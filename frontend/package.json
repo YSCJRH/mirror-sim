@@ -1,0 +1,9 @@
+{
+  "name": "mirror-frontend-shell",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "node -e \"console.log('Mirror frontend shell is intentionally deferred until artifacts stabilize.')\"",
+    "build": "node -e \"console.log('No frontend build is required in Phase 0.')\""
+  }
+}

@@ -1,0 +1,14 @@
+artifacts/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.venv/
+node_modules/
+dist/
+build/
+*.pyc
+*.pyo
+*.coverage
+coverage.xml
+.DS_Store
+Thumbs.db

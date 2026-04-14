@@ -1,0 +1,48 @@
+name: phase0
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  linux-smoke-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install backend package
+        run: python -m pip install -e backend[dev]
+
+      - name: Run tests
+        run: make test
+
+      - name: Run smoke
+        run: make smoke
+
+  windows-smoke-and-test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install backend package
+        run: python -m pip install -e backend[dev]
+
+      - name: Run tests
+        shell: pwsh
+        run: .\make.ps1 test
+
+      - name: Run smoke
+        shell: pwsh
+        run: .\make.ps1 smoke

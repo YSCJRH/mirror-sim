@@ -1,0 +1,14 @@
+scenario_id: scenario_baseline
+world_id: fog-harbor-east-gate
+title: Baseline East Gate Response
+description: >
+  The baseline branch assumes the archive ledger copy moves on time and no extra
+  communication disruption is injected beyond the crisis already described in the corpus.
+seed: 7
+turn_budget: 8
+branch_count: 1
+evaluation_questions:
+  - Who gains enough information to escalate the gate risk first?
+  - Does the maintenance ledger surface before Zhao Ke locks the festival plan?
+  - Is evacuation triggered before the storm reaches the east wharf?
+injections: []

@@ -1,0 +1,51 @@
+world_id: fog-harbor-east-gate
+title: Fog Harbor East Gate Crisis
+docs:
+  - document_id: doc_storm_bulletin
+    title: Harbor Observatory Storm Bulletin
+    kind: bulletin
+    path: docs/storm_bulletin.md
+    created_at: "1904-09-17T06:00:00Z"
+    metadata:
+      author: fog_harbor_observatory
+      channel: bulletin_board
+  - document_id: doc_engineering_inspection
+    title: East Gate Engineering Inspection
+    kind: inspection_report
+    path: docs/engineering_inspection.md
+    created_at: "1904-09-17T08:15:00Z"
+    metadata:
+      author: su_he
+      channel: public_works
+  - document_id: doc_budget_minutes
+    title: Harbor Council Budget Minutes
+    kind: minutes
+    path: docs/council_budget_minutes.md
+    created_at: "1904-09-16T20:30:00Z"
+    metadata:
+      author: harbor_council
+      channel: closed_session
+  - document_id: doc_tugboat_log
+    title: Tide Log From The Tug Lantern Three
+    kind: vessel_log
+    path: docs/tugboat_log.md
+    created_at: "1904-09-17T04:45:00Z"
+    metadata:
+      author: chen_yu
+      channel: harbor_patrol
+  - document_id: doc_ledger_copy
+    title: Copy Of The Maintenance Ledger
+    kind: ledger_copy
+    path: docs/archive_ledger_copy.md
+    created_at: "1904-09-17T09:10:00Z"
+    metadata:
+      author: lin_lan
+      channel: archives
+  - document_id: doc_gate_dispatch
+    title: East Wharf Dispatch Notes
+    kind: dispatch_notes
+    path: docs/gate_watch_dispatch.md
+    created_at: "1904-09-17T09:40:00Z"
+    metadata:
+      author: east_wharf_dispatch
+      channel: harbor_dispatch

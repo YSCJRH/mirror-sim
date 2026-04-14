@@ -1,0 +1,12 @@
+blocked_topics:
+  - political persuasion
+  - voter targeting
+  - law enforcement scoring
+  - hiring score
+  - credit score
+  - medical diagnosis
+  - judicial prediction
+blocked_phrases:
+  - predicts the future
+  - system proves
+  - real world will

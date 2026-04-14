@@ -1,0 +1,30 @@
+eval_name: fog_harbor_phase0_demo
+checks:
+  - name: baseline_exposes_budget
+    kind: run_field
+    run: baseline
+    field: budget_exposed
+    equals: true
+  - name: baseline_triggers_evacuation
+    kind: run_field
+    run: baseline
+    field: evacuation_triggered
+    equals: true
+  - name: intervention_delays_ledger
+    kind: compare_runs
+    left_run: reporter_detained
+    left_field: ledger_public_turn
+    op: gt
+    right_run: baseline
+    right_field: ledger_public_turn
+  - name: intervention_delays_evacuation
+    kind: compare_runs
+    left_run: reporter_detained
+    left_field: evacuation_turn
+    op: gt
+    right_run: baseline
+    right_field: evacuation_turn
+  - name: claims_are_labeled
+    kind: claim_labels_complete
+  - name: claims_have_evidence
+    kind: claim_evidence_complete

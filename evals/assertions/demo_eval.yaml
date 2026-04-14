@@ -1,0 +1,3 @@
+eval_name: fog_harbor_phase0_demo
+source: data/demo/expectations/demo_eval.yaml
+description: Canonical expectation set for the baseline and reporter_detained comparison.

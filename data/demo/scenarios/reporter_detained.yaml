@@ -1,0 +1,24 @@
+scenario_id: scenario_reporter_detained
+world_id: fog-harbor-east-gate
+title: Reporter Delayed Before Publication
+description: >
+  The ledger courier is interrupted, so the copied maintenance record reaches the
+  public decision loop later than it does in baseline.
+seed: 7
+turn_budget: 8
+branch_count: 1
+evaluation_questions:
+  - How much later does the maintenance ledger surface?
+  - Does the delayed document postpone evacuation?
+  - Which action chain preserves Zhao Ke's preferred festival timeline longest?
+injections:
+  - injection_id: inj_reporter_detained
+    kind: delay_document
+    target_id: doc_ledger_copy
+    actor_id: entity_lin_lan
+    params:
+      delay_turns: 2
+      cause: courier_interruption
+    rationale: >
+      The reporter is briefly detained, so the copied ledger cannot trigger public
+      pressure on the same turn as the baseline branch.

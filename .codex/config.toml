@@ -1,0 +1,26 @@
+# Conservative project-scoped subagent defaults for Mirror.
+
+[agents]
+max_threads = 4
+max_depth = 1
+job_max_runtime_seconds = 900
+
+[agents.repo_explorer]
+description = "Read-only scout for locating code paths, entry points, dependencies, and contract surfaces."
+config_file = "agents/repo_explorer.toml"
+
+[agents.docs_researcher]
+description = "Read-only verifier for project docs, ADRs, schema notes, and behavior constraints."
+config_file = "agents/docs_researcher.toml"
+
+[agents.evaluator]
+description = "Validation-focused agent for smoke, test, eval-demo, and artifact inspection without product edits."
+config_file = "agents/evaluator.toml"
+
+[agents.safety_reviewer]
+description = "Read-only reviewer for Mirror redlines, evidence discipline, and unsafe phrasing."
+config_file = "agents/safety_reviewer.toml"
+
+[agents.implementer]
+description = "Single-writer implementation agent for the smallest approved change set after synthesis."
+config_file = "agents/implementer.toml"
