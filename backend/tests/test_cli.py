@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import pytest
 
 from backend.app.cli import main
 from backend.app.config import get_settings
@@ -21,7 +22,25 @@ def test_cli_validate_and_smoke(tmp_path: Path) -> None:
     assert (tmp_path / "baseline.json").exists()
 
 
-def test_cli_inspect_world_outputs_json(tmp_path: Path, capsys) -> None:
+def _load_fixture(name: str) -> dict:
+    return json.loads((Path(__file__).parent / "fixtures" / name).read_text(encoding="utf-8"))
+
+
+@pytest.mark.parametrize(
+    ("kind", "object_id", "fixture_name"),
+    [
+        ("entity", "entity_east_gate", "inspect_world_entity_east_gate.json"),
+        ("persona", "persona_su_he", "inspect_world_persona_su_he.json"),
+        ("event", "event_gate_failure_risk", "inspect_world_event_gate_failure_risk.json"),
+    ],
+)
+def test_cli_inspect_world_matches_golden_outputs(
+    tmp_path: Path,
+    capsys,
+    kind: str,
+    object_id: str,
+    fixture_name: str,
+) -> None:
     settings = get_settings()
     assert main(["ingest", str(settings.manifest_path), "--out", str(tmp_path / "ingest")]) == 0
     assert main(["build-graph", str(tmp_path / "ingest" / "chunks.jsonl"), "--out", str(tmp_path / "graph")]) == 0
@@ -32,9 +51,9 @@ def test_cli_inspect_world_outputs_json(tmp_path: Path, capsys) -> None:
             [
                 "inspect-world",
                 "--kind",
-                "entity",
+                kind,
                 "--id",
-                "entity_east_gate",
+                object_id,
                 "--graph",
                 str(tmp_path / "graph" / "graph.json"),
                 "--personas",
@@ -44,8 +63,7 @@ def test_cli_inspect_world_outputs_json(tmp_path: Path, capsys) -> None:
         == 0
     )
     payload = json.loads(capsys.readouterr().out)
-    assert payload["kind"] == "entity"
-    assert payload["object"]["entity_id"] == "entity_east_gate"
+    assert payload == _load_fixture(fixture_name)
 
 
 def test_cli_classify_lane_outputs_json(capsys) -> None:
