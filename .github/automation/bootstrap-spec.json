@@ -1,0 +1,135 @@
+{
+  "milestones": [
+    {
+      "title": "Phase 1 - World/Persona Modeling",
+      "description": "Produce a stable, evidence-backed world model and persona layer for the Fog Harbor demo."
+    },
+    {
+      "title": "Phase 2 - Scenario/Simulation Loop",
+      "description": "Stabilize baseline/intervention simulation, trace, report, and eval loops."
+    },
+    {
+      "title": "Phase 3 - Eval/UI/Demo",
+      "description": "Finish the workbench, final demo loop, and review-grade presentation layer."
+    }
+  ],
+  "labels": [
+    {
+      "name": "phase:1",
+      "color": "0e8a16",
+      "description": "Phase 1 world and persona modeling work."
+    },
+    {
+      "name": "phase:2",
+      "color": "1d76db",
+      "description": "Phase 2 scenario and simulation work."
+    },
+    {
+      "name": "phase:3",
+      "color": "5319e7",
+      "description": "Phase 3 UI, eval, and demo work."
+    },
+    {
+      "name": "area:backend",
+      "color": "0052cc",
+      "description": "Backend, CLI, contracts, or artifact pipeline work."
+    },
+    {
+      "name": "area:frontend",
+      "color": "fbca04",
+      "description": "Frontend or workbench UI work."
+    },
+    {
+      "name": "area:docs-evals",
+      "color": "c2e0c6",
+      "description": "Docs, ADRs, rubrics, or eval-harness work."
+    },
+    {
+      "name": "risk:core-contract",
+      "color": "b60205",
+      "description": "Touches protected-core contracts and cannot auto-merge."
+    },
+    {
+      "name": "risk:safety",
+      "color": "d93f0b",
+      "description": "Touches safety, redlines, or policy boundaries."
+    },
+    {
+      "name": "risk:ci",
+      "color": "e99695",
+      "description": "Touches CI, automation, or workflow reliability."
+    },
+    {
+      "name": "lane:auto-safe",
+      "color": "0e8a16",
+      "description": "Eligible for autonomous safe-lane execution and merge."
+    },
+    {
+      "name": "lane:protected-core",
+      "color": "b60205",
+      "description": "Protected-core lane; may be automated but must not auto-merge."
+    },
+    {
+      "name": "status:ready",
+      "color": "0e8a16",
+      "description": "Ready for Codex triage or execution."
+    },
+    {
+      "name": "status:blocked",
+      "color": "d73a4a",
+      "description": "Blocked and should not be picked by builder automation."
+    },
+    {
+      "name": "status:needs-adr",
+      "color": "5319e7",
+      "description": "Needs an ADR or contract decision before merge."
+    }
+  ],
+  "issues": [
+    {
+      "title": "Day 0 bootstrap: create a clean automation baseline",
+      "milestone": "Phase 1 - World/Persona Modeling",
+      "labels": [
+        "phase:1",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nCreate the clean baseline required before long-running automation can write code or auto-merge.\n\n## input\n- Current repository baseline state\n- Existing Phase 0/Phase 1 repo state\n- Automation plan in docs/plans/automation-roadmap.md\n\n## output\n- A clean baseline snapshot or baseline PR\n- Confirmed milestones and label taxonomy\n- CI upgraded from phase0-only checks to long-running automation gates\n\n## out-of-scope\n- Building new product features\n- Expanding the simulation contract\n\n## minimal test\n- `git -c safe.directory=D:/mirror status --short`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n\n## touches contract\nYes. This work changes automation governance and merge policy.\n\n## phase\nPhase 1 bootstrap gate"
+    },
+    {
+      "title": "Phase 1 exit gate",
+      "milestone": "Phase 1 - World/Persona Modeling",
+      "labels": [
+        "phase:1",
+        "area:docs-evals",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nValidate that all Phase 1 exit criteria are met before automation advances to Phase 2.\n\n## input\n- Current artifacts/demo outputs\n- Current Phase 1 milestone state\n- ADR and contract notes\n\n## output\n- Phase audit summary\n- Gap issues if anything is missing\n- Go/no-go decision for Phase 2\n\n## out-of-scope\n- Implementing new features unrelated to exit criteria\n\n## minimal test\n- `python -m backend.app.cli audit-phase phase1`\n\n## touches contract\nYes. Exit gating can block or permit phase progression.\n\n## phase\nPhase 1"
+    },
+    {
+      "title": "Phase 2 exit gate",
+      "milestone": "Phase 2 - Scenario/Simulation Loop",
+      "labels": [
+        "phase:2",
+        "area:docs-evals",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nVerify Phase 2 exit criteria before the automation system opens Phase 3.\n\n## input\n- run/report/eval artifacts\n- open protected-core PR state\n- milestone completion state\n\n## output\n- phase audit summary\n- explicit go/no-go decision\n- follow-up gap issues when needed\n\n## out-of-scope\n- new scenario work beyond unmet criteria\n\n## minimal test\n- `python -m backend.app.cli audit-phase phase2`\n\n## touches contract\nYes. Exit gates are protected-core.\n\n## phase\nPhase 2"
+    },
+    {
+      "title": "Phase 3 exit gate",
+      "milestone": "Phase 3 - Eval/UI/Demo",
+      "labels": [
+        "phase:3",
+        "area:docs-evals",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that all blueprint Phase 3 criteria are satisfied and the automation system can pause permanently.\n\n## input\n- final artifacts and frontend workbench\n- current milestone and PR state\n- human review rubric output\n\n## output\n- final completion report\n- PAUSED automation state\n- documented stop condition\n\n## out-of-scope\n- follow-on enterprise productization\n\n## minimal test\n- `python -m backend.app.cli audit-phase phase3`\n\n## touches contract\nYes. This issue controls the project stop condition.\n\n## phase\nPhase 3"
+    }
+  ]
+}

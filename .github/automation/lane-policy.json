@@ -1,0 +1,21 @@
+{
+  "autonomous_safe_label": "lane:auto-safe",
+  "protected_core_label": "lane:protected-core",
+  "protected_core_labels": [
+    "lane:protected-core",
+    "risk:core-contract"
+  ],
+  "automerge_blocking_labels": [
+    "risk:core-contract",
+    "status:needs-adr",
+    "risk:safety"
+  ],
+  "protected_core_prefixes": [
+    "docs/architecture/contracts.md",
+    "docs/decisions/",
+    "backend/app/domain/",
+    "backend/app/scenarios/",
+    "backend/app/simulation/",
+    "backend/app/reports/"
+  ]
+}

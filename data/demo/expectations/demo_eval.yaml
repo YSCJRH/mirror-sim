@@ -1,5 +1,30 @@
 eval_name: fog_harbor_phase0_demo
 checks:
+  - name: graph_has_events
+    kind: graph_events_nonempty
+  - name: world_objects_have_evidence
+    kind: world_evidence_complete
+  - name: persona_fields_have_provenance
+    kind: persona_field_provenance_complete
+    fields:
+      - public_role
+      - goals
+      - constraints
+      - known_facts
+      - private_info
+      - relationships
+  - name: inspect_entity_east_gate
+    kind: inspect_world
+    object_kind: entity
+    object_id: entity_east_gate
+  - name: inspect_persona_su_he
+    kind: inspect_world
+    object_kind: persona
+    object_id: persona_su_he
+  - name: inspect_event_gate_failure_risk
+    kind: inspect_world
+    object_kind: event
+    object_id: event_gate_failure_risk
   - name: baseline_exposes_budget
     kind: run_field
     run: baseline

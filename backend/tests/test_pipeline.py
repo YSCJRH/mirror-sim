@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from backend.app.world_query import inspect_world
 from pathlib import Path
 
 from backend.app.config import get_settings
@@ -27,7 +28,24 @@ def test_graph_and_personas_have_evidence(tmp_path: Path) -> None:
     graph = build_graph(tmp_path / "ingest" / "chunks.jsonl", tmp_path / "graph")
     personas = build_personas(tmp_path / "graph" / "graph.json", tmp_path / "personas")
     assert graph["stats"]["relation_count"] >= 4
+    assert graph["stats"]["event_count"] >= 4
+    assert graph["events"]
     assert all(persona.evidence_ids for persona in personas)
+    assert all(persona.field_provenance["public_role"] for persona in personas)
+    assert all(persona.field_provenance["relationships"] for persona in personas)
+
+
+def test_world_query_returns_evidence_backed_objects(tmp_path: Path) -> None:
+    settings = get_settings()
+    ingest_manifest(settings.manifest_path, tmp_path / "ingest")
+    build_graph(tmp_path / "ingest" / "chunks.jsonl", tmp_path / "graph")
+    build_personas(tmp_path / "graph" / "graph.json", tmp_path / "personas")
+    entity = inspect_world("entity", "entity_east_gate", tmp_path / "graph" / "graph.json", tmp_path / "personas" / "personas.json")
+    persona = inspect_world("persona", "persona_su_he", tmp_path / "graph" / "graph.json", tmp_path / "personas" / "personas.json")
+    event = inspect_world("event", "event_gate_failure_risk", tmp_path / "graph" / "graph.json", tmp_path / "personas" / "personas.json")
+    assert entity["object"]["evidence_ids"]
+    assert persona["object"]["field_provenance"]["known_facts"]
+    assert event["object"]["participant_entity_ids"]
 
 
 def test_scenario_validation_and_simulation_are_deterministic(tmp_path: Path) -> None:
@@ -79,3 +97,4 @@ def test_eval_demo_passes(tmp_path: Path) -> None:
     settings = get_settings()
     result = run_phase0_demo(settings=settings, artifacts_root=tmp_path / "demo")
     assert result.status == "pass"
+    assert result.metrics["event_count"] >= 4

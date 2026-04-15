@@ -1,0 +1,39 @@
+name: Mirror Phase Exit Gate
+description: Track the explicit exit criteria that must pass before automation can advance to the next phase.
+title: "[phase-exit] "
+body:
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Phase
+      description: Which phase exit gate is this?
+      options:
+        - Phase 1 - World/Persona Modeling
+        - Phase 2 - Scenario/Simulation Loop
+        - Phase 3 - Eval/UI/Demo
+    validations:
+      required: true
+  - type: textarea
+    id: gate_criteria
+    attributes:
+      label: Gate criteria
+      description: Copy the blueprint exit criteria that must all be satisfied.
+      placeholder: List each required exit criterion on its own line.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and artifacts
+      description: What local artifacts, eval summaries, docs, or PR states prove the gate is met?
+      placeholder: Point to artifacts/demo, eval summaries, ADRs, or milestone status.
+    validations:
+      required: true
+  - type: textarea
+    id: minimal_test
+    attributes:
+      label: Minimal audit command
+      description: The phase-audit command or other check that should be run.
+      placeholder: python -m backend.app.cli audit-phase phase1
+    validations:
+      required: true

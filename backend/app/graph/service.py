@@ -2,79 +2,86 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from backend.app.domain.models import Entity, Relation
+from backend.app.config import get_settings
+from backend.app.domain.models import Entity, Event, Relation
 from backend.app.utils import read_jsonl, write_json
+from backend.app.world_model import MatchRule, load_world_model
 
 
-ENTITY_DEFINITIONS = [
-    {"entity_id": "entity_lin_lan", "name": "Lin Lan", "type": "person", "aliases": ["lin lan", "archive clerk", "archive room"]},
-    {"entity_id": "entity_zhao_ke", "name": "Zhao Ke", "type": "person", "aliases": ["zhao ke", "deputy mayor", "mayor's office"]},
-    {"entity_id": "entity_su_he", "name": "Su He", "type": "person", "aliases": ["su he", "engineer su he", "public works office"]},
-    {"entity_id": "entity_chen_yu", "name": "Chen Yu", "type": "person", "aliases": ["chen yu", "captain chen yu", "tug lantern three"]},
-    {"entity_id": "entity_east_gate", "name": "East Gate", "type": "infrastructure", "aliases": ["east gate", "flood gate", "gate seam"]},
-    {"entity_id": "entity_maintenance_ledger", "name": "Maintenance Ledger", "type": "document", "aliases": ["maintenance ledger", "ledger copy", "copied pages"]},
-    {"entity_id": "entity_sea_lantern_festival", "name": "Sea Lantern Festival", "type": "event", "aliases": ["sea lantern festival", "festival", "opening ceremony"]},
-    {"entity_id": "entity_east_wharf", "name": "East Wharf", "type": "location", "aliases": ["east wharf", "harbor square", "quay"]},
-]
-
-RELATION_RULES = [
-    {"relation_id": "relation_lin_lan_controls_ledger", "source_entity_id": "entity_lin_lan", "relation_type": "controls", "target_entity_id": "entity_maintenance_ledger", "keywords": ["lin lan", "ledger"]},
-    {"relation_id": "relation_su_he_inspects_gate", "source_entity_id": "entity_su_he", "relation_type": "inspects", "target_entity_id": "entity_east_gate", "keywords": ["su he", "east gate"]},
-    {"relation_id": "relation_zhao_ke_protects_festival", "source_entity_id": "entity_zhao_ke", "relation_type": "protects", "target_entity_id": "entity_sea_lantern_festival", "keywords": ["zhao ke", "festival"]},
-    {"relation_id": "relation_chen_yu_observes_tides", "source_entity_id": "entity_chen_yu", "relation_type": "observes", "target_entity_id": "entity_east_gate", "keywords": ["chen yu", "tide"]},
-    {"relation_id": "relation_festival_diverts_maintenance_budget", "source_entity_id": "entity_sea_lantern_festival", "relation_type": "draws_funding_from", "target_entity_id": "entity_east_gate", "keywords": ["festival", "maintenance", "reassigned"]},
-]
+def _matches_rule(text: str, rule: MatchRule) -> bool:
+    if rule.all and not all(keyword in text for keyword in rule.all):
+        return False
+    if rule.any and not any(keyword in text for keyword in rule.any):
+        return False
+    return bool(rule.all or rule.any)
 
 
-def build_graph(chunks_path: Path, out_dir: Path) -> dict:
+def _match_aliases(text: str, aliases: list[str]) -> bool:
+    return any(alias in text for alias in aliases)
+
+
+def _evidence_for_aliases(chunk_rows: list[dict], aliases: list[str]) -> list[str]:
+    return sorted({chunk["chunk_id"] for chunk in chunk_rows if _match_aliases(chunk["text"].lower(), aliases)})
+
+
+def _evidence_for_rule(chunk_rows: list[dict], rule: MatchRule) -> list[str]:
+    return sorted({chunk["chunk_id"] for chunk in chunk_rows if _matches_rule(chunk["text"].lower(), rule)})
+
+
+def build_graph(chunks_path: Path, out_dir: Path, world_model_path: Path | None = None) -> dict:
     chunk_rows = read_jsonl(chunks_path)
+    world_model = load_world_model(world_model_path or get_settings().world_model_path)
     entities: list[Entity] = []
     relations: list[Relation] = []
+    events: list[Event] = []
 
-    for definition in ENTITY_DEFINITIONS:
-        evidence_ids = sorted(
-            {
-                chunk["chunk_id"]
-                for chunk in chunk_rows
-                if any(alias in chunk["text"].lower() for alias in definition["aliases"])
-            }
-        )
+    for definition in world_model.entities:
+        evidence_ids = _evidence_for_aliases(chunk_rows, definition.aliases)
         entities.append(
             Entity(
-                entity_id=definition["entity_id"],
-                name=definition["name"],
-                type=definition["type"],
-                aliases=definition["aliases"],
+                entity_id=definition.entity_id,
+                name=definition.name,
+                type=definition.type,
+                aliases=definition.aliases,
                 evidence_ids=evidence_ids,
             )
         )
 
-    for rule in RELATION_RULES:
-        evidence_ids = sorted(
-            {
-                chunk["chunk_id"]
-                for chunk in chunk_rows
-                if all(keyword in chunk["text"].lower() for keyword in rule["keywords"])
-            }
-        )
+    for rule in world_model.relations:
+        evidence_ids = _evidence_for_rule(chunk_rows, rule.match)
         if evidence_ids:
             relations.append(
                 Relation(
-                    relation_id=rule["relation_id"],
-                    source_entity_id=rule["source_entity_id"],
-                    relation_type=rule["relation_type"],
-                    target_entity_id=rule["target_entity_id"],
+                    relation_id=rule.relation_id,
+                    source_entity_id=rule.source_entity_id,
+                    relation_type=rule.relation_type,
+                    target_entity_id=rule.target_entity_id,
+                    evidence_ids=evidence_ids,
+                )
+            )
+
+    for definition in world_model.events:
+        evidence_ids = _evidence_for_rule(chunk_rows, definition.match)
+        if evidence_ids:
+            events.append(
+                Event(
+                    event_id=definition.event_id,
+                    name=definition.name,
+                    kind=definition.kind,
+                    participant_entity_ids=definition.participant_entity_ids,
                     evidence_ids=evidence_ids,
                 )
             )
 
     payload = {
-        "world_id": "fog-harbor-east-gate",
+        "world_id": world_model.world_id,
         "entities": [entity.model_dump() for entity in entities],
         "relations": [relation.model_dump() for relation in relations],
+        "events": [event.model_dump() for event in events],
         "stats": {
             "entity_count": len(entities),
             "relation_count": len(relations),
+            "event_count": len(events),
             "chunk_count": len(chunk_rows),
         },
     }

@@ -1,16 +1,19 @@
 # Mirror Engine
 
-Mirror Engine 是一个面向虚构或明确授权知识环境的、带证据约束的条件化推演沙盘。它用于回答 “如果某个扰动发生，关键角色、信息流和结局会怎样变化”，而不是声称能预测真实未来。
+Mirror Engine is a constrained, evidence-backed conditional simulation sandbox for fictional or explicitly authorized knowledge environments. It is designed to answer questions like "if this disturbance occurs, how do key actors, information flows, and outcomes change?" without presenting itself as a real-world future prediction machine.
 
-## Phase 0 Status
+## Current Status
 
-当前仓库已搭起 Phase 0 地基：
+The repository has completed its Phase 0 foundation and is now in Phase 1 world-model hardening.
 
-- 项目治理文档与 Codex 执行规则
-- demo 世界 “雾港东闸危机”
-- 核心 domain models 与 schema 假设
-- 最小 CLI pipeline：ingest、graph、personas、scenario、simulate、report、eval
-- smoke / test / eval-demo 命令入口
+- Governance documents and Codex execution rules are in place.
+- The canonical demo world is `Fog Harbor East Gate`.
+- The backend can ingest, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
+- The repo now also includes the bootstrap pieces for long-running automation:
+  - GitHub issue and PR templates
+  - lane policy and bootstrap spec
+  - CI upgraded to a long-running quality gate
+  - local lane-classification and phase-audit commands
 
 ## Quick Start
 
@@ -39,22 +42,29 @@ python -m backend.app.cli personas artifacts/demo/graph/graph.json --out artifac
 python -m backend.app.cli validate-scenario data/demo/scenarios/reporter_detained.yaml --out artifacts/demo/scenario/reporter_detained.json
 python -m backend.app.cli simulate data/demo/scenarios/reporter_detained.yaml --graph artifacts/demo/graph/graph.json --personas artifacts/demo/personas/personas.json --out artifacts/demo/run/reporter_detained
 python -m backend.app.cli report artifacts/demo/run/reporter_detained --baseline artifacts/demo/run/baseline --out artifacts/demo/report
+python -m backend.app.cli inspect-world --kind entity --id entity_east_gate --graph artifacts/demo/graph/graph.json --personas artifacts/demo/personas/personas.json
+python -m backend.app.cli classify-lane --files README.md backend/app/cli.py
+python -m backend.app.cli audit-phase phase1
 ```
 
 ## Repo Map
 
-- [mirror.md](/D:/mirror/mirror.md): 顶层蓝图 / harness
-- [AGENTS.md](/D:/mirror/AGENTS.md): Codex 执行规则
-- [docs/plans/phase-0-foundation.md](/D:/mirror/docs/plans/phase-0-foundation.md): 当前 Phase 0 实施说明
-- [docs/architecture/contracts.md](/D:/mirror/docs/architecture/contracts.md): 核心契约与假设
-- [data/demo](/D:/mirror/data/demo): demo world、scenarios、expectations
-- [backend](/D:/mirror/backend): FastAPI app、CLI、domain models、pipeline
-- [evals/assertions](/D:/mirror/evals/assertions): 自动化断言
-- [frontend](/D:/mirror/frontend): 延后实现的 workbench shell 占位
+- [mirror.md](/D:/mirror/mirror.md): top-level blueprint and harness
+- [AGENTS.md](/D:/mirror/AGENTS.md): Codex execution rules
+- [docs/plans/phase-0-foundation.md](/D:/mirror/docs/plans/phase-0-foundation.md): Phase 0 implementation note
+- [docs/plans/automation-roadmap.md](/D:/mirror/docs/plans/automation-roadmap.md): long-running automation bootstrap and operating plan
+- [docs/architecture/contracts.md](/D:/mirror/docs/architecture/contracts.md): durable contracts and assumptions
+- [data/demo/config/world_model.yaml](/D:/mirror/data/demo/config/world_model.yaml): demo world model and persona blueprint
+- [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
+- [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
+- [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
+- [frontend](/D:/mirror/frontend): deferred workbench shell
+- [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
+- [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
 ## Architecture Shape
 
-Phase 0 只实现最短闭环：
+The current deterministic backbone remains:
 
 ```text
 Corpus
@@ -68,29 +78,41 @@ Corpus
   -> Eval Summary
 ```
 
-设计原则：
+Key principles:
 
-- 主干确定性，LLM 在边缘
-- 先单机文件流，再考虑复杂 infra
-- report 必须带 claim labels 和 `evidence_ids`
-- safety 与 eval 不是附录，而是主流程
+- Deterministic backbone first; LLMs stay at the edge.
+- Local files and transparent artifacts first; heavy infra later.
+- Reports must carry claim labels and `evidence_ids`.
+- World model outputs must remain queryable.
+- Safety and eval are part of the main loop, not an appendix.
 
-## Known Assumptions
+## Automation Bootstrap
 
-- `RunTrace` 被实现为 run 级摘要模型；`TurnAction` 是 `run_trace.jsonl` 中的逐行动记录。
-- `reporter_detained` 是场景 ID，不是 injection kind；其注入类型实现为 `delay_document`。
-- 保留 `Makefile` 作为规范接口，同时提供 `make.ps1` / `make.cmd` 兼容当前 Windows 环境。
+Mirror now treats GitHub as the operational source of truth for long-running automation.
 
-## Non-goals For This Repo
+Repository-side automation assets:
 
-- 开放世界 ingest
-- 真实人物或真实社会建模
-- 自由 agent swarm
-- 重型图数据库
-- fancy UI 先行
-- 外部 LLM 深绑定
+- `.github/ISSUE_TEMPLATE/`
+- `.github/pull_request_template.md`
+- `.github/workflows/phase0.yml`
+- `.github/workflows/pull-request-lane.yml`
+- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`
+- `python -m backend.app.cli classify-lane ...`
+- `python -m backend.app.cli audit-phase ...`
+
+Important constraint:
+
+- Day 0 bootstrap still requires a clean baseline snapshot before autonomous code-writing loops should run on worktrees.
+
+## Non-goals
+
+- Open-world ingest
+- Real-person or real-society modeling
+- Free-form agent swarm
+- Heavy graph databases as the default
+- Fancy UI before artifacts and evals are stable
+- Deep binding to external LLM APIs in the core loop
 
 ## License
 
-This repository is licensed under `MIT`.  
-The public remote currently needs to be brought into alignment on the next push.
+This repository is licensed under `MIT`.
