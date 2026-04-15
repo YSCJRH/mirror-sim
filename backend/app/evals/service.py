@@ -31,9 +31,10 @@ def _scan_terms(text: str, terms: list[str]) -> list[str]:
     return [term for term in terms if term.lower() in lowered]
 
 
-def _evaluate_redlines(redlines_path: Path, artifacts_root: Path) -> list[str]:
-    rules = load_yaml(redlines_path)
-    texts = {
+def _redline_texts(artifacts_root: Path) -> dict[str, str]:
+    graph_path = artifacts_root / "graph" / "graph.json"
+    personas_path = artifacts_root / "personas" / "personas.json"
+    return {
         "report": (artifacts_root / "report" / "report.md").read_text(encoding="utf-8"),
         "claims": json.dumps(read_json(artifacts_root / "report" / "claims.json"), ensure_ascii=False),
         "baseline_scenario": json.dumps(read_json(artifacts_root / "scenario" / "baseline.json"), ensure_ascii=False),
@@ -41,7 +42,24 @@ def _evaluate_redlines(redlines_path: Path, artifacts_root: Path) -> list[str]:
             read_json(artifacts_root / "scenario" / "reporter_detained.json"),
             ensure_ascii=False,
         ),
+        "query_entity_east_gate": json.dumps(
+            inspect_world("entity", "entity_east_gate", graph_path, personas_path),
+            ensure_ascii=False,
+        ),
+        "query_persona_su_he": json.dumps(
+            inspect_world("persona", "persona_su_he", graph_path, personas_path),
+            ensure_ascii=False,
+        ),
+        "query_event_gate_failure_risk": json.dumps(
+            inspect_world("event", "event_gate_failure_risk", graph_path, personas_path),
+            ensure_ascii=False,
+        ),
     }
+
+
+def _evaluate_redlines(redlines_path: Path, artifacts_root: Path) -> list[str]:
+    rules = load_yaml(redlines_path)
+    texts = _redline_texts(artifacts_root)
     failures: list[str] = []
     for label, text in texts.items():
         topic_hits = _scan_terms(text, rules["blocked_topics"])
