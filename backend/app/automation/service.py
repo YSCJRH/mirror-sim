@@ -294,7 +294,7 @@ def run_phase_audit(
         notes = ["TODO[verify]: Deterministic replay across independent reruns is enforced by eval-demo, not by this artifact-only audit."]
     elif phase == "phase3":
         checks = _phase3_checks(settings, artifacts_root)
-        notes = ["TODO[verify]: Phase 3 stop-condition still requires GitHub milestone closure and demo review sign-off."]
+        notes = ["TODO[verify]: Open a fresh GitHub milestone and exit-gate issue before resuming builder automation beyond the closed Phase 3 queue."]
     else:
         raise ValueError(f"Unsupported phase: {phase}")
 
