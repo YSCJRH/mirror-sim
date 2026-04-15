@@ -1,5 +1,9 @@
 # Mirror Engine
 
+<p align="center">
+  <img src="mirror.png" alt="Mirror concept illustration" width="100%" />
+</p>
+
 Mirror Engine is a constrained, evidence-backed conditional simulation sandbox for fictional or explicitly authorized knowledge environments. It is designed to answer questions like "if this disturbance occurs, how do key actors, information flows, and outcomes change?" without presenting itself as a real-world future prediction machine.
 
 ## Current Status
