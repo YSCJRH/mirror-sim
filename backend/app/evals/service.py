@@ -31,6 +31,16 @@ def _scan_terms(text: str, terms: list[str]) -> list[str]:
     return [term for term in terms if term.lower() in lowered]
 
 
+def _graph_collection_id_field(collection: str) -> str:
+    if collection == "entities":
+        return "entity_id"
+    if collection == "relations":
+        return "relation_id"
+    if collection == "events":
+        return "event_id"
+    raise ValueError(f"Unsupported graph collection: {collection}")
+
+
 def _evaluate_redlines(redlines_path: Path, artifacts_root: Path) -> list[str]:
     rules = load_yaml(redlines_path)
     texts = {
@@ -101,6 +111,15 @@ def evaluate_runs(expectations_path: Path, artifacts_root: Path, out_dir: Path, 
             collections = ("entities", "relations", "events")
             if not all(item.get("evidence_ids") for collection in collections for item in graph_payload[collection]):
                 failures.append(f"{check['name']}: at least one world object is missing evidence_ids")
+            else:
+                passed += 1
+        elif kind == "world_object_ids_present":
+            collection = check["collection"]
+            id_field = _graph_collection_id_field(collection)
+            observed_ids = {item[id_field] for item in graph_payload[collection]}
+            missing = [object_id for object_id in check["ids"] if object_id not in observed_ids]
+            if missing:
+                failures.append(f"{check['name']}: missing {collection} ids {missing}")
             else:
                 passed += 1
         elif kind == "persona_field_provenance_complete":
