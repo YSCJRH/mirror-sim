@@ -96,7 +96,7 @@
         "status:ready",
         "lane:protected-core"
       ],
-      "body": "## goal\nCreate the clean baseline required before long-running automation can write code or auto-merge.\n\n## input\n- Current dirty main worktree\n- Existing Phase 0/Phase 1 repo state\n- Automation plan in docs/plans/automation-roadmap.md\n\n## output\n- A clean baseline snapshot or baseline PR\n- Confirmed milestones and label taxonomy\n- CI upgraded from phase0-only checks to long-running automation gates\n\n## out-of-scope\n- Building new product features\n- Expanding the simulation contract\n\n## minimal test\n- `git -c safe.directory=D:/mirror status --short`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n\n## touches contract\nYes. This work changes automation governance and merge policy.\n\n## phase\nPhase 1 bootstrap gate"
+      "body": "## goal\nCreate the clean baseline required before long-running automation can write code or auto-merge.\n\n## input\n- Current repository baseline state\n- Existing Phase 0/Phase 1 repo state\n- Automation plan in docs/plans/automation-roadmap.md\n\n## output\n- A clean baseline snapshot or baseline PR\n- Confirmed milestones and label taxonomy\n- CI upgraded from phase0-only checks to long-running automation gates\n\n## out-of-scope\n- Building new product features\n- Expanding the simulation contract\n\n## minimal test\n- `git -c safe.directory=D:/mirror status --short`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n\n## touches contract\nYes. This work changes automation governance and merge policy.\n\n## phase\nPhase 1 bootstrap gate"
     },
     {
       "title": "Phase 1 exit gate",
