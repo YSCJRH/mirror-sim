@@ -4,16 +4,24 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed its Phase 0 foundation and is now in Phase 1 world-model hardening.
+The repository has completed Day 0 bootstrap, closed Phase 1 and Phase 2 gates, and is now actively delivering the Phase 3 workbench.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
 - The backend can ingest, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
-- The repo now also includes the bootstrap pieces for long-running automation:
+- The repo now also includes the long-running automation and workbench pieces:
   - GitHub issue and PR templates
   - lane policy and bootstrap spec
   - CI upgraded to a long-running quality gate
   - local lane-classification and phase-audit commands
+  - protected `main` with required status checks and auto-merge for safe-lane PRs
+  - a browser workbench shell that now renders report, claims, eval summary, rubric, corpus, graph, and scenarios
+
+Local phase audits currently show:
+
+- Phase 1: `pass`
+- Phase 2: `pass`
+- Phase 3: `pass`
 
 ## Quick Start
 
@@ -53,12 +61,13 @@ python -m backend.app.cli audit-phase phase1
 - [AGENTS.md](/D:/mirror/AGENTS.md): Codex execution rules
 - [docs/plans/phase-0-foundation.md](/D:/mirror/docs/plans/phase-0-foundation.md): Phase 0 implementation note
 - [docs/plans/automation-roadmap.md](/D:/mirror/docs/plans/automation-roadmap.md): long-running automation bootstrap and operating plan
+- [docs/plans/phase-execution-queue.md](/D:/mirror/docs/plans/phase-execution-queue.md): current phase queue and execution order
 - [docs/architecture/contracts.md](/D:/mirror/docs/architecture/contracts.md): durable contracts and assumptions
 - [data/demo/config/world_model.yaml](/D:/mirror/data/demo/config/world_model.yaml): demo world model and persona blueprint
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): deferred workbench shell
+- [frontend](/D:/mirror/frontend): active Phase 3 workbench shell
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -102,7 +111,8 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap still requires a clean baseline snapshot before autonomous code-writing loops should run on worktrees.
+- Day 0 bootstrap is complete. The current execution queue is tracked in [docs/plans/phase-execution-queue.md](/D:/mirror/docs/plans/phase-execution-queue.md).
+- Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals
 

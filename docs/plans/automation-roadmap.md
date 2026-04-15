@@ -4,6 +4,16 @@
 
 Turn Mirror into a long-running, repo-native automation loop that uses GitHub as the task source of truth, Codex as the execution plane, CI/eval as gates, and phase audits as the stop condition.
 
+## Current State
+
+Day 0 bootstrap is complete.
+
+- GitHub milestones, labels, and phase issues exist.
+- `main` is protected by the required Linux and Windows quality gates.
+- Repository auto-merge is enabled for safe-lane use.
+- Phase 1 and Phase 2 gates are closed.
+- Phase 3 is the active implementation queue.
+
 ## Day 0 Bootstrap
 
 Before builder automation is allowed to write code or auto-merge:
@@ -53,5 +63,5 @@ Before builder automation is allowed to write code or auto-merge:
 
 ## TODO[verify]
 
-- TODO[verify]: GitHub branch protection and repository auto-merge settings still need to be applied on the remote repository.
 - TODO[verify]: Codex cron automations should target worktrees, not the current dirty `main` checkout.
+- TODO[verify]: once the current Phase 3 workbench PRs land, the phase auditor should close the Phase 3 gate and milestone only after demo review sign-off is recorded.
