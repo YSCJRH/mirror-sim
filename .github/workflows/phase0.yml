@@ -32,6 +32,12 @@ jobs:
       - name: Run eval-demo
         run: make eval-demo
 
+      - name: Audit Phase 1
+        run: python -m backend.app.cli audit-phase phase1
+
+      - name: Audit Phase 2
+        run: python -m backend.app.cli audit-phase phase2
+
       - name: Upload demo artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -64,3 +70,11 @@ jobs:
       - name: Run eval-demo
         shell: pwsh
         run: .\make.ps1 eval-demo
+
+      - name: Audit Phase 1
+        shell: pwsh
+        run: python -m backend.app.cli audit-phase phase1
+
+      - name: Audit Phase 2
+        shell: pwsh
+        run: python -m backend.app.cli audit-phase phase2
