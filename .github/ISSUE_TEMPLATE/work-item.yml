@@ -1,0 +1,76 @@
+name: Mirror Work Item
+description: Create a Codex-friendly implementation task with explicit inputs, outputs, and tests.
+title: "[work-item] "
+body:
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Phase
+      description: Which blueprint phase does this work belong to?
+      options:
+        - Phase 1 - World/Persona Modeling
+        - Phase 2 - Scenario/Simulation Loop
+        - Phase 3 - Eval/UI/Demo
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which subsystem is primarily affected?
+      options:
+        - backend
+        - frontend
+        - docs-evals
+    validations:
+      required: true
+  - type: dropdown
+    id: touches_contract
+    attributes:
+      label: Touches contract
+      description: Does this work touch a protected-core contract, ADR, or schema?
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: One primary objective only.
+      placeholder: Describe the single most important outcome.
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Input
+      description: Required files, artifacts, docs, or assumptions.
+      placeholder: List the concrete inputs this task depends on.
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: Concrete implementation or artifact outputs.
+      placeholder: List the code, docs, tests, or artifacts this task should produce.
+    validations:
+      required: true
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+      description: Boundaries that keep the task small and Codex-safe.
+      placeholder: Describe what must not be changed in this task.
+    validations:
+      required: true
+  - type: textarea
+    id: minimal_test
+    attributes:
+      label: Minimal test
+      description: The smallest command or test that proves the task works.
+      placeholder: ./make.ps1 test
+    validations:
+      required: true

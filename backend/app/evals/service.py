@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +13,7 @@ from backend.app.reports.service import generate_report
 from backend.app.scenarios.service import validate_scenario
 from backend.app.simulation.service import simulate_scenario
 from backend.app.utils import load_yaml, read_json, write_json
+from backend.app.world_query import inspect_world
 
 
 def _compare(op: str, left: Any, right: Any) -> bool:
@@ -24,10 +26,39 @@ def _compare(op: str, left: Any, right: Any) -> bool:
     raise ValueError(f"Unsupported comparison op: {op}")
 
 
-def evaluate_runs(expectations_path: Path, artifacts_root: Path, out_dir: Path) -> EvalResult:
+def _scan_terms(text: str, terms: list[str]) -> list[str]:
+    lowered = text.lower()
+    return [term for term in terms if term.lower() in lowered]
+
+
+def _evaluate_redlines(redlines_path: Path, artifacts_root: Path) -> list[str]:
+    rules = load_yaml(redlines_path)
+    texts = {
+        "report": (artifacts_root / "report" / "report.md").read_text(encoding="utf-8"),
+        "claims": json.dumps(read_json(artifacts_root / "report" / "claims.json"), ensure_ascii=False),
+        "baseline_scenario": json.dumps(read_json(artifacts_root / "scenario" / "baseline.json"), ensure_ascii=False),
+        "intervention_scenario": json.dumps(
+            read_json(artifacts_root / "scenario" / "reporter_detained.json"),
+            ensure_ascii=False,
+        ),
+    }
+    failures: list[str] = []
+    for label, text in texts.items():
+        topic_hits = _scan_terms(text, rules["blocked_topics"])
+        if topic_hits:
+            failures.append(f"redlines[{label}]: blocked topics {topic_hits}")
+        phrase_hits = _scan_terms(text, rules["blocked_phrases"])
+        if phrase_hits:
+            failures.append(f"redlines[{label}]: blocked phrases {phrase_hits}")
+    return failures
+
+
+def evaluate_runs(expectations_path: Path, artifacts_root: Path, out_dir: Path, redlines_path: Path) -> EvalResult:
     expectations = load_yaml(expectations_path)
     baseline_summary = read_json(artifacts_root / "run" / "baseline" / "summary.json")
     intervention_summary = read_json(artifacts_root / "run" / "reporter_detained" / "summary.json")
+    graph_payload = read_json(artifacts_root / "graph" / "graph.json")
+    persona_payload = read_json(artifacts_root / "personas" / "personas.json")
     claims = read_json(artifacts_root / "report" / "claims.json")
     runs = {
         "baseline": {**baseline_summary, **baseline_summary["final_state"]},
@@ -61,20 +92,64 @@ def evaluate_runs(expectations_path: Path, artifacts_root: Path, out_dir: Path) 
                 failures.append(f"{check['name']}: at least one claim is missing evidence_ids")
             else:
                 passed += 1
+        elif kind == "graph_events_nonempty":
+            if not graph_payload.get("events"):
+                failures.append(f"{check['name']}: graph.json did not contain any events")
+            else:
+                passed += 1
+        elif kind == "world_evidence_complete":
+            collections = ("entities", "relations", "events")
+            if not all(item.get("evidence_ids") for collection in collections for item in graph_payload[collection]):
+                failures.append(f"{check['name']}: at least one world object is missing evidence_ids")
+            else:
+                passed += 1
+        elif kind == "persona_field_provenance_complete":
+            required_fields = check["fields"]
+            missing: list[str] = []
+            for persona in persona_payload["personas"]:
+                field_provenance = persona.get("field_provenance", {})
+                for field_name in required_fields:
+                    if persona.get(field_name) and not field_provenance.get(field_name):
+                        missing.append(f"{persona['persona_id']}.{field_name}")
+            if missing:
+                failures.append(f"{check['name']}: missing provenance for {missing}")
+            else:
+                passed += 1
+        elif kind == "inspect_world":
+            try:
+                payload = inspect_world(
+                    check["object_kind"],
+                    check["object_id"],
+                    artifacts_root / "graph" / "graph.json",
+                    artifacts_root / "personas" / "personas.json",
+                )
+            except ValueError as exc:
+                failures.append(f"{check['name']}: {exc}")
+            else:
+                if not payload["object"].get("evidence_ids"):
+                    failures.append(f"{check['name']}: inspected object is missing evidence_ids")
+                else:
+                    passed += 1
         else:
             failures.append(f"{check['name']}: unsupported check kind {kind}")
+
+    redline_failures = _evaluate_redlines(redlines_path, artifacts_root)
+    if not redline_failures:
+        passed += 1
+    failures.extend(redline_failures)
 
     result = EvalResult(
         eval_name=expectations["eval_name"],
         status="pass" if not failures else "fail",
         metrics={
-            "checks_total": len(expectations["checks"]),
+            "checks_total": len(expectations["checks"]) + 1,
             "checks_passed": passed,
             "baseline_evacuation_turn": baseline_summary["evacuation_turn"],
             "intervention_evacuation_turn": intervention_summary["evacuation_turn"],
+            "event_count": graph_payload["stats"]["event_count"],
         },
         failures=failures,
-        notes=["Phase 0 eval covers deterministic demo behavior and claim provenance."],
+        notes=["Phase 1 eval covers deterministic demo behavior, world-model provenance, and redline checks."],
     )
     write_json(out_dir / "summary.json", result.model_dump())
     return result
@@ -85,8 +160,8 @@ def run_phase0_demo(settings: Settings | None = None, artifacts_root: Path | Non
     artifacts_root = artifacts_root or settings.artifacts_root
 
     ingest_manifest(settings.manifest_path, artifacts_root / "ingest")
-    build_graph(artifacts_root / "ingest" / "chunks.jsonl", artifacts_root / "graph")
-    build_personas(artifacts_root / "graph" / "graph.json", artifacts_root / "personas")
+    build_graph(artifacts_root / "ingest" / "chunks.jsonl", artifacts_root / "graph", settings.world_model_path)
+    build_personas(artifacts_root / "graph" / "graph.json", artifacts_root / "personas", settings.world_model_path)
     validate_scenario(settings.baseline_scenario_path, artifacts_root / "scenario" / "baseline.json")
     validate_scenario(settings.intervention_scenario_path, artifacts_root / "scenario" / "reporter_detained.json")
     simulate_scenario(
@@ -106,4 +181,4 @@ def run_phase0_demo(settings: Settings | None = None, artifacts_root: Path | Non
         artifacts_root / "report",
         baseline_dir=artifacts_root / "run" / "baseline",
     )
-    return evaluate_runs(settings.expectations_path, artifacts_root, artifacts_root / "eval")
+    return evaluate_runs(settings.expectations_path, artifacts_root, artifacts_root / "eval", settings.redlines_path)

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Mirror Blueprint
+    url: https://github.com/YSCJRH/mirror-sim/blob/main/mirror.md
+    about: Read the project blueprint before proposing work that changes core contracts or scope.

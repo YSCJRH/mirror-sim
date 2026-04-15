@@ -1,0 +1,68 @@
+name: pull-request-lane
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  classify-lane:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout default branch policy
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Apply lane labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const policy = JSON.parse(fs.readFileSync(".github/automation/lane-policy.json", "utf8"));
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pull_number = context.payload.pull_request.number;
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number,
+              per_page: 100
+            });
+            const changed = files.map(file => file.filename);
+            const protectedHits = changed.filter(file =>
+              policy.protected_core_prefixes.some(prefix => file.startsWith(prefix))
+            );
+            const existingLabels = context.payload.pull_request.labels.map(label => label.name);
+            const labelsToAdd = protectedHits.length
+              ? policy.protected_core_labels.filter(label => !existingLabels.includes(label))
+              : [policy.autonomous_safe_label].filter(label => !existingLabels.includes(label));
+            for (const label of labelsToAdd) {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number: pull_number,
+                labels: [label]
+              });
+            }
+            if (!protectedHits.length && existingLabels.includes(policy.protected_core_label)) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number: pull_number,
+                  name: policy.protected_core_label
+                });
+              } catch (error) {
+                core.warning(`Could not remove protected-core lane label: ${error.message}`);
+              }
+            }
+            core.setOutput("lane", protectedHits.length ? policy.protected_core_label : policy.autonomous_safe_label);
+            core.setOutput("protected_hits", JSON.stringify(protectedHits));

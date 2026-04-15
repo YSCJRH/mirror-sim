@@ -49,6 +49,14 @@ class Relation(MirrorBaseModel):
     evidence_ids: list[str] = Field(default_factory=list)
 
 
+class Event(MirrorBaseModel):
+    event_id: str
+    name: str
+    kind: str
+    participant_entity_ids: list[str] = Field(default_factory=list)
+    evidence_ids: list[str] = Field(default_factory=list)
+
+
 class Persona(MirrorBaseModel):
     persona_id: str
     entity_id: str
@@ -58,6 +66,7 @@ class Persona(MirrorBaseModel):
     known_facts: list[str] = Field(default_factory=list)
     private_info: list[str] = Field(default_factory=list)
     relationships: list[dict[str, str]] = Field(default_factory=list)
+    field_provenance: dict[str, list[str]] = Field(default_factory=dict)
     evidence_ids: list[str] = Field(default_factory=list)
 
 

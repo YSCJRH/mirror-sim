@@ -1,5 +1,8 @@
 # Sprint 01 Backlog
 
+This file remains the historical seed backlog for Phase 0 and early Phase 1.
+Once Day 0 automation bootstrap is complete, GitHub milestones/issues become the operational source of truth for ongoing work.
+
 1. Scaffold repo structure, wrappers, and governance docs
 2. Land demo world corpus, scenarios, and expectations
 3. Freeze core domain contracts and artifact paths

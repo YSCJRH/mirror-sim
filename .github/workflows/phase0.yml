@@ -1,11 +1,15 @@
-name: phase0
+name: mirror-ci
 
 on:
   push:
   pull_request:
 
+concurrency:
+  group: mirror-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  linux-smoke-and-test:
+  linux-quality-gate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,7 +29,17 @@ jobs:
       - name: Run smoke
         run: make smoke
 
-  windows-smoke-and-test:
+      - name: Run eval-demo
+        run: make eval-demo
+
+      - name: Upload demo artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-artifacts-linux
+          path: artifacts/demo
+
+  windows-quality-gate:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -46,3 +60,7 @@ jobs:
       - name: Run smoke
         shell: pwsh
         run: .\make.ps1 smoke
+
+      - name: Run eval-demo
+        shell: pwsh
+        run: .\make.ps1 eval-demo

@@ -1,0 +1,455 @@
+world_id: fog-harbor-east-gate
+entities:
+  - entity_id: entity_lin_lan
+    name: Lin Lan
+    type: person
+    aliases:
+      - lin lan
+      - archive clerk
+      - archive room
+  - entity_id: entity_zhao_ke
+    name: Zhao Ke
+    type: person
+    aliases:
+      - zhao ke
+      - deputy mayor
+      - mayor's office
+  - entity_id: entity_su_he
+    name: Su He
+    type: person
+    aliases:
+      - su he
+      - engineer su he
+      - public works office
+  - entity_id: entity_chen_yu
+    name: Chen Yu
+    type: person
+    aliases:
+      - chen yu
+      - captain chen yu
+      - tug lantern three
+  - entity_id: entity_east_gate
+    name: East Gate
+    type: infrastructure
+    aliases:
+      - east gate
+      - flood gate
+      - gate seam
+  - entity_id: entity_maintenance_ledger
+    name: Maintenance Ledger
+    type: document
+    aliases:
+      - maintenance ledger
+      - ledger copy
+      - copied pages
+  - entity_id: entity_sea_lantern_festival
+    name: Sea Lantern Festival
+    type: event
+    aliases:
+      - sea lantern festival
+      - festival
+      - opening ceremony
+  - entity_id: entity_east_wharf
+    name: East Wharf
+    type: location
+    aliases:
+      - east wharf
+      - harbor square
+      - quay
+
+relations:
+  - relation_id: relation_lin_lan_controls_ledger
+    source_entity_id: entity_lin_lan
+    relation_type: controls
+    target_entity_id: entity_maintenance_ledger
+    match:
+      all:
+        - lin lan
+        - ledger
+      any:
+        - copy
+        - copied
+        - courier
+  - relation_id: relation_su_he_inspects_gate
+    source_entity_id: entity_su_he
+    relation_type: inspects
+    target_entity_id: entity_east_gate
+    match:
+      all:
+        - su he
+        - east gate
+      any:
+        - inspected
+        - inspection
+        - requested
+        - latest inspection
+  - relation_id: relation_zhao_ke_protects_festival
+    source_entity_id: entity_zhao_ke
+    relation_type: protects
+    target_entity_id: entity_sea_lantern_festival
+    match:
+      all:
+        - zhao ke
+      any:
+        - festival
+        - opening ceremony
+        - morale and trade
+  - relation_id: relation_chen_yu_tracks_gate
+    source_entity_id: entity_chen_yu
+    relation_type: observes
+    target_entity_id: entity_east_gate
+    match:
+      all:
+        - chen yu
+        - east gate
+      any:
+        - tide
+        - channel
+        - shuddered
+        - sunrise
+
+events:
+  - event_id: event_budget_diversion
+    name: Maintenance Budget Diverted To Festival
+    kind: budget_diversion
+    participant_entity_ids:
+      - entity_zhao_ke
+      - entity_sea_lantern_festival
+      - entity_east_gate
+      - entity_maintenance_ledger
+      - entity_lin_lan
+    match:
+      all:
+        - east gate
+      any:
+        - reassigned
+        - redirected
+        - construction invoices
+        - missing maintenance
+  - event_id: event_gate_failure_risk
+    name: East Gate Failure Risk Escalates
+    kind: risk_escalation
+    participant_entity_ids:
+      - entity_su_he
+      - entity_chen_yu
+      - entity_east_gate
+      - entity_east_wharf
+    match:
+      any:
+        - widening fracture
+        - compound failure
+        - shuddered harder
+        - gate is compromised
+        - flood with very little warning
+        - surge window
+  - event_id: event_dispatch_breakdown
+    name: Dispatch And Courier Friction Slows The Response
+    kind: communication_breakdown
+    participant_entity_ids:
+      - entity_lin_lan
+      - entity_su_he
+      - entity_zhao_ke
+      - entity_east_wharf
+      - entity_maintenance_ledger
+    match:
+      any:
+        - confusion between the public works office
+        - taking longer routes
+        - communication slows
+        - local reporter could publish
+        - courier
+  - event_id: event_storm_surge_warning
+    name: Storm Surge Warning Narrows The Evacuation Window
+    kind: storm_warning
+    participant_entity_ids:
+      - entity_east_gate
+      - entity_east_wharf
+      - entity_sea_lantern_festival
+    match:
+      any:
+        - storm front
+        - high tide surges
+        - evacuation routes
+        - storm surge
+        - suspend public gatherings
+
+personas:
+  - persona_id: persona_lin_lan
+    entity_id: entity_lin_lan
+    public_role:
+      text: Archive clerk guarding the maintenance record trail.
+      evidence:
+        entity_ids:
+          - entity_lin_lan
+          - entity_maintenance_ledger
+        relation_ids:
+          - relation_lin_lan_controls_ledger
+    goals:
+      - text: Surface the diverted maintenance funds before the storm hits.
+        evidence:
+          event_ids:
+            - event_budget_diversion
+            - event_storm_surge_warning
+      - text: Keep a durable copy of the ledger available to trusted messengers.
+        evidence:
+          relation_ids:
+            - relation_lin_lan_controls_ledger
+          event_ids:
+            - event_dispatch_breakdown
+    constraints:
+      - text: Has little executive authority.
+        evidence:
+          event_ids:
+            - event_budget_diversion
+            - event_dispatch_breakdown
+          entity_ids:
+            - entity_zhao_ke
+      - text: Needs others to amplify the archive evidence.
+        evidence:
+          relation_ids:
+            - relation_lin_lan_controls_ledger
+            - relation_su_he_inspects_gate
+          event_ids:
+            - event_dispatch_breakdown
+    known_facts:
+      - text: The copied ledger links festival spending to missing repair money.
+        evidence:
+          event_ids:
+            - event_budget_diversion
+          relation_ids:
+            - relation_lin_lan_controls_ledger
+      - text: Su He's latest inspection references the same delayed work order.
+        evidence:
+          relation_ids:
+            - relation_su_he_inspects_gate
+          event_ids:
+            - event_gate_failure_risk
+    private_info:
+      - text: Lin Lan made a private copy of the ledger before the archive room closed.
+        evidence:
+          relation_ids:
+            - relation_lin_lan_controls_ledger
+          event_ids:
+            - event_dispatch_breakdown
+    relationships:
+      - target_id: persona_su_he
+        kind: coordinates_with
+        evidence:
+          relation_ids:
+            - relation_su_he_inspects_gate
+            - relation_lin_lan_controls_ledger
+          event_ids:
+            - event_dispatch_breakdown
+      - target_id: persona_zhao_ke
+        kind: distrusts
+        evidence:
+          event_ids:
+            - event_budget_diversion
+            - event_dispatch_breakdown
+
+  - persona_id: persona_su_he
+    entity_id: entity_su_he
+    public_role:
+      text: Waterworks engineer responsible for the East Gate inspection.
+      evidence:
+        entity_ids:
+          - entity_su_he
+          - entity_east_gate
+        relation_ids:
+          - relation_su_he_inspects_gate
+    goals:
+      - text: Get the gate reinforced before the surge window closes.
+        evidence:
+          relation_ids:
+            - relation_su_he_inspects_gate
+          event_ids:
+            - event_gate_failure_risk
+            - event_storm_surge_warning
+      - text: Escalate evacuation if evidence confirms leadership is delaying repairs.
+        evidence:
+          event_ids:
+            - event_budget_diversion
+            - event_storm_surge_warning
+            - event_dispatch_breakdown
+    constraints:
+      - text: Cannot repair the gate alone.
+        evidence:
+          relation_ids:
+            - relation_su_he_inspects_gate
+          event_ids:
+            - event_gate_failure_risk
+      - text: Needs records or public pressure to override festival priorities.
+        evidence:
+          event_ids:
+            - event_budget_diversion
+            - event_dispatch_breakdown
+    known_facts:
+      - text: The East Gate brace is already widening under pressure.
+        evidence:
+          relation_ids:
+            - relation_su_he_inspects_gate
+          event_ids:
+            - event_gate_failure_risk
+      - text: Festival traffic would slow emergency repairs.
+        evidence:
+          event_ids:
+            - event_budget_diversion
+            - event_dispatch_breakdown
+    private_info:
+      - text: Su He believes the next surge could trigger a compound failure if leadership waits.
+        evidence:
+          event_ids:
+            - event_gate_failure_risk
+            - event_budget_diversion
+    relationships:
+      - target_id: persona_lin_lan
+        kind: depends_on
+        evidence:
+          relation_ids:
+            - relation_lin_lan_controls_ledger
+          event_ids:
+            - event_dispatch_breakdown
+      - target_id: persona_chen_yu
+        kind: trusts
+        evidence:
+          relation_ids:
+            - relation_chen_yu_tracks_gate
+            - relation_su_he_inspects_gate
+          event_ids:
+            - event_gate_failure_risk
+
+  - persona_id: persona_chen_yu
+    entity_id: entity_chen_yu
+    public_role:
+      text: Tugboat captain tracking tide behavior in the eastern channel.
+      evidence:
+        entity_ids:
+          - entity_chen_yu
+          - entity_east_gate
+        relation_ids:
+          - relation_chen_yu_tracks_gate
+    goals:
+      - text: Warn the harbor before carts and festival barges block evacuation lanes.
+        evidence:
+          event_ids:
+            - event_dispatch_breakdown
+            - event_storm_surge_warning
+      - text: Push officials to respect tide observations from the quay.
+        evidence:
+          relation_ids:
+            - relation_chen_yu_tracks_gate
+          event_ids:
+            - event_gate_failure_risk
+    constraints:
+      - text: Has operational knowledge but no policy authority.
+        evidence:
+          event_ids:
+            - event_dispatch_breakdown
+            - event_budget_diversion
+      - text: Depends on dispatch routes to move warnings quickly.
+        evidence:
+          event_ids:
+            - event_dispatch_breakdown
+            - event_storm_surge_warning
+    known_facts:
+      - text: The gate seam is already throwing spray under strain.
+        evidence:
+          relation_ids:
+            - relation_chen_yu_tracks_gate
+          event_ids:
+            - event_gate_failure_risk
+      - text: A late evacuation order will trap equipment on the quay road.
+        evidence:
+          event_ids:
+            - event_dispatch_breakdown
+            - event_storm_surge_warning
+    private_info:
+      - text: Chen Yu trusts Su He's risk assessment more than the mayor's office messaging.
+        evidence:
+          relation_ids:
+            - relation_chen_yu_tracks_gate
+            - relation_su_he_inspects_gate
+          event_ids:
+            - event_gate_failure_risk
+    relationships:
+      - target_id: persona_su_he
+        kind: trusts
+        evidence:
+          relation_ids:
+            - relation_chen_yu_tracks_gate
+            - relation_su_he_inspects_gate
+      - target_id: persona_zhao_ke
+        kind: pressures
+        evidence:
+          event_ids:
+            - event_budget_diversion
+            - event_dispatch_breakdown
+
+  - persona_id: persona_zhao_ke
+    entity_id: entity_zhao_ke
+    public_role:
+      text: Deputy mayor trying to preserve the Sea Lantern Festival schedule.
+      evidence:
+        entity_ids:
+          - entity_zhao_ke
+          - entity_sea_lantern_festival
+        relation_ids:
+          - relation_zhao_ke_protects_festival
+    goals:
+      - text: Avoid a public cancellation before the opening ceremony.
+        evidence:
+          relation_ids:
+            - relation_zhao_ke_protects_festival
+          event_ids:
+            - event_budget_diversion
+      - text: Keep control of the narrative around the gate delay.
+        evidence:
+          relation_ids:
+            - relation_zhao_ke_protects_festival
+          event_ids:
+            - event_dispatch_breakdown
+    constraints:
+      - text: Needs some factual basis before ordering a visible evacuation.
+        evidence:
+          event_ids:
+            - event_budget_diversion
+            - event_gate_failure_risk
+      - text: Faces public backlash if the budget diversion becomes undeniable.
+        evidence:
+          event_ids:
+            - event_budget_diversion
+            - event_dispatch_breakdown
+    known_facts:
+      - text: Festival spending already consumed money earmarked for gate repairs.
+        evidence:
+          relation_ids:
+            - relation_zhao_ke_protects_festival
+          event_ids:
+            - event_budget_diversion
+      - text: Visible documentary proof could force an emergency reversal.
+        evidence:
+          event_ids:
+            - event_budget_diversion
+            - event_dispatch_breakdown
+    private_info:
+      - text: Zhao Ke worries more about public embarrassment than engineering nuance until pressure becomes undeniable.
+        evidence:
+          relation_ids:
+            - relation_zhao_ke_protects_festival
+          event_ids:
+            - event_budget_diversion
+            - event_gate_failure_risk
+    relationships:
+      - target_id: persona_lin_lan
+        kind: fears_disclosure_from
+        evidence:
+          event_ids:
+            - event_budget_diversion
+            - event_dispatch_breakdown
+      - target_id: persona_su_he
+        kind: deflects
+        evidence:
+          relation_ids:
+            - relation_su_he_inspects_gate
+          event_ids:
+            - event_dispatch_breakdown
