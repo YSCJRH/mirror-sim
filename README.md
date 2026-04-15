@@ -4,16 +4,21 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed its Phase 0 foundation and is now in Phase 1 world-model hardening.
+The repository has completed Day 0 bootstrap and now has an automation-ready baseline.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
 - The backend can ingest, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
-- The repo now also includes the bootstrap pieces for long-running automation:
+- The repo now also includes the active bootstrap pieces for long-running automation:
   - GitHub issue and PR templates
   - lane policy and bootstrap spec
   - CI upgraded to a long-running quality gate
   - local lane-classification and phase-audit commands
+  - remote `main` branch protection and repository auto-merge
+- Local phase audits currently show:
+  - Phase 1: pass
+  - Phase 2: pass
+  - Phase 3: blocked on the browser workbench entrypoint
 
 ## Quick Start
 
@@ -102,7 +107,8 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap still requires a clean baseline snapshot before autonomous code-writing loops should run on worktrees.
+- Day 0 bootstrap is complete; the next active queue is tracked in [docs/plans/phase-execution-queue.md](/D:/mirror/docs/plans/phase-execution-queue.md).
+- Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals
 
