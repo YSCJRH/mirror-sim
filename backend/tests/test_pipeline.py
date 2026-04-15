@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import backend.app.evals.service as evals_service
 from backend.app.world_query import inspect_world
 from pathlib import Path
 
 from backend.app.config import get_settings
-from backend.app.evals.service import run_phase0_demo
+from backend.app.evals.service import evaluate_runs, run_phase0_demo
 from backend.app.graph.service import build_graph
 from backend.app.ingest.service import ingest_manifest
 from backend.app.personas.service import build_personas
@@ -131,3 +132,28 @@ def test_eval_demo_passes(tmp_path: Path) -> None:
     result = run_phase0_demo(settings=settings, artifacts_root=tmp_path / "demo")
     assert result.status == "pass"
     assert result.metrics["event_count"] >= 4
+
+
+def test_eval_redlines_cover_query_outputs(tmp_path: Path, monkeypatch) -> None:
+    settings = get_settings()
+    artifacts_root = tmp_path / "demo"
+    baseline = run_phase0_demo(settings=settings, artifacts_root=artifacts_root)
+    assert baseline.status == "pass"
+
+    original_inspect_world = evals_service.inspect_world
+
+    def patched_inspect_world(kind: str, object_id: str, graph_path: Path, personas_path: Path) -> dict:
+        payload = original_inspect_world(kind, object_id, graph_path, personas_path)
+        if kind == "persona":
+            payload["object"]["unsafe_note"] = "This system proves the real world will comply."
+        return payload
+
+    monkeypatch.setattr(evals_service, "inspect_world", patched_inspect_world)
+    result = evaluate_runs(
+        settings.expectations_path,
+        artifacts_root,
+        artifacts_root / "eval-redline-query",
+        settings.redlines_path,
+    )
+    assert result.status == "fail"
+    assert any("redlines[query_persona_su_he]" in failure for failure in result.failures)
