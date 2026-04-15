@@ -137,6 +137,12 @@ code {
   gap: 16px;
 }
 
+.reportGrid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 18px;
+}
+
 .card {
   padding: 18px;
   border-radius: 22px;
@@ -153,6 +159,132 @@ code {
   gap: 10px;
 }
 
+.checklist.compact {
+  margin-top: 16px;
+}
+
+.artifactCard {
+  padding: 18px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 240, 232, 0.96));
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 16px;
+  min-height: 100%;
+}
+
+.artifactCardWide {
+  min-width: 0;
+}
+
+.artifactMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.artifactMeta span {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 11px;
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.artifactPre {
+  margin: 0;
+  padding: 18px;
+  border-radius: 20px;
+  background: #1f1d1a;
+  color: #f5efe4;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.artifactPreCompact {
+  max-height: 460px;
+  overflow-y: auto;
+}
+
+.claimList {
+  display: grid;
+  gap: 12px;
+}
+
+.claimCard {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid var(--border);
+}
+
+.claimCard p {
+  margin: 0;
+}
+
+.claimHeader,
+.statusRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.claimEvidence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.claimNote {
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(15, 107, 99, 0.12);
+  color: var(--accent-strong);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.metricCard {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(15, 107, 99, 0.08);
+  border: 1px solid rgba(15, 107, 99, 0.12);
+}
+
+.metricCard span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.metricCard strong {
+  font-size: 1.5rem;
+}
+
 @media (max-width: 720px) {
   body {
     padding-inline: 14px;
@@ -167,5 +299,9 @@ code {
   .heroMeta {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .reportGrid {
+    grid-template-columns: 1fr;
   }
 }

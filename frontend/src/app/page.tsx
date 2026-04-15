@@ -1,3 +1,6 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
 const sections = [
   {
     title: "Corpus",
@@ -26,7 +29,46 @@ const sections = [
   }
 ];
 
-export default function Page() {
+type Claim = {
+  claim_id: string;
+  text: string;
+  label: string;
+  evidence_ids: string[];
+  confidence_note: string;
+};
+
+type EvalSummary = {
+  eval_name: string;
+  status: string;
+  metrics: Record<string, number>;
+  failures: string[];
+  notes: string[];
+};
+
+async function readText(relativePath: string) {
+  const repoRoot = path.resolve(process.cwd(), "..");
+  return readFile(path.join(repoRoot, relativePath), "utf-8");
+}
+
+async function loadWorkbenchData() {
+  const [report, claimsRaw, evalRaw, rubric] = await Promise.all([
+    readText("artifacts/demo/report/report.md"),
+    readText("artifacts/demo/report/claims.json"),
+    readText("artifacts/demo/eval/summary.json"),
+    readText("docs/rubrics/human-review.md")
+  ]);
+
+  return {
+    report,
+    claims: JSON.parse(claimsRaw) as Claim[],
+    evalSummary: JSON.parse(evalRaw) as EvalSummary,
+    rubric
+  };
+}
+
+export default async function Page() {
+  const { report, claims, evalSummary, rubric } = await loadWorkbenchData();
+
   return (
     <main className="shell">
       <section className="hero">
@@ -69,6 +111,87 @@ export default function Page() {
           <li>Expose corpus, graph, and scenario artifacts without changing their contracts.</li>
           <li>Keep evidence and traceability visible in every later Phase 3 view.</li>
         </ul>
+      </section>
+
+      <section className="panel">
+        <div className="panelHeader">
+          <p className="eyebrow">Report</p>
+          <h2>Current branch report and evidence-labeled claims.</h2>
+        </div>
+        <div className="reportGrid">
+          <article className="artifactCard artifactCardWide">
+            <div className="artifactMeta">
+              <span>artifact</span>
+              <code>artifacts/demo/report/report.md</code>
+            </div>
+            <pre className="artifactPre">{report}</pre>
+          </article>
+          <article className="artifactCard">
+            <div className="artifactMeta">
+              <span>artifact</span>
+              <code>artifacts/demo/report/claims.json</code>
+            </div>
+            <div className="claimList">
+              {claims.map((claim) => (
+                <article key={claim.claim_id} className="claimCard">
+                  <div className="claimHeader">
+                    <strong>{claim.claim_id}</strong>
+                    <span className="pill">{claim.label}</span>
+                  </div>
+                  <p>{claim.text}</p>
+                  <div className="claimEvidence">
+                    {claim.evidence_ids.map((evidenceId) => (
+                      <code key={evidenceId}>{evidenceId}</code>
+                    ))}
+                  </div>
+                  <p className="claimNote">{claim.confidence_note}</p>
+                </article>
+              ))}
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panelHeader">
+          <p className="eyebrow">Eval And Review</p>
+          <h2>Machine summary and human rubric stay visible side-by-side.</h2>
+        </div>
+        <div className="reportGrid">
+          <article className="artifactCard">
+            <div className="artifactMeta">
+              <span>artifact</span>
+              <code>artifacts/demo/eval/summary.json</code>
+            </div>
+            <div className="metricGrid">
+              {Object.entries(evalSummary.metrics).map(([key, value]) => (
+                <div key={key} className="metricCard">
+                  <span>{key}</span>
+                  <strong>{value}</strong>
+                </div>
+              ))}
+            </div>
+            <div className="statusRow">
+              <span className="pill">{evalSummary.status}</span>
+              <span>{evalSummary.eval_name}</span>
+            </div>
+            {evalSummary.notes.length > 0 ? (
+              <ul className="checklist compact">
+                {evalSummary.notes.map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
+            ) : null}
+          </article>
+
+          <article className="artifactCard">
+            <div className="artifactMeta">
+              <span>artifact</span>
+              <code>docs/rubrics/human-review.md</code>
+            </div>
+            <pre className="artifactPre artifactPreCompact">{rubric}</pre>
+          </article>
+        </div>
       </section>
     </main>
   );
