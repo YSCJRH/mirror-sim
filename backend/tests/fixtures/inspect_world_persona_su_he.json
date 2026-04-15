@@ -1,0 +1,126 @@
+{
+  "world_id": "fog-harbor-east-gate",
+  "kind": "persona",
+  "object": {
+    "persona_id": "persona_su_he",
+    "entity_id": "entity_su_he",
+    "public_role": "Waterworks engineer responsible for the East Gate inspection.",
+    "goals": [
+      "Get the gate reinforced before the surge window closes.",
+      "Escalate evacuation if evidence confirms leadership is delaying repairs."
+    ],
+    "constraints": [
+      "Cannot repair the gate alone.",
+      "Needs records or public pressure to override festival priorities."
+    ],
+    "known_facts": [
+      "The East Gate brace is already widening under pressure.",
+      "Festival traffic would slow emergency repairs."
+    ],
+    "private_info": [
+      "Su He believes the next surge could trigger a compound failure if leadership waits."
+    ],
+    "relationships": [
+      {
+        "target_id": "persona_lin_lan",
+        "kind": "depends_on"
+      },
+      {
+        "target_id": "persona_chen_yu",
+        "kind": "trusts"
+      }
+    ],
+    "field_provenance": {
+      "public_role": [
+        "chunk_doc_budget_minutes_002",
+        "chunk_doc_budget_minutes_004",
+        "chunk_doc_engineering_inspection_001",
+        "chunk_doc_engineering_inspection_002",
+        "chunk_doc_engineering_inspection_003",
+        "chunk_doc_gate_dispatch_002",
+        "chunk_doc_ledger_copy_002",
+        "chunk_doc_ledger_copy_004",
+        "chunk_doc_storm_bulletin_002",
+        "chunk_doc_storm_bulletin_003",
+        "chunk_doc_tugboat_log_002",
+        "chunk_doc_tugboat_log_004"
+      ],
+      "goals": [
+        "chunk_doc_budget_minutes_002",
+        "chunk_doc_engineering_inspection_002",
+        "chunk_doc_engineering_inspection_004",
+        "chunk_doc_gate_dispatch_002",
+        "chunk_doc_gate_dispatch_003",
+        "chunk_doc_gate_dispatch_004",
+        "chunk_doc_ledger_copy_002",
+        "chunk_doc_ledger_copy_003",
+        "chunk_doc_storm_bulletin_002",
+        "chunk_doc_storm_bulletin_003",
+        "chunk_doc_storm_bulletin_004",
+        "chunk_doc_tugboat_log_002"
+      ],
+      "constraints": [
+        "chunk_doc_budget_minutes_002",
+        "chunk_doc_engineering_inspection_002",
+        "chunk_doc_engineering_inspection_004",
+        "chunk_doc_gate_dispatch_002",
+        "chunk_doc_gate_dispatch_003",
+        "chunk_doc_gate_dispatch_004",
+        "chunk_doc_ledger_copy_002",
+        "chunk_doc_ledger_copy_003",
+        "chunk_doc_storm_bulletin_003",
+        "chunk_doc_tugboat_log_002"
+      ],
+      "known_facts": [
+        "chunk_doc_budget_minutes_002",
+        "chunk_doc_engineering_inspection_002",
+        "chunk_doc_engineering_inspection_004",
+        "chunk_doc_gate_dispatch_002",
+        "chunk_doc_gate_dispatch_003",
+        "chunk_doc_gate_dispatch_004",
+        "chunk_doc_ledger_copy_002",
+        "chunk_doc_ledger_copy_003",
+        "chunk_doc_storm_bulletin_003",
+        "chunk_doc_tugboat_log_002"
+      ],
+      "private_info": [
+        "chunk_doc_budget_minutes_002",
+        "chunk_doc_engineering_inspection_002",
+        "chunk_doc_engineering_inspection_004",
+        "chunk_doc_ledger_copy_002",
+        "chunk_doc_storm_bulletin_003",
+        "chunk_doc_tugboat_log_002"
+      ],
+      "relationships": [
+        "chunk_doc_engineering_inspection_002",
+        "chunk_doc_engineering_inspection_004",
+        "chunk_doc_gate_dispatch_002",
+        "chunk_doc_gate_dispatch_003",
+        "chunk_doc_gate_dispatch_004",
+        "chunk_doc_ledger_copy_002",
+        "chunk_doc_ledger_copy_003",
+        "chunk_doc_storm_bulletin_003",
+        "chunk_doc_tugboat_log_002"
+      ]
+    },
+    "evidence_ids": [
+      "chunk_doc_budget_minutes_002",
+      "chunk_doc_budget_minutes_004",
+      "chunk_doc_engineering_inspection_001",
+      "chunk_doc_engineering_inspection_002",
+      "chunk_doc_engineering_inspection_003",
+      "chunk_doc_engineering_inspection_004",
+      "chunk_doc_gate_dispatch_002",
+      "chunk_doc_gate_dispatch_003",
+      "chunk_doc_gate_dispatch_004",
+      "chunk_doc_ledger_copy_002",
+      "chunk_doc_ledger_copy_003",
+      "chunk_doc_ledger_copy_004",
+      "chunk_doc_storm_bulletin_002",
+      "chunk_doc_storm_bulletin_003",
+      "chunk_doc_storm_bulletin_004",
+      "chunk_doc_tugboat_log_002",
+      "chunk_doc_tugboat_log_004"
+    ]
+  }
+}

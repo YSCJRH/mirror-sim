@@ -36,6 +36,39 @@ def test_graph_and_personas_have_evidence(tmp_path: Path) -> None:
     assert all(persona.field_provenance["relationships"] for persona in personas)
 
 
+def test_graph_contains_canonical_demo_ids(tmp_path: Path) -> None:
+    settings = get_settings()
+    ingest_manifest(settings.manifest_path, tmp_path / "ingest")
+    graph = build_graph(tmp_path / "ingest" / "chunks.jsonl", tmp_path / "graph")
+
+    entity_ids = {item["entity_id"] for item in graph["entities"]}
+    relation_ids = {item["relation_id"] for item in graph["relations"]}
+    event_ids = {item["event_id"] for item in graph["events"]}
+
+    assert {
+        "entity_lin_lan",
+        "entity_zhao_ke",
+        "entity_su_he",
+        "entity_chen_yu",
+        "entity_east_gate",
+        "entity_maintenance_ledger",
+        "entity_sea_lantern_festival",
+        "entity_east_wharf",
+    }.issubset(entity_ids)
+    assert {
+        "relation_lin_lan_controls_ledger",
+        "relation_su_he_inspects_gate",
+        "relation_zhao_ke_protects_festival",
+        "relation_chen_yu_tracks_gate",
+    }.issubset(relation_ids)
+    assert {
+        "event_budget_diversion",
+        "event_gate_failure_risk",
+        "event_dispatch_breakdown",
+        "event_storm_surge_warning",
+    }.issubset(event_ids)
+
+
 def test_world_query_returns_evidence_backed_objects(tmp_path: Path) -> None:
     settings = get_settings()
     ingest_manifest(settings.manifest_path, tmp_path / "ingest")

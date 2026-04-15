@@ -1,0 +1,24 @@
+{
+  "world_id": "fog-harbor-east-gate",
+  "kind": "entity",
+  "object": {
+    "entity_id": "entity_east_gate",
+    "name": "East Gate",
+    "type": "infrastructure",
+    "aliases": [
+      "east gate",
+      "flood gate",
+      "gate seam"
+    ],
+    "evidence_ids": [
+      "chunk_doc_budget_minutes_002",
+      "chunk_doc_budget_minutes_004",
+      "chunk_doc_engineering_inspection_001",
+      "chunk_doc_engineering_inspection_002",
+      "chunk_doc_ledger_copy_002",
+      "chunk_doc_storm_bulletin_002",
+      "chunk_doc_storm_bulletin_003",
+      "chunk_doc_tugboat_log_002"
+    ]
+  }
+}
