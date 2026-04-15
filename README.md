@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed Phase 1 and Phase 2 gates, and is now actively delivering the Phase 3 workbench.
+The repository has completed Day 0 bootstrap and closed the Phase 1, Phase 2, and Phase 3 gates. The current `main` branch is in a post-Phase-3 handoff and maintenance state rather than an active implementation queue.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -20,6 +20,10 @@ The repository has completed Day 0 bootstrap, closed Phase 1 and Phase 2 gates, 
   - local lane-classification and phase-audit commands
   - protected `main` with required status checks and auto-merge for safe-lane PRs
   - a browser workbench shell that now renders report, claims, eval summary, rubric, corpus, graph, and scenarios
+- GitHub closeout is aligned with the local baseline:
+  - Phase 3 exit issue `#4` is closed
+  - milestone `Phase 3 - Eval/UI/Demo` is closed
+  - future work should open a fresh GitHub issue and milestone instead of reusing the Phase 3 queue
 
 Local phase audits currently show:
 
@@ -66,6 +70,7 @@ python -m backend.app.cli audit-phase phase1
 - [docs/plans/phase-0-foundation.md](/D:/mirror/docs/plans/phase-0-foundation.md): Phase 0 implementation note
 - [docs/plans/automation-roadmap.md](/D:/mirror/docs/plans/automation-roadmap.md): long-running automation bootstrap and operating plan
 - [docs/plans/phase-execution-queue.md](/D:/mirror/docs/plans/phase-execution-queue.md): current phase queue and execution order
+- [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md): current handoff baseline and trusted source-of-truth checks
 - [docs/architecture/contracts.md](/D:/mirror/docs/architecture/contracts.md): durable contracts and assumptions
 - [data/demo/config/world_model.yaml](/D:/mirror/data/demo/config/world_model.yaml): demo world model and persona blueprint
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
@@ -115,7 +120,8 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap is complete. The current execution queue is tracked in [docs/plans/phase-execution-queue.md](/D:/mirror/docs/plans/phase-execution-queue.md).
+- Day 0 bootstrap and Phase 3 closeout are complete. Any future execution queue should be opened in GitHub before builder automation resumes.
+- The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals

@@ -12,7 +12,9 @@ Day 0 bootstrap is complete.
 - `main` is protected by the required Linux and Windows quality gates.
 - Repository auto-merge is enabled for safe-lane use.
 - Phase 1 and Phase 2 gates are closed.
-- Phase 3 is the active implementation queue.
+- Phase 3 is closed locally and in GitHub.
+- Phase 3 exit issue `#4` is closed and milestone `Phase 3 - Eval/UI/Demo` is closed.
+- No active implementation queue is currently open; builder automation should remain paused until a fresh issue and milestone are opened.
 
 ## Day 0 Bootstrap
 
@@ -52,7 +54,7 @@ Before builder automation is allowed to write code or auto-merge:
 - `mirror-phase-auditor`
   - run local phase audits
   - compare against milestone state
-  - pause automation when Phase 3 is complete
+  - keep automation paused once the active phase is complete and no new milestone has been opened
 
 ## Guardrails
 
@@ -64,4 +66,4 @@ Before builder automation is allowed to write code or auto-merge:
 ## TODO[verify]
 
 - TODO[verify]: Codex cron automations should target worktrees, not the current dirty `main` checkout.
-- TODO[verify]: once the current Phase 3 workbench PRs land, the phase auditor should close the Phase 3 gate and milestone only after demo review sign-off is recorded.
+- TODO[verify]: if a new milestone opens after Phase 3, create a fresh exit-gate issue instead of reusing the closed Phase 3 closeout thread.

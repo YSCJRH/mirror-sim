@@ -29,7 +29,8 @@ def test_phase1_and_phase2_audit_pass_with_demo_artifacts(tmp_path: Path) -> Non
     assert phase2.status == "pass"
 
 
-def test_phase3_audit_fails_without_workbench() -> None:
+def test_phase3_audit_passes_with_current_workbench_contract(tmp_path: Path) -> None:
     settings = get_settings()
-    phase3 = run_phase_audit("phase3", settings=settings, artifacts_root=settings.artifacts_root)
-    assert phase3.status == "fail"
+    run_phase0_demo(settings=settings, artifacts_root=tmp_path / "demo")
+    phase3 = run_phase_audit("phase3", settings=settings, artifacts_root=tmp_path / "demo")
+    assert phase3.status == "pass"

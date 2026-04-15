@@ -1,12 +1,12 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution order for Mirror.
+This note records the current post-Day-0 execution status for Mirror after the Phase 3 closeout.
 
 ## Current Gate State
 
 - Phase 1 exit gate: closed
 - Phase 2 exit gate: closed
-- Phase 3 exit gate: open
+- Phase 3 exit gate: closed
 
 Local phase audits currently report:
 
@@ -14,35 +14,43 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Current Queue
-
-### Phase 3 Active Work
+## Closeout Snapshot
 
 - `#17` browser workbench entrypoint
   - implemented
-  - PR merged
+  - merged via PR `#20`
 - `#18` report, claims, eval summary, and rubric panels
   - implemented
-  - safe-lane PR in review/merge flow
+  - merged via PR `#21`
 - `#19` corpus, graph, and scenario artifact browser
   - implemented
-  - safe-lane PR in review/merge flow
+  - merged via PR `#22`
+- docs sync
+  - merged via PR `#23`
+- Phase 3 exit issue `#4`
+  - closed
+- milestone `Phase 3 - Eval/UI/Demo`
+  - closed
+- GitHub remote state
+  - no open issues
+  - no open pull requests
 
-### Phase 3 Exit Gate
+## Current Queue
 
-- `#4` remains blocked until:
-  - the open Phase 3 safe-lane PRs land on `main`
-  - final demo review sign-off is recorded
-  - docs and queue notes stay aligned with the merged implementation
+- No active implementation queue is open on `main`.
+- GitHub remains the operational source of truth for any future queue.
+- `backlog/sprint-01.md` remains a historical seed backlog only.
+- Future implementation should start from a fresh GitHub issue and milestone instead of reopening the closed Phase 3 queue.
 
 ## Automation Guidance
 
-- Builder should prefer the earliest unfinished phase.
-- Exit-gate issues stay blocked until their dependent work is truly complete.
+- Builder should prefer the earliest unfinished open milestone once a new queue exists.
+- Closed exit-gate issues and milestones should remain archived history, not be reused as active work trackers.
 - Safe-lane PRs may auto-merge once checks are green and no blocking labels are present.
 - Protected-core changes still require explicit review and must not auto-merge.
 
-## TODO[verify]
+## Historical Branch Status
 
-- TODO[verify]: once the current Phase 3 PRs land, re-run the GitHub-side closeout for issue `#4`.
-- TODO[verify]: decide whether the older docs-sync PR should be merged or closed as superseded by the newer queue state.
+- The visible `origin/codex/*` branches correspond to closed or merged work.
+- Treat those branches as historical and superseded by `main`, not as an active queue.
+- TODO[verify]: delete or archive the superseded remote branches during the next repository cleanup window.
