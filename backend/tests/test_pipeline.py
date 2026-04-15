@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import backend.app.evals.service as evals_service
 from backend.app.world_query import inspect_world
 from pathlib import Path
 
 from backend.app.config import get_settings
-from backend.app.evals.service import run_phase0_demo
+from backend.app.evals.service import evaluate_runs, run_phase0_demo
 from backend.app.graph.service import build_graph
 from backend.app.ingest.service import ingest_manifest
 from backend.app.personas.service import build_personas
@@ -33,6 +34,39 @@ def test_graph_and_personas_have_evidence(tmp_path: Path) -> None:
     assert all(persona.evidence_ids for persona in personas)
     assert all(persona.field_provenance["public_role"] for persona in personas)
     assert all(persona.field_provenance["relationships"] for persona in personas)
+
+
+def test_graph_contains_canonical_demo_ids(tmp_path: Path) -> None:
+    settings = get_settings()
+    ingest_manifest(settings.manifest_path, tmp_path / "ingest")
+    graph = build_graph(tmp_path / "ingest" / "chunks.jsonl", tmp_path / "graph")
+
+    entity_ids = {item["entity_id"] for item in graph["entities"]}
+    relation_ids = {item["relation_id"] for item in graph["relations"]}
+    event_ids = {item["event_id"] for item in graph["events"]}
+
+    assert {
+        "entity_lin_lan",
+        "entity_zhao_ke",
+        "entity_su_he",
+        "entity_chen_yu",
+        "entity_east_gate",
+        "entity_maintenance_ledger",
+        "entity_sea_lantern_festival",
+        "entity_east_wharf",
+    }.issubset(entity_ids)
+    assert {
+        "relation_lin_lan_controls_ledger",
+        "relation_su_he_inspects_gate",
+        "relation_zhao_ke_protects_festival",
+        "relation_chen_yu_tracks_gate",
+    }.issubset(relation_ids)
+    assert {
+        "event_budget_diversion",
+        "event_gate_failure_risk",
+        "event_dispatch_breakdown",
+        "event_storm_surge_warning",
+    }.issubset(event_ids)
 
 
 def test_world_query_returns_evidence_backed_objects(tmp_path: Path) -> None:
@@ -98,3 +132,28 @@ def test_eval_demo_passes(tmp_path: Path) -> None:
     result = run_phase0_demo(settings=settings, artifacts_root=tmp_path / "demo")
     assert result.status == "pass"
     assert result.metrics["event_count"] >= 4
+
+
+def test_eval_redlines_cover_query_outputs(tmp_path: Path, monkeypatch) -> None:
+    settings = get_settings()
+    artifacts_root = tmp_path / "demo"
+    baseline = run_phase0_demo(settings=settings, artifacts_root=artifacts_root)
+    assert baseline.status == "pass"
+
+    original_inspect_world = evals_service.inspect_world
+
+    def patched_inspect_world(kind: str, object_id: str, graph_path: Path, personas_path: Path) -> dict:
+        payload = original_inspect_world(kind, object_id, graph_path, personas_path)
+        if kind == "persona":
+            payload["object"]["unsafe_note"] = "This system proves the real world will comply."
+        return payload
+
+    monkeypatch.setattr(evals_service, "inspect_world", patched_inspect_world)
+    result = evaluate_runs(
+        settings.expectations_path,
+        artifacts_root,
+        artifacts_root / "eval-redline-query",
+        settings.redlines_path,
+    )
+    assert result.status == "fail"
+    assert any("redlines[query_persona_su_he]" in failure for failure in result.failures)

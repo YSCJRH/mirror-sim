@@ -2,6 +2,34 @@ eval_name: fog_harbor_phase0_demo
 checks:
   - name: graph_has_events
     kind: graph_events_nonempty
+  - name: core_entity_ids_present
+    kind: world_object_ids_present
+    collection: entities
+    ids:
+      - entity_lin_lan
+      - entity_zhao_ke
+      - entity_su_he
+      - entity_chen_yu
+      - entity_east_gate
+      - entity_maintenance_ledger
+      - entity_sea_lantern_festival
+      - entity_east_wharf
+  - name: core_relation_ids_present
+    kind: world_object_ids_present
+    collection: relations
+    ids:
+      - relation_lin_lan_controls_ledger
+      - relation_su_he_inspects_gate
+      - relation_zhao_ke_protects_festival
+      - relation_chen_yu_tracks_gate
+  - name: core_event_ids_present
+    kind: world_object_ids_present
+    collection: events
+    ids:
+      - event_budget_diversion
+      - event_gate_failure_risk
+      - event_dispatch_breakdown
+      - event_storm_surge_warning
   - name: world_objects_have_evidence
     kind: world_evidence_complete
   - name: persona_fields_have_provenance

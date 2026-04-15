@@ -31,9 +31,20 @@ def _scan_terms(text: str, terms: list[str]) -> list[str]:
     return [term for term in terms if term.lower() in lowered]
 
 
-def _evaluate_redlines(redlines_path: Path, artifacts_root: Path) -> list[str]:
-    rules = load_yaml(redlines_path)
-    texts = {
+def _graph_collection_id_field(collection: str) -> str:
+    if collection == "entities":
+        return "entity_id"
+    if collection == "relations":
+        return "relation_id"
+    if collection == "events":
+        return "event_id"
+    raise ValueError(f"Unsupported graph collection: {collection}")
+
+
+def _redline_texts(artifacts_root: Path) -> dict[str, str]:
+    graph_path = artifacts_root / "graph" / "graph.json"
+    personas_path = artifacts_root / "personas" / "personas.json"
+    return {
         "report": (artifacts_root / "report" / "report.md").read_text(encoding="utf-8"),
         "claims": json.dumps(read_json(artifacts_root / "report" / "claims.json"), ensure_ascii=False),
         "baseline_scenario": json.dumps(read_json(artifacts_root / "scenario" / "baseline.json"), ensure_ascii=False),
@@ -41,7 +52,24 @@ def _evaluate_redlines(redlines_path: Path, artifacts_root: Path) -> list[str]:
             read_json(artifacts_root / "scenario" / "reporter_detained.json"),
             ensure_ascii=False,
         ),
+        "query_entity_east_gate": json.dumps(
+            inspect_world("entity", "entity_east_gate", graph_path, personas_path),
+            ensure_ascii=False,
+        ),
+        "query_persona_su_he": json.dumps(
+            inspect_world("persona", "persona_su_he", graph_path, personas_path),
+            ensure_ascii=False,
+        ),
+        "query_event_gate_failure_risk": json.dumps(
+            inspect_world("event", "event_gate_failure_risk", graph_path, personas_path),
+            ensure_ascii=False,
+        ),
     }
+
+
+def _evaluate_redlines(redlines_path: Path, artifacts_root: Path) -> list[str]:
+    rules = load_yaml(redlines_path)
+    texts = _redline_texts(artifacts_root)
     failures: list[str] = []
     for label, text in texts.items():
         topic_hits = _scan_terms(text, rules["blocked_topics"])
@@ -101,6 +129,15 @@ def evaluate_runs(expectations_path: Path, artifacts_root: Path, out_dir: Path, 
             collections = ("entities", "relations", "events")
             if not all(item.get("evidence_ids") for collection in collections for item in graph_payload[collection]):
                 failures.append(f"{check['name']}: at least one world object is missing evidence_ids")
+            else:
+                passed += 1
+        elif kind == "world_object_ids_present":
+            collection = check["collection"]
+            id_field = _graph_collection_id_field(collection)
+            observed_ids = {item[id_field] for item in graph_payload[collection]}
+            missing = [object_id for object_id in check["ids"] if object_id not in observed_ids]
+            if missing:
+                failures.append(f"{check['name']}: missing {collection} ids {missing}")
             else:
                 passed += 1
         elif kind == "persona_field_provenance_complete":
