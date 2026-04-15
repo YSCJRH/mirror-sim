@@ -1,0 +1,21 @@
+{
+  "world_id": "fog-harbor-east-gate",
+  "kind": "event",
+  "object": {
+    "event_id": "event_gate_failure_risk",
+    "name": "East Gate Failure Risk Escalates",
+    "kind": "risk_escalation",
+    "participant_entity_ids": [
+      "entity_su_he",
+      "entity_chen_yu",
+      "entity_east_gate",
+      "entity_east_wharf"
+    ],
+    "evidence_ids": [
+      "chunk_doc_engineering_inspection_002",
+      "chunk_doc_engineering_inspection_004",
+      "chunk_doc_storm_bulletin_003",
+      "chunk_doc_tugboat_log_002"
+    ]
+  }
+}
