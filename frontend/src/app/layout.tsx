@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "Mirror Workbench",
-  description: "Phase 4 review workflow workbench for the Fog Harbor demo."
+  description: "Phase 5 review sign-off workbench for the Fog Harbor demo."
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
