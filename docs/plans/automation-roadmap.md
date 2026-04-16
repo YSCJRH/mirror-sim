@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, and Phase 12 is now the active preset-refinement track.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, and Phase 13 is now the active export-review track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -37,9 +37,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 11 is closed locally and in GitHub.
 - Phase 11 exit issue `#74` is closed and milestone `Phase 11 - Export Presets and Delivery Shortcuts` is closed.
 - The Phase 11 queue was completed through issues `#74-#77`.
-- Phase 12 is the active successor queue.
-- milestone `Phase 12 - Delivery Preset Refinement and Comparison Flow` is open.
-- The Phase 12 queue is initialized through issues `#81-#84`.
+- Phase 12 is closed locally and in GitHub.
+- Phase 12 exit issue `#81` is closed and milestone `Phase 12 - Delivery Preset Refinement and Comparison Flow` is closed.
+- The Phase 12 queue was completed through issues `#81-#84`.
+- Phase 13 is the active successor queue.
+- milestone `Phase 13 - Guided Export Payload Review` is open.
+- The Phase 13 queue is initialized through issues `#88-#91`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.

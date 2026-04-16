@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 12 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 13 queue resumption.
 
 ## Current Gate State
 
@@ -15,7 +15,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 9 exit gate: closed
 - Phase 10 exit gate: closed
 - Phase 11 exit gate: closed
-- Phase 12 exit gate: open
+- Phase 12 exit gate: closed
+- Phase 13 exit gate: open
 
 Local phase audits currently report:
 
@@ -74,16 +75,24 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 11 - Export Presets and Delivery Shortcuts`
   - closed
+- Phase 12 exit issue `#81`
+  - closed
+- milestone `Phase 12 - Delivery Preset Refinement and Comparison Flow`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 12 queue kickoff
+  - no open pull requests remain after the Phase 13 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 12 - Delivery Preset Refinement and Comparison Flow` is open.
-- `#81` `Phase 12 exit gate`
+- milestone `Phase 13 - Guided Export Payload Review` is open.
+- `#88` `Phase 13 exit gate`
   - open
--  - blocked until the Phase 12 delivery preset refinement and comparison slice is complete
-- The current Phase 12 execution slice is tracked through:
+- blocked until the Phase 13 guided export payload review slice is complete
+- The current Phase 13 execution slice is tracked through:
+  - `#89` `Phase 13: sync bootstrap spec and docs to the active export-review queue`
+  - `#90` `Phase 13: add side-by-side export payload preview for the current recommendation and best alternative`
+  - `#91` `Phase 13: add destination tradeoff notes and fallback guidance for guided exports`
+- The completed Phase 12 slice was tracked through:
   - `#82` `Phase 12: sync bootstrap spec and docs to the active preset-refinement queue`
   - `#83` `Phase 12: add preset comparison cards with expected omissions and best-fit destinations`
   - `#84` `Phase 12: add context carry-forward chips for claims, blockers, and validation steps across guided exports`
