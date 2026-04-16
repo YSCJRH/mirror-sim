@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap and closed the Phase 1-6 gates. The long-running loop is currently paused until a fresh successor queue is opened in GitHub.
+The repository has completed Day 0 bootstrap, closed the Phase 1-6 gates, and resumed the successor queue as `Phase 7 - Operator Handoff and Review Delivery`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -27,8 +27,8 @@ The repository has completed Day 0 bootstrap and closed the Phase 1-6 gates. The
   - milestone `Phase 4 - Review Workflow and Ops Hardening` is closed
   - milestone `Phase 5 - Review Sign-off and Evidence Packaging` is closed
   - milestone `Phase 6 - Automation Activation and Queue Hygiene` is closed
-  - Phase 6 queue was completed through issues `#40-#43`
-  - the local queue heartbeat remains active, but `audit-github-queue` should now report `paused` until the next successor milestone and exit gate are opened
+  - milestone `Phase 7 - Operator Handoff and Review Delivery` is open
+  - Phase 7 queue is initialized through issues `#46-#49`
 
 Local phase audits currently show:
 
@@ -83,7 +83,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): Phase 6-complete review sign-off workbench
+- [frontend](/D:/mirror/frontend): Phase 6-complete review sign-off workbench with the current Phase 7 handoff queue still consuming the same artifact surface
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -128,10 +128,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 6 closeout are complete. No execution milestone should be reopened or resumed implicitly.
+- Day 0 bootstrap and Phase 6 closeout are complete. Phase 7 is now the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may remain active, but builder pickup should stay paused until a fresh successor milestone and blocked protected-core exit gate are opened.
+- The local heartbeat automation may resume pickup guidance only against the Phase 7 queue and must stop again if `audit-github-queue` leaves `ready`.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals

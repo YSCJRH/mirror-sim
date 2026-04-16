@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 6 closeout.
+This note records the current post-Day-0 execution status for Mirror after the Phase 7 queue resumption.
 
 ## Current Gate State
 
@@ -10,6 +10,7 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 4 exit gate: closed
 - Phase 5 exit gate: closed
 - Phase 6 exit gate: closed
+- Phase 7 exit gate: open
 
 Local phase audits currently report:
 
@@ -49,11 +50,18 @@ Local phase audits currently report:
 - milestone `Phase 6 - Automation Activation and Queue Hygiene`
   - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 6 closeout
+  - no open pull requests remain after the Phase 7 queue kickoff
 
 ## Current Queue
 
-- No execution milestone is currently open.
+- milestone `Phase 7 - Operator Handoff and Review Delivery` is open.
+- `#46` `Phase 7 exit gate`
+  - open
+  - blocked until the Phase 7 operator handoff and review delivery slice is complete
+- The current Phase 7 execution slice is tracked through:
+  - `#47` `Phase 7: sync bootstrap spec and docs to the active handoff queue`
+  - `#48` `Phase 7: add issue-comment-ready review packet sections in the workbench`
+  - `#49` `Phase 7: add decision brief and next-action handoff panel in the workbench`
 - The completed Phase 6 slice was tracked through:
   - `#41` `Phase 6: sync bootstrap spec and docs to the active automation queue`
   - `#42` `Phase 6: define and activate local Codex queue heartbeat against the worktree runbook`
@@ -75,7 +83,7 @@ Local phase audits currently report:
 - Safe-lane PRs may auto-merge once checks are green and no blocking labels are present.
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
-- When `audit-github-queue` reports `paused` because no open milestone exists, open the next successor queue before resuming builder pickup.
+- When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
 
 ## Historical Branch Status
 
