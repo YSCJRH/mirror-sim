@@ -863,6 +863,133 @@ function buildCopyPreflightChecklist(
   };
 }
 
+function buildSelectionRationaleOptions(
+  destination: DeliveryDestination,
+  selectedExportId: ExportSurfaceId,
+  recommendedExportId: ExportSurfaceId,
+  selectedExportCoverage: ExportCoverage,
+  recommendedExportCoverage: ExportCoverage,
+  deliveryReadiness: DeliveryReadiness,
+  blockerCount: number
+) {
+  const selectedSurface = exportSurfaces[selectedExportId];
+  const recommendedSurface = exportSurfaces[recommendedExportId];
+  const isOverride = selectedExportId !== recommendedExportId;
+
+  if (!isOverride) {
+    const options = [
+      {
+        key: "fit",
+        label: "Best destination fit",
+        detail: `${selectedSurface.label} still matches the current ${deliveryDestinations[destination].label.toLowerCase()} handoff better than the nearby alternatives.`,
+        note: `Keep ${selectedSurface.label.toLowerCase()} because it still fits the current ${deliveryDestinations[destination].label.toLowerCase()} destination without needing a fallback packet.`
+      },
+      {
+        key: "speed",
+        label: "Lowest-friction path",
+        detail: "The current recommendation is the fastest copy path that still preserves enough context for the next reader.",
+        note: `Keep ${selectedSurface.label.toLowerCase()} because it is the lowest-friction export that still carries the needed context.`
+      }
+    ];
+
+    if (blockerCount === 0) {
+      options.push({
+        key: "no-blockers",
+        label: "No blocker escalation needed",
+        detail: "No active blockers are asking for a wider or more defensive export right now.",
+        note: `Keep ${selectedSurface.label.toLowerCase()} because there are no blocker cues forcing a wider fallback.`
+      });
+    } else if (selectedExportCoverage.includes.includes("Blockers")) {
+      options.push({
+        key: "blockers-covered",
+        label: "Current blockers stay visible",
+        detail: "Active blockers exist, but the current recommendation already carries them clearly enough for this handoff.",
+        note: `Keep ${selectedSurface.label.toLowerCase()} because it already carries the current blocker context for this handoff.`
+      });
+    }
+
+    if (deliveryReadiness.tone !== "ready") {
+      options.push({
+        key: "discussion",
+        label: "Discussion-first handoff",
+        detail: "The current state still reads as discussion or review, so a heavier fallback packet would add friction without closing the gaps.",
+        note: `Keep ${selectedSurface.label.toLowerCase()} because the branch still needs review discussion more than a heavier fallback export.`
+      });
+    }
+
+    return options;
+  }
+
+  const options = [
+    {
+      key: "fit",
+      label: "Better destination fit",
+      detail: `${selectedSurface.label} fits this ${deliveryDestinations[destination].label.toLowerCase()} handoff better than the current recommendation ${recommendedSurface.label}.`,
+      note: `Override ${recommendedSurface.label.toLowerCase()} with ${selectedSurface.label.toLowerCase()} because it is the better fit for the current ${deliveryDestinations[destination].label.toLowerCase()} handoff.`
+    }
+  ];
+
+  if (
+    selectedExportCoverage.includes.includes("Blockers") &&
+    !recommendedExportCoverage.includes.includes("Blockers")
+  ) {
+    options.push({
+      key: "blockers",
+      label: "Need blocker visibility",
+      detail: `${selectedSurface.label} keeps blockers attached, while ${recommendedSurface.label} would hide part of that risk context.`,
+      note: `Override ${recommendedSurface.label.toLowerCase()} with ${selectedSurface.label.toLowerCase()} so blocker context stays visible during handoff.`
+    });
+  }
+
+  if (
+    selectedExportCoverage.includes.includes("Validation commands") &&
+    !recommendedExportCoverage.includes.includes("Validation commands")
+  ) {
+    options.push({
+      key: "validation",
+      label: "Need validation evidence",
+      detail: `${selectedSurface.label} carries validation commands that the current recommendation leaves behind.`,
+      note: `Override ${recommendedSurface.label.toLowerCase()} with ${selectedSurface.label.toLowerCase()} because the next reader needs validation evidence attached.`
+    });
+  }
+
+  if (
+    selectedExportCoverage.includes.includes("Lane guidance") &&
+    !recommendedExportCoverage.includes.includes("Lane guidance")
+  ) {
+    options.push({
+      key: "routing",
+      label: "Need routing clarity",
+      detail: `${selectedSurface.label} keeps lane or pickup-routing guidance visible, which the current recommendation would downplay.`,
+      note: `Override ${recommendedSurface.label.toLowerCase()} with ${selectedSurface.label.toLowerCase()} so routing and merge guidance stay explicit.`
+    });
+  }
+
+  if (
+    destination === "pr-comment" &&
+    (selectedExportId === "issue-comment" || selectedExportId === "decision-brief") &&
+    selectedExportId !== recommendedExportId
+  ) {
+    options.push({
+      key: "brevity",
+      label: "Need a shorter export",
+      detail: `${selectedSurface.label} is shorter and more paste-ready for a GitHub thread than the current recommendation.`,
+      note: `Override ${recommendedSurface.label.toLowerCase()} with ${selectedSurface.label.toLowerCase()} because the handoff needs a tighter GitHub-ready payload.`
+    });
+  }
+
+  if (deliveryReadiness.tone === "hold") {
+    options.push({
+      key: "confidence",
+      label: "Need a more defensive handoff",
+      detail: "Current readiness warnings are strong enough that a wider or more explicit fallback is safer than the default recommendation.",
+      note: `Override ${recommendedSurface.label.toLowerCase()} with ${selectedSurface.label.toLowerCase()} because the current readiness state calls for a more defensive handoff.`
+    });
+  }
+
+  return options;
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -886,6 +1013,7 @@ export function ReviewScorecard({
   const [selectedDestination, setSelectedDestination] = useState<DeliveryDestination>("pr-comment");
   const [recommendedCopyState, setRecommendedCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [shortcutCopyState, setShortcutCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [selectedRationaleKey, setSelectedRationaleKey] = useState<string | null>(null);
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -920,6 +1048,7 @@ export function ReviewScorecard({
   );
   const recommendedExport = recommendedExportForDestination(selectedDestination, pickupLane, deliveryReadiness);
   const recommendedExportSurface = exportSurfaces[recommendedExport.exportId];
+  const recommendedExportCoverage = exportCoverage[recommendedExport.exportId];
   const shortcutAlternatives = alternativeExportsForDestination(
     selectedDestination,
     recommendedExport.exportId,
@@ -941,6 +1070,17 @@ export function ReviewScorecard({
     deliveryReadiness,
     blockers.length
   );
+  const selectionRationaleOptions = buildSelectionRationaleOptions(
+    selectedDestination,
+    selectedExport,
+    recommendedExport.exportId,
+    selectedExportCoverage,
+    recommendedExportCoverage,
+    deliveryReadiness,
+    blockers.length
+  );
+  const selectedRationale =
+    selectionRationaleOptions.find((option) => option.key === selectedRationaleKey) ?? selectionRationaleOptions[0];
   const claimChipPreview =
     claimPackets.length > 0
       ? claimPackets.slice(0, 3).map((claim) => claim.claimId)
@@ -1583,6 +1723,55 @@ export function ReviewScorecard({
                   </article>
                 ))}
               </div>
+            </div>
+
+            <div className="selectionRationaleBoard">
+              <div className="claimHeader">
+                <strong>Selection rationale</strong>
+                <span
+                  className={`statusPill statusPill${
+                    selectedExport === recommendedExport.exportId ? "ready" : "followup"
+                  }`}
+                >
+                  {selectedExport === recommendedExport.exportId ? "keep recommendation" : "override selected"}
+                </span>
+              </div>
+              <p className="scoreHint">
+                {selectedExport === recommendedExport.exportId
+                  ? `The current export still follows the workbench recommendation for ${deliveryDestinations[selectedDestination].label.toLowerCase()}.`
+                  : `The current export overrides the recommendation ${recommendedExportSurface.label} in favor of ${selectedExportSurface.label}.`}
+              </p>
+              <div className="statusRow">
+                <span className="pill">{recommendedExportSurface.label}</span>
+                <span className="pill">{selectedExportSurface.label}</span>
+              </div>
+
+              <div className="chipRow">
+                {selectionRationaleOptions.map((option) => (
+                  <button
+                    key={option.key}
+                    type="button"
+                    className={`laneToggleButton${selectedRationale?.key === option.key ? " laneToggleButtonActive" : ""}`}
+                    onClick={() => setSelectedRationaleKey(option.key)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+
+              {selectedRationale ? (
+                <div className="handoffSections">
+                  <div className="handoffSection handoffSectionReady">
+                    <h3>Why this choice</h3>
+                    <p>{selectedRationale.detail}</p>
+                  </div>
+
+                  <div className="handoffSection">
+                    <h3>Rationale note preview</h3>
+                    <p className="scoreHint">{selectedRationale.note}</p>
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             <div className="copyPreflightBoard">
