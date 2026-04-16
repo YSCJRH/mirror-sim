@@ -30,6 +30,14 @@ type DivergentTurn = {
   interventionAction: string | null;
 };
 
+type PickupLane = "lane:auto-safe" | "lane:protected-core";
+
+type LaneRoute = {
+  summary: string;
+  checklist: string[];
+  reviewPath: string[];
+};
+
 type ReviewScorecardProps = {
   rubricRows: RubricRow[];
   claimCount: number;
@@ -50,6 +58,47 @@ const closeoutValidationCommands = [
   "python -m backend.app.cli audit-phase phase2",
   "python -m backend.app.cli audit-phase phase3"
 ] as const;
+const postMergeCheckpointCommands = [
+  "./make.ps1 smoke",
+  "./make.ps1 test",
+  "./make.ps1 eval-demo",
+  "python -m backend.app.cli audit-phase phase1",
+  "python -m backend.app.cli audit-phase phase2",
+  "python -m backend.app.cli audit-phase phase3",
+  "python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim"
+] as const;
+const laneRoutes: Record<PickupLane, LaneRoute> = {
+  "lane:auto-safe": {
+    summary: "Use the safe-lane route when the change stays outside protected-core files and can merge after standard checks with no blocking labels.",
+    checklist: [
+      "Run audit-github-queue and confirm exactly one active milestone still reports ready.",
+      "Pick the earliest open status:ready issue and keep a single writer on it.",
+      "Create an isolated worktree named wt/<phase>-<topic> before editing.",
+      "Classify the diff before opening the PR and keep it inside safe-lane surfaces.",
+      "Re-run local smoke, test, and eval checks when the workbench or demo readers change."
+    ],
+    reviewPath: [
+      "Open the PR once checks are ready and the issue handoff copy is prepared.",
+      "Allow merge only after required checks are green and no blocking labels remain.",
+      "Do not widen the diff into queue governance, templates, contracts, or other protected-core paths mid-flight."
+    ]
+  },
+  "lane:protected-core": {
+    summary: "Use the protected-core route when queue governance, templates, contracts, CI, or operating docs are touched and the work cannot rely on auto-merge.",
+    checklist: [
+      "Run audit-github-queue and confirm the active milestone still reports ready before pickup.",
+      "Create one dedicated worktree for the issue and avoid multi-writer overlap on the same core surface.",
+      "Classify the diff early and keep explicit protected-core framing in the PR summary.",
+      "Re-run local smoke, test, eval-demo, and phase audits when governance, CI, or runbook logic changes.",
+      "Keep the issue or closeout packet attached so review context stays visible during protected-core review."
+    ],
+    reviewPath: [
+      "Open the PR with explicit protected-core framing and do not auto-merge.",
+      "Require an explicit review pass before merge when templates, contracts, queue rules, or operating docs are involved.",
+      "If the queue becomes paused or fail after merge, stop pickup and repair the milestone, exit gate, or label structure before continuing."
+    ]
+  }
+};
 
 function formatDecisionLabel(score: number | null) {
   return score === null ? "unscored" : `${score}/5`;
@@ -234,6 +283,8 @@ export function ReviewScorecard({
   const [issueCommentCopyState, setIssueCommentCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [handoffCopyState, setHandoffCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [closeoutCopyState, setCloseoutCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [pickupLane, setPickupLane] = useState<PickupLane>("lane:auto-safe");
+  const [pickupRoutingCopyState, setPickupRoutingCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -253,6 +304,7 @@ export function ReviewScorecard({
   );
   const blockers = buildBlockers(decision, unscoredDimensions, weakDimensions, notes);
   const carryForwardAnchors = buildCarryForwardAnchors(claimPackets, divergentTurns);
+  const pickupRoute = laneRoutes[pickupLane];
   const packetMarkdown = [
     "# Mirror Review Packet",
     "",
@@ -329,6 +381,36 @@ export function ReviewScorecard({
     ...closeoutValidationCommands.map((command) => `- Run \`${command}\``),
     "",
     "## Carry-Forward Evidence Anchors",
+    ...carryForwardAnchors.map((anchor) => `- ${anchor}`),
+    "",
+    "## Current Blockers",
+    ...blockers.map((blocker) => `- ${blocker}`),
+    "",
+    "## Reviewer Notes",
+    notes.trim() ? notes : "- No reviewer notes captured yet."
+  ].join("\n");
+  const pickupRoutingMarkdown = [
+    "## Pickup Routing",
+    `- Selected lane: ${pickupLane}`,
+    `- Sign-off posture: ${decision.label}`,
+    `- Eval: ${evalName} (${evalStatus})`,
+    "",
+    "## Lane Summary",
+    `- ${pickupRoute.summary}`,
+    "",
+    "## Current Next Actions",
+    ...nextActions.map((action) => `- ${action}`),
+    "",
+    "## Lane Checklist",
+    ...pickupRoute.checklist.map((step) => `- ${step}`),
+    "",
+    "## Review And Merge Path",
+    ...pickupRoute.reviewPath.map((step) => `- ${step}`),
+    "",
+    "## Post-Merge Checkpoint",
+    ...postMergeCheckpointCommands.map((command) => `- Run \`${command}\``),
+    "",
+    "## Carry-Forward Anchors",
     ...carryForwardAnchors.map((anchor) => `- ${anchor}`),
     "",
     "## Current Blockers",
@@ -543,6 +625,92 @@ export function ReviewScorecard({
                 : handoffCopyState === "failed"
                   ? "Clipboard copy failed. You can still copy from the packet field."
                   : "Use this field when the next operator needs a concise decision brief instead of the full review packet."}
+            </p>
+          </article>
+
+          <article className="artifactCard handoffCard">
+            <div className="artifactMeta">
+              <span>routing</span>
+              <code>lane-aware pickup</code>
+            </div>
+            <div className="claimHeader">
+              <strong>Pickup routing panel</strong>
+              <button
+                type="button"
+                className="actionButton"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(pickupRoutingMarkdown);
+                    setPickupRoutingCopyState("copied");
+                  } catch {
+                    setPickupRoutingCopyState("failed");
+                  }
+                }}
+              >
+                Copy pickup routing
+              </button>
+            </div>
+            <p className="scoreHint">
+              Toggle the lane to switch between safe-lane and protected-core pickup steps without leaving the workbench.
+            </p>
+
+            <div className="laneToggleGroup" role="tablist" aria-label="Pickup lane routing">
+              {(Object.keys(laneRoutes) as PickupLane[]).map((lane) => (
+                <button
+                  key={lane}
+                  type="button"
+                  className={`laneToggleButton${pickupLane === lane ? " laneToggleButtonActive" : ""}`}
+                  onClick={() => setPickupLane(lane)}
+                >
+                  {lane}
+                </button>
+              ))}
+            </div>
+
+            <div className="claimHeader">
+              <strong>Selected route</strong>
+              <span className="pill">{pickupLane}</span>
+            </div>
+            <p>{pickupRoute.summary}</p>
+
+            <div className="handoffSections">
+              <div className="handoffSection">
+                <h3>Lane checklist</h3>
+                <ul className="checklist compact">
+                  {pickupRoute.checklist.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="handoffSection">
+                <h3>Review and merge path</h3>
+                <ul className="checklist compact">
+                  {pickupRoute.reviewPath.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="handoffSection">
+                <h3>Post-merge checkpoint</h3>
+                <ul className="checklist compact">
+                  {postMergeCheckpointCommands.map((command) => (
+                    <li key={command}>
+                      Run <code>{command}</code>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <textarea className="packetField packetFieldCompact" readOnly value={pickupRoutingMarkdown} />
+            <p className="scoreHint">
+              {pickupRoutingCopyState === "copied"
+                ? "Pickup routing copied to clipboard."
+                : pickupRoutingCopyState === "failed"
+                  ? "Clipboard copy failed. You can still copy from the packet field."
+                  : "Use this field when the next operator needs lane-specific pickup and merge guidance tied to the current review state."}
             </p>
           </article>
 
