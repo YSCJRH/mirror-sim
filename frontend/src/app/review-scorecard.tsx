@@ -546,6 +546,105 @@ function buildPayloadPreview(markdown: string, previewLineCount = 10) {
   };
 }
 
+function buildMarkdownSections(markdown: string) {
+  const sections: Array<{ title: string; lineCount: number }> = [];
+  let currentTitle: string | null = null;
+  let currentLines: string[] = [];
+
+  for (const rawLine of markdown.trim().split("\n")) {
+    const line = rawLine.trimEnd();
+    if (line.startsWith("## ")) {
+      if (currentTitle !== null) {
+        sections.push({
+          title: currentTitle,
+          lineCount: currentLines.filter((sectionLine) => sectionLine.trim() !== "").length
+        });
+      }
+      currentTitle = line.slice(3);
+      currentLines = [line];
+      continue;
+    }
+
+    if (currentTitle !== null) {
+      currentLines.push(line);
+    }
+  }
+
+  if (currentTitle !== null) {
+    sections.push({
+      title: currentTitle,
+      lineCount: currentLines.filter((sectionLine) => sectionLine.trim() !== "").length
+    });
+  }
+
+  return sections;
+}
+
+function buildSectionDiffHighlights(recommendedMarkdown: string, fallbackMarkdown: string) {
+  const recommendedSections = buildMarkdownSections(recommendedMarkdown);
+  const fallbackSections = buildMarkdownSections(fallbackMarkdown);
+  const recommendedMap = new Map(recommendedSections.map((section) => [section.title, section]));
+  const fallbackMap = new Map(fallbackSections.map((section) => [section.title, section]));
+  const titles = Array.from(new Set([...recommendedMap.keys(), ...fallbackMap.keys()]));
+
+  const highlights = titles.map((title) => {
+    const recommendedSection = recommendedMap.get(title);
+    const fallbackSection = fallbackMap.get(title);
+
+    if (recommendedSection && !fallbackSection) {
+      return {
+        title,
+        kind: "recommended-only" as const,
+        recommendedLines: recommendedSection.lineCount,
+        fallbackLines: 0,
+        note: "Only the current recommendation carries this section."
+      };
+    }
+
+    if (!recommendedSection && fallbackSection) {
+      return {
+        title,
+        kind: "fallback-only" as const,
+        recommendedLines: 0,
+        fallbackLines: fallbackSection.lineCount,
+        note: "Only the selected fallback carries this section."
+      };
+    }
+
+    const lineDelta = (recommendedSection?.lineCount ?? 0) - (fallbackSection?.lineCount ?? 0);
+    if (Math.abs(lineDelta) <= 1) {
+      return {
+        title,
+        kind: "shared" as const,
+        recommendedLines: recommendedSection?.lineCount ?? 0,
+        fallbackLines: fallbackSection?.lineCount ?? 0,
+        note: "Both exports keep this section at roughly the same size."
+      };
+    }
+
+    if (lineDelta > 0) {
+      return {
+        title,
+        kind: "recommended-heavier" as const,
+        recommendedLines: recommendedSection?.lineCount ?? 0,
+        fallbackLines: fallbackSection?.lineCount ?? 0,
+        note: `The recommendation spends ${lineDelta} more line(s) here than the selected fallback.`
+      };
+    }
+
+    return {
+      title,
+      kind: "fallback-heavier" as const,
+      recommendedLines: recommendedSection?.lineCount ?? 0,
+      fallbackLines: fallbackSection?.lineCount ?? 0,
+      note: `The selected fallback spends ${Math.abs(lineDelta)} more line(s) here than the recommendation.`
+    };
+  });
+
+  const changedHighlights = highlights.filter((highlight) => highlight.kind !== "shared");
+  return changedHighlights.length > 0 ? changedHighlights : highlights.slice(0, 1);
+}
+
 function tradeoffSummaryForExport(exportId: ExportSurfaceId) {
   switch (exportId) {
     case "issue-comment":
@@ -863,7 +962,9 @@ export function ReviewScorecard({
     "closeout-packet": closeoutMarkdown,
     "pickup-routing": pickupRoutingMarkdown
   };
-  const comparisonAlternativeId = shortcutAlternatives[0] ?? recommendedExport.exportId;
+  const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
+    ? selectedExport
+    : (shortcutAlternatives[0] ?? recommendedExport.exportId);
   const payloadPreviewCards = [
     {
       exportId: recommendedExport.exportId,
@@ -894,6 +995,10 @@ export function ReviewScorecard({
       preview: buildPayloadPreview(exportMarkdownById[exportId])
     };
   });
+  const sectionDiffHighlights = buildSectionDiffHighlights(
+    exportMarkdownById[recommendedExport.exportId],
+    exportMarkdownById[comparisonAlternativeId]
+  );
 
   return (
     <section className="panel panelAccent">
@@ -1188,6 +1293,24 @@ export function ReviewScorecard({
                 frontend-only and reflects the current destination, scorecard, notes, and blocker state.
               </p>
 
+              {shortcutAlternatives.length > 0 ? (
+                <div className="payloadComparePicker">
+                  <span className="scoreHint">Selected fallback</span>
+                  <div className="chipRow">
+                    {shortcutAlternatives.map((exportId) => (
+                      <button
+                        key={exportId}
+                        type="button"
+                        className={`laneToggleButton${comparisonAlternativeId === exportId ? " laneToggleButtonActive" : ""}`}
+                        onClick={() => setSelectedExport(exportId)}
+                      >
+                        Compare {exportSurfaces[exportId].label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
               <div className="payloadPreviewGrid">
                 {payloadPreviewCards.map((card, index) => (
                   <article
@@ -1236,6 +1359,36 @@ export function ReviewScorecard({
                     </div>
                   </article>
                 ))}
+              </div>
+
+              <div className="payloadDiffBoard">
+                <div className="claimHeader">
+                  <strong>Section-level delta</strong>
+                  <span className="pill">{exportSurfaces[comparisonAlternativeId].label}</span>
+                </div>
+                <p className="scoreHint">
+                  These highlights show where the current recommendation drops, adds, or expands sections relative to the
+                  selected fallback.
+                </p>
+
+                <div className="payloadDiffGrid">
+                  {sectionDiffHighlights.map((highlight) => (
+                    <article
+                      key={highlight.title}
+                      className={`payloadDiffCard payloadDiffCard${highlight.kind.replace(/-/g, "")}`}
+                    >
+                      <div className="claimHeader">
+                        <strong>{highlight.title}</strong>
+                        <span className="statusPill statusPillfollowup">{highlight.kind.replace(/-/g, " ")}</span>
+                      </div>
+                      <p className="scoreHint">{highlight.note}</p>
+                      <div className="payloadPreviewMeta">
+                        <span className="metaChip">recommended: {highlight.recommendedLines} lines</span>
+                        <span className="metaChip">fallback: {highlight.fallbackLines} lines</span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               </div>
             </div>
 
