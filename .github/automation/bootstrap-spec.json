@@ -71,6 +71,10 @@
     {
       "title": "Phase 18 - Bundle Variants and Receiver Guidance",
       "description": "Turn the Phase 17 final bundle into a more receiver-specific delivery artifact by adding compact/full bundle variants and explicit receiver follow-through cues without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 19 - Receiver Roles and Follow-Through Routing",
+      "description": "Turn the Phase 18 receiver-guidance bundle into a more role-aware handoff surface by tailoring guidance for reviewer, approver, and operator pickups without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -163,6 +167,11 @@
       "name": "phase:18",
       "color": "C27BA0",
       "description": "Phase 18 bundle variants and receiver guidance work."
+    },
+    {
+      "name": "phase:19",
+      "color": "A64D79",
+      "description": "Phase 19 receiver roles and follow-through routing work."
     },
     {
       "name": "area:backend",
@@ -954,6 +963,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd receiver action checklist and reply-prompt cues so the final bundle tells the next reviewer or operator what to do after they receive it, not just what the current package contains.\n\n## input\n- current `frontend/src/app/review-scorecard.tsx`\n- current final bundle copy, manifest, destination-aware guidance, and next-action state\n- existing demo artifacts under `artifacts/demo/**`\n\n## output\n- a frontend-only receiver-action checklist tied to the current destination and package posture\n- reply-prompt or follow-through cues that can travel with the copied handoff without changing the underlying artifacts\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or queue-governance contracts\n- storing receiver acknowledgements\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the receiver checklist and reply cues react to destination, rationale, and blocker state\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 18"
+    },
+    {
+      "title": "Phase 19 exit gate",
+      "milestone": "Phase 19 - Receiver Roles and Follow-Through Routing",
+      "labels": [
+        "phase:19",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 19 receiver roles and follow-through routing criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 19 milestone state\n- merged PR state for queue sync and receiver-routing work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 19 closeout decision\n- documented stop condition for the Phase 19 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 19 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 19"
+    },
+    {
+      "title": "Phase 19: sync bootstrap spec and docs to the active receiver-routing queue",
+      "milestone": "Phase 19 - Receiver Roles and Follow-Through Routing",
+      "labels": [
+        "phase:19",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 18 baseline to the active Phase 19 queue so docs, bootstrap metadata, and README reflect the new receiver-routing track.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `README.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- current live GitHub milestone and issue state\n\n## output\n- `phase:19` and Phase 19 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 19 as the active successor queue\n- no stale Phase 18 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- receiver-routing UI changes\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 19"
+    },
+    {
+      "title": "Phase 19: add receiver-role chooser for reviewer, approver, and operator handoff modes",
+      "milestone": "Phase 19 - Receiver Roles and Follow-Through Routing",
+      "labels": [
+        "phase:19",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a receiver-role chooser so the final bundle can tailor its follow-through guidance for reviewer, approver, and operator handoff modes without changing the underlying artifact contracts.\n\n## input\n- current `frontend/src/app/review-scorecard.tsx`\n- current final bundle copy, variant chooser, receiver checklist, and reply-prompt guidance\n- existing demo artifacts under `artifacts/demo/**`\n\n## output\n- a frontend-only receiver-role chooser that retargets bundle guidance for reviewer, approver, and operator contexts\n- copyable role-specific guidance that still consumes the same destination, blocker, and action state\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or review-state contracts\n- storing receiver role preferences\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that switching receiver role updates the bundle guidance without mutating the underlying artifacts\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 19"
+    },
+    {
+      "title": "Phase 19: add follow-through routing strip for acknowledge, request-more-context, and escalate cues",
+      "milestone": "Phase 19 - Receiver Roles and Follow-Through Routing",
+      "labels": [
+        "phase:19",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a follow-through routing strip so the final bundle can clearly signal acknowledge, request-more-context, and escalate paths for the current handoff state without changing artifact contracts.\n\n## input\n- current `frontend/src/app/review-scorecard.tsx`\n- current final bundle copy, receiver checklist, reply prompt, blockers, and next-action state\n- existing demo artifacts under `artifacts/demo/**`\n\n## output\n- a frontend-only routing strip that maps the current bundle state to acknowledge, request-more-context, and escalate cues\n- copyable routing language that can travel with the bundle without requiring backend mutation\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing queue-governance rules or packet schemas\n- storing acknowledgement state\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that routing cues update with destination, blockers, and readiness tone\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 19"
     }
   ]
 }

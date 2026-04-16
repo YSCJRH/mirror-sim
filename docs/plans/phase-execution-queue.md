@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 18 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 19 queue resumption.
 
 ## Current Gate State
 
@@ -21,7 +21,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 15 exit gate: closed
 - Phase 16 exit gate: closed
 - Phase 17 exit gate: closed
-- Phase 18 exit gate: open
+- Phase 18 exit gate: closed
+- Phase 19 exit gate: open
 
 Local phase audits currently report:
 
@@ -97,15 +98,19 @@ Local phase audits currently report:
 - milestone `Phase 15 - Override Rationale and Delivery Confidence`
   - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 18 queue kickoff
+  - no open pull requests remain after the Phase 19 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 18 - Bundle Variants and Receiver Guidance` is open.
-- `#123` `Phase 18 exit gate`
+- milestone `Phase 19 - Receiver Roles and Follow-Through Routing` is open.
+- `#130` `Phase 19 exit gate`
   - open
-- blocked until the Phase 18 bundle variants and receiver guidance slice is complete
-- The current Phase 18 execution slice is tracked through:
+- blocked until the Phase 19 receiver roles and follow-through routing slice is complete
+- The current Phase 19 execution slice is tracked through:
+  - `#131` `Phase 19: sync bootstrap spec and docs to the active receiver-routing queue`
+  - `#132` `Phase 19: add receiver-role chooser for reviewer, approver, and operator handoff modes`
+  - `#133` `Phase 19: add follow-through routing strip for acknowledge, request-more-context, and escalate cues`
+- The completed Phase 18 slice was tracked through:
   - `#124` `Phase 18: sync bootstrap spec and docs to the active bundle-variants queue`
   - `#125` `Phase 18: add compact-versus-full final bundle variant chooser for destination-specific delivery`
   - `#126` `Phase 18: add receiver action checklist and reply-prompt cues for final bundle handoff`
