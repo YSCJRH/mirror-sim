@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, and Phase 20 is now the active role-template track.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, and Phase 21 is now the active role-preset track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -61,9 +61,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 19 is closed locally and in GitHub.
 - Phase 19 exit issue `#130` is closed and milestone `Phase 19 - Receiver Roles and Follow-Through Routing` is closed.
 - The Phase 19 queue was completed through issues `#130-#133`.
-- Phase 20 is the active successor queue.
-- milestone `Phase 20 - Role-Specific Bundle Layout and Decision Templates` is open.
-- The Phase 20 queue is initialized through issues `#137-#140`.
+- Phase 20 is closed locally and in GitHub.
+- Phase 20 exit issue `#137` is closed and milestone `Phase 20 - Role-Specific Bundle Layout and Decision Templates` is closed.
+- The Phase 20 queue was completed through issues `#137-#140`.
+- Phase 21 is the active successor queue.
+- milestone `Phase 21 - Role Presets and Response Packaging` is open.
+- The Phase 21 queue is initialized through issues `#144-#147`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.

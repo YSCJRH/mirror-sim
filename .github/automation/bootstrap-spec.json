@@ -79,6 +79,10 @@
     {
       "title": "Phase 20 - Role-Specific Bundle Layout and Decision Templates",
       "description": "Turn the Phase 19 role-aware routing bundle into clearer role-specific packet layouts and decision-ready response templates without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 21 - Role Presets and Response Packaging",
+      "description": "Turn the Phase 20 role-aware bundle layouts and decision templates into faster role presets and response packaging flows without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -181,6 +185,11 @@
       "name": "phase:20",
       "color": "674EA7",
       "description": "Phase 20 role-specific bundle layout and decision template work."
+    },
+    {
+      "name": "phase:21",
+      "color": "3D85C6",
+      "description": "Phase 21 role presets and response packaging work."
     },
     {
       "name": "area:backend",
@@ -1062,6 +1071,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd decision-template snippets for acknowledge, request-more-context, and escalate follow-through so the final bundle can provide role-aware response text that is easier to reuse directly.\n\n## input\n- current `frontend/src/app/review-scorecard.tsx`\n- current follow-through routing strip, role chooser, reply prompt, and blocker state\n- existing demo artifacts under `artifacts/demo/**`\n\n## output\n- a frontend-only set of decision-template snippets derived from the current role, destination, and routing posture\n- copyable response text for acknowledge, request-more-context, and escalate paths\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing queue-governance rules or packet schemas\n- storing response history\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the decision-template snippets update with role, destination, and blocker posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 20"
+    },
+    {
+      "title": "Phase 21 exit gate",
+      "milestone": "Phase 21 - Role Presets and Response Packaging",
+      "labels": [
+        "phase:21",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 21 role presets and response packaging criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 21 milestone state\n- merged PR state for queue sync and role-preset work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 21 closeout decision\n- documented stop condition for the Phase 21 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 21 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 21"
+    },
+    {
+      "title": "Phase 21: sync bootstrap spec and docs to the active role-preset queue",
+      "milestone": "Phase 21 - Role Presets and Response Packaging",
+      "labels": [
+        "phase:21",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 20 baseline to the active Phase 21 queue so docs, bootstrap metadata, and README reflect the new role-preset track.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `README.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- current live GitHub milestone and issue state\n\n## output\n- `phase:21` and Phase 21 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 21 as the active successor queue\n- no stale Phase 20 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- role-preset UI changes\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 21"
+    },
+    {
+      "title": "Phase 21: add role preset cards for reviewer, approver, and operator bundle modes",
+      "milestone": "Phase 21 - Role Presets and Response Packaging",
+      "labels": [
+        "phase:21",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd role preset cards so reviewer, approver, and operator modes can switch the final bundle to a recommended section mix and copy posture without manually toggling every control.\n\n## input\n- current `frontend/src/app/review-scorecard.tsx`\n- current role chooser, bundle variant chooser, routing strip, and decision-template surfaces\n- existing demo artifacts under `artifacts/demo/**`\n\n## output\n- a frontend-only role preset layer that applies role-aware bundle defaults and packaging emphasis\n- no backend API calls and no new artifact files\n- a clearer preset-driven entrypoint into the existing role-specific bundle workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or review-state contracts\n- storing preset preferences\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that switching presets changes the bundle posture without mutating the underlying artifacts\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 21"
+    },
+    {
+      "title": "Phase 21: add response-packaging shortcuts for acknowledge, request-more-context, and escalate templates",
+      "milestone": "Phase 21 - Role Presets and Response Packaging",
+      "labels": [
+        "phase:21",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd response-packaging shortcuts so the final bundle can expose quicker copy paths for the current acknowledge, request-more-context, and escalate templates without leaving the role-specific handoff workflow.\n\n## input\n- current `frontend/src/app/review-scorecard.tsx`\n- current routing strip, decision-template snippets, role chooser, and bundle structure\n- existing demo artifacts under `artifacts/demo/**`\n\n## output\n- a frontend-only shortcut layer for the current response-template set\n- copyable packaging shortcuts for acknowledge, request-more-context, and escalate paths\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or queue-governance contracts\n- storing shortcut history\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the shortcut actions update with role, variant, and routing posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 21"
     }
   ]
 }

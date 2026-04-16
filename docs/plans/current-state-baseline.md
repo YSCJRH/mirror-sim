@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the current Phase 20 active-queue baseline.
+This note is the current Phase 21 active-queue baseline.
 
 ## Snapshot
 
@@ -84,11 +84,15 @@ This note is the current Phase 20 active-queue baseline.
   - `gh api repos/YSCJRH/mirror-sim/issues/130`
     - Phase 19 exit issue is `closed`
   - `gh api repos/YSCJRH/mirror-sim/milestones/20`
-    - milestone `Phase 20 - Role-Specific Bundle Layout and Decision Templates` is `open`
-  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=20"`
-    - Phase 20 queue is initialized through issues `#137-#140`
+    - milestone `Phase 20 - Role-Specific Bundle Layout and Decision Templates` is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/issues/137`
+    - Phase 20 exit issue is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/milestones/21`
+    - milestone `Phase 21 - Role Presets and Response Packaging` is `open`
+  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=21"`
+    - Phase 21 queue is initialized through issues `#144-#147`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - successor queue currently reports `ready` because Phase 20 has one blocked protected-core exit gate and multiple ready work items
+    - successor queue currently reports `ready` because Phase 21 has one blocked protected-core exit gate and multiple ready work items
 
 ## Trusted Source Of Truth
 
@@ -105,13 +109,13 @@ This note is the current Phase 20 active-queue baseline.
 
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
-- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, and routing-strip follow-through guidance without introducing backend API expansion.
-- The current repository state is in an active Phase 20 successor queue, not a closed Phase 19 baseline.
+- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, and decision-template snippets without introducing backend API expansion.
+- The current repository state is in an active Phase 21 successor queue, not a closed Phase 20 baseline.
 
 ## Next Entry Point
 
-- Phase 20 is the active milestone and the current role-template slice is tracked by issues `#137-#140`.
-- New implementation work should attach to the existing Phase 20 queue until its exit gate is closed, instead of opening a parallel successor milestone.
+- Phase 21 is the active milestone and the current role-preset slice is tracked by issues `#144-#147`.
+- New implementation work should attach to the existing Phase 21 queue until its exit gate is closed, instead of opening a parallel successor milestone.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
 - The local queue heartbeat remains active as `mirror-queue-heartbeat` and should continue reporting the paused/ready state of the live queue.
