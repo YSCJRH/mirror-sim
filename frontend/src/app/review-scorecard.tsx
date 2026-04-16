@@ -1402,6 +1402,78 @@ function buildReceiverGuidance(
   };
 }
 
+function buildFollowThroughRouting(
+  destination: DeliveryDestination,
+  variant: BundleVariant,
+  role: ReceiverRole,
+  copyPreflight: ReturnType<typeof buildCopyPreflightChecklist>,
+  blockers: string[],
+  nextActions: string[]
+) {
+  const hasCleanBlockers = blockers[0] === "No blocking issues surfaced in the current frontend-only review state.";
+  const acknowledgeTone =
+    copyPreflight.tone === "ready" && hasCleanBlockers ? "ready" : copyPreflight.tone === "followup" ? "followup" : "hold";
+  const requestMoreTone =
+    variant === "compact" || !hasCleanBlockers || copyPreflight.tone !== "ready" ? "followup" : "ready";
+  const escalateTone =
+    copyPreflight.tone === "hold" || !hasCleanBlockers || destination === "closeout" ? "hold" : "followup";
+  const acknowledgePrompt =
+    role === "approver"
+      ? `Acknowledge receipt and state whether the ${deliveryDestinations[destination].label.toLowerCase()} handoff is approved to proceed.`
+      : role === "reviewer"
+        ? `Acknowledge receipt and state whether the current evidence packet is sufficient for review.`
+        : `Acknowledge receipt and name the first execution step after reading the bundle.`;
+  const requestMorePrompt =
+    role === "approver"
+      ? `Request the fuller packet, extra evidence, or a blocker update before you issue a final decision.`
+      : role === "reviewer"
+        ? `Request more context if the current packet still leaves evidence quality or confidence unresolved.`
+        : `Request more context if the current bundle is too light to start execution safely.`;
+  const escalatePrompt =
+    role === "approver"
+      ? `Escalate when the current blocker posture or gate risk is too strong for approval in this handoff.`
+      : role === "reviewer"
+        ? `Escalate when the evidence boundary is weak enough that normal review should pause.`
+        : `Escalate when execution should pause and another reviewer or approver needs to step in.`;
+
+  return {
+    summary:
+      "Use the routing strip to tell the receiver whether they should acknowledge, ask for more context, or escalate from the current bundle state.",
+    routes: [
+      {
+        key: "acknowledge",
+        label: "Acknowledge",
+        tone: acknowledgeTone,
+        detail:
+          acknowledgeTone === "ready"
+            ? "The current handoff is strong enough for a clean acknowledgement and forward motion."
+            : "Acknowledge only as a provisional handoff; the receiver should keep the remaining gaps visible.",
+        prompt: acknowledgePrompt
+      },
+      {
+        key: "request-more-context",
+        label: "Request More Context",
+        tone: requestMoreTone,
+        detail:
+          requestMoreTone === "ready"
+            ? "This remains available if the receiver wants the richer packet, but the current bundle is already fairly complete."
+            : `Use this when the receiver still needs fuller context. Start from: ${nextActions[0] ?? "Name the next missing context item before proceeding."}`,
+        prompt: requestMorePrompt
+      },
+      {
+        key: "escalate",
+        label: "Escalate",
+        tone: escalateTone,
+        detail:
+          escalateTone === "hold"
+            ? "The current posture is strong enough that escalation should stay visible as a first-class path."
+            : "Keep escalation available when the receiver cannot comfortably acknowledge or request more context inside the current lane.",
+        prompt: escalatePrompt
+      }
+    ]
+  };
+}
+
 function buildFinalBundlePackage(
   variant: BundleVariant,
   destination: DeliveryDestination,
@@ -1412,6 +1484,7 @@ function buildFinalBundlePackage(
   copySidecarMarkdown: string,
   recipientCoverSheetMarkdown: string,
   receiverGuidance: ReturnType<typeof buildReceiverGuidance>,
+  followThroughRouting: ReturnType<typeof buildFollowThroughRouting>,
   attachmentOrder: ReturnType<typeof buildAttachmentOrderGuidance>,
   copyPreflight: ReturnType<typeof buildCopyPreflightChecklist>,
   blockers: string[]
@@ -1459,6 +1532,16 @@ function buildFinalBundlePackage(
       detail: receiverGuidance.summary
     },
     {
+      label: "Routing strip",
+      status: "included",
+      tone: followThroughRouting.routes.some((route) => route.tone === "hold")
+        ? "hold"
+        : followThroughRouting.routes.some((route) => route.tone === "followup")
+          ? "followup"
+          : "ready",
+      detail: followThroughRouting.summary
+    },
+    {
       label: "Workbench-only guide surfaces",
       status: "intentionally omitted",
       tone: "hold",
@@ -1497,6 +1580,12 @@ function buildFinalBundlePackage(
             ...attachmentOrder.steps.filter((step) => step.active).map((step) => `- ${step.order}. ${step.title}: ${step.detail}`)
           ]
         : []),
+      "",
+      "## Follow-Through Routing",
+      ...followThroughRouting.routes.flatMap((route) => [
+        `- ${route.label}: ${route.detail}`,
+        `  - Prompt: ${route.prompt}`
+      ]),
       "",
       "## Receiver Follow-Through",
       `- Receiver role: ${receiverGuidance.roleLabel}`,
@@ -1810,6 +1899,14 @@ export function ReviewScorecard({
     nextActions,
     blockers
   );
+  const followThroughRouting = buildFollowThroughRouting(
+    selectedDestination,
+    bundleVariant,
+    receiverRole,
+    copyPreflight,
+    blockers,
+    nextActions
+  );
   const finalBundlePackage = buildFinalBundlePackage(
     bundleVariant,
     selectedDestination,
@@ -1820,6 +1917,7 @@ export function ReviewScorecard({
     copySidecar.markdown,
     recipientCoverSheet.markdown,
     receiverGuidance,
+    followThroughRouting,
     attachmentOrder,
     copyPreflight,
     blockers
@@ -2729,6 +2827,23 @@ export function ReviewScorecard({
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
+              </div>
+
+              <div className="handoffSection">
+                <h3>Follow-through routing</h3>
+                <p className="scoreHint">{followThroughRouting.summary}</p>
+                <div className="manifestGrid">
+                  {followThroughRouting.routes.map((route) => (
+                    <article key={route.key} className="manifestCard">
+                      <div className="claimHeader">
+                        <strong>{route.label}</strong>
+                        <span className={`statusPill statusPill${route.tone}`}>{route.tone}</span>
+                      </div>
+                      <p className="scoreHint">{route.detail}</p>
+                      <p className="scoreHint">{route.prompt}</p>
+                    </article>
+                  ))}
+                </div>
               </div>
 
               <div className="handoffSections">
