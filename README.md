@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-20 gates, and resumed the successor queue as `Phase 21 - Role Presets and Response Packaging`.
+The repository has completed Day 0 bootstrap, closed the Phase 1-21 gates, and resumed the successor queue as `Phase 22 - Preset Workflow and Packed Responses`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -41,8 +41,9 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-20 gates, and r
   - milestone `Phase 18 - Bundle Variants and Receiver Guidance` is closed
   - milestone `Phase 19 - Receiver Roles and Follow-Through Routing` is closed
   - milestone `Phase 20 - Role-Specific Bundle Layout and Decision Templates` is closed
-  - milestone `Phase 21 - Role Presets and Response Packaging` is open
-  - Phase 21 queue is initialized through issues `#144-#147`
+  - milestone `Phase 21 - Role Presets and Response Packaging` is closed
+  - milestone `Phase 22 - Preset Workflow and Packed Responses` is open
+  - Phase 22 queue is initialized through issues `#151-#154`
 
 Local phase audits currently show:
 
@@ -97,7 +98,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): review workbench with Phase 20 role-specific layout and decision-template surfaces landed and the current Phase 21 role-preset queue still consuming the same artifact surface
+- [frontend](/D:/mirror/frontend): review workbench with Phase 21 preset-action and response-shortcut surfaces landed and the current Phase 22 preset-workflow queue still consuming the same artifact surface
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -142,10 +143,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 20 closeout are complete. Phase 21 is now the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 21 closeout are complete. Phase 22 is now the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may resume pickup guidance only against the Phase 21 queue and must stop again if `audit-github-queue` leaves `ready`.
+- The local heartbeat automation may resume pickup guidance only against the Phase 22 queue and must stop again if `audit-github-queue` leaves `ready`.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals
