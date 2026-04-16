@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the current Phase 11 active-queue baseline.
+This note is the current Phase 12 active-queue baseline.
 
 ## Snapshot
 
@@ -48,11 +48,15 @@ This note is the current Phase 11 active-queue baseline.
   - `gh api repos/YSCJRH/mirror-sim/issues/67`
     - Phase 10 exit issue is `closed`
   - `gh api repos/YSCJRH/mirror-sim/milestones/11`
-    - milestone `Phase 11 - Export Presets and Delivery Shortcuts` is `open`
-  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=11"`
-    - Phase 11 queue is initialized through issues `#74-#77`
+    - milestone `Phase 11 - Export Presets and Delivery Shortcuts` is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/issues/74`
+    - Phase 11 exit issue is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/milestones/12`
+    - milestone `Phase 12 - Delivery Preset Refinement and Comparison Flow` is `open`
+  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=12"`
+    - Phase 12 queue is initialized through issues `#81-#84`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - successor queue currently reports `ready` because Phase 11 has one blocked protected-core exit gate and multiple ready work items
+    - successor queue currently reports `ready` because Phase 12 has one blocked protected-core exit gate and multiple ready work items
 
 ## Trusted Source Of Truth
 
@@ -69,13 +73,13 @@ This note is the current Phase 11 active-queue baseline.
 
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
-- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, and packet coverage previews without introducing backend API expansion.
-- The current repository state is in an active Phase 11 successor queue, not a closed Phase 10 baseline.
+- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, and quick-export shortcuts without introducing backend API expansion.
+- The current repository state is in an active Phase 12 successor queue, not a closed Phase 11 baseline.
 
 ## Next Entry Point
 
-- Phase 11 is the active milestone and the current export-shortcut slice is tracked by issues `#74-#77`.
-- New implementation work should attach to the existing Phase 11 queue until its exit gate is closed, instead of opening a parallel successor milestone.
+- Phase 12 is the active milestone and the current preset-refinement slice is tracked by issues `#81-#84`.
+- New implementation work should attach to the existing Phase 12 queue until its exit gate is closed, instead of opening a parallel successor milestone.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
 - The local queue heartbeat remains active as `mirror-queue-heartbeat` and should continue reporting the paused/ready state of the live queue.
