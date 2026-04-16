@@ -222,6 +222,7 @@ const exportCoverage: Record<ExportSurfaceId, ExportCoverage> = {
     note: "Carries the fullest operator-routing context, especially when lane rules and post-merge checks matter."
   }
 };
+const validationPreviewChips = ["smoke", "test", "eval-demo", "phase audits"] as const;
 
 function formatDecisionLabel(score: number | null) {
   return score === null ? "unscored" : `${score}/5`;
@@ -577,6 +578,7 @@ export function ReviewScorecard({
   const carryForwardAnchors = buildCarryForwardAnchors(claimPackets, divergentTurns);
   const pickupRoute = laneRoutes[pickupLane];
   const selectedExportSurface = exportSurfaces[selectedExport];
+  const selectedExportCoverage = exportCoverage[selectedExport];
   const deliveryReadiness = buildDeliveryReadiness(
     decision,
     filledCount,
@@ -594,6 +596,12 @@ export function ReviewScorecard({
     recommendedExport.exportId,
     pickupLane
   );
+  const claimChipPreview =
+    claimPackets.length > 0
+      ? claimPackets.slice(0, 3).map((claim) => claim.claimId)
+      : ["No claims in scope"];
+  const blockerChipPreview =
+    blockers.length > 0 ? blockers.slice(0, 2).map((blocker) => blocker.replace(/\.$/, "")) : ["No blockers surfaced"];
   const presetRecommendations = deliveryDestinationOrder.map((destination) => {
     const recommendation = recommendedExportForDestination(destination, pickupLane, deliveryReadiness);
     return {
@@ -1027,6 +1035,60 @@ export function ReviewScorecard({
                     ? "Clipboard copy failed. You can still copy from the recommended export card below."
                     : "Use the shortcut strip when you already trust the current recommendation and want the fastest copy or jump action."}
               </p>
+            </div>
+
+            <div className="handoffSection">
+              <h3>Carry-forward context</h3>
+              <p className="scoreHint">
+                These chips show what the current export selection carries forward before you copy it.
+              </p>
+
+              <div className="presetMeta">
+                <div className="presetMetaBlock">
+                  <h3>Claims</h3>
+                  <div className="chipRow">
+                    {selectedExportCoverage.includes.includes("Claim context") ? (
+                      claimChipPreview.map((claimId) => (
+                        <span key={claimId} className="metaChip">
+                          {claimId}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="metaChip metaChipMuted">Claims omitted</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="presetMetaBlock">
+                  <h3>Blockers</h3>
+                  <div className="chipRow">
+                    {selectedExportCoverage.includes.includes("Blockers") ? (
+                      blockerChipPreview.map((blocker) => (
+                        <span key={blocker} className="metaChip">
+                          {blocker}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="metaChip metaChipMuted">Blockers omitted</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="presetMetaBlock">
+                  <h3>Validation steps</h3>
+                  <div className="chipRow">
+                    {selectedExportCoverage.includes.includes("Validation commands") ? (
+                      validationPreviewChips.map((step) => (
+                        <span key={step} className="metaChip">
+                          {step}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="metaChip metaChipMuted">Validation steps omitted</span>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="handoffSections">
