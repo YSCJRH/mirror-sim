@@ -55,6 +55,10 @@
     {
       "title": "Phase 14 - Export Delta and Copy Confidence",
       "description": "Turn guided export selection into a higher-confidence handoff step by surfacing export deltas and destination-specific copy preflight cues without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 15 - Override Rationale and Delivery Confidence",
+      "description": "Turn guided export selection into a clearer operator commitment step by surfacing override rationale and copy-sidecar handoff context without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -127,6 +131,11 @@
       "name": "phase:14",
       "color": "7a39de",
       "description": "Phase 14 export delta and copy confidence work."
+    },
+    {
+      "name": "phase:15",
+      "color": "8a32e6",
+      "description": "Phase 15 override rationale and delivery confidence work."
     },
     {
       "name": "area:backend",
@@ -738,6 +747,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd destination-specific copy preflight checklist and blocker acknowledgements to the guided export area so an operator can tell whether the current export is safe to copy as-is for the selected destination.\n\n## input\n- current tradeoff notes, readiness panel, blocker state, and export controls\n- current guided export layout\n- current destination-aware recommendation flow\n\n## output\n- pre-copy checklist cues tied to the selected destination and recommendation\n- clearer acknowledgement of blockers or missing inputs before copy\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- blocking the copy action behind persistence or modal workflows\n- changing packet schemas or queue-governance rules\n- adding backend review state\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the preflight cues change with destination, blockers, and readiness\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 14"
+    },
+    {
+      "title": "Phase 15 exit gate",
+      "milestone": "Phase 15 - Override Rationale and Delivery Confidence",
+      "labels": [
+        "phase:15",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 15 override rationale and delivery confidence criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 15 milestone state\n- merged PR state for queue sync and delivery-confidence work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 15 closeout decision\n- documented stop condition for the Phase 15 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 15 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 15"
+    },
+    {
+      "title": "Phase 15: sync bootstrap spec and docs to the active override-confidence queue",
+      "milestone": "Phase 15 - Override Rationale and Delivery Confidence",
+      "labels": [
+        "phase:15",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 14 baseline to the active Phase 15 queue so docs, bootstrap metadata, and README reflect the new override-confidence track.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `README.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- current live GitHub milestone and issue state\n\n## output\n- `phase:15` and Phase 15 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 15 as the active successor queue\n- no stale Phase 14 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- override-confidence UI changes\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 15"
+    },
+    {
+      "title": "Phase 15: add explicit keep-vs-override rationale cues for guided exports",
+      "milestone": "Phase 15 - Override Rationale and Delivery Confidence",
+      "labels": [
+        "phase:15",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd an explicit override rationale layer to the guided export area so an operator can record why they are keeping the recommendation or deliberately choosing a fallback export.\n\n## input\n- current recommendation banner, payload preview, diff highlights, tradeoff notes, and copy preflight surfaces\n- current destination-aware export guidance flow\n- current guided export layout\n\n## output\n- explicit keep-vs-override cues tied to the current recommendation and selected fallback\n- lightweight rationale prompts or derived notes that help future readers understand why a fallback was chosen\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- persistent operator storage\n- changing export packet schemas or queue-governance rules\n- posting directly to GitHub\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that fallback selection produces clearer rationale cues before copy\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 15"
+    },
+    {
+      "title": "Phase 15: add copy-sidecar summary for destination fit, blocker acknowledgement, and selection confidence",
+      "milestone": "Phase 15 - Override Rationale and Delivery Confidence",
+      "labels": [
+        "phase:15",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a compact copy-sidecar summary to the guided export area so an operator can carry destination fit, blocker acknowledgements, and export-selection confidence into the final handoff without re-reading the whole workbench.\n\n## input\n- current copy preflight, blocker acknowledgement, recommendation, and payload compare surfaces\n- current selected destination and export state\n- current guided export layout\n\n## output\n- a concise sidecar summary that can travel with the copied export or sit beside it during handoff\n- clearer copy-confidence cues for the selected destination and current blocker state\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- changing packet schemas or backend review state\n- auto-posting to GitHub\n- gating copy behind modal confirmation flows\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the sidecar summary tracks destination, blocker, and selection changes\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 15"
     }
   ]
 }

@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the current Phase 14 active-queue baseline.
+This note is the current Phase 15 active-queue baseline.
 
 ## Snapshot
 
@@ -60,11 +60,15 @@ This note is the current Phase 14 active-queue baseline.
   - `gh api repos/YSCJRH/mirror-sim/issues/88`
     - Phase 13 exit issue is `closed`
   - `gh api repos/YSCJRH/mirror-sim/milestones/14`
-    - milestone `Phase 14 - Export Delta and Copy Confidence` is `open`
-  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=14"`
-    - Phase 14 queue is initialized through issues `#95-#98`
+    - milestone `Phase 14 - Export Delta and Copy Confidence` is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/issues/95`
+    - Phase 14 exit issue is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/milestones/15`
+    - milestone `Phase 15 - Override Rationale and Delivery Confidence` is `open`
+  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=15"`
+    - Phase 15 queue is initialized through issues `#102-#105`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - successor queue currently reports `ready` because Phase 14 has one blocked protected-core exit gate and multiple ready work items
+    - successor queue currently reports `ready` because Phase 15 has one blocked protected-core exit gate and multiple ready work items
 
 ## Trusted Source Of Truth
 
@@ -81,13 +85,13 @@ This note is the current Phase 14 active-queue baseline.
 
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
-- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, and tradeoff-guidance cards without introducing backend API expansion.
-- The current repository state is in an active Phase 14 successor queue, not a closed Phase 13 baseline.
+- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, and copy-preflight checklists without introducing backend API expansion.
+- The current repository state is in an active Phase 15 successor queue, not a closed Phase 14 baseline.
 
 ## Next Entry Point
 
-- Phase 14 is the active milestone and the current export-delta slice is tracked by issues `#95-#98`.
-- New implementation work should attach to the existing Phase 14 queue until its exit gate is closed, instead of opening a parallel successor milestone.
+- Phase 15 is the active milestone and the current override-confidence slice is tracked by issues `#102-#105`.
+- New implementation work should attach to the existing Phase 15 queue until its exit gate is closed, instead of opening a parallel successor milestone.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
 - The local queue heartbeat remains active as `mirror-queue-heartbeat` and should continue reporting the paused/ready state of the live queue.
