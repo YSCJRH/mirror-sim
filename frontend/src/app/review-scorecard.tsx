@@ -110,6 +110,7 @@ export function ReviewScorecard({
   );
   const [notes, setNotes] = useState("");
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [issueCommentCopyState, setIssueCommentCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -151,6 +152,29 @@ export function ReviewScorecard({
       `  - 3: ${row.three}`,
       `  - 5: ${row.five}`
     ]),
+    "",
+    "## Reviewer Notes",
+    notes.trim() ? notes : "- No reviewer notes captured yet."
+  ].join("\n");
+  const issueCommentMarkdown = [
+    "## Review Handoff",
+    `- Provisional sign-off: ${decision.label}`,
+    `- Eval: ${evalName} (${evalStatus})`,
+    `- Scorecard coverage: ${filledCount}/${rubricRows.length} dimensions scored`,
+    "",
+    "## Claims To Carry Forward",
+    ...claimPackets.flatMap((claim) => [
+      `- \`${claim.claimId}\`: ${claim.text}`,
+      `  - related turns: ${claim.relatedTurnIds.length > 0 ? claim.relatedTurnIds.join(", ") : "none"}`
+    ]),
+    "",
+    "## Divergent Turns To Replay",
+    ...(divergentTurns.length > 0
+      ? divergentTurns.map(
+          (turn) =>
+            `- Turn ${turn.turnIndex}: baseline \`${turn.baselineTurnId ?? "none"}\` vs intervention \`${turn.interventionTurnId ?? "none"}\``
+        )
+      : ["- No divergent turns highlighted in the current comparison."]),
     "",
     "## Reviewer Notes",
     notes.trim() ? notes : "- No reviewer notes captured yet."
@@ -290,35 +314,70 @@ export function ReviewScorecard({
               <span>packet</span>
               <code>frontend-derived markdown</code>
             </div>
-            <div className="claimHeader">
-              <strong>Shareable review packet</strong>
-              <button
-                type="button"
-                className="actionButton"
-                onClick={async () => {
-                  try {
-                    await navigator.clipboard.writeText(packetMarkdown);
-                    setCopyState("copied");
-                  } catch {
-                    setCopyState("failed");
-                  }
-                }}
-              >
-                Copy markdown packet
-              </button>
+            <div className="packetStack">
+              <div className="packetSection">
+                <div className="claimHeader">
+                  <strong>Shareable review packet</strong>
+                  <button
+                    type="button"
+                    className="actionButton"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(packetMarkdown);
+                        setCopyState("copied");
+                      } catch {
+                        setCopyState("failed");
+                      }
+                    }}
+                  >
+                    Copy markdown packet
+                  </button>
+                </div>
+                <p className="scoreHint">
+                  This packet packages claim IDs, divergent turn IDs, rubric context, and the current worksheet summary
+                  without creating any new artifact files.
+                </p>
+                <textarea className="packetField" readOnly value={packetMarkdown} />
+                <p className="scoreHint">
+                  {copyState === "copied"
+                    ? "Packet copied to clipboard."
+                    : copyState === "failed"
+                      ? "Clipboard copy failed. You can still copy from the packet field."
+                      : "Use this field as the handoff-ready packet for reviewers or follow-on product work."}
+                </p>
+              </div>
+
+              <div className="packetSection">
+                <div className="claimHeader">
+                  <strong>Issue comment packet</strong>
+                  <button
+                    type="button"
+                    className="actionButton"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(issueCommentMarkdown);
+                        setIssueCommentCopyState("copied");
+                      } catch {
+                        setIssueCommentCopyState("failed");
+                      }
+                    }}
+                  >
+                    Copy issue comment
+                  </button>
+                </div>
+                <p className="scoreHint">
+                  This version trims the handoff into GitHub-ready sections so an operator can paste it into an issue or PR comment without reformatting.
+                </p>
+                <textarea className="packetField packetFieldCompact" readOnly value={issueCommentMarkdown} />
+                <p className="scoreHint">
+                  {issueCommentCopyState === "copied"
+                    ? "Issue comment packet copied to clipboard."
+                    : issueCommentCopyState === "failed"
+                      ? "Clipboard copy failed. You can still copy from the packet field."
+                      : "Use this field when the next operator needs a GitHub-comment-ready review handoff."}
+                </p>
+              </div>
             </div>
-            <p className="scoreHint">
-              This packet packages claim IDs, divergent turn IDs, rubric context, and the current worksheet summary
-              without creating any new artifact files.
-            </p>
-            <textarea className="packetField" readOnly value={packetMarkdown} />
-            <p className="scoreHint">
-              {copyState === "copied"
-                ? "Packet copied to clipboard."
-                : copyState === "failed"
-                  ? "Clipboard copy failed. You can still copy from the packet field."
-                  : "Use this field as the handoff-ready packet for reviewers or follow-on product work."}
-            </p>
           </article>
         </div>
       </div>
