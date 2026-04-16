@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 14 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 15 queue resumption.
 
 ## Current Gate State
 
@@ -17,7 +17,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 11 exit gate: closed
 - Phase 12 exit gate: closed
 - Phase 13 exit gate: closed
-- Phase 14 exit gate: open
+- Phase 14 exit gate: closed
+- Phase 15 exit gate: open
 
 Local phase audits currently report:
 
@@ -84,16 +85,24 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 13 - Guided Export Payload Review`
   - closed
+- Phase 14 exit issue `#95`
+  - closed
+- milestone `Phase 14 - Export Delta and Copy Confidence`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 14 queue kickoff
+  - no open pull requests remain after the Phase 15 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 14 - Export Delta and Copy Confidence` is open.
-- `#95` `Phase 14 exit gate`
+- milestone `Phase 15 - Override Rationale and Delivery Confidence` is open.
+- `#102` `Phase 15 exit gate`
   - open
-- blocked until the Phase 14 export delta and copy confidence slice is complete
-- The current Phase 14 execution slice is tracked through:
+- blocked until the Phase 15 override rationale and delivery confidence slice is complete
+- The current Phase 15 execution slice is tracked through:
+  - `#103` `Phase 15: sync bootstrap spec and docs to the active override-confidence queue`
+  - `#104` `Phase 15: add explicit keep-vs-override rationale cues for guided exports`
+  - `#105` `Phase 15: add copy-sidecar summary for destination fit, blocker acknowledgement, and selection confidence`
+- The completed Phase 14 slice was tracked through:
   - `#96` `Phase 14: sync bootstrap spec and docs to the active export-delta queue`
   - `#97` `Phase 14: add section-level diff highlights between the recommended export and the selected fallback`
   - `#98` `Phase 14: add destination-specific copy preflight checklist and blocker acknowledgements`
