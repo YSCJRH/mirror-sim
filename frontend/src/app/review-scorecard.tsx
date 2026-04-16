@@ -1287,6 +1287,94 @@ function buildAttachmentOrderGuidance(
   };
 }
 
+function buildFinalBundlePackage(
+  destination: DeliveryDestination,
+  selectedExportId: ExportSurfaceId,
+  selectedExportMarkdown: string,
+  recommendedExportId: ExportSurfaceId,
+  rationaleNote: string | null,
+  copySidecarMarkdown: string,
+  recipientCoverSheetMarkdown: string,
+  attachmentOrder: ReturnType<typeof buildAttachmentOrderGuidance>,
+  copyPreflight: ReturnType<typeof buildCopyPreflightChecklist>,
+  blockers: string[]
+) {
+  const selectedSurface = exportSurfaces[selectedExportId];
+  const recommendedSurface = exportSurfaces[recommendedExportId];
+  const followsRecommendation = selectedExportId === recommendedExportId;
+  const includeRationale = !followsRecommendation || copyPreflight.tone !== "ready";
+  const includeSidecar = destination !== "pr-comment" || blockers.length > 0 || copyPreflight.tone !== "ready";
+  const manifestItems = [
+    {
+      label: "Recipient cover sheet",
+      status: "included",
+      tone: "ready",
+      detail: "Lead the package with the receiver-facing summary so destination, export choice, and blocker posture are visible before the detailed payload."
+    },
+    {
+      label: "Primary export",
+      status: "included",
+      tone: "ready",
+      detail: `${selectedSurface.label} stays in the package because it carries the main ${deliveryDestinations[destination].label.toLowerCase()} payload.`
+    },
+    {
+      label: "Rationale note",
+      status: includeRationale ? "included" : "optional",
+      tone: includeRationale ? "ready" : "followup",
+      detail: includeRationale
+        ? rationaleNote ?? "Include the rationale note so the receiver sees why this package shape was chosen."
+        : "This note stays optional because the current package already matches the destination without extra explanation."
+    },
+    {
+      label: "Copy sidecar",
+      status: includeSidecar ? "included" : "optional",
+      tone: includeSidecar ? "ready" : "followup",
+      detail: includeSidecar
+        ? "Include the sidecar so destination fit, blocker acknowledgement, and confidence cues travel with the copied bundle."
+        : "This sidecar stays optional because the current destination does not need extra blocker or confidence scaffolding."
+    },
+    {
+      label: "Workbench-only guide surfaces",
+      status: "intentionally omitted",
+      tone: "hold",
+      detail: "Leave packet chooser, routing guidance, and the rest of the workbench scaffolding behind; the final bundle should travel as a compact delivery artifact."
+    }
+  ];
+  const orderedSections = [
+    "Cover sheet lead-in",
+    ...attachmentOrder.steps.filter((step) => step.active).map((step) => `${step.order}. ${step.title}`)
+  ];
+  const summary =
+    includeRationale || includeSidecar
+      ? "Copy one final package that keeps the receiver-facing cover sheet, primary export, and the currently required companions together."
+      : "Copy one final package with the cover sheet and primary export first, while the manifest records the optional companions you chose not to include.";
+
+  return {
+    summary,
+    manifestItems,
+    orderedSections,
+    markdown: [
+      recipientCoverSheetMarkdown,
+      "",
+      "## Package Manifest",
+      ...manifestItems.map((item) => `- ${item.label}: ${item.status}. ${item.detail}`),
+      "",
+      "## Bundle Order",
+      ...orderedSections.map((item) => `- ${item}`),
+      "",
+      selectedExportMarkdown,
+      ...(includeRationale
+        ? [
+            "",
+            "## Rationale Note",
+            rationaleNote ? `- ${rationaleNote}` : "- Keep the rationale note attached with the copied package."
+          ]
+        : []),
+      ...(includeSidecar ? ["", copySidecarMarkdown] : [])
+    ].join("\n")
+  };
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -1313,6 +1401,7 @@ export function ReviewScorecard({
   const [selectedRationaleKey, setSelectedRationaleKey] = useState<string | null>(null);
   const [sidecarCopyState, setSidecarCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [coverSheetCopyState, setCoverSheetCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [finalBundleCopyState, setFinalBundleCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -1567,6 +1656,18 @@ export function ReviewScorecard({
     exportMarkdownById[selectedExport],
     selectedRationale?.note ?? null,
     copySidecar.markdown
+  );
+  const finalBundlePackage = buildFinalBundlePackage(
+    selectedDestination,
+    selectedExport,
+    exportMarkdownById[selectedExport],
+    recommendedExport.exportId,
+    selectedRationale?.note ?? null,
+    copySidecar.markdown,
+    recipientCoverSheet.markdown,
+    attachmentOrder,
+    copyPreflight,
+    blockers
   );
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
@@ -2394,6 +2495,66 @@ export function ReviewScorecard({
                 </ul>
               </div>
             </div>
+
+            <article className="artifactCard finalBundleCard">
+              <div className="artifactMeta">
+                <span>final bundle</span>
+                <code>one-step delivery copy</code>
+              </div>
+              <div className="claimHeader">
+                <strong>One-step final bundle</strong>
+                <button
+                  type="button"
+                  className="actionButton"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(finalBundlePackage.markdown);
+                      setFinalBundleCopyState("copied");
+                    } catch {
+                      setFinalBundleCopyState("failed");
+                    }
+                  }}
+                >
+                  Copy final bundle
+                </button>
+              </div>
+              <p className="scoreHint">{finalBundlePackage.summary}</p>
+
+              <div className="statusRow">
+                <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                <span className="pill">{selectedExportSurface.label}</span>
+              </div>
+
+              <div className="manifestGrid">
+                {finalBundlePackage.manifestItems.map((item) => (
+                  <article key={item.label} className="manifestCard">
+                    <div className="claimHeader">
+                      <strong>{item.label}</strong>
+                      <span className={`statusPill statusPill${item.tone}`}>{item.status}</span>
+                    </div>
+                    <p className="scoreHint">{item.detail}</p>
+                  </article>
+                ))}
+              </div>
+
+              <div className="handoffSection">
+                <h3>Bundle order</h3>
+                <ul className="checklist compact">
+                  {finalBundlePackage.orderedSections.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <textarea className="packetField packetFieldCompact" readOnly value={finalBundlePackage.markdown} />
+              <p className="scoreHint">
+                {finalBundleCopyState === "copied"
+                  ? "Final bundle copied to clipboard."
+                  : finalBundleCopyState === "failed"
+                    ? "Clipboard copy failed. You can still copy from the final-bundle field."
+                    : "Use this copy action when you want the cover sheet, manifest, primary export, and required companions to travel as one delivery artifact."}
+              </p>
+            </article>
 
             <div className="handoffSection">
               <h3>Carry-forward context</h3>
