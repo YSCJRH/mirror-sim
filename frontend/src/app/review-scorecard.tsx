@@ -41,6 +41,15 @@ type ReviewScorecardProps = {
 };
 
 const scoreOptions = [1, 2, 3, 4, 5] as const;
+const closeoutValidationCommands = [
+  "npm run build --prefix frontend",
+  "./make.ps1 smoke",
+  "./make.ps1 test",
+  "./make.ps1 eval-demo",
+  "python -m backend.app.cli audit-phase phase1",
+  "python -m backend.app.cli audit-phase phase2",
+  "python -m backend.app.cli audit-phase phase3"
+] as const;
 
 function formatDecisionLabel(score: number | null) {
   return score === null ? "unscored" : `${score}/5`;
@@ -224,6 +233,7 @@ export function ReviewScorecard({
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [issueCommentCopyState, setIssueCommentCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [handoffCopyState, setHandoffCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [closeoutCopyState, setCloseoutCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -300,6 +310,29 @@ export function ReviewScorecard({
     "",
     "## Carry-Forward Anchors",
     ...carryForwardAnchors.map((anchor) => `- ${anchor}`),
+    "",
+    "## Reviewer Notes",
+    notes.trim() ? notes : "- No reviewer notes captured yet."
+  ].join("\n");
+  const closeoutMarkdown = [
+    "## Exit Gate Closeout Packet",
+    `- Provisional sign-off: ${decision.label}`,
+    `- Eval: ${evalName} (${evalStatus})`,
+    `- Claims reviewed: ${claimCount}`,
+    `- Divergent turns reviewed: ${divergentTurnCount}`,
+    `- Scorecard coverage: ${filledCount}/${rubricRows.length} dimensions scored`,
+    "",
+    "## Closeout Recommendation",
+    `- ${recommendation}`,
+    "",
+    "## Validation Checklist",
+    ...closeoutValidationCommands.map((command) => `- Run \`${command}\``),
+    "",
+    "## Carry-Forward Evidence Anchors",
+    ...carryForwardAnchors.map((anchor) => `- ${anchor}`),
+    "",
+    "## Current Blockers",
+    ...blockers.map((blocker) => `- ${blocker}`),
     "",
     "## Reviewer Notes",
     notes.trim() ? notes : "- No reviewer notes captured yet."
@@ -596,6 +629,61 @@ export function ReviewScorecard({
                     : issueCommentCopyState === "failed"
                       ? "Clipboard copy failed. You can still copy from the packet field."
                       : "Use this field when the next operator needs a GitHub-comment-ready review handoff."}
+                </p>
+              </div>
+
+              <div className="packetSection">
+                <div className="claimHeader">
+                  <strong>Closeout packet</strong>
+                  <button
+                    type="button"
+                    className="actionButton"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(closeoutMarkdown);
+                        setCloseoutCopyState("copied");
+                      } catch {
+                        setCloseoutCopyState("failed");
+                      }
+                    }}
+                  >
+                    Copy closeout packet
+                  </button>
+                </div>
+                <p className="scoreHint">
+                  This version packages sign-off posture, trusted validation commands, carry-forward evidence anchors,
+                  and reviewer notes into an exit-gate-ready closeout note.
+                </p>
+
+                <div className="handoffSections">
+                  <div className="handoffSection">
+                    <h3>Validation checklist</h3>
+                    <ul className="checklist compact">
+                      {closeoutValidationCommands.map((command) => (
+                        <li key={command}>
+                          Run <code>{command}</code>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="handoffSection">
+                    <h3>Carry-forward anchors</h3>
+                    <ul className="checklist compact">
+                      {carryForwardAnchors.map((anchor) => (
+                        <li key={anchor}>{anchor}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <textarea className="packetField packetFieldCompact" readOnly value={closeoutMarkdown} />
+                <p className="scoreHint">
+                  {closeoutCopyState === "copied"
+                    ? "Closeout packet copied to clipboard."
+                    : closeoutCopyState === "failed"
+                      ? "Clipboard copy failed. You can still copy from the packet field."
+                      : "Use this field when the next operator needs an exit-gate or milestone closeout summary without rewriting the current review state."}
                 </p>
               </div>
             </div>
