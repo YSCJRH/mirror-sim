@@ -534,6 +534,18 @@ function alternativeExportsForDestination(
   return candidates.filter((exportId) => exportId !== recommendedExportId).slice(0, 2);
 }
 
+function buildPayloadPreview(markdown: string, previewLineCount = 10) {
+  const lines = markdown.trim().split("\n");
+  const previewLines = lines.slice(0, previewLineCount);
+
+  return {
+    excerpt: previewLines.join("\n"),
+    lineCount: lines.length,
+    hiddenLineCount: Math.max(lines.length - previewLines.length, 0),
+    sectionCount: lines.filter((line) => line.startsWith("## ")).length
+  };
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -754,6 +766,37 @@ export function ReviewScorecard({
     "closeout-packet": closeoutMarkdown,
     "pickup-routing": pickupRoutingMarkdown
   };
+  const comparisonAlternativeId = shortcutAlternatives[0] ?? recommendedExport.exportId;
+  const payloadPreviewCards = [
+    {
+      exportId: recommendedExport.exportId,
+      roleLabel: "Current recommendation",
+      detail: recommendedExport.reason,
+      toneClass: "statusPillready"
+    },
+    ...(comparisonAlternativeId !== recommendedExport.exportId
+      ? [
+          {
+            exportId: comparisonAlternativeId,
+            roleLabel: "Best nearby alternative",
+            detail: exportSurfaces[comparisonAlternativeId].summary,
+            toneClass: "statusPillfollowup"
+          }
+        ]
+      : [])
+  ].map(({ exportId, roleLabel, detail, toneClass }) => {
+    const coverage = exportCoverage[exportId];
+
+    return {
+      exportId,
+      roleLabel,
+      detail,
+      toneClass,
+      surface: exportSurfaces[exportId],
+      coverage,
+      preview: buildPayloadPreview(exportMarkdownById[exportId])
+    };
+  });
 
   return (
     <section className="panel panelAccent">
@@ -1001,6 +1044,7 @@ export function ReviewScorecard({
                   type="button"
                   className="actionButton"
                   onClick={() => {
+                    setSelectedExport(recommendedExport.exportId);
                     document.getElementById(recommendedExportSurface.targetId)?.scrollIntoView({
                       behavior: "smooth",
                       block: "start"
@@ -1035,6 +1079,67 @@ export function ReviewScorecard({
                     ? "Clipboard copy failed. You can still copy from the recommended export card below."
                     : "Use the shortcut strip when you already trust the current recommendation and want the fastest copy or jump action."}
               </p>
+            </div>
+
+            <div className="payloadPreviewBoard">
+              <div className="claimHeader">
+                <strong>Payload preview</strong>
+                <span className="pill">recommended vs nearby alternative</span>
+              </div>
+              <p className="scoreHint">
+                Compare the first sections of the live markdown payloads before you copy either path. The preview stays
+                frontend-only and reflects the current destination, scorecard, notes, and blocker state.
+              </p>
+
+              <div className="payloadPreviewGrid">
+                {payloadPreviewCards.map((card, index) => (
+                  <article
+                    key={card.exportId}
+                    className={`payloadPreviewCard${index === 0 ? " payloadPreviewCardPrimary" : ""}`}
+                  >
+                    <div className="claimHeader">
+                      <div>
+                        <strong>{card.surface.label}</strong>
+                        <p className="scoreHint">{card.surface.destination}</p>
+                      </div>
+                      <span className={`statusPill ${card.toneClass}`}>{card.roleLabel}</span>
+                    </div>
+
+                    <p className="scoreHint">{card.detail}</p>
+
+                    <div className="payloadPreviewMeta">
+                      <span className="metaChip">{card.preview.lineCount} lines</span>
+                      <span className="metaChip">{card.preview.sectionCount} sections</span>
+                      <span className="metaChip">
+                        {card.coverage.omits.length > 0 ? `${card.coverage.omits.length} omission(s)` : "full field coverage"}
+                      </span>
+                    </div>
+
+                    <pre className="payloadPreviewPre">{card.preview.excerpt}</pre>
+
+                    <div className="payloadPreviewFooter">
+                      <p className="scoreHint">
+                        {card.preview.hiddenLineCount > 0
+                          ? `+${card.preview.hiddenLineCount} more line(s) in the full ${card.surface.label.toLowerCase()} export below.`
+                          : `This preview already shows the full ${card.surface.label.toLowerCase()} payload.`}
+                      </p>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={() => {
+                          setSelectedExport(card.exportId);
+                          document.getElementById(card.surface.targetId)?.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                          });
+                        }}
+                      >
+                        Focus {card.surface.label}
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
 
             <div className="handoffSection">
