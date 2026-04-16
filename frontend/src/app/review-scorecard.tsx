@@ -1088,6 +1088,94 @@ function buildHandoffBundlePreview(
   };
 }
 
+function buildRecipientCoverSheet(
+  destination: DeliveryDestination,
+  selectedExportId: ExportSurfaceId,
+  recommendedExportId: ExportSurfaceId,
+  rationaleNote: string | null,
+  copyPreflight: ReturnType<typeof buildCopyPreflightChecklist>,
+  blockers: string[]
+) {
+  const selectedSurface = exportSurfaces[selectedExportId];
+  const recommendedSurface = exportSurfaces[recommendedExportId];
+  const followsRecommendation = selectedExportId === recommendedExportId;
+  const includeRationale = !followsRecommendation || copyPreflight.tone !== "ready";
+  const includeSidecar = destination !== "pr-comment" || blockers.length > 0 || copyPreflight.tone !== "ready";
+  const deliveryLead =
+    destination === "pr-comment"
+      ? "Lead with a concise GitHub-ready note so the next reader can understand the handoff without reformatting the package."
+      : destination === "closeout"
+        ? "Lead with a closure-ready summary so reviewers see the primary evidence bundle, confidence posture, and blocker state at a glance."
+        : "Lead with an operator-facing summary so the next owner sees the package purpose, selected export, and companions before diving into the detailed payload.";
+  const rationalePosture = followsRecommendation
+    ? `${selectedSurface.label} still follows the current recommendation for ${deliveryDestinations[destination].label.toLowerCase()}.`
+    : `${selectedSurface.label} is intentionally overriding ${recommendedSurface.label} for ${deliveryDestinations[destination].label.toLowerCase()}.`;
+  const blockerPosture =
+    blockers.length > 0
+      ? `Call out ${blockers.length} blocker(s) near the top of the package so the receiver treats this as an informed handoff instead of a clean final sign-off.`
+      : copyPreflight.tone === "ready"
+        ? "No active blockers currently need top-level receiver attention."
+        : "No blocker list is active, but the receiver should still treat the package as follow-up work until the copy-preflight warnings clear.";
+  const companions = [
+    {
+      label: "Primary export",
+      status: "included",
+      detail: `${selectedSurface.label} stays first because it carries the main ${deliveryDestinations[destination].label.toLowerCase()} payload.`
+    },
+    {
+      label: "Rationale note",
+      status: includeRationale ? "included" : "optional",
+      detail: includeRationale
+        ? rationaleNote ?? "Keep the rationale note attached so the receiver sees why this choice still makes sense."
+        : "The rationale note can stay optional when the current package already fits the destination cleanly."
+    },
+    {
+      label: "Copy sidecar",
+      status: includeSidecar ? "included" : "optional",
+      detail: includeSidecar
+        ? "Keep the sidecar attached so destination fit, blocker acknowledgement, and confidence cues remain visible."
+        : "The sidecar can stay optional when the destination is discussion-first and no extra blocker or confidence cues need emphasis."
+    }
+  ];
+
+  return {
+    statusTone: blockers.length > 0 && copyPreflight.tone === "ready" ? "followup" : copyPreflight.tone,
+    recommendationPosture: followsRecommendation ? "following recommendation" : "override in effect",
+    deliveryLead,
+    rationalePosture,
+    blockerPosture,
+    companions,
+    markdown: [
+      "# Recipient Handoff Cover Sheet",
+      "",
+      `- Destination: ${deliveryDestinations[destination].label}`,
+      `- Lead export: ${selectedSurface.label}`,
+      `- Recommendation posture: ${followsRecommendation ? "following the current recommendation" : `overriding ${recommendedSurface.label}`}`,
+      `- Package confidence: ${
+        copyPreflight.tone === "ready"
+          ? "ready to send"
+          : copyPreflight.tone === "followup"
+            ? "usable with follow-up"
+            : "draft-only handoff"
+      }`,
+      "",
+      "## Receiver orientation",
+      `- ${deliveryLead}`,
+      "",
+      "## Rationale posture",
+      `- ${rationalePosture}`,
+      ...(includeRationale ? [`- ${rationaleNote ?? "Keep the rationale note attached with the package."}`] : []),
+      "",
+      "## Blocker posture",
+      ...(blockers.length > 0 ? blockers.slice(0, 2).map((blocker) => `- ${blocker}`) : ["- No blockers surfaced."]),
+      `- ${blockerPosture}`,
+      "",
+      "## Included companions",
+      ...companions.map((companion) => `- ${companion.label}: ${companion.status}. ${companion.detail}`)
+    ].join("\n")
+  };
+}
+
 function buildAttachmentOrderGuidance(
   destination: DeliveryDestination,
   selectedExportId: ExportSurfaceId,
@@ -1224,6 +1312,7 @@ export function ReviewScorecard({
   const [shortcutCopyState, setShortcutCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [selectedRationaleKey, setSelectedRationaleKey] = useState<string | null>(null);
   const [sidecarCopyState, setSidecarCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [coverSheetCopyState, setCoverSheetCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -1295,6 +1384,14 @@ export function ReviewScorecard({
     selectedDestination,
     selectedExport,
     recommendedExport.exportId,
+    copyPreflight,
+    blockers
+  );
+  const recipientCoverSheet = buildRecipientCoverSheet(
+    selectedDestination,
+    selectedExport,
+    recommendedExport.exportId,
+    selectedRationale?.note ?? null,
     copyPreflight,
     blockers
   );
@@ -2115,6 +2212,101 @@ export function ReviewScorecard({
                   : sidecarCopyState === "failed"
                     ? "Clipboard copy failed. You can still copy from the sidecar field."
                     : "Use this sidecar when the next reader needs quick destination-fit and blocker-confidence context beside the main export."}
+              </p>
+            </article>
+
+            <article className="artifactCard coverSheetCard">
+              <div className="artifactMeta">
+                <span>cover sheet</span>
+                <code>recipient-facing lead-in</code>
+              </div>
+              <div className="claimHeader">
+                <strong>Recipient-facing cover sheet</strong>
+                <button
+                  type="button"
+                  className="actionButton"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(recipientCoverSheet.markdown);
+                      setCoverSheetCopyState("copied");
+                    } catch {
+                      setCoverSheetCopyState("failed");
+                    }
+                  }}
+                >
+                  Copy cover sheet
+                </button>
+              </div>
+              <p className="scoreHint">
+                Lead the final package with a concise reader-facing summary of destination, export choice, rationale
+                posture, blocker state, and the companions that will travel with the handoff.
+              </p>
+
+              <div className="coverSheetHighlightGrid">
+                <article className="coverSheetHighlight">
+                  <span>Destination</span>
+                  <strong>{deliveryDestinations[selectedDestination].label}</strong>
+                  <p>{selectedExportSurface.label} is the lead export for this package.</p>
+                </article>
+                <article className="coverSheetHighlight">
+                  <span>Recommendation posture</span>
+                  <strong>{recipientCoverSheet.recommendationPosture}</strong>
+                  <p>{recipientCoverSheet.rationalePosture}</p>
+                </article>
+                <article className="coverSheetHighlight">
+                  <span>Bundle confidence</span>
+                  <strong>
+                    {copyPreflight.tone === "ready"
+                      ? "ready to send"
+                      : copyPreflight.tone === "followup"
+                        ? "usable with follow-up"
+                        : "draft-only handoff"}
+                  </strong>
+                  <p>{recipientCoverSheet.blockerPosture}</p>
+                </article>
+              </div>
+
+              <div className="statusRow">
+                <span className={`statusPill statusPill${recipientCoverSheet.statusTone}`}>
+                  {recipientCoverSheet.recommendationPosture}
+                </span>
+                <span className="pill">{selectedExportSurface.label}</span>
+              </div>
+
+              <div className="handoffSections">
+                <div className="handoffSection">
+                  <h3>Receiver orientation</h3>
+                  <p>{recipientCoverSheet.deliveryLead}</p>
+                </div>
+
+                <div
+                  className={`handoffSection${
+                    blockers.length > 0 || copyPreflight.tone === "hold" ? " handoffSectionWarning" : " handoffSectionReady"
+                  }`}
+                >
+                  <h3>Blocker posture</h3>
+                  <p>{recipientCoverSheet.blockerPosture}</p>
+                </div>
+
+                <div className="handoffSection">
+                  <h3>Included companions</h3>
+                  <ul className="checklist compact">
+                    {recipientCoverSheet.companions.map((companion) => (
+                      <li key={companion.label}>
+                        {companion.label}: {companion.status}. {companion.detail}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <textarea className="packetField packetFieldCompact" readOnly value={recipientCoverSheet.markdown} />
+              <p className="scoreHint">
+                {coverSheetCopyState === "copied"
+                  ? "Cover sheet copied to clipboard."
+                  : coverSheetCopyState === "failed"
+                    ? "Clipboard copy failed. You can still copy from the cover-sheet field."
+                    : "Use this cover sheet when you want the receiver to understand the package purpose before reading the detailed export and companions."}
               </p>
             </article>
 

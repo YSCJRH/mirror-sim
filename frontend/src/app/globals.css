@@ -700,8 +700,45 @@ code {
   align-content: start;
 }
 
+.coverSheetCard {
+  align-content: start;
+}
+
 .bundlePreviewCard {
   align-content: start;
+}
+
+.coverSheetHighlightGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.coverSheetHighlight {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border);
+}
+
+.coverSheetHighlight span {
+  color: var(--muted);
+  font-size: 0.84rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.coverSheetHighlight strong {
+  font-size: 1rem;
+}
+
+.coverSheetHighlight p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 .bundlePreviewStack {
