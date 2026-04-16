@@ -47,6 +47,10 @@
     {
       "title": "Phase 12 - Delivery Preset Refinement and Comparison Flow",
       "description": "Refine the new delivery presets and shortcut surfaces with clearer comparison and context carry-forward, without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 13 - Guided Export Payload Review",
+      "description": "Refine the guided export surfaces by making payload differences and destination tradeoffs easier to review without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -109,6 +113,11 @@
       "name": "phase:12",
       "color": "5b48c8",
       "description": "Phase 12 delivery preset refinement and comparison work."
+    },
+    {
+      "name": "phase:13",
+      "color": "6b40cf",
+      "description": "Phase 13 guided export payload review work."
     },
     {
       "name": "area:backend",
@@ -630,6 +639,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd context carry-forward chips to the guided export area so an operator can see at a glance which claims, blockers, and validation steps will travel with the current preset or recommended export.\n\n## input\n- current recommendation banner, readiness panel, coverage matrix, and detailed export surfaces\n- current claim, blocker, and validation-command context already rendered in the workbench\n- current workbench layout\n\n## output\n- lightweight carry-forward chips or tags that make the export payload more legible before copy\n- no backend API calls and no new artifact files\n- no packet schema changes\n\n## out-of-scope\n- persistent selection state across sessions\n- posting directly to GitHub\n- changing existing packet contents or queue-governance rules\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the carry-forward chips visibly track the current preset/recommended export context\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 12"
+    },
+    {
+      "title": "Phase 13 exit gate",
+      "milestone": "Phase 13 - Guided Export Payload Review",
+      "labels": [
+        "phase:13",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 13 guided export payload review criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 13 milestone state\n- merged PR state for queue sync and export-review work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 13 closeout decision\n- documented stop condition for the Phase 13 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 13 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 13"
+    },
+    {
+      "title": "Phase 13: sync bootstrap spec and docs to the active export-review queue",
+      "milestone": "Phase 13 - Guided Export Payload Review",
+      "labels": [
+        "phase:13",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 12 baseline to the active Phase 13 queue so docs, bootstrap metadata, and README reflect the new export-review track.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `README.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- current live GitHub milestone and issue state\n\n## output\n- `phase:13` and Phase 13 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 13 as the active successor queue\n- no stale Phase 12 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- export-review UI changes\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 13"
+    },
+    {
+      "title": "Phase 13: add side-by-side export payload preview for the current recommendation and best alternative",
+      "milestone": "Phase 13 - Guided Export Payload Review",
+      "labels": [
+        "phase:13",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a side-by-side payload preview so an operator can compare the current recommended export with the best nearby alternative before copying either one.\n\n## input\n- current recommendation banner, shortcut strip, and detailed export surfaces\n- current preset comparison cards and coverage matrix\n- current workbench layout\n\n## output\n- a side-by-side preview of the recommended export and one alternative export\n- no backend API calls and no new artifact files\n- no packet schema changes\n\n## out-of-scope\n- posting directly to GitHub\n- removing the existing detailed export cards\n- queue-governance changes\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the comparison preview makes tradeoffs easier to spot before copy\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 13"
+    },
+    {
+      "title": "Phase 13: add destination tradeoff notes and fallback guidance for guided exports",
+      "milestone": "Phase 13 - Guided Export Payload Review",
+      "labels": [
+        "phase:13",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd clearer tradeoff notes and fallback guidance to the guided export area so the operator knows when to accept the current recommendation and when to pivot to another export.\n\n## input\n- current recommendation banner, shortcut strip, preset cards, and coverage matrix\n- current workbench layout\n- current blocker and readiness signals\n\n## output\n- visible tradeoff and fallback guidance tied to the current destination and recommendation\n- no backend API calls and no new artifact files\n- no packet schema changes\n\n## out-of-scope\n- posting directly to GitHub\n- changing queue-governance rules\n- removing the detailed export controls\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the guidance helps explain when to accept or override the recommendation\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 13"
     }
   ]
 }
