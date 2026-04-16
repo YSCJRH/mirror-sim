@@ -175,6 +175,7 @@ const deliveryDestinations: Record<DeliveryDestination, { label: string; summary
     summary: "Use when the next operator needs the clearest next step for continuing the work."
   }
 };
+const deliveryDestinationOrder: DeliveryDestination[] = ["pr-comment", "closeout", "pickup-handoff"];
 const exportCoverage: Record<ExportSurfaceId, ExportCoverage> = {
   "decision-brief": {
     includes: ["Claim context", "Blockers", "Reviewer notes"],
@@ -551,6 +552,14 @@ export function ReviewScorecard({
   );
   const recommendedExport = recommendedExportForDestination(selectedDestination, pickupLane, deliveryReadiness);
   const recommendedExportSurface = exportSurfaces[recommendedExport.exportId];
+  const presetRecommendations = deliveryDestinationOrder.map((destination) => {
+    const recommendation = recommendedExportForDestination(destination, pickupLane, deliveryReadiness);
+    return {
+      destination,
+      recommendation,
+      exportSurface: exportSurfaces[recommendation.exportId]
+    };
+  });
   const packetMarkdown = [
     "# Mirror Review Packet",
     "",
@@ -848,6 +857,39 @@ export function ReviewScorecard({
                   {deliveryDestinations[destination].label}
                 </button>
               ))}
+            </div>
+
+            <div className="presetGrid">
+              {presetRecommendations.map(({ destination, recommendation, exportSurface }) => {
+                const isActive = selectedDestination === destination;
+
+                return (
+                  <article
+                    key={destination}
+                    className={`presetCard${isActive ? " presetCardActive" : ""}`}
+                  >
+                    <div className="claimHeader">
+                      <strong>{deliveryDestinations[destination].label}</strong>
+                      {isActive ? <span className="statusPill statusPillready">active</span> : null}
+                    </div>
+                    <p className="scoreHint">{deliveryDestinations[destination].summary}</p>
+                    <p>
+                      <strong>Recommended export:</strong> {exportSurface.label}
+                    </p>
+                    <p className="scoreHint">{recommendation.reason}</p>
+                    <button
+                      type="button"
+                      className="actionButton"
+                      onClick={() => {
+                        setSelectedDestination(destination);
+                        setSelectedExport(recommendation.exportId);
+                      }}
+                    >
+                      {isActive ? "Preset active" : "Use preset"}
+                    </button>
+                  </article>
+                );
+              })}
             </div>
 
             <div className="handoffSections">
