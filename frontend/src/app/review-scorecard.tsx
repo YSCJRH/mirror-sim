@@ -38,6 +38,20 @@ type LaneRoute = {
   reviewPath: string[];
 };
 
+type ExportSurfaceId =
+  | "decision-brief"
+  | "review-packet"
+  | "issue-comment"
+  | "closeout-packet"
+  | "pickup-routing";
+
+type ExportSurface = {
+  label: string;
+  destination: string;
+  summary: string;
+  targetId: string;
+};
+
 type ReviewScorecardProps = {
   rubricRows: RubricRow[];
   claimCount: number;
@@ -97,6 +111,38 @@ const laneRoutes: Record<PickupLane, LaneRoute> = {
       "Require an explicit review pass before merge when templates, contracts, queue rules, or operating docs are involved.",
       "If the queue becomes paused or fail after merge, stop pickup and repair the milestone, exit gate, or label structure before continuing."
     ]
+  }
+};
+const exportSurfaces: Record<ExportSurfaceId, ExportSurface> = {
+  "decision-brief": {
+    label: "Decision brief",
+    destination: "Use for a concise operator handoff summary or a fast status checkpoint.",
+    summary: "Carries the current recommendation, blockers, next actions, and evidence anchors in a compact form.",
+    targetId: "decision-brief-export"
+  },
+  "review-packet": {
+    label: "Review packet",
+    destination: "Use for broader reviewer or product follow-up context when the full packet is still helpful.",
+    summary: "Includes claims, divergent turns, rubric context, and the current worksheet state in the widest export surface.",
+    targetId: "review-packet-export"
+  },
+  "issue-comment": {
+    label: "Issue comment packet",
+    destination: "Use for a PR or issue comment when the next operator needs GitHub-ready handoff copy.",
+    summary: "Compresses the handoff into comment-ready markdown without requiring manual reformatting.",
+    targetId: "issue-comment-export"
+  },
+  "closeout-packet": {
+    label: "Closeout packet",
+    destination: "Use for an exit gate or milestone closeout note when validation and sign-off posture need to travel together.",
+    summary: "Packages sign-off posture, trusted validation commands, evidence anchors, blockers, and reviewer notes for closeout.",
+    targetId: "closeout-packet-export"
+  },
+  "pickup-routing": {
+    label: "Pickup routing",
+    destination: "Use for the next operator pickup when lane-specific merge and checkpoint rules need to stay visible.",
+    summary: "Maps the current review state onto safe-lane or protected-core pickup, merge, and post-merge steps.",
+    targetId: "pickup-routing-export"
   }
 };
 
@@ -285,6 +331,7 @@ export function ReviewScorecard({
   const [closeoutCopyState, setCloseoutCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [pickupLane, setPickupLane] = useState<PickupLane>("lane:auto-safe");
   const [pickupRoutingCopyState, setPickupRoutingCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [selectedExport, setSelectedExport] = useState<ExportSurfaceId>("issue-comment");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -305,6 +352,7 @@ export function ReviewScorecard({
   const blockers = buildBlockers(decision, unscoredDimensions, weakDimensions, notes);
   const carryForwardAnchors = buildCarryForwardAnchors(claimPackets, divergentTurns);
   const pickupRoute = laneRoutes[pickupLane];
+  const selectedExportSurface = exportSurfaces[selectedExport];
   const packetMarkdown = [
     "# Mirror Review Packet",
     "",
@@ -557,6 +605,60 @@ export function ReviewScorecard({
 
           <article className="artifactCard handoffCard">
             <div className="artifactMeta">
+              <span>exports</span>
+              <code>destination guide</code>
+            </div>
+            <div className="claimHeader">
+              <strong>Packet chooser</strong>
+              <button
+                type="button"
+                className="actionButton"
+                onClick={() => {
+                  document.getElementById(selectedExportSurface.targetId)?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                  });
+                }}
+              >
+                Jump to selected export
+              </button>
+            </div>
+            <p className="scoreHint">
+              Use this guide when you know the destination first and need the right export surface without scanning the whole sidebar.
+            </p>
+
+            <div className="laneToggleGroup" role="tablist" aria-label="Export destination chooser">
+              {(Object.keys(exportSurfaces) as ExportSurfaceId[]).map((exportId) => (
+                <button
+                  key={exportId}
+                  type="button"
+                  className={`laneToggleButton${selectedExport === exportId ? " laneToggleButtonActive" : ""}`}
+                  onClick={() => setSelectedExport(exportId)}
+                >
+                  {exportSurfaces[exportId].label}
+                </button>
+              ))}
+            </div>
+
+            <div className="handoffSections">
+              <div className="handoffSection">
+                <h3>Selected export</h3>
+                <p>{selectedExportSurface.summary}</p>
+              </div>
+
+              <div className="handoffSection">
+                <h3>Best destination</h3>
+                <ul className="checklist compact">
+                  <li>{selectedExportSurface.destination}</li>
+                  <li>Current sign-off posture: {decision.label}.</li>
+                  <li>Current blockers surfaced: {blockers.length}.</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article id="decision-brief-export" className="artifactCard handoffCard">
+            <div className="artifactMeta">
               <span>handoff</span>
               <code>operator pickup brief</code>
             </div>
@@ -628,7 +730,7 @@ export function ReviewScorecard({
             </p>
           </article>
 
-          <article className="artifactCard handoffCard">
+          <article id="pickup-routing-export" className="artifactCard handoffCard">
             <div className="artifactMeta">
               <span>routing</span>
               <code>lane-aware pickup</code>
@@ -737,7 +839,7 @@ export function ReviewScorecard({
               <code>frontend-derived markdown</code>
             </div>
             <div className="packetStack">
-              <div className="packetSection">
+              <div id="review-packet-export" className="packetSection">
                 <div className="claimHeader">
                   <strong>Shareable review packet</strong>
                   <button
@@ -769,7 +871,7 @@ export function ReviewScorecard({
                 </p>
               </div>
 
-              <div className="packetSection">
+              <div id="issue-comment-export" className="packetSection">
                 <div className="claimHeader">
                   <strong>Issue comment packet</strong>
                   <button
@@ -800,7 +902,7 @@ export function ReviewScorecard({
                 </p>
               </div>
 
-              <div className="packetSection">
+              <div id="closeout-packet-export" className="packetSection">
                 <div className="claimHeader">
                   <strong>Closeout packet</strong>
                   <button
