@@ -68,6 +68,11 @@ type ExportCoverage = {
   note: string;
 };
 
+type DeliveryPresetProfile = {
+  emphasis: string;
+  bestFit: string;
+};
+
 type ReviewScorecardProps = {
   rubricRows: RubricRow[];
   claimCount: number;
@@ -173,6 +178,20 @@ const deliveryDestinations: Record<DeliveryDestination, { label: string; summary
   "pickup-handoff": {
     label: "Pickup handoff",
     summary: "Use when the next operator needs the clearest next step for continuing the work."
+  }
+};
+const presetProfiles: Record<DeliveryDestination, DeliveryPresetProfile> = {
+  "pr-comment": {
+    emphasis: "Compact GitHub-ready summary",
+    bestFit: "Best when the next step is discussion inside a PR or issue thread."
+  },
+  closeout: {
+    emphasis: "Validation and sign-off evidence",
+    bestFit: "Best when a milestone or exit gate needs a closeout-ready note."
+  },
+  "pickup-handoff": {
+    emphasis: "Operator continuation path",
+    bestFit: "Best when the next operator needs to keep moving without re-reading the whole workbench."
   }
 };
 const deliveryDestinationOrder: DeliveryDestination[] = ["pr-comment", "closeout", "pickup-handoff"];
@@ -885,6 +904,8 @@ export function ReviewScorecard({
             <div className="presetGrid">
               {presetRecommendations.map(({ destination, recommendation, exportSurface }) => {
                 const isActive = selectedDestination === destination;
+                const coverage = exportCoverage[recommendation.exportId];
+                const presetProfile = presetProfiles[destination];
 
                 return (
                   <article
@@ -899,7 +920,37 @@ export function ReviewScorecard({
                     <p>
                       <strong>Recommended export:</strong> {exportSurface.label}
                     </p>
+                    <p>
+                      <strong>Emphasis:</strong> {presetProfile.emphasis}
+                    </p>
+                    <p className="scoreHint">{presetProfile.bestFit}</p>
                     <p className="scoreHint">{recommendation.reason}</p>
+
+                    <div className="presetMeta">
+                      <div className="presetMetaBlock">
+                        <h3>Expected omissions</h3>
+                        <div className="chipRow">
+                          {coverage.omits.length > 0 ? (
+                            coverage.omits.map((item) => (
+                              <span key={item} className="metaChip">
+                                {item}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="metaChip">No key delivery fields omitted</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="presetMetaBlock">
+                        <h3>Best-fit destination</h3>
+                        <div className="chipRow">
+                          <span className="metaChip">{deliveryDestinations[destination].label}</span>
+                          <span className="metaChip">{exportSurface.label}</span>
+                        </div>
+                      </div>
+                    </div>
+
                     <button
                       type="button"
                       className="actionButton"

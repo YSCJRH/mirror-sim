@@ -507,6 +507,35 @@ code {
   margin: 0;
 }
 
+.presetMeta,
+.presetMetaBlock {
+  display: grid;
+  gap: 8px;
+}
+
+.presetMetaBlock h3 {
+  margin: 0;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.metaChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(15, 107, 99, 0.1);
+  border: 1px solid rgba(15, 107, 99, 0.16);
+  color: var(--accent-strong);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
 .shortcutStrip {
   display: grid;
   gap: 12px;
