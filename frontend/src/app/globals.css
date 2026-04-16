@@ -455,6 +455,10 @@ code {
   align-content: start;
 }
 
+.packetCard {
+  align-content: start;
+}
+
 .noteLabel {
   font-weight: 700;
   color: var(--accent-strong);
@@ -476,6 +480,38 @@ code {
 .notesField:focus {
   outline: 2px solid rgba(15, 107, 99, 0.2);
   border-color: rgba(15, 107, 99, 0.45);
+}
+
+.packetField {
+  width: 100%;
+  min-height: 260px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 107, 99, 0.18);
+  background: #1f1d1a;
+  color: #f5efe4;
+  font: inherit;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 107, 99, 0.24);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--accent-strong);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.actionButton:hover {
+  border-color: rgba(15, 107, 99, 0.45);
+  color: var(--accent);
 }
 
 .timelineCards {
