@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 9 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 10 queue resumption.
 
 ## Current Gate State
 
@@ -12,7 +12,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 6 exit gate: closed
 - Phase 7 exit gate: closed
 - Phase 8 exit gate: closed
-- Phase 9 exit gate: open
+- Phase 9 exit gate: closed
+- Phase 10 exit gate: open
 
 Local phase audits currently report:
 
@@ -59,16 +60,24 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 8 - Closeout Delivery and Pickup Routing`
   - closed
+- Phase 9 exit issue `#60`
+  - closed
+- milestone `Phase 9 - Review Delivery Polish and Completeness`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 9 queue kickoff
+  - no open pull requests remain after the Phase 10 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 9 - Review Delivery Polish and Completeness` is open.
-- `#60` `Phase 9 exit gate`
+- milestone `Phase 10 - Guided Delivery and Quick Export` is open.
+- `#67` `Phase 10 exit gate`
   - open
-  - blocked until the Phase 9 review delivery polish and completeness slice is complete
-- The current Phase 9 execution slice is tracked through:
+-  - blocked until the Phase 10 guided delivery and quick export slice is complete
+- The current Phase 10 execution slice is tracked through:
+  - `#68` `Phase 10: sync bootstrap spec and docs to the active guided-delivery queue`
+  - `#69` `Phase 10: add destination-aware recommended export banner and quick-copy action in the workbench`
+  - `#70` `Phase 10: add packet coverage matrix and destination inclusion preview in the workbench`
+- The completed Phase 9 slice was tracked through:
   - `#61` `Phase 9: sync bootstrap spec and docs to the active delivery-polish queue`
   - `#62` `Phase 9: add export destination guide and packet chooser in the workbench`
   - `#63` `Phase 9: add delivery completeness summary and missing-input warnings in the workbench`

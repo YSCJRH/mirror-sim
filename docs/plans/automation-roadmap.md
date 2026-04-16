@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, and Phase 9 is now the active delivery-polish track.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, and Phase 10 is now the active guided-delivery track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -28,9 +28,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 8 is closed locally and in GitHub.
 - Phase 8 exit issue `#53` is closed and milestone `Phase 8 - Closeout Delivery and Pickup Routing` is closed.
 - The Phase 8 queue was completed through issues `#53-#56`.
-- Phase 9 is the active successor queue.
-- milestone `Phase 9 - Review Delivery Polish and Completeness` is open.
-- The Phase 9 queue is initialized through issues `#60-#63`.
+- Phase 9 is closed locally and in GitHub.
+- Phase 9 exit issue `#60` is closed and milestone `Phase 9 - Review Delivery Polish and Completeness` is closed.
+- The Phase 9 queue was completed through issues `#60-#63`.
+- Phase 10 is the active successor queue.
+- milestone `Phase 10 - Guided Delivery and Quick Export` is open.
+- The Phase 10 queue is initialized through issues `#67-#70`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.

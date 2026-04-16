@@ -35,6 +35,10 @@
     {
       "title": "Phase 9 - Review Delivery Polish and Completeness",
       "description": "Consolidate the growing workbench delivery surfaces by mapping each export to its GitHub or operator destination and surfacing completion gaps without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 10 - Guided Delivery and Quick Export",
+      "description": "Turn the growing set of workbench delivery surfaces into a more guided, lower-friction operator flow with destination-aware recommendations and quick export actions, without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -82,6 +86,11 @@
       "name": "phase:9",
       "color": "315f8c",
       "description": "Phase 9 review delivery polish and completeness work."
+    },
+    {
+      "name": "phase:10",
+      "color": "4157a5",
+      "description": "Phase 10 guided delivery and quick export work."
     },
     {
       "name": "area:backend",
@@ -468,6 +477,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a delivery completeness summary to the workbench so an operator can see which missing scores, notes, or blockers still weaken the current packet set before copying review, closeout, or pickup exports.\n\n## input\n- current reviewer scorecard state\n- current decision brief, closeout packet, and pickup-routing packet state\n- current blocker and note handling in the workbench\n\n## output\n- a delivery-readiness summary panel that highlights missing rubric scores, empty reviewer notes, and unresolved blockers\n- visible warnings that make incomplete exports harder to miss before handoff\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- persistent draft storage\n- changing packet or rubric contracts\n- changing lane-classifier or queue-governance behavior\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that incomplete scorecard or note state surfaces clear warnings in the UI\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 9"
+    },
+    {
+      "title": "Phase 10 exit gate",
+      "milestone": "Phase 10 - Guided Delivery and Quick Export",
+      "labels": [
+        "phase:10",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 10 guided delivery and quick export criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 10 milestone state\n- merged PR state for queue sync and guided-delivery work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 10 closeout decision\n- documented stop condition for the Phase 10 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 10 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 10"
+    },
+    {
+      "title": "Phase 10: sync bootstrap spec and docs to the active guided-delivery queue",
+      "milestone": "Phase 10 - Guided Delivery and Quick Export",
+      "labels": [
+        "phase:10",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 9 baseline to the active Phase 10 queue so docs, bootstrap metadata, and README reflect the new guided-delivery track.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `README.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- current live GitHub milestone and issue state\n\n## output\n- `phase:10` and Phase 10 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 10 as the active successor queue\n- no stale Phase 9 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- guided-export UI changes\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 10"
+    },
+    {
+      "title": "Phase 10: add destination-aware recommended export banner and quick-copy action in the workbench",
+      "milestone": "Phase 10 - Guided Delivery and Quick Export",
+      "labels": [
+        "phase:10",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a destination-aware recommendation banner to the workbench so the operator can see the currently best export for a PR comment, closeout, or pickup handoff and copy it without hopping between multiple packet cards.\n\n## input\n- current packet chooser, delivery-readiness panel, and export surfaces\n- current sign-off posture, blockers, and reviewer-note state\n- current workbench layout\n\n## output\n- a recommended export banner tied to the current state and selected destination\n- one-step quick-copy for the recommended export from the guide surface\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or queue-governance rules\n- removing the existing detailed export cards\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that changing the destination updates the recommendation and quick-copy target\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 10"
+    },
+    {
+      "title": "Phase 10: add packet coverage matrix and destination inclusion preview in the workbench",
+      "milestone": "Phase 10 - Guided Delivery and Quick Export",
+      "labels": [
+        "phase:10",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a packet coverage matrix to the workbench so an operator can see which current export includes claims, blockers, validation commands, lane guidance, and reviewer notes before copying it to a destination.\n\n## input\n- current review packet, issue-comment packet, closeout packet, decision brief, and pickup-routing packet surfaces\n- current export destination guide and delivery-readiness panel\n- current workbench layout\n\n## output\n- a matrix or inclusion preview that compares packet coverage by destination and content type\n- a clearer explanation of what each export omits as well as what it includes\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- packet schema changes\n- removing existing packet surfaces\n- storing user preferences or persistent delivery presets\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the matrix helps distinguish packet coverage and omissions at a glance\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 10"
     }
   ]
 }
