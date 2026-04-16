@@ -62,6 +62,7 @@ type DeliveryReadiness = {
 
 type DeliveryDestination = "pr-comment" | "closeout" | "pickup-handoff";
 type BundleVariant = "compact" | "full";
+type ReceiverRole = "reviewer" | "approver" | "operator";
 
 type ExportCoverage = {
   includes: string[];
@@ -204,6 +205,20 @@ const bundleVariantProfiles: Record<BundleVariant, { label: string; summary: str
   full: {
     label: "Full",
     summary: "Carry the richer delivery bundle so cover context, rationale, and sidecar all travel together for deeper review."
+  }
+};
+const receiverRoleProfiles: Record<ReceiverRole, { label: string; summary: string }> = {
+  reviewer: {
+    label: "Reviewer",
+    summary: "Tailor the bundle for someone who is validating evidence quality, fit, and whether more context is needed."
+  },
+  approver: {
+    label: "Approver",
+    summary: "Tailor the bundle for someone who needs to make a sign-off, hold, or escalation decision from the same package."
+  },
+  operator: {
+    label: "Operator",
+    summary: "Tailor the bundle for someone who is picking up the next concrete action after the handoff is received."
   }
 };
 const exportCoverage: Record<ExportSurfaceId, ExportCoverage> = {
@@ -1301,41 +1316,87 @@ function buildAttachmentOrderGuidance(
 function buildReceiverGuidance(
   destination: DeliveryDestination,
   variant: BundleVariant,
+  role: ReceiverRole,
   copyPreflight: ReturnType<typeof buildCopyPreflightChecklist>,
   nextActions: string[],
   blockers: string[]
 ) {
   const actionLead =
-    destination === "pr-comment"
-      ? "Review the copied bundle in-thread and decide whether the current packet is enough for sign-off discussion."
-      : destination === "closeout"
-        ? "Review the copied bundle as a closure packet and decide whether the branch can actually clear the exit gate."
-        : "Acknowledge pickup, name the first execution step, and keep the current blocker posture visible for the next operator.";
+    role === "reviewer"
+      ? destination === "pr-comment"
+        ? "Review the copied bundle in-thread and decide whether the current evidence packet is sufficient for discussion."
+        : destination === "closeout"
+          ? "Review the copied bundle as a closure packet and call out whether evidence quality is strong enough for gate review."
+          : "Review the pickup bundle and confirm whether the next operator has enough context to act without reopening the packet."
+      : role === "approver"
+        ? destination === "pr-comment"
+          ? "Use the copied bundle to decide whether the branch is ready for a sign-off response or still needs more evidence."
+          : destination === "closeout"
+            ? "Use the copied bundle to make an explicit approve, hold, or escalate decision for the current exit path."
+            : "Use the pickup bundle to decide whether execution can proceed immediately or needs another review checkpoint."
+        : destination === "pr-comment"
+          ? "Review the copied bundle in-thread and decide whether the current packet is enough for sign-off discussion."
+          : destination === "closeout"
+            ? "Review the copied bundle as a closure packet and decide whether the branch can actually clear the exit gate."
+            : "Acknowledge pickup, name the first execution step, and keep the current blocker posture visible for the next operator.";
   const checklist = [
     actionLead,
-    nextActions[0] ?? "Confirm the next concrete action before treating the handoff as complete.",
+    role === "reviewer"
+      ? `Reviewer focus: ${nextActions[0] ?? "Confirm the strongest evidence-backed next action before treating the handoff as complete."}`
+      : role === "approver"
+        ? `Decision focus: ${nextActions[0] ?? "Name the next required action before issuing an approval or hold decision."}`
+        : nextActions[0] ?? "Confirm the next concrete action before treating the handoff as complete.",
     blockers[0] === "No blocking issues surfaced in the current frontend-only review state."
       ? "Explicitly note that no blocking issues surfaced in the current review state."
       : `Carry the top blocker forward: ${blockers[0]}`,
-    variant === "compact"
-      ? "Ask for the full bundle if the receiver still needs extra rationale or confidence context."
-      : "Reply with the first follow-through action after reading the richer bundle."
+    role === "reviewer"
+      ? variant === "compact"
+        ? "Ask for the full bundle if your review still needs rationale or confidence detail."
+        : "Reply with the strongest evidence boundary that still needs attention after review."
+      : role === "approver"
+        ? variant === "compact"
+          ? "Request the full bundle before deciding if the compact packet feels too light for approval."
+          : "Reply with an explicit approve, hold, or escalate posture after reading the richer bundle."
+        : variant === "compact"
+          ? "Ask for the full bundle if the receiver still needs extra rationale or confidence context."
+          : "Reply with the first follow-through action after reading the richer bundle."
   ];
   const replyPrompt =
-    destination === "pr-comment"
-      ? `Reviewed the ${variant} bundle for ${deliveryDestinations[destination].label.toLowerCase()}; next step is ____, and blocker posture is ____.`
-      : destination === "closeout"
-        ? `Reviewed the ${variant} closeout bundle; gate decision is ____, next follow-through action is ____, and blocker posture is ____.`
-        : `Picked up the ${variant} bundle; first execution step is ____, reply checkpoint is ____, and blocker posture is ____.`;
+    role === "reviewer"
+      ? destination === "pr-comment"
+        ? `Reviewer read the ${variant} bundle for ${deliveryDestinations[destination].label.toLowerCase()}; evidence confidence is ____, more context needed is ____, and blocker posture is ____.`
+        : destination === "closeout"
+          ? `Reviewer read the ${variant} closeout bundle; review posture is ____, strongest remaining evidence gap is ____, and blocker posture is ____.`
+          : `Reviewer read the ${variant} pickup bundle; the next operator has enough context for ____ / still needs ____, and blocker posture is ____.`
+      : role === "approver"
+        ? destination === "pr-comment"
+          ? `Approver reviewed the ${variant} bundle for ${deliveryDestinations[destination].label.toLowerCase()}; decision is approve / hold / request-more-context because ____, and blocker posture is ____.`
+          : destination === "closeout"
+            ? `Approver reviewed the ${variant} closeout bundle; gate decision is ____, required follow-through is ____, and blocker posture is ____.`
+            : `Approver reviewed the ${variant} pickup bundle; execution may proceed after ____ / must pause for ____, and blocker posture is ____.`
+        : destination === "pr-comment"
+          ? `Reviewed the ${variant} bundle for ${deliveryDestinations[destination].label.toLowerCase()}; next step is ____, and blocker posture is ____.`
+          : destination === "closeout"
+            ? `Reviewed the ${variant} closeout bundle; gate decision is ____, next follow-through action is ____, and blocker posture is ____.`
+            : `Picked up the ${variant} bundle; first execution step is ____, reply checkpoint is ____, and blocker posture is ____.`;
 
   return {
+    roleLabel: receiverRoleProfiles[role].label,
     tone: copyPreflight.tone === "ready" && blockers[0] === "No blocking issues surfaced in the current frontend-only review state."
       ? "ready"
       : copyPreflight.tone,
     summary:
-      variant === "compact"
-        ? "Keep a short receiver checklist and a reply prompt attached so the next reader can confirm whether the compact bundle is enough."
-        : "Carry explicit follow-through cues so the next reader can acknowledge the richer bundle and state the first action after review.",
+      role === "reviewer"
+        ? variant === "compact"
+          ? "Keep reviewer-facing cues attached so the next reviewer can quickly decide whether the compact bundle is enough."
+          : "Carry reviewer-facing cues so the next reviewer can comment on evidence quality without rebuilding the handoff."
+        : role === "approver"
+          ? variant === "compact"
+            ? "Keep approver-facing cues attached so the next decision-maker can request more context before clearing the handoff."
+            : "Carry approver-facing cues so the next decision-maker can issue an approve, hold, or escalate posture from the same bundle."
+          : variant === "compact"
+            ? "Keep a short operator checklist and reply prompt attached so the next operator can confirm whether the compact bundle is enough."
+            : "Carry explicit operator follow-through cues so the next reader can acknowledge the richer bundle and state the first action after review.",
     checklist,
     replyPrompt
   };
@@ -1438,6 +1499,7 @@ function buildFinalBundlePackage(
         : []),
       "",
       "## Receiver Follow-Through",
+      `- Receiver role: ${receiverGuidance.roleLabel}`,
       ...receiverGuidance.checklist.map((item) => `- ${item}`),
       "",
       "## Suggested Reply Prompt",
@@ -1483,6 +1545,7 @@ export function ReviewScorecard({
   const [sidecarCopyState, setSidecarCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [coverSheetCopyState, setCoverSheetCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [bundleVariant, setBundleVariant] = useState<BundleVariant>("compact");
+  const [receiverRole, setReceiverRole] = useState<ReceiverRole>("operator");
   const [finalBundleCopyState, setFinalBundleCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -1742,6 +1805,7 @@ export function ReviewScorecard({
   const receiverGuidance = buildReceiverGuidance(
     selectedDestination,
     bundleVariant,
+    receiverRole,
     copyPreflight,
     nextActions,
     blockers
@@ -2625,9 +2689,24 @@ export function ReviewScorecard({
               </div>
               <p className="scoreHint">{bundleVariantProfiles[bundleVariant].summary}</p>
 
+              <div className="laneToggleGroup" role="tablist" aria-label="Receiver role chooser">
+                {(["reviewer", "approver", "operator"] as ReceiverRole[]).map((role) => (
+                  <button
+                    key={role}
+                    type="button"
+                    className={`laneToggleButton${receiverRole === role ? " laneToggleButtonActive" : ""}`}
+                    onClick={() => setReceiverRole(role)}
+                  >
+                    {receiverRoleProfiles[role].label}
+                  </button>
+                ))}
+              </div>
+              <p className="scoreHint">{receiverRoleProfiles[receiverRole].summary}</p>
+
               <div className="statusRow">
                 <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
                 <span className="pill">{finalBundlePackage.variantLabel}</span>
+                <span className="pill">{receiverGuidance.roleLabel}</span>
                 <span className="pill">{selectedExportSurface.label}</span>
               </div>
 
