@@ -221,6 +221,29 @@ const receiverRoleProfiles: Record<ReceiverRole, { label: string; summary: strin
     summary: "Tailor the bundle for someone who is picking up the next concrete action after the handoff is received."
   }
 };
+const rolePresetProfiles: Record<
+  ReceiverRole,
+  { destination: DeliveryDestination; variant: BundleVariant; emphasis: string; summary: string }
+> = {
+  reviewer: {
+    destination: "pr-comment",
+    variant: "full",
+    emphasis: "Lead with the review payload and keep context-heavy sections visible for evidence checks.",
+    summary: "Use when the next reader is evaluating whether the packet is review-ready or still needs more evidence."
+  },
+  approver: {
+    destination: "closeout",
+    variant: "full",
+    emphasis: "Lead with decision-facing sections so approve, hold, or escalate posture is visible immediately.",
+    summary: "Use when the next reader is making a closeout or gate decision from the same bundle."
+  },
+  operator: {
+    destination: "pickup-handoff",
+    variant: "compact",
+    emphasis: "Lead with the operational payload and keep only the companions needed for the next execution step.",
+    summary: "Use when the next reader is picking up work and needs a faster, action-first handoff package."
+  }
+};
 const exportCoverage: Record<ExportSurfaceId, ExportCoverage> = {
   "decision-brief": {
     includes: ["Claim context", "Blockers", "Reviewer notes"],
@@ -1898,6 +1921,17 @@ export function ReviewScorecard({
       exportSurface: exportSurfaces[recommendation.exportId]
     };
   });
+  const rolePresetCards = (["reviewer", "approver", "operator"] as ReceiverRole[]).map((role) => {
+    const preset = rolePresetProfiles[role];
+    const recommendation = recommendedExportForDestination(preset.destination, pickupLane, deliveryReadiness);
+
+    return {
+      role,
+      preset,
+      recommendation,
+      exportSurface: exportSurfaces[recommendation.exportId]
+    };
+  });
   const packetMarkdown = [
     "# Mirror Review Packet",
     "",
@@ -2967,6 +3001,51 @@ export function ReviewScorecard({
                 ))}
               </div>
               <p className="scoreHint">{receiverRoleProfiles[receiverRole].summary}</p>
+
+              <div className="presetGrid">
+                {rolePresetCards.map(({ role, preset, recommendation, exportSurface }) => {
+                  const isActive =
+                    receiverRole === role &&
+                    bundleVariant === preset.variant &&
+                    selectedDestination === preset.destination &&
+                    selectedExport === recommendation.exportId;
+
+                  return (
+                    <article key={role} className={`presetCard${isActive ? " presetCardActive" : ""}`}>
+                      <div className="claimHeader">
+                        <strong>{receiverRoleProfiles[role].label} preset</strong>
+                        {isActive ? <span className="statusPill statusPillready">active</span> : null}
+                      </div>
+                      <p className="scoreHint">{preset.summary}</p>
+                      <p>
+                        <strong>Bundle mode:</strong> {bundleVariantProfiles[preset.variant].label}
+                      </p>
+                      <p>
+                        <strong>Destination:</strong> {deliveryDestinations[preset.destination].label}
+                      </p>
+                      <p>
+                        <strong>Recommended export:</strong> {exportSurface.label}
+                      </p>
+                      <p className="scoreHint">
+                        <strong>Emphasis:</strong> {preset.emphasis}
+                      </p>
+                      <p className="scoreHint">{recommendation.reason}</p>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={() => {
+                          setReceiverRole(role);
+                          setBundleVariant(preset.variant);
+                          setSelectedDestination(preset.destination);
+                          setSelectedExport(recommendation.exportId);
+                        }}
+                      >
+                        {isActive ? "Preset active" : "Use preset"}
+                      </button>
+                    </article>
+                  );
+                })}
+              </div>
 
               <div className="statusRow">
                 <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
