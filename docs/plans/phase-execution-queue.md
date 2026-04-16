@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 8 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 9 queue resumption.
 
 ## Current Gate State
 
@@ -11,7 +11,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 5 exit gate: closed
 - Phase 6 exit gate: closed
 - Phase 7 exit gate: closed
-- Phase 8 exit gate: open
+- Phase 8 exit gate: closed
+- Phase 9 exit gate: open
 
 Local phase audits currently report:
 
@@ -54,16 +55,24 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 7 - Operator Handoff and Review Delivery`
   - closed
+- Phase 8 exit issue `#53`
+  - closed
+- milestone `Phase 8 - Closeout Delivery and Pickup Routing`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 8 queue kickoff
+  - no open pull requests remain after the Phase 9 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 8 - Closeout Delivery and Pickup Routing` is open.
-- `#53` `Phase 8 exit gate`
+- milestone `Phase 9 - Review Delivery Polish and Completeness` is open.
+- `#60` `Phase 9 exit gate`
   - open
-  - blocked until the Phase 8 closeout delivery and pickup routing slice is complete
-- The current Phase 8 execution slice is tracked through:
+  - blocked until the Phase 9 review delivery polish and completeness slice is complete
+- The current Phase 9 execution slice is tracked through:
+  - `#61` `Phase 9: sync bootstrap spec and docs to the active delivery-polish queue`
+  - `#62` `Phase 9: add export destination guide and packet chooser in the workbench`
+  - `#63` `Phase 9: add delivery completeness summary and missing-input warnings in the workbench`
+- The completed Phase 8 slice was tracked through:
   - `#54` `Phase 8: sync bootstrap spec and docs to the active closeout-delivery queue`
   - `#55` `Phase 8: add exit-gate-ready closeout packet sections in the workbench`
   - `#56` `Phase 8: add lane-aware pickup checklist and handoff routing panel in the workbench`
