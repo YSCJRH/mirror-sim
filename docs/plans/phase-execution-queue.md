@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 13 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 14 queue resumption.
 
 ## Current Gate State
 
@@ -16,7 +16,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 10 exit gate: closed
 - Phase 11 exit gate: closed
 - Phase 12 exit gate: closed
-- Phase 13 exit gate: open
+- Phase 13 exit gate: closed
+- Phase 14 exit gate: open
 
 Local phase audits currently report:
 
@@ -79,16 +80,24 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 12 - Delivery Preset Refinement and Comparison Flow`
   - closed
+- Phase 13 exit issue `#88`
+  - closed
+- milestone `Phase 13 - Guided Export Payload Review`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 13 queue kickoff
+  - no open pull requests remain after the Phase 14 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 13 - Guided Export Payload Review` is open.
-- `#88` `Phase 13 exit gate`
+- milestone `Phase 14 - Export Delta and Copy Confidence` is open.
+- `#95` `Phase 14 exit gate`
   - open
-- blocked until the Phase 13 guided export payload review slice is complete
-- The current Phase 13 execution slice is tracked through:
+- blocked until the Phase 14 export delta and copy confidence slice is complete
+- The current Phase 14 execution slice is tracked through:
+  - `#96` `Phase 14: sync bootstrap spec and docs to the active export-delta queue`
+  - `#97` `Phase 14: add section-level diff highlights between the recommended export and the selected fallback`
+  - `#98` `Phase 14: add destination-specific copy preflight checklist and blocker acknowledgements`
+- The completed Phase 13 slice was tracked through:
   - `#89` `Phase 13: sync bootstrap spec and docs to the active export-review queue`
   - `#90` `Phase 13: add side-by-side export payload preview for the current recommendation and best alternative`
   - `#91` `Phase 13: add destination tradeoff notes and fallback guidance for guided exports`
