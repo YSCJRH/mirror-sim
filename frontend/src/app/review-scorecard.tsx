@@ -1051,6 +1051,43 @@ function buildCopySidecarSummary(
   };
 }
 
+function buildHandoffBundlePreview(
+  destination: DeliveryDestination,
+  selectedExportId: ExportSurfaceId,
+  selectedExportMarkdown: string,
+  rationaleNote: string | null,
+  copySidecarMarkdown: string
+) {
+  const exportPreview = buildPayloadPreview(selectedExportMarkdown, 8);
+  const sidecarPreview = buildPayloadPreview(copySidecarMarkdown, 8);
+
+  return {
+    exportPreview,
+    sidecarPreview,
+    markdown: [
+      "# Handoff Bundle Preview",
+      "",
+      `- Destination: ${deliveryDestinations[destination].label}`,
+      `- Primary export: ${exportSurfaces[selectedExportId].label}`,
+      "",
+      "## Primary export excerpt",
+      exportPreview.excerpt,
+      ...(exportPreview.hiddenLineCount > 0
+        ? [``, `- +${exportPreview.hiddenLineCount} more line(s) remain in the full export.`]
+        : []),
+      "",
+      "## Rationale note",
+      rationaleNote ? `- ${rationaleNote}` : "- No rationale note selected.",
+      "",
+      "## Copy sidecar excerpt",
+      sidecarPreview.excerpt,
+      ...(sidecarPreview.hiddenLineCount > 0
+        ? [``, `- +${sidecarPreview.hiddenLineCount} more line(s) remain in the full sidecar.`]
+        : [])
+    ].join("\n")
+  };
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -1308,6 +1345,13 @@ export function ReviewScorecard({
     "closeout-packet": closeoutMarkdown,
     "pickup-routing": pickupRoutingMarkdown
   };
+  const handoffBundlePreview = buildHandoffBundlePreview(
+    selectedDestination,
+    selectedExport,
+    exportMarkdownById[selectedExport],
+    selectedRationale?.note ?? null,
+    copySidecar.markdown
+  );
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
     : (shortcutAlternatives[0] ?? recommendedExport.exportId);
@@ -1952,6 +1996,57 @@ export function ReviewScorecard({
                   : sidecarCopyState === "failed"
                     ? "Clipboard copy failed. You can still copy from the sidecar field."
                     : "Use this sidecar when the next reader needs quick destination-fit and blocker-confidence context beside the main export."}
+              </p>
+            </article>
+
+            <article className="artifactCard bundlePreviewCard">
+              <div className="artifactMeta">
+                <span>bundle preview</span>
+                <code>export + rationale + sidecar</code>
+              </div>
+              <div className="claimHeader">
+                <strong>Composed handoff bundle</strong>
+                <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+              </div>
+              <p className="scoreHint">
+                Preview how the current export, rationale note, and copy sidecar fit together before you hand the bundle off.
+              </p>
+
+              <div className="bundlePreviewStack">
+                <article className="bundleComponentCard">
+                  <div className="claimHeader">
+                    <strong>1. Primary export</strong>
+                    <span className="pill">{selectedExportSurface.label}</span>
+                  </div>
+                  <p className="scoreHint">{selectedExportSurface.destination}</p>
+                  <pre className="bundlePreviewPre">{handoffBundlePreview.exportPreview.excerpt}</pre>
+                </article>
+
+                <article className="bundleComponentCard">
+                  <div className="claimHeader">
+                    <strong>2. Rationale note</strong>
+                    <span className="pill">
+                      {selectedExport === recommendedExport.exportId ? "keep" : "override"}
+                    </span>
+                  </div>
+                  <p className="scoreHint">
+                    {selectedRationale?.note ?? "No rationale note selected."}
+                  </p>
+                </article>
+
+                <article className="bundleComponentCard">
+                  <div className="claimHeader">
+                    <strong>3. Copy sidecar</strong>
+                    <span className={`statusPill statusPill${copySidecar.tone}`}>{copySidecar.confidenceLabel}</span>
+                  </div>
+                  <p className="scoreHint">{copySidecar.destinationFit}</p>
+                  <pre className="bundlePreviewPre">{handoffBundlePreview.sidecarPreview.excerpt}</pre>
+                </article>
+              </div>
+
+              <textarea className="packetField packetFieldCompact" readOnly value={handoffBundlePreview.markdown} />
+              <p className="scoreHint">
+                Use this preview to sanity-check the current package composition before you copy the main export and its companions into the next handoff.
               </p>
             </article>
 
