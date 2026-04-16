@@ -990,6 +990,67 @@ function buildSelectionRationaleOptions(
   return options;
 }
 
+function buildCopySidecarSummary(
+  destination: DeliveryDestination,
+  selectedExportId: ExportSurfaceId,
+  recommendedExportId: ExportSurfaceId,
+  copyPreflight: ReturnType<typeof buildCopyPreflightChecklist>,
+  blockers: string[]
+) {
+  const selectedSurface = exportSurfaces[selectedExportId];
+  const recommendedSurface = exportSurfaces[recommendedExportId];
+  const followsRecommendation = selectedExportId === recommendedExportId;
+  const confidenceLabel =
+    copyPreflight.tone === "ready"
+      ? followsRecommendation
+        ? "high confidence"
+        : "steady override"
+      : copyPreflight.tone === "followup"
+        ? "watch closely"
+        : "draft only";
+  const destinationFit = followsRecommendation
+    ? `${selectedSurface.label} remains the workbench recommendation for ${deliveryDestinations[destination].label.toLowerCase()}.`
+    : `${selectedSurface.label} is being used instead of ${recommendedSurface.label} for ${deliveryDestinations[destination].label.toLowerCase()}.`;
+  const blockerSummary =
+    blockers.length > 0
+      ? `Carry blocker acknowledgement with this handoff: ${blockers.slice(0, 2).join(" ")}`
+      : "No active blockers currently require extra acknowledgement beside the copied export.";
+  const confidenceSummary =
+    copyPreflight.tone === "ready"
+      ? "The current selection reads as copy-safe for the destination without obvious missing context."
+      : copyPreflight.tone === "followup"
+        ? "The current selection is usable, but the next reader should still see the sidecar before treating it as final."
+        : "Treat the copied export as a draft handoff and keep the sidecar attached so the remaining gaps stay visible.";
+
+  return {
+    tone: copyPreflight.tone,
+    confidenceLabel,
+    destinationFit,
+    blockerSummary,
+    confidenceSummary,
+    markdown: [
+      "## Copy Sidecar",
+      `- Destination: ${deliveryDestinations[destination].label}`,
+      `- Selected export: ${selectedSurface.label}`,
+      `- Recommendation status: ${
+        followsRecommendation
+          ? "following the current recommendation"
+          : `override current recommendation (${recommendedSurface.label})`
+      }`,
+      `- Selection confidence: ${confidenceLabel}`,
+      "",
+      "### Destination fit",
+      `- ${destinationFit}`,
+      "",
+      "### Blocker acknowledgement",
+      ...(blockers.length > 0 ? blockers.slice(0, 2).map((blocker) => `- ${blocker}`) : ["- No blockers surfaced."]),
+      "",
+      "### Confidence note",
+      `- ${confidenceSummary}`
+    ].join("\n")
+  };
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -1014,6 +1075,7 @@ export function ReviewScorecard({
   const [recommendedCopyState, setRecommendedCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [shortcutCopyState, setShortcutCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [selectedRationaleKey, setSelectedRationaleKey] = useState<string | null>(null);
+  const [sidecarCopyState, setSidecarCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -1081,6 +1143,13 @@ export function ReviewScorecard({
   );
   const selectedRationale =
     selectionRationaleOptions.find((option) => option.key === selectedRationaleKey) ?? selectionRationaleOptions[0];
+  const copySidecar = buildCopySidecarSummary(
+    selectedDestination,
+    selectedExport,
+    recommendedExport.exportId,
+    copyPreflight,
+    blockers
+  );
   const claimChipPreview =
     claimPackets.length > 0
       ? claimPackets.slice(0, 3).map((claim) => claim.claimId)
@@ -1823,6 +1892,68 @@ export function ReviewScorecard({
                 </div>
               </div>
             </div>
+
+            <article className="artifactCard sidecarCard">
+              <div className="artifactMeta">
+                <span>copy sidecar</span>
+                <code>handoff companion</code>
+              </div>
+              <div className="claimHeader">
+                <strong>Copy sidecar summary</strong>
+                <button
+                  type="button"
+                  className="actionButton"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(copySidecar.markdown);
+                      setSidecarCopyState("copied");
+                    } catch {
+                      setSidecarCopyState("failed");
+                    }
+                  }}
+                >
+                  Copy sidecar
+                </button>
+              </div>
+              <p className="scoreHint">
+                Carry this beside the copied export when the next reader needs destination fit, blocker acknowledgement,
+                and selection confidence without re-reading the whole workbench.
+              </p>
+              <div className="statusRow">
+                <span className={`statusPill statusPill${copySidecar.tone}`}>{copySidecar.confidenceLabel}</span>
+                <span className="pill">{selectedExportSurface.label}</span>
+              </div>
+
+              <div className="handoffSections">
+                <div className="handoffSection">
+                  <h3>Destination fit</h3>
+                  <p>{copySidecar.destinationFit}</p>
+                </div>
+
+                <div
+                  className={`handoffSection${
+                    blockers.length > 0 ? " handoffSectionWarning" : " handoffSectionReady"
+                  }`}
+                >
+                  <h3>Blocker acknowledgement</h3>
+                  <p>{copySidecar.blockerSummary}</p>
+                </div>
+
+                <div className="handoffSection">
+                  <h3>Selection confidence</h3>
+                  <p>{copySidecar.confidenceSummary}</p>
+                </div>
+              </div>
+
+              <textarea className="packetField packetFieldCompact" readOnly value={copySidecar.markdown} />
+              <p className="scoreHint">
+                {sidecarCopyState === "copied"
+                  ? "Copy sidecar copied to clipboard."
+                  : sidecarCopyState === "failed"
+                    ? "Clipboard copy failed. You can still copy from the sidecar field."
+                    : "Use this sidecar when the next reader needs quick destination-fit and blocker-confidence context beside the main export."}
+              </p>
+            </article>
 
             <div className="handoffSection">
               <h3>Carry-forward context</h3>
