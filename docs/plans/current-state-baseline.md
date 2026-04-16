@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the current Phase 6 active-queue baseline.
+This note is the current post-Phase-6 paused baseline.
 
 ## Snapshot
 
@@ -28,11 +28,11 @@ This note is the current Phase 6 active-queue baseline.
   - `gh api repos/YSCJRH/mirror-sim/issues/31`
     - Phase 5 exit issue is `closed`
   - `gh api repos/YSCJRH/mirror-sim/milestones/6`
-    - milestone `Phase 6 - Automation Activation and Queue Hygiene` is `open`
-  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=6"`
-    - Phase 6 queue is initialized through issues `#40-#43`
+    - milestone `Phase 6 - Automation Activation and Queue Hygiene` is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/issues/40`
+    - Phase 6 exit issue is `closed`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - successor queue currently reports `ready` because Phase 6 has one blocked protected-core exit gate and multiple ready work items
+    - successor queue should now report `paused` because no open milestone is available for pickup yet
 
 ## Trusted Source Of Truth
 
@@ -50,11 +50,12 @@ This note is the current Phase 6 active-queue baseline.
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
 - The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, and shareable review packet export without introducing backend API expansion.
-- The current repository state is in an active Phase 6 successor queue, not a paused post-Phase-5 idle baseline.
+- The current repository state is a paused post-Phase-6 baseline, not an active successor queue.
 
 ## Next Entry Point
 
-- Phase 6 is the active milestone and the current queue-resumption slice is tracked by issues `#40-#43`.
-- New implementation work should attach to the existing Phase 6 queue until its exit gate is closed, instead of opening a parallel successor milestone.
+- No execution milestone is currently open for pickup.
+- The next implementation work must begin by opening a fresh successor milestone and its blocked protected-core exit gate before any new ready issues are introduced.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
+- The local queue heartbeat remains active as `mirror-queue-heartbeat` and should continue reporting the paused/ready state of the live queue.
