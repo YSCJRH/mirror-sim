@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { ReviewScorecard } from "./review-scorecard";
 
 const sections = [
   {
@@ -124,6 +125,13 @@ type SnapshotPayload = {
 };
 
 type ScenarioKey = "baseline" | "reporter_detained";
+
+type RubricRow = {
+  dimension: string;
+  one: string;
+  three: string;
+  five: string;
+};
 
 type RunPayload = {
   key: ScenarioKey;
@@ -273,6 +281,47 @@ function stateHighlights(state: Record<string, unknown> | undefined) {
   });
 }
 
+function parseRubricRows(rubric: string): RubricRow[] {
+  const rows = rubric
+    .split("\n")
+    .filter((line) => line.startsWith("|"))
+    .slice(2)
+    .map((line) => line.split("|").map((cell) => cell.trim()).filter(Boolean))
+    .filter((cells) => cells.length >= 4)
+    .map(([dimension, one, three, five]) => ({ dimension, one, three, five }));
+
+  if (rows.length > 0) {
+    return rows;
+  }
+
+  return [
+    {
+      dimension: "Usefulness",
+      one: "Adds no new understanding",
+      three: "Some useful contrast",
+      five: "Clearly clarifies branch differences"
+    },
+    {
+      dimension: "Credibility",
+      one: "Reads like guesswork",
+      three: "Partly grounded",
+      five: "Evidence boundaries are clear"
+    },
+    {
+      dimension: "Explainability",
+      one: "Hard to trace",
+      three: "Mostly understandable",
+      five: "Easy to replay from trace"
+    },
+    {
+      dimension: "Actionability",
+      one: "No next step is obvious",
+      three: "Some follow-up hints",
+      five: "Clear next engineering/product step"
+    }
+  ];
+}
+
 export default async function Page() {
   const {
     report,
@@ -286,6 +335,7 @@ export default async function Page() {
     interventionRun
   } = await loadWorkbenchData();
 
+  const rubricRows = parseRubricRows(rubric);
   const documentsById = new Map(documents.map((document) => [document.document_id, document]));
   const chunksById = new Map(chunks.map((chunk) => [chunk.chunk_id, chunk]));
   const baselineTurns = buildTurnEntries(baselineRun);
@@ -348,15 +398,15 @@ export default async function Page() {
   return (
     <main className="shell">
       <section className="hero">
-        <p className="eyebrow">Mirror Engine / Phase 4 Review Workflow</p>
+        <p className="eyebrow">Mirror Engine / Phase 5 Review Sign-Off</p>
         <h1>Review the Fog Harbor sandbox with evidence, trace, and branch context in one place.</h1>
         <p className="lede">
-          The workbench now stays artifact-first while adding the missing reviewer path:
-          from claim, to evidence, to branch timeline, without leaving the bounded demo world.
+          The workbench now stays artifact-first while extending the reviewer path:
+          from claim, to evidence, to branch timeline, to a live sign-off worksheet inside the bounded demo world.
         </p>
         <div className="heroMeta">
           <span>Current demo: Fog Harbor East Gate</span>
-          <span>Current phase: review workflow and ops hardening</span>
+          <span>Current phase: review sign-off and evidence packaging</span>
           <span>No backend API expansion required</span>
         </div>
       </section>
@@ -379,13 +429,13 @@ export default async function Page() {
 
       <section className="panel panelAccent">
         <div className="panelHeader">
-          <p className="eyebrow">Phase 4 Slice</p>
-          <h2>The first successor slice stays contract-light and review-heavy.</h2>
+          <p className="eyebrow">Phase 5 Slice</p>
+          <h2>The current successor slice turns review context into sign-off context.</h2>
         </div>
         <ul className="checklist">
           <li>Claim cards now link into their supporting evidence, graph context, and branch turns.</li>
           <li>Baseline and intervention runs now surface as a reviewer-readable turn-by-turn timeline.</li>
-          <li>Everything still reads the existing artifact tree directly, with no backend API expansion.</li>
+          <li>Reviewer scorecards and sign-off worksheets now live on top of the same artifacts, still without backend API expansion.</li>
         </ul>
       </section>
 
@@ -851,6 +901,17 @@ export default async function Page() {
           </article>
         </div>
       </section>
+
+      <ReviewScorecard
+        rubricRows={rubricRows}
+        claimCount={claims.length}
+        divergentTurnCount={timelineRows.filter(({ baseline, intervention }) => (
+          baseline?.turn.action_type !== intervention?.turn.action_type ||
+          baseline?.turn.target_id !== intervention?.turn.target_id
+        )).length}
+        evalName={evalSummary.eval_name}
+        evalStatus={evalSummary.status}
+      />
     </main>
   );
 }

@@ -342,6 +342,142 @@ code {
   box-shadow: 0 18px 38px rgba(15, 107, 99, 0.1);
 }
 
+.reviewColumns {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 18px;
+}
+
+.reviewScoreGrid {
+  display: grid;
+  gap: 14px;
+}
+
+.scoreCard,
+.worksheetCard {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--border);
+}
+
+.scoreAnchors {
+  display: grid;
+  gap: 8px;
+}
+
+.scoreAnchors p,
+.worksheetNotes p,
+.worksheetFollowup p {
+  margin: 0;
+}
+
+.scoreButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.scoreButton {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 107, 99, 0.2);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--accent-strong);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.scoreButton:hover {
+  border-color: rgba(15, 107, 99, 0.45);
+}
+
+.scoreButtonActive {
+  background: var(--accent);
+  color: #f7fbfa;
+  border-color: var(--accent-strong);
+}
+
+.scoreHint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.reviewSidebar {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+.statusPillincomplete {
+  background: rgba(112, 87, 255, 0.12);
+  color: #4f39b8;
+}
+
+.statusPillready {
+  background: rgba(15, 107, 99, 0.14);
+  color: var(--accent-strong);
+}
+
+.statusPillfollowup {
+  background: rgba(191, 120, 72, 0.14);
+  color: #8c4f21;
+}
+
+.statusPillhold {
+  background: rgba(161, 49, 49, 0.14);
+  color: #7c2727;
+}
+
+.worksheetNotes,
+.worksheetFollowup {
+  display: grid;
+  gap: 8px;
+}
+
+.reviewerNotesCard {
+  align-content: start;
+}
+
+.noteLabel {
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.notesField {
+  width: 100%;
+  min-height: 180px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 107, 99, 0.18);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.notesField:focus {
+  outline: 2px solid rgba(15, 107, 99, 0.2);
+  border-color: rgba(15, 107, 99, 0.45);
+}
+
 .timelineCards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -446,6 +582,10 @@ code {
   }
 
   .reportGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .reviewColumns {
     grid-template-columns: 1fr;
   }
 
