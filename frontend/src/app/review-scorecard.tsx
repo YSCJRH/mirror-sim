@@ -1298,6 +1298,49 @@ function buildAttachmentOrderGuidance(
   };
 }
 
+function buildReceiverGuidance(
+  destination: DeliveryDestination,
+  variant: BundleVariant,
+  copyPreflight: ReturnType<typeof buildCopyPreflightChecklist>,
+  nextActions: string[],
+  blockers: string[]
+) {
+  const actionLead =
+    destination === "pr-comment"
+      ? "Review the copied bundle in-thread and decide whether the current packet is enough for sign-off discussion."
+      : destination === "closeout"
+        ? "Review the copied bundle as a closure packet and decide whether the branch can actually clear the exit gate."
+        : "Acknowledge pickup, name the first execution step, and keep the current blocker posture visible for the next operator.";
+  const checklist = [
+    actionLead,
+    nextActions[0] ?? "Confirm the next concrete action before treating the handoff as complete.",
+    blockers[0] === "No blocking issues surfaced in the current frontend-only review state."
+      ? "Explicitly note that no blocking issues surfaced in the current review state."
+      : `Carry the top blocker forward: ${blockers[0]}`,
+    variant === "compact"
+      ? "Ask for the full bundle if the receiver still needs extra rationale or confidence context."
+      : "Reply with the first follow-through action after reading the richer bundle."
+  ];
+  const replyPrompt =
+    destination === "pr-comment"
+      ? `Reviewed the ${variant} bundle for ${deliveryDestinations[destination].label.toLowerCase()}; next step is ____, and blocker posture is ____.`
+      : destination === "closeout"
+        ? `Reviewed the ${variant} closeout bundle; gate decision is ____, next follow-through action is ____, and blocker posture is ____.`
+        : `Picked up the ${variant} bundle; first execution step is ____, reply checkpoint is ____, and blocker posture is ____.`;
+
+  return {
+    tone: copyPreflight.tone === "ready" && blockers[0] === "No blocking issues surfaced in the current frontend-only review state."
+      ? "ready"
+      : copyPreflight.tone,
+    summary:
+      variant === "compact"
+        ? "Keep a short receiver checklist and a reply prompt attached so the next reader can confirm whether the compact bundle is enough."
+        : "Carry explicit follow-through cues so the next reader can acknowledge the richer bundle and state the first action after review.",
+    checklist,
+    replyPrompt
+  };
+}
+
 function buildFinalBundlePackage(
   variant: BundleVariant,
   destination: DeliveryDestination,
@@ -1307,6 +1350,7 @@ function buildFinalBundlePackage(
   rationaleNote: string | null,
   copySidecarMarkdown: string,
   recipientCoverSheetMarkdown: string,
+  receiverGuidance: ReturnType<typeof buildReceiverGuidance>,
   attachmentOrder: ReturnType<typeof buildAttachmentOrderGuidance>,
   copyPreflight: ReturnType<typeof buildCopyPreflightChecklist>,
   blockers: string[]
@@ -1348,6 +1392,12 @@ function buildFinalBundlePackage(
         : "This sidecar stays out of the compact bundle because the current destination does not need extra blocker or confidence scaffolding."
     },
     {
+      label: "Receiver follow-through cues",
+      status: "included",
+      tone: receiverGuidance.tone,
+      detail: receiverGuidance.summary
+    },
+    {
       label: "Workbench-only guide surfaces",
       status: "intentionally omitted",
       tone: "hold",
@@ -1386,6 +1436,12 @@ function buildFinalBundlePackage(
             ...attachmentOrder.steps.filter((step) => step.active).map((step) => `- ${step.order}. ${step.title}: ${step.detail}`)
           ]
         : []),
+      "",
+      "## Receiver Follow-Through",
+      ...receiverGuidance.checklist.map((item) => `- ${item}`),
+      "",
+      "## Suggested Reply Prompt",
+      `- ${receiverGuidance.replyPrompt}`,
       "",
       selectedExportMarkdown,
       ...(includeRationale
@@ -1683,6 +1739,13 @@ export function ReviewScorecard({
     selectedRationale?.note ?? null,
     copySidecar.markdown
   );
+  const receiverGuidance = buildReceiverGuidance(
+    selectedDestination,
+    bundleVariant,
+    copyPreflight,
+    nextActions,
+    blockers
+  );
   const finalBundlePackage = buildFinalBundlePackage(
     bundleVariant,
     selectedDestination,
@@ -1692,6 +1755,7 @@ export function ReviewScorecard({
     selectedRationale?.note ?? null,
     copySidecar.markdown,
     recipientCoverSheet.markdown,
+    receiverGuidance,
     attachmentOrder,
     copyPreflight,
     blockers
@@ -2586,6 +2650,22 @@ export function ReviewScorecard({
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
+              </div>
+
+              <div className="handoffSections">
+                <div className={`handoffSection handoffSection${receiverGuidance.tone === "ready" ? "Ready" : "Warning"}`}>
+                  <h3>Receiver action checklist</h3>
+                  <ul className="checklist compact">
+                    {receiverGuidance.checklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="handoffSection">
+                  <h3>Suggested reply prompt</h3>
+                  <p>{receiverGuidance.replyPrompt}</p>
+                </div>
               </div>
 
               <textarea className="packetField packetFieldCompact" readOnly value={finalBundlePackage.markdown} />
