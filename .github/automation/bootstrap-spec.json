@@ -39,6 +39,10 @@
     {
       "title": "Phase 10 - Guided Delivery and Quick Export",
       "description": "Turn the growing set of workbench delivery surfaces into a more guided, lower-friction operator flow with destination-aware recommendations and quick export actions, without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 11 - Export Presets and Delivery Shortcuts",
+      "description": "Reduce operator decision friction by adding export presets, delivery shortcuts, and clearer guided handoff entry points without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -91,6 +95,11 @@
       "name": "phase:10",
       "color": "4157a5",
       "description": "Phase 10 guided delivery and quick export work."
+    },
+    {
+      "name": "phase:11",
+      "color": "4b4fb6",
+      "description": "Phase 11 export presets and delivery shortcuts work."
     },
     {
       "name": "area:backend",
@@ -522,6 +531,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a packet coverage matrix to the workbench so an operator can see which current export includes claims, blockers, validation commands, lane guidance, and reviewer notes before copying it to a destination.\n\n## input\n- current review packet, issue-comment packet, closeout packet, decision brief, and pickup-routing packet surfaces\n- current export destination guide and delivery-readiness panel\n- current workbench layout\n\n## output\n- a matrix or inclusion preview that compares packet coverage by destination and content type\n- a clearer explanation of what each export omits as well as what it includes\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- packet schema changes\n- removing existing packet surfaces\n- storing user preferences or persistent delivery presets\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the matrix helps distinguish packet coverage and omissions at a glance\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 10"
+    },
+    {
+      "title": "Phase 11 exit gate",
+      "milestone": "Phase 11 - Export Presets and Delivery Shortcuts",
+      "labels": [
+        "phase:11",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 11 export presets and delivery shortcuts criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 11 milestone state\n- merged PR state for queue sync and delivery-shortcut work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 11 closeout decision\n- documented stop condition for the Phase 11 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 11 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 11"
+    },
+    {
+      "title": "Phase 11: sync bootstrap spec and docs to the active export-shortcut queue",
+      "milestone": "Phase 11 - Export Presets and Delivery Shortcuts",
+      "labels": [
+        "phase:11",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 10 baseline to the active Phase 11 queue so docs, bootstrap metadata, and README reflect the new export-shortcut track.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `README.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- current live GitHub milestone and issue state\n\n## output\n- `phase:11` and Phase 11 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 11 as the active successor queue\n- no stale Phase 10 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- export-shortcut UI changes\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 11"
+    },
+    {
+      "title": "Phase 11: add delivery preset cards for PR comment, closeout, and pickup handoff",
+      "milestone": "Phase 11 - Export Presets and Delivery Shortcuts",
+      "labels": [
+        "phase:11",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd delivery preset cards to the workbench so an operator can jump into a PR-comment, closeout, or pickup-handoff flow from one clear entry point instead of assembling the path from multiple widgets.\n\n## input\n- current destination-aware recommendation banner\n- current packet chooser, readiness panel, and coverage matrix\n- current workbench layout\n\n## output\n- three clear delivery preset cards that set destination context and focus the operator on the most relevant export path\n- no backend API calls and no new artifact files\n- existing detailed export surfaces remain available underneath\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or queue-governance rules\n- removing the existing guided-export controls\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that selecting a preset updates the guided export state and shortcut path\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 11"
+    },
+    {
+      "title": "Phase 11: add quick-export shortcut strip with copy and jump actions for the current recommended path",
+      "milestone": "Phase 11 - Export Presets and Delivery Shortcuts",
+      "labels": [
+        "phase:11",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a compact quick-export shortcut strip to the workbench so the operator can copy the current recommended export, jump to its detailed card, or pivot to the next-best export without scrolling through the full sidebar.\n\n## input\n- current destination-aware recommendation banner\n- current packet chooser and coverage matrix\n- current workbench layout\n\n## output\n- a shortcut strip for the current recommended path with copy and jump actions\n- a lightweight path to alternative exports when the operator does not want the default recommendation\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas, scoring contracts, or queue-governance rules\n- removing the existing detailed export cards\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the shortcut strip stays aligned with the current recommended export\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 11"
     }
   ]
 }

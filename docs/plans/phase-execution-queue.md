@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 10 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 11 queue resumption.
 
 ## Current Gate State
 
@@ -13,7 +13,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 7 exit gate: closed
 - Phase 8 exit gate: closed
 - Phase 9 exit gate: closed
-- Phase 10 exit gate: open
+- Phase 10 exit gate: closed
+- Phase 11 exit gate: open
 
 Local phase audits currently report:
 
@@ -64,16 +65,24 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 9 - Review Delivery Polish and Completeness`
   - closed
+- Phase 10 exit issue `#67`
+  - closed
+- milestone `Phase 10 - Guided Delivery and Quick Export`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 10 queue kickoff
+  - no open pull requests remain after the Phase 11 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 10 - Guided Delivery and Quick Export` is open.
-- `#67` `Phase 10 exit gate`
+- milestone `Phase 11 - Export Presets and Delivery Shortcuts` is open.
+- `#74` `Phase 11 exit gate`
   - open
--  - blocked until the Phase 10 guided delivery and quick export slice is complete
-- The current Phase 10 execution slice is tracked through:
+  - blocked until the Phase 11 export presets and delivery shortcuts slice is complete
+- The current Phase 11 execution slice is tracked through:
+  - `#75` `Phase 11: sync bootstrap spec and docs to the active export-shortcut queue`
+  - `#76` `Phase 11: add delivery preset cards for PR comment, closeout, and pickup handoff`
+  - `#77` `Phase 11: add quick-export shortcut strip with copy and jump actions for the current recommended path`
+- The completed Phase 10 slice was tracked through:
   - `#68` `Phase 10: sync bootstrap spec and docs to the active guided-delivery queue`
   - `#69` `Phase 10: add destination-aware recommended export banner and quick-copy action in the workbench`
   - `#70` `Phase 10: add packet coverage matrix and destination inclusion preview in the workbench`
