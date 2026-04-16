@@ -700,6 +700,36 @@ code {
   align-content: start;
 }
 
+.bundlePreviewCard {
+  align-content: start;
+}
+
+.bundlePreviewStack {
+  display: grid;
+  gap: 12px;
+}
+
+.bundleComponentCard {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border);
+}
+
+.bundlePreviewPre {
+  margin: 0;
+  padding: 12px;
+  border-radius: 16px;
+  background: #1f1d1a;
+  color: #f5efe4;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
 .copyPreflightBoard {
   display: grid;
   gap: 12px;
