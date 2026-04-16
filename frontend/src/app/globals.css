@@ -686,6 +686,41 @@ code {
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid var(--border);
 }
+
+.copyPreflightBoard {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(30, 26, 22, 0.05);
+  border: 1px solid rgba(30, 26, 22, 0.1);
+}
+
+.preflightGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.preflightCard {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--border);
+}
+
+.preflightCardready {
+  border-color: rgba(15, 107, 99, 0.24);
+}
+
+.preflightCardfollowup {
+  border-color: rgba(191, 120, 72, 0.24);
+}
+
+.preflightCardhold {
+  border-color: rgba(161, 49, 49, 0.24);
+}
 .coverageGrid {
   display: grid;
   gap: 14px;
