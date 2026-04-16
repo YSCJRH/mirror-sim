@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 19 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 20 queue resumption.
 
 ## Current Gate State
 
@@ -22,7 +22,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 16 exit gate: closed
 - Phase 17 exit gate: closed
 - Phase 18 exit gate: closed
-- Phase 19 exit gate: open
+- Phase 19 exit gate: closed
+- Phase 20 exit gate: open
 
 Local phase audits currently report:
 
@@ -98,15 +99,19 @@ Local phase audits currently report:
 - milestone `Phase 15 - Override Rationale and Delivery Confidence`
   - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 19 queue kickoff
+  - no open pull requests remain after the Phase 20 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 19 - Receiver Roles and Follow-Through Routing` is open.
-- `#130` `Phase 19 exit gate`
+- milestone `Phase 20 - Role-Specific Bundle Layout and Decision Templates` is open.
+- `#137` `Phase 20 exit gate`
   - open
-- blocked until the Phase 19 receiver roles and follow-through routing slice is complete
-- The current Phase 19 execution slice is tracked through:
+- blocked until the Phase 20 role-specific bundle layout and decision template slice is complete
+- The current Phase 20 execution slice is tracked through:
+  - `#138` `Phase 20: sync bootstrap spec and docs to the active role-template queue`
+  - `#139` `Phase 20: add role-specific bundle emphasis and section pinning for reviewer, approver, and operator modes`
+  - `#140` `Phase 20: add decision-template snippets for acknowledge, request-more-context, and escalate paths`
+- The completed Phase 19 slice was tracked through:
   - `#131` `Phase 19: sync bootstrap spec and docs to the active receiver-routing queue`
   - `#132` `Phase 19: add receiver-role chooser for reviewer, approver, and operator handoff modes`
   - `#133` `Phase 19: add follow-through routing strip for acknowledge, request-more-context, and escalate cues`
