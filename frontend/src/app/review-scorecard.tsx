@@ -61,6 +61,7 @@ type DeliveryReadiness = {
 };
 
 type DeliveryDestination = "pr-comment" | "closeout" | "pickup-handoff";
+type BundleVariant = "compact" | "full";
 
 type ExportCoverage = {
   includes: string[];
@@ -195,6 +196,16 @@ const presetProfiles: Record<DeliveryDestination, DeliveryPresetProfile> = {
   }
 };
 const deliveryDestinationOrder: DeliveryDestination[] = ["pr-comment", "closeout", "pickup-handoff"];
+const bundleVariantProfiles: Record<BundleVariant, { label: string; summary: string }> = {
+  compact: {
+    label: "Compact",
+    summary: "Keep the cover sheet, primary export, and only the companions that this destination currently needs."
+  },
+  full: {
+    label: "Full",
+    summary: "Carry the richer delivery bundle so cover context, rationale, and sidecar all travel together for deeper review."
+  }
+};
 const exportCoverage: Record<ExportSurfaceId, ExportCoverage> = {
   "decision-brief": {
     includes: ["Claim context", "Blockers", "Reviewer notes"],
@@ -1288,6 +1299,7 @@ function buildAttachmentOrderGuidance(
 }
 
 function buildFinalBundlePackage(
+  variant: BundleVariant,
   destination: DeliveryDestination,
   selectedExportId: ExportSurfaceId,
   selectedExportMarkdown: string,
@@ -1302,8 +1314,10 @@ function buildFinalBundlePackage(
   const selectedSurface = exportSurfaces[selectedExportId];
   const recommendedSurface = exportSurfaces[recommendedExportId];
   const followsRecommendation = selectedExportId === recommendedExportId;
-  const includeRationale = !followsRecommendation || copyPreflight.tone !== "ready";
-  const includeSidecar = destination !== "pr-comment" || blockers.length > 0 || copyPreflight.tone !== "ready";
+  const requiredRationale = !followsRecommendation || copyPreflight.tone !== "ready";
+  const requiredSidecar = destination !== "pr-comment" || blockers.length > 0 || copyPreflight.tone !== "ready";
+  const includeRationale = variant === "full" ? true : requiredRationale;
+  const includeSidecar = variant === "full" ? true : requiredSidecar;
   const manifestItems = [
     {
       label: "Recipient cover sheet",
@@ -1319,19 +1333,19 @@ function buildFinalBundlePackage(
     },
     {
       label: "Rationale note",
-      status: includeRationale ? "included" : "optional",
+      status: includeRationale ? (requiredRationale ? "included" : "included in full") : "omitted in compact",
       tone: includeRationale ? "ready" : "followup",
       detail: includeRationale
         ? rationaleNote ?? "Include the rationale note so the receiver sees why this package shape was chosen."
-        : "This note stays optional because the current package already matches the destination without extra explanation."
+        : "This note stays out of the compact bundle because the current package already matches the destination without extra explanation."
     },
     {
       label: "Copy sidecar",
-      status: includeSidecar ? "included" : "optional",
+      status: includeSidecar ? (requiredSidecar ? "included" : "included in full") : "omitted in compact",
       tone: includeSidecar ? "ready" : "followup",
       detail: includeSidecar
         ? "Include the sidecar so destination fit, blocker acknowledgement, and confidence cues travel with the copied bundle."
-        : "This sidecar stays optional because the current destination does not need extra blocker or confidence scaffolding."
+        : "This sidecar stays out of the compact bundle because the current destination does not need extra blocker or confidence scaffolding."
     },
     {
       label: "Workbench-only guide surfaces",
@@ -1342,25 +1356,36 @@ function buildFinalBundlePackage(
   ];
   const orderedSections = [
     "Cover sheet lead-in",
-    ...attachmentOrder.steps.filter((step) => step.active).map((step) => `${step.order}. ${step.title}`)
+    "Package manifest",
+    "Primary export",
+    ...(includeRationale ? ["Rationale note"] : []),
+    ...(includeSidecar ? ["Copy sidecar"] : []),
+    ...(variant === "full" ? ["Bundle order guidance"] : [])
   ];
   const summary =
-    includeRationale || includeSidecar
-      ? "Copy one final package that keeps the receiver-facing cover sheet, primary export, and the currently required companions together."
-      : "Copy one final package with the cover sheet and primary export first, while the manifest records the optional companions you chose not to include.";
+    variant === "full"
+      ? "Copy a fuller delivery bundle that always carries the cover sheet, manifest, primary export, and both companion surfaces."
+      : includeRationale || includeSidecar
+        ? "Copy a compact delivery bundle that keeps the cover sheet, primary export, and only the companions this destination currently needs."
+        : "Copy a compact delivery bundle with the cover sheet and primary export first, while the manifest records the companions intentionally left out.";
 
   return {
+    variantLabel: bundleVariantProfiles[variant].label,
     summary,
     manifestItems,
     orderedSections,
     markdown: [
       recipientCoverSheetMarkdown,
       "",
-      "## Package Manifest",
+      variant === "full" ? "## Full Package Manifest" : "## Compact Package Manifest",
       ...manifestItems.map((item) => `- ${item.label}: ${item.status}. ${item.detail}`),
-      "",
-      "## Bundle Order",
-      ...orderedSections.map((item) => `- ${item}`),
+      ...(variant === "full"
+        ? [
+            "",
+            "## Bundle Order",
+            ...attachmentOrder.steps.filter((step) => step.active).map((step) => `- ${step.order}. ${step.title}: ${step.detail}`)
+          ]
+        : []),
       "",
       selectedExportMarkdown,
       ...(includeRationale
@@ -1401,6 +1426,7 @@ export function ReviewScorecard({
   const [selectedRationaleKey, setSelectedRationaleKey] = useState<string | null>(null);
   const [sidecarCopyState, setSidecarCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [coverSheetCopyState, setCoverSheetCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [bundleVariant, setBundleVariant] = useState<BundleVariant>("compact");
   const [finalBundleCopyState, setFinalBundleCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -1658,6 +1684,7 @@ export function ReviewScorecard({
     copySidecar.markdown
   );
   const finalBundlePackage = buildFinalBundlePackage(
+    bundleVariant,
     selectedDestination,
     selectedExport,
     exportMarkdownById[selectedExport],
@@ -2520,8 +2547,23 @@ export function ReviewScorecard({
               </div>
               <p className="scoreHint">{finalBundlePackage.summary}</p>
 
+              <div className="laneToggleGroup" role="tablist" aria-label="Final bundle variant chooser">
+                {(["compact", "full"] as BundleVariant[]).map((variant) => (
+                  <button
+                    key={variant}
+                    type="button"
+                    className={`laneToggleButton${bundleVariant === variant ? " laneToggleButtonActive" : ""}`}
+                    onClick={() => setBundleVariant(variant)}
+                  >
+                    {bundleVariantProfiles[variant].label}
+                  </button>
+                ))}
+              </div>
+              <p className="scoreHint">{bundleVariantProfiles[bundleVariant].summary}</p>
+
               <div className="statusRow">
                 <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                <span className="pill">{finalBundlePackage.variantLabel}</span>
                 <span className="pill">{selectedExportSurface.label}</span>
               </div>
 
