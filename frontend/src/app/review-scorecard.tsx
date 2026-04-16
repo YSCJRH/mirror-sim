@@ -1474,6 +1474,45 @@ function buildFollowThroughRouting(
   };
 }
 
+function buildDecisionTemplates(
+  destination: DeliveryDestination,
+  variant: BundleVariant,
+  role: ReceiverRole,
+  receiverGuidance: ReturnType<typeof buildReceiverGuidance>,
+  followThroughRouting: ReturnType<typeof buildFollowThroughRouting>
+) {
+  const roleLabel = receiverRoleProfiles[role].label;
+  const templates = followThroughRouting.routes.map((route) => ({
+    key: route.key,
+    label: route.label,
+    tone: route.tone,
+    detail: route.detail,
+    prompt: route.prompt,
+    markdown: [
+      `### ${route.label}`,
+      `- Receiver role: ${roleLabel}`,
+      `- Destination: ${deliveryDestinations[destination].label}`,
+      `- Bundle mode: ${bundleVariantProfiles[variant].label}`,
+      `- Route tone: ${route.tone}`,
+      `- Use when: ${route.detail}`,
+      `- Suggested response: ${route.prompt}`
+    ].join("\n")
+  }));
+
+  return {
+    summary:
+      "Use these snippets when the receiver is ready to send a concrete acknowledge, request-more-context, or escalate response without rewriting the routing guidance by hand.",
+    templates,
+    combinedMarkdown: [
+      "## Decision Templates",
+      ...templates.flatMap((template) => ["", template.markdown]),
+      "",
+      "## Shared Reply Prompt",
+      `- ${receiverGuidance.replyPrompt}`
+    ].join("\n")
+  };
+}
+
 function buildRoleSpecificBundlePlan(
   role: ReceiverRole,
   includeRationale: boolean,
@@ -1486,6 +1525,7 @@ function buildRoleSpecificBundlePlan(
       "receiver-follow-through",
       "rationale-note",
       "follow-through-routing",
+      "decision-templates",
       "manifest",
       "copy-sidecar",
       "bundle-order"
@@ -1493,6 +1533,7 @@ function buildRoleSpecificBundlePlan(
     approver: [
       "receiver-follow-through",
       "follow-through-routing",
+      "decision-templates",
       "manifest",
       "primary-export",
       "rationale-note",
@@ -1504,6 +1545,7 @@ function buildRoleSpecificBundlePlan(
       "receiver-follow-through",
       "copy-sidecar",
       "follow-through-routing",
+      "decision-templates",
       "manifest",
       "rationale-note",
       "bundle-order"
@@ -1515,6 +1557,7 @@ function buildRoleSpecificBundlePlan(
       "receiver-follow-through": "Keep the review checklist near the top so the reviewer can quickly say whether the packet is sufficient.",
       "rationale-note": "Keep rationale visible when the reviewer needs to understand why this package shape was chosen.",
       "follow-through-routing": "Show routing early so the reviewer can choose between acknowledge, request-more-context, and escalate paths.",
+      "decision-templates": "Keep reusable response templates near the top so the reviewer can answer immediately from the current route.",
       manifest: "Keep the manifest visible so the reviewer can see what is included before asking for more context.",
       "copy-sidecar": "Keep destination-fit and blocker confidence nearby when a fuller review path still matters.",
       "bundle-order": "Show packaging order last as a reference once review priorities are already clear."
@@ -1524,6 +1567,7 @@ function buildRoleSpecificBundlePlan(
       "receiver-follow-through": "Put the decision-facing checklist first so the approver can issue approve, hold, or escalate posture quickly.",
       "rationale-note": "Keep rationale visible when the approver needs to understand why the current package shape should stand.",
       "follow-through-routing": "Keep routing near the top because the approver mainly needs the decision paths, not just the packet contents.",
+      "decision-templates": "Keep reusable approve, hold, and escalate language near the top so the approver can answer from the same bundle.",
       manifest: "Keep the manifest visible so the approver sees the package scope before clearing it.",
       "copy-sidecar": "Keep blocker and confidence cues nearby when the approval decision still depends on delivery posture.",
       "bundle-order": "Keep packaging order as a lower-priority reference after the decision path is already visible."
@@ -1533,6 +1577,7 @@ function buildRoleSpecificBundlePlan(
       "receiver-follow-through": "Keep the action checklist high because the operator mainly needs the first next step and reply checkpoint.",
       "rationale-note": "Keep rationale available, but lower, when the operator mainly needs execution context instead of decision framing.",
       "follow-through-routing": "Show routing before the manifest so the operator sees whether to acknowledge, ask for more context, or escalate.",
+      "decision-templates": "Keep reusable response templates nearby so the operator can answer quickly after deciding the next action.",
       manifest: "Keep the manifest visible as a quick inventory after the action path is already understood.",
       "copy-sidecar": "Keep the sidecar high when the operator still needs blocker and destination-fit context beside the main export.",
       "bundle-order": "Keep packaging order last because it matters less than starting execution."
@@ -1543,6 +1588,7 @@ function buildRoleSpecificBundlePlan(
     "receiver-follow-through": "Receiver follow-through",
     "rationale-note": "Rationale note",
     "follow-through-routing": "Routing strip",
+    "decision-templates": "Decision templates",
     manifest: "Package manifest",
     "copy-sidecar": "Copy sidecar",
     "bundle-order": "Bundle order guidance"
@@ -1551,6 +1597,7 @@ function buildRoleSpecificBundlePlan(
     "primary-export",
     "receiver-follow-through",
     "follow-through-routing",
+    "decision-templates",
     "manifest",
     ...(includeRationale ? ["rationale-note"] : []),
     ...(includeSidecar ? ["copy-sidecar"] : []),
@@ -1580,6 +1627,7 @@ function buildFinalBundlePackage(
   recipientCoverSheetMarkdown: string,
   receiverGuidance: ReturnType<typeof buildReceiverGuidance>,
   followThroughRouting: ReturnType<typeof buildFollowThroughRouting>,
+  decisionTemplates: ReturnType<typeof buildDecisionTemplates>,
   attachmentOrder: ReturnType<typeof buildAttachmentOrderGuidance>,
   copyPreflight: ReturnType<typeof buildCopyPreflightChecklist>,
   blockers: string[]
@@ -1638,6 +1686,16 @@ function buildFinalBundlePackage(
       detail: followThroughRouting.summary
     },
     {
+      label: "Decision-template snippets",
+      status: "included",
+      tone: decisionTemplates.templates.some((template) => template.tone === "hold")
+        ? "hold"
+        : decisionTemplates.templates.some((template) => template.tone === "followup")
+          ? "followup"
+          : "ready",
+      detail: decisionTemplates.summary
+    },
+    {
       label: "Workbench-only guide surfaces",
       status: "intentionally omitted",
       tone: "hold",
@@ -1658,6 +1716,13 @@ function buildFinalBundlePackage(
       ...followThroughRouting.routes.flatMap((route) => [
         `- ${route.label}: ${route.detail}`,
         `  - Prompt: ${route.prompt}`
+      ])
+    ],
+    "decision-templates": [
+      "## Decision Templates",
+      ...decisionTemplates.templates.flatMap((template) => [
+        `- ${template.label}: ${template.detail}`,
+        `  - Suggested response: ${template.prompt}`
       ])
     ],
     "receiver-follow-through": [
@@ -1690,6 +1755,8 @@ function buildFinalBundlePackage(
     markdown: [
       recipientCoverSheetMarkdown,
       ...rolePlan.orderedKeys.flatMap((key) => ["", ...sectionBlocks[key]]),
+      "",
+      decisionTemplates.combinedMarkdown,
       "",
       "## Suggested Reply Prompt",
       `- ${receiverGuidance.replyPrompt}`
@@ -1726,6 +1793,7 @@ export function ReviewScorecard({
   const [bundleVariant, setBundleVariant] = useState<BundleVariant>("compact");
   const [receiverRole, setReceiverRole] = useState<ReceiverRole>("operator");
   const [finalBundleCopyState, setFinalBundleCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [decisionTemplateCopyState, setDecisionTemplateCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -1997,6 +2065,13 @@ export function ReviewScorecard({
     blockers,
     nextActions
   );
+  const decisionTemplates = buildDecisionTemplates(
+    selectedDestination,
+    bundleVariant,
+    receiverRole,
+    receiverGuidance,
+    followThroughRouting
+  );
   const finalBundlePackage = buildFinalBundlePackage(
     bundleVariant,
     selectedDestination,
@@ -2009,6 +2084,7 @@ export function ReviewScorecard({
     recipientCoverSheet.markdown,
     receiverGuidance,
     followThroughRouting,
+    decisionTemplates,
     attachmentOrder,
     copyPreflight,
     blockers
@@ -2950,6 +3026,46 @@ export function ReviewScorecard({
                     </article>
                   ))}
                 </div>
+              </div>
+
+              <div className="handoffSection">
+                <div className="claimHeader">
+                  <h3>Decision templates</h3>
+                  <button
+                    type="button"
+                    className="actionButton"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(decisionTemplates.combinedMarkdown);
+                        setDecisionTemplateCopyState("copied");
+                      } catch {
+                        setDecisionTemplateCopyState("failed");
+                      }
+                    }}
+                  >
+                    Copy templates
+                  </button>
+                </div>
+                <p className="scoreHint">{decisionTemplates.summary}</p>
+                <div className="manifestGrid">
+                  {decisionTemplates.templates.map((template) => (
+                    <article key={template.key} className="manifestCard">
+                      <div className="claimHeader">
+                        <strong>{template.label}</strong>
+                        <span className={`statusPill statusPill${template.tone}`}>{template.tone}</span>
+                      </div>
+                      <p className="scoreHint">{template.detail}</p>
+                      <pre className="bundlePreviewPre">{template.markdown}</pre>
+                    </article>
+                  ))}
+                </div>
+                <p className="scoreHint">
+                  {decisionTemplateCopyState === "copied"
+                    ? "Decision templates copied to clipboard."
+                    : decisionTemplateCopyState === "failed"
+                      ? "Clipboard copy failed. You can still copy from the template cards."
+                      : "Use these templates when the receiver is ready to send a concrete acknowledge, request-more-context, or escalate response."}
+                </p>
               </div>
 
               <div className="handoffSections">
