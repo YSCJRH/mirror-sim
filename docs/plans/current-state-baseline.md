@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the current successor-queue baseline after the Phase 5 repo-first kickoff.
+This note is the current post-Phase-5 paused baseline.
 
 ## Snapshot
 
@@ -24,11 +24,11 @@ This note is the current successor-queue baseline after the Phase 5 repo-first k
   - `gh api repos/YSCJRH/mirror-sim/issues/26`
     - Phase 4 exit issue is `closed`
   - `gh api repos/YSCJRH/mirror-sim/milestones/5`
-    - milestone `Phase 5 - Review Sign-off and Evidence Packaging` is `open`
-  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=5"`
-    - Phase 5 queue is initialized through issues `#31-#35`
+    - milestone `Phase 5 - Review Sign-off and Evidence Packaging` is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/issues/31`
+    - Phase 5 exit issue is `closed`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - successor queue currently reports `ready` for the active Phase 5 milestone because one blocked protected exit gate and multiple ready work items are present
+    - successor queue should now report `paused` because no open milestone is available for pickup yet
 
 ## Trusted Source Of Truth
 
@@ -45,12 +45,12 @@ This note is the current successor-queue baseline after the Phase 5 repo-first k
 
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
-- The workbench now also supports claim -> evidence drill-down and baseline/intervention trace review without introducing backend API expansion.
-- The current repository state is in an active Phase 5 successor queue, not a post-Phase-4 idle handoff.
+- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, and shareable review packet export without introducing backend API expansion.
+- The current repository state is a paused post-Phase-5 baseline, not an active successor queue.
 
 ## Next Entry Point
 
-- Phase 5 is the active milestone and the current repo-first slice is tracked by issues `#31-#35`.
-- New implementation work should attach to the existing Phase 5 queue until its exit gate is closed, instead of opening a parallel successor milestone.
+- No execution milestone is currently open for pickup.
+- The next implementation work must begin by opening a fresh successor milestone and its blocked protected-core exit gate before any new ready issues are introduced.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.

@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 5 repo-first queue kickoff.
+This note records the current post-Day-0 execution status for Mirror after the Phase 5 closeout.
 
 ## Current Gate State
 
@@ -8,7 +8,7 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 2 exit gate: closed
 - Phase 3 exit gate: closed
 - Phase 4 exit gate: closed
-- Phase 5 exit gate: open
+- Phase 5 exit gate: closed
 
 Local phase audits currently report:
 
@@ -39,16 +39,17 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 4 - Review Workflow and Ops Hardening`
   - closed
+- Phase 5 exit issue `#31`
+  - closed
+- milestone `Phase 5 - Review Sign-off and Evidence Packaging`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 5 queue bootstrap
+  - no open pull requests remain after the Phase 5 closeout
 
 ## Current Queue
 
-- milestone `Phase 5 - Review Sign-off and Evidence Packaging` is open.
-- `#31` `Phase 5 exit gate`
-  - open
-  - blocked until the Phase 5 sign-off and evidence-packaging slice is complete
-- The current Phase 5 execution slice is tracked through:
+- No execution milestone is currently open.
+- The completed Phase 5 slice was tracked through:
   - `#32` `Phase 5: decouple successor bootstrap from hardcoded phase templates and sync queue docs`
   - `#33` `Phase 5: add reviewer scorecard and sign-off worksheet in the workbench`
   - `#34` `Phase 5: add shareable review packet export from claims, timeline, and rubric`
@@ -65,6 +66,7 @@ Local phase audits currently report:
 - Safe-lane PRs may auto-merge once checks are green and no blocking labels are present.
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
+- When `audit-github-queue` reports `paused` because no open milestone exists, open the next successor queue before resuming builder pickup.
 
 ## Historical Branch Status
 
