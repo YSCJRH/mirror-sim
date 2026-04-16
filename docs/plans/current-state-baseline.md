@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the current Phase 7 active-queue baseline.
+This note is the current Phase 8 active-queue baseline.
 
 ## Snapshot
 
@@ -32,11 +32,15 @@ This note is the current Phase 7 active-queue baseline.
   - `gh api repos/YSCJRH/mirror-sim/issues/40`
     - Phase 6 exit issue is `closed`
   - `gh api repos/YSCJRH/mirror-sim/milestones/7`
-    - milestone `Phase 7 - Operator Handoff and Review Delivery` is `open`
-  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=7"`
-    - Phase 7 queue is initialized through issues `#46-#49`
+    - milestone `Phase 7 - Operator Handoff and Review Delivery` is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/issues/46`
+    - Phase 7 exit issue is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/milestones/8`
+    - milestone `Phase 8 - Closeout Delivery and Pickup Routing` is `open`
+  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=8"`
+    - Phase 8 queue is initialized through issues `#53-#56`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - successor queue currently reports `ready` because Phase 7 has one blocked protected-core exit gate and multiple ready work items
+    - successor queue currently reports `ready` because Phase 8 has one blocked protected-core exit gate and multiple ready work items
 
 ## Trusted Source Of Truth
 
@@ -53,13 +57,13 @@ This note is the current Phase 7 active-queue baseline.
 
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
-- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, and shareable review packet export without introducing backend API expansion.
-- The current repository state is in an active Phase 7 successor queue, not a paused post-Phase-6 baseline.
+- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, and operator decision briefs without introducing backend API expansion.
+- The current repository state is in an active Phase 8 successor queue, not a closed Phase 7 baseline.
 
 ## Next Entry Point
 
-- Phase 7 is the active milestone and the current operator-handoff slice is tracked by issues `#46-#49`.
-- New implementation work should attach to the existing Phase 7 queue until its exit gate is closed, instead of opening a parallel successor milestone.
+- Phase 8 is the active milestone and the current closeout-delivery slice is tracked by issues `#53-#56`.
+- New implementation work should attach to the existing Phase 8 queue until its exit gate is closed, instead of opening a parallel successor milestone.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
 - The local queue heartbeat remains active as `mirror-queue-heartbeat` and should continue reporting the paused/ready state of the live queue.

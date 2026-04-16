@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 7 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 8 queue resumption.
 
 ## Current Gate State
 
@@ -10,7 +10,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 4 exit gate: closed
 - Phase 5 exit gate: closed
 - Phase 6 exit gate: closed
-- Phase 7 exit gate: open
+- Phase 7 exit gate: closed
+- Phase 8 exit gate: open
 
 Local phase audits currently report:
 
@@ -49,16 +50,24 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 6 - Automation Activation and Queue Hygiene`
   - closed
+- Phase 7 exit issue `#46`
+  - closed
+- milestone `Phase 7 - Operator Handoff and Review Delivery`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 7 queue kickoff
+  - no open pull requests remain after the Phase 8 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 7 - Operator Handoff and Review Delivery` is open.
-- `#46` `Phase 7 exit gate`
+- milestone `Phase 8 - Closeout Delivery and Pickup Routing` is open.
+- `#53` `Phase 8 exit gate`
   - open
-  - blocked until the Phase 7 operator handoff and review delivery slice is complete
-- The current Phase 7 execution slice is tracked through:
+  - blocked until the Phase 8 closeout delivery and pickup routing slice is complete
+- The current Phase 8 execution slice is tracked through:
+  - `#54` `Phase 8: sync bootstrap spec and docs to the active closeout-delivery queue`
+  - `#55` `Phase 8: add exit-gate-ready closeout packet sections in the workbench`
+  - `#56` `Phase 8: add lane-aware pickup checklist and handoff routing panel in the workbench`
+- The completed Phase 7 slice was tracked through:
   - `#47` `Phase 7: sync bootstrap spec and docs to the active handoff queue`
   - `#48` `Phase 7: add issue-comment-ready review packet sections in the workbench`
   - `#49` `Phase 7: add decision brief and next-action handoff panel in the workbench`
@@ -87,8 +96,8 @@ Local phase audits currently report:
 
 ## Historical Branch Status
 
-- The visible `origin/codex/*` branches correspond to closed or merged work.
-- Treat those branches as historical and superseded by `main`, not as an active queue.
+- No remote `origin/codex/*` branches remain after the Phase 6 branch-hygiene closeout.
+- Treat any future recreated `codex/*` remote branch as temporary execution state, not as a standing backlog.
 - Delete a historical branch when it is tied only to closed or merged work and no open issue, PR, or runbook step references it.
 - Keep a historical branch only when an open issue or unresolved forensic comparison explicitly depends on it.
 - Revive a historical branch only through a new issue that names the branch and explains why `main` is insufficient.

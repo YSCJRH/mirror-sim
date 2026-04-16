@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-6 gates, and resumed the successor queue as `Phase 7 - Operator Handoff and Review Delivery`.
+The repository has completed Day 0 bootstrap, closed the Phase 1-7 gates, and resumed the successor queue as `Phase 8 - Closeout Delivery and Pickup Routing`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -19,7 +19,7 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-6 gates, and re
   - CI upgraded to a long-running quality gate
   - local lane-classification, phase-audit, and GitHub queue-audit commands
   - protected `main` with required status checks and auto-merge for safe-lane PRs
-  - a browser workbench that now supports claim -> evidence drill-down and baseline/intervention trace review
+  - a browser workbench that now supports claim -> evidence drill-down, trace review, reviewer scorecards, issue-comment packets, and operator handoff briefs
   - a documented worktree-based pickup and handoff path for long-running queue execution
 - GitHub queue state is aligned with the local baseline:
   - Phase 3 exit issue `#4` is closed
@@ -27,8 +27,9 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-6 gates, and re
   - milestone `Phase 4 - Review Workflow and Ops Hardening` is closed
   - milestone `Phase 5 - Review Sign-off and Evidence Packaging` is closed
   - milestone `Phase 6 - Automation Activation and Queue Hygiene` is closed
-  - milestone `Phase 7 - Operator Handoff and Review Delivery` is open
-  - Phase 7 queue is initialized through issues `#46-#49`
+  - milestone `Phase 7 - Operator Handoff and Review Delivery` is closed
+  - milestone `Phase 8 - Closeout Delivery and Pickup Routing` is open
+  - Phase 8 queue is initialized through issues `#53-#56`
 
 Local phase audits currently show:
 
@@ -83,7 +84,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): Phase 6-complete review sign-off workbench with the current Phase 7 handoff queue still consuming the same artifact surface
+- [frontend](/D:/mirror/frontend): review workbench with Phase 7 handoff surfaces landed and the current Phase 8 closeout-delivery queue still consuming the same artifact surface
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -128,10 +129,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 6 closeout are complete. Phase 7 is now the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 7 closeout are complete. Phase 8 is now the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may resume pickup guidance only against the Phase 7 queue and must stop again if `audit-github-queue` leaves `ready`.
+- The local heartbeat automation may resume pickup guidance only against the Phase 8 queue and must stop again if `audit-github-queue` leaves `ready`.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals
