@@ -60,6 +60,8 @@ type DeliveryReadiness = {
   readyItems: string[];
 };
 
+type DeliveryDestination = "pr-comment" | "closeout" | "pickup-handoff";
+
 type ReviewScorecardProps = {
   rubricRows: RubricRow[];
   claimCount: number;
@@ -151,6 +153,20 @@ const exportSurfaces: Record<ExportSurfaceId, ExportSurface> = {
     destination: "Use for the next operator pickup when lane-specific merge and checkpoint rules need to stay visible.",
     summary: "Maps the current review state onto safe-lane or protected-core pickup, merge, and post-merge steps.",
     targetId: "pickup-routing-export"
+  }
+};
+const deliveryDestinations: Record<DeliveryDestination, { label: string; summary: string }> = {
+  "pr-comment": {
+    label: "PR comment",
+    summary: "Use when the next operator needs GitHub-ready handoff copy inside a PR or issue thread."
+  },
+  closeout: {
+    label: "Closeout",
+    summary: "Use when sign-off posture, validation commands, and evidence anchors need to travel together."
+  },
+  "pickup-handoff": {
+    label: "Pickup handoff",
+    summary: "Use when the next operator needs the clearest next step for continuing the work."
   }
 };
 
@@ -402,6 +418,51 @@ function buildDeliveryReadiness(
   };
 }
 
+function recommendedExportForDestination(
+  destination: DeliveryDestination,
+  pickupLane: PickupLane,
+  deliveryReadiness: DeliveryReadiness
+): { exportId: ExportSurfaceId; reason: string; caution: string | null } {
+  if (destination === "pr-comment") {
+    return {
+      exportId: "issue-comment",
+      reason: "The issue comment packet is already trimmed into GitHub-ready sections, so it is the fastest fit for a PR or issue comment.",
+      caution:
+        deliveryReadiness.tone === "ready"
+          ? null
+          : "The current readiness warnings still apply, so treat the copied comment as a handoff snapshot rather than a sign-off claim."
+    };
+  }
+
+  if (destination === "closeout") {
+    return {
+      exportId: "closeout-packet",
+      reason: "The closeout packet keeps sign-off posture, validation commands, blockers, and evidence anchors together for exit-gate or milestone notes.",
+      caution:
+        deliveryReadiness.tone === "ready"
+          ? null
+          : "Resolve the visible readiness warnings before treating the closeout packet as final closure evidence."
+    };
+  }
+
+  if (pickupLane === "lane:protected-core") {
+    return {
+      exportId: "pickup-routing",
+      reason: "Protected-core pickup should travel with lane-specific review, merge, and checkpoint rules, so routing is the safest first export.",
+      caution: "Supplement with the decision brief if the next operator also needs a shorter narrative summary."
+    };
+  }
+
+  return {
+    exportId: "decision-brief",
+    reason: "For safe-lane pickup, the decision brief is the fastest summary of recommendation, blockers, and next actions for the next operator.",
+    caution:
+      deliveryReadiness.tone === "ready"
+        ? "Use the pickup routing panel if the next operator also needs the explicit merge and checkpoint path."
+        : "Use the readiness panel below to resolve missing inputs before treating the brief as a clean handoff."
+  };
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -422,6 +483,8 @@ export function ReviewScorecard({
   const [pickupLane, setPickupLane] = useState<PickupLane>("lane:auto-safe");
   const [pickupRoutingCopyState, setPickupRoutingCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [selectedExport, setSelectedExport] = useState<ExportSurfaceId>("issue-comment");
+  const [selectedDestination, setSelectedDestination] = useState<DeliveryDestination>("pr-comment");
+  const [recommendedCopyState, setRecommendedCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -453,6 +516,8 @@ export function ReviewScorecard({
     claimCount,
     divergentTurnCount
   );
+  const recommendedExport = recommendedExportForDestination(selectedDestination, pickupLane, deliveryReadiness);
+  const recommendedExportSurface = exportSurfaces[recommendedExport.exportId];
   const packetMarkdown = [
     "# Mirror Review Packet",
     "",
@@ -590,6 +655,13 @@ export function ReviewScorecard({
     "## Reviewer Notes",
     notes.trim() ? notes : "- No reviewer notes captured yet."
   ].join("\n");
+  const exportMarkdownById: Record<ExportSurfaceId, string> = {
+    "decision-brief": handoffMarkdown,
+    "review-packet": packetMarkdown,
+    "issue-comment": issueCommentMarkdown,
+    "closeout-packet": closeoutMarkdown,
+    "pickup-routing": pickupRoutingMarkdown
+  };
 
   return (
     <section className="panel panelAccent">
@@ -713,18 +785,81 @@ export function ReviewScorecard({
               <button
                 type="button"
                 className="actionButton"
-                onClick={() => {
-                  document.getElementById(selectedExportSurface.targetId)?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                  });
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(exportMarkdownById[recommendedExport.exportId]);
+                    setRecommendedCopyState("copied");
+                  } catch {
+                    setRecommendedCopyState("failed");
+                  }
                 }}
               >
-                Jump to selected export
+                Copy recommended export
               </button>
             </div>
             <p className="scoreHint">
-              Use this guide when you know the destination first and need the right export surface without scanning the whole sidebar.
+              Start from the destination, then use the recommended export or jump to any detailed packet when you need more control.
+            </p>
+
+            <div className="laneToggleGroup" role="tablist" aria-label="Delivery destination chooser">
+              {(Object.keys(deliveryDestinations) as DeliveryDestination[]).map((destination) => (
+                <button
+                  key={destination}
+                  type="button"
+                  className={`laneToggleButton${selectedDestination === destination ? " laneToggleButtonActive" : ""}`}
+                  onClick={() => {
+                    setSelectedDestination(destination);
+                    setSelectedExport(recommendedExportForDestination(destination, pickupLane, deliveryReadiness).exportId);
+                  }}
+                >
+                  {deliveryDestinations[destination].label}
+                </button>
+              ))}
+            </div>
+
+            <div className="handoffSections">
+              <div
+                className={`handoffSection${
+                  deliveryReadiness.tone === "ready" ? " handoffSectionReady" : " handoffSectionWarning"
+                }`}
+              >
+                <h3>Recommended export</h3>
+                <p>
+                  <strong>{recommendedExportSurface.label}</strong>
+                </p>
+                <p>{recommendedExport.reason}</p>
+                <p className="scoreHint">{deliveryDestinations[selectedDestination].summary}</p>
+              </div>
+
+              <div className="handoffSection">
+                <h3>Quick actions</h3>
+                <ul className="checklist compact">
+                  <li>Best destination: {recommendedExportSurface.destination}</li>
+                  <li>Current sign-off posture: {decision.label}.</li>
+                  <li>Current blockers surfaced: {blockers.length}.</li>
+                  {recommendedExport.caution ? <li>{recommendedExport.caution}</li> : null}
+                </ul>
+                <button
+                  type="button"
+                  className="actionButton"
+                  onClick={() => {
+                    document.getElementById(recommendedExportSurface.targetId)?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start"
+                    });
+                  }}
+                >
+                  Jump to recommended export
+                </button>
+              </div>
+            </div>
+
+            <p className="scoreHint">
+              {recommendedCopyState === "copied"
+                ? `${recommendedExportSurface.label} copied to clipboard.`
+                : recommendedCopyState === "failed"
+                  ? "Clipboard copy failed. You can still copy from the detailed export field below."
+                  : "Use the quick-copy button for the current destination, or switch destinations to update the recommendation."}
             </p>
 
             <div className="laneToggleGroup" role="tablist" aria-label="Export destination chooser">
