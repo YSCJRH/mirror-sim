@@ -1536,6 +1536,27 @@ function buildDecisionTemplates(
   };
 }
 
+function buildGroupedResponsePack(
+  destination: DeliveryDestination,
+  variant: BundleVariant,
+  role: ReceiverRole,
+  decisionTemplates: ReturnType<typeof buildDecisionTemplates>
+) {
+  return {
+    summary:
+      "Use the grouped response pack when the receiver wants all three current paths together instead of copying each template one by one.",
+    markdown: [
+      "# Grouped Response Pack",
+      "",
+      `- Receiver role: ${receiverRoleProfiles[role].label}`,
+      `- Destination: ${deliveryDestinations[destination].label}`,
+      `- Bundle mode: ${bundleVariantProfiles[variant].label}`,
+      "",
+      decisionTemplates.combinedMarkdown
+    ].join("\n")
+  };
+}
+
 function buildRoleSpecificBundlePlan(
   role: ReceiverRole,
   includeRationale: boolean,
@@ -1821,6 +1842,7 @@ export function ReviewScorecard({
   const [lastShortcutLabel, setLastShortcutLabel] = useState<string>("");
   const [presetActionCopyState, setPresetActionCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [lastPresetLabel, setLastPresetLabel] = useState<string>("");
+  const [responsePackCopyState, setResponsePackCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -2098,6 +2120,12 @@ export function ReviewScorecard({
     receiverRole,
     receiverGuidance,
     followThroughRouting
+  );
+  const groupedResponsePack = buildGroupedResponsePack(
+    selectedDestination,
+    bundleVariant,
+    receiverRole,
+    decisionTemplates
   );
   const primaryResponseShortcut =
     decisionTemplates.templates.find((template) => template.tone === "ready") ?? decisionTemplates.templates[0];
@@ -3322,6 +3350,35 @@ export function ReviewScorecard({
                     : decisionTemplateCopyState === "failed"
                       ? "Clipboard copy failed. You can still copy from the template cards."
                       : "Use these templates when the receiver is ready to send a concrete acknowledge, request-more-context, or escalate response."}
+                </p>
+              </div>
+
+              <div className="handoffSection">
+                <div className="claimHeader">
+                  <h3>Grouped response pack</h3>
+                  <button
+                    type="button"
+                    className="actionButton"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(groupedResponsePack.markdown);
+                        setResponsePackCopyState("copied");
+                      } catch {
+                        setResponsePackCopyState("failed");
+                      }
+                    }}
+                  >
+                    Copy response pack
+                  </button>
+                </div>
+                <p className="scoreHint">{groupedResponsePack.summary}</p>
+                <pre className="bundlePreviewPre">{groupedResponsePack.markdown}</pre>
+                <p className="scoreHint">
+                  {responsePackCopyState === "copied"
+                    ? "Grouped response pack copied to clipboard."
+                    : responsePackCopyState === "failed"
+                      ? "Clipboard copy failed. You can still copy from the response-pack preview."
+                      : "Use the grouped response pack when you want the full acknowledge / request-more-context / escalate set in one packaged export."}
                 </p>
               </div>
 
