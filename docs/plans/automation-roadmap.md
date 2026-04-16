@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, and Phase 13 is now the active export-review track.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, and Phase 14 is now the active export-delta track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -40,9 +40,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 12 is closed locally and in GitHub.
 - Phase 12 exit issue `#81` is closed and milestone `Phase 12 - Delivery Preset Refinement and Comparison Flow` is closed.
 - The Phase 12 queue was completed through issues `#81-#84`.
-- Phase 13 is the active successor queue.
-- milestone `Phase 13 - Guided Export Payload Review` is open.
-- The Phase 13 queue is initialized through issues `#88-#91`.
+- Phase 13 is closed locally and in GitHub.
+- Phase 13 exit issue `#88` is closed and milestone `Phase 13 - Guided Export Payload Review` is closed.
+- The Phase 13 queue was completed through issues `#88-#91`.
+- Phase 14 is the active successor queue.
+- milestone `Phase 14 - Export Delta and Copy Confidence` is open.
+- The Phase 14 queue is initialized through issues `#95-#98`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.
