@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-4 gates, and opened the successor queue as `Phase 5 - Review Sign-off and Evidence Packaging`.
+The repository has completed Day 0 bootstrap and closed the Phase 1-5 gates. The long-running loop is currently paused until a fresh successor queue is opened in GitHub.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -25,8 +25,9 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-4 gates, and op
   - Phase 3 exit issue `#4` is closed
   - milestone `Phase 3 - Eval/UI/Demo` is closed
   - milestone `Phase 4 - Review Workflow and Ops Hardening` is closed
-  - milestone `Phase 5 - Review Sign-off and Evidence Packaging` is open
-  - Phase 5 queue is initialized through issues `#31-#35`
+  - milestone `Phase 5 - Review Sign-off and Evidence Packaging` is closed
+  - Phase 5 queue was completed through issues `#31-#35`
+  - `audit-github-queue` should now report `paused` until the next successor milestone and exit gate are opened
 
 Local phase audits currently show:
 
@@ -81,7 +82,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): active Phase 5 review sign-off workbench
+- [frontend](/D:/mirror/frontend): Phase 5-complete review sign-off workbench
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -126,9 +127,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 4 closeout are complete. Phase 5 is the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 5 closeout are complete. No execution milestone should be reopened or resumed implicitly.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
+- Builder automation should remain paused until a fresh successor milestone and blocked protected-core exit gate are opened.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals

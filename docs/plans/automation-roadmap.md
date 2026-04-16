@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete and the repo-first Phase 5 closure is now the active track.
+Day 0 bootstrap is complete and Phase 5 closeout is complete.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -16,10 +16,10 @@ Day 0 bootstrap is complete and the repo-first Phase 5 closure is now the active
 - Phase 3 exit issue `#4` is closed and milestone `Phase 3 - Eval/UI/Demo` is closed.
 - Phase 4 is closed locally and in GitHub.
 - Phase 4 exit issue `#26` is closed and milestone `Phase 4 - Review Workflow and Ops Hardening` is closed.
-- Phase 5 is the active successor queue.
-- milestone `Phase 5 - Review Sign-off and Evidence Packaging` is open.
-- The Phase 5 queue is initialized through issues `#31-#35`.
-- Builder state should now be derived from `audit-github-queue`, not from doc-only convention.
+- Phase 5 is closed locally and in GitHub.
+- Phase 5 exit issue `#31` is closed and milestone `Phase 5 - Review Sign-off and Evidence Packaging` is closed.
+- The Phase 5 queue was completed through issues `#31-#35`.
+- Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 
 ## Day 0 Bootstrap
@@ -72,3 +72,4 @@ Before builder automation is allowed to write code or auto-merge:
 - Any open `status:needs-adr` or `risk:safety` label blocks auto-merge.
 - Long-running execution must run from isolated worktrees rather than the current `main` checkout.
 - Queue pickup order, one-writer ownership, and branch hygiene should follow `docs/plans/long-running-loop-runbook.md`.
+- When no open milestone exists, the correct queue state is `paused`, and the next action is to open a fresh successor milestone plus a blocked protected-core exit gate before resuming builder automation.
