@@ -31,6 +31,10 @@
     {
       "title": "Phase 8 - Closeout Delivery and Pickup Routing",
       "description": "Turn the new operator handoff surfaces into exit-gate-ready closeout packets and lane-aware pickup guidance without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 9 - Review Delivery Polish and Completeness",
+      "description": "Consolidate the growing workbench delivery surfaces by mapping each export to its GitHub or operator destination and surfacing completion gaps without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -73,6 +77,11 @@
       "name": "phase:8",
       "color": "236f85",
       "description": "Phase 8 closeout delivery and pickup routing work."
+    },
+    {
+      "name": "phase:9",
+      "color": "315f8c",
+      "description": "Phase 9 review delivery polish and completeness work."
     },
     {
       "name": "area:backend",
@@ -414,6 +423,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a lane-aware pickup panel to the workbench so the next operator can see different handoff and review steps for `lane:auto-safe` versus `lane:protected-core` without leaving the workbench.\n\n## input\n- current decision-brief and issue-comment packet state\n- `docs/plans/long-running-loop-runbook.md`\n- current claim and timeline context already rendered in the workbench\n\n## output\n- a toggleable lane-specific pickup checklist and routing panel in the workbench\n- copyable guidance that stays aligned with the current runbook without mutating GitHub state\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- changing lane-classifier rules\n- changing runbook governance contracts\n- storing per-user preferences or workflow state\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that switching lanes updates the checklist and handoff guidance copy\n\n## touches contract\nNo. This issue must remain frontend-only and repo-read-only.\n\n## phase\nPhase 8"
+    },
+    {
+      "title": "Phase 9 exit gate",
+      "milestone": "Phase 9 - Review Delivery Polish and Completeness",
+      "labels": [
+        "phase:9",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 9 review delivery polish and completeness criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 9 milestone state\n- merged PR state for queue sync and delivery-polish work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 9 closeout decision\n- documented stop condition for the Phase 9 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 9 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 9"
+    },
+    {
+      "title": "Phase 9: sync bootstrap spec and docs to the active delivery-polish queue",
+      "milestone": "Phase 9 - Review Delivery Polish and Completeness",
+      "labels": [
+        "phase:9",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 8 baseline to the active Phase 9 queue so docs, bootstrap metadata, and README reflect the new delivery-polish track.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `README.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- current live GitHub milestone and issue state\n\n## output\n- `phase:9` and Phase 9 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 9 as the active successor queue\n- no stale Phase 8 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- delivery-surface UI changes\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 9"
+    },
+    {
+      "title": "Phase 9: add export destination guide and packet chooser in the workbench",
+      "milestone": "Phase 9 - Review Delivery Polish and Completeness",
+      "labels": [
+        "phase:9",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd an export destination guide and packet chooser to the workbench so an operator can quickly decide which current packet belongs in a PR comment, an exit gate, or the next pickup handoff without scanning every export surface.\n\n## input\n- current review packet, issue-comment packet, closeout packet, and pickup-routing packet surfaces\n- current decision-brief and reviewer-note state\n- current workbench layout\n\n## output\n- a destination guide that maps each packet to its intended GitHub or operator touchpoint\n- a packet chooser or jump surface that reduces export-surface hunting in the workbench\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas, report schemas, or trace schemas\n- hiding or removing the existing export surfaces\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that each export surface is clearly mapped to a destination\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 9"
+    },
+    {
+      "title": "Phase 9: add delivery completeness summary and missing-input warnings in the workbench",
+      "milestone": "Phase 9 - Review Delivery Polish and Completeness",
+      "labels": [
+        "phase:9",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a delivery completeness summary to the workbench so an operator can see which missing scores, notes, or blockers still weaken the current packet set before copying review, closeout, or pickup exports.\n\n## input\n- current reviewer scorecard state\n- current decision brief, closeout packet, and pickup-routing packet state\n- current blocker and note handling in the workbench\n\n## output\n- a delivery-readiness summary panel that highlights missing rubric scores, empty reviewer notes, and unresolved blockers\n- visible warnings that make incomplete exports harder to miss before handoff\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- persistent draft storage\n- changing packet or rubric contracts\n- changing lane-classifier or queue-governance behavior\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that incomplete scorecard or note state surfaces clear warnings in the UI\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 9"
     }
   ]
 }
