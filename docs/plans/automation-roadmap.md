@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, and Phase 15 is now the active override-confidence track.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, and Phase 16 is now the active handoff-packaging track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -46,9 +46,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 14 is closed locally and in GitHub.
 - Phase 14 exit issue `#95` is closed and milestone `Phase 14 - Export Delta and Copy Confidence` is closed.
 - The Phase 14 queue was completed through issues `#95-#98`.
-- Phase 15 is the active successor queue.
-- milestone `Phase 15 - Override Rationale and Delivery Confidence` is open.
-- The Phase 15 queue is initialized through issues `#102-#105`.
+- Phase 15 is closed locally and in GitHub.
+- Phase 15 exit issue `#102` is closed and milestone `Phase 15 - Override Rationale and Delivery Confidence` is closed.
+- The Phase 15 queue was completed through issues `#102-#105`.
+- Phase 16 is the active successor queue.
+- milestone `Phase 16 - Export Bundle Composition and Handoff Packaging` is open.
+- The Phase 16 queue is initialized through issues `#109-#112`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.

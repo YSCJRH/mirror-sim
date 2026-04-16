@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 15 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 16 queue resumption.
 
 ## Current Gate State
 
@@ -18,7 +18,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 12 exit gate: closed
 - Phase 13 exit gate: closed
 - Phase 14 exit gate: closed
-- Phase 15 exit gate: open
+- Phase 15 exit gate: closed
+- Phase 16 exit gate: open
 
 Local phase audits currently report:
 
@@ -89,16 +90,24 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 14 - Export Delta and Copy Confidence`
   - closed
+- Phase 15 exit issue `#102`
+  - closed
+- milestone `Phase 15 - Override Rationale and Delivery Confidence`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 15 queue kickoff
+  - no open pull requests remain after the Phase 16 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 15 - Override Rationale and Delivery Confidence` is open.
-- `#102` `Phase 15 exit gate`
+- milestone `Phase 16 - Export Bundle Composition and Handoff Packaging` is open.
+- `#109` `Phase 16 exit gate`
   - open
-- blocked until the Phase 15 override rationale and delivery confidence slice is complete
-- The current Phase 15 execution slice is tracked through:
+- blocked until the Phase 16 export bundle composition and handoff packaging slice is complete
+- The current Phase 16 execution slice is tracked through:
+  - `#110` `Phase 16: sync bootstrap spec and docs to the active handoff-packaging queue`
+  - `#111` `Phase 16: add composed handoff-bundle preview for export, rationale note, and sidecar summary`
+  - `#112` `Phase 16: add destination-specific attachment order and companion checklist for handoff packaging`
+- The completed Phase 15 slice was tracked through:
   - `#103` `Phase 15: sync bootstrap spec and docs to the active override-confidence queue`
   - `#104` `Phase 15: add explicit keep-vs-override rationale cues for guided exports`
   - `#105` `Phase 15: add copy-sidecar summary for destination fit, blocker acknowledgement, and selection confidence`

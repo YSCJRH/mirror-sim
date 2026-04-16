@@ -59,6 +59,10 @@
     {
       "title": "Phase 15 - Override Rationale and Delivery Confidence",
       "description": "Turn guided export selection into a clearer operator commitment step by surfacing override rationale and copy-sidecar handoff context without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 16 - Export Bundle Composition and Handoff Packaging",
+      "description": "Turn the guided export choice into a clearer final handoff package by composing export companions and destination-specific attachment order without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -136,6 +140,11 @@
       "name": "phase:15",
       "color": "8a32e6",
       "description": "Phase 15 override rationale and delivery confidence work."
+    },
+    {
+      "name": "phase:16",
+      "color": "9730ef",
+      "description": "Phase 16 export bundle composition and handoff packaging work."
     },
     {
       "name": "area:backend",
@@ -792,6 +801,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a compact copy-sidecar summary to the guided export area so an operator can carry destination fit, blocker acknowledgements, and export-selection confidence into the final handoff without re-reading the whole workbench.\n\n## input\n- current copy preflight, blocker acknowledgement, recommendation, and payload compare surfaces\n- current selected destination and export state\n- current guided export layout\n\n## output\n- a concise sidecar summary that can travel with the copied export or sit beside it during handoff\n- clearer copy-confidence cues for the selected destination and current blocker state\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- changing packet schemas or backend review state\n- auto-posting to GitHub\n- gating copy behind modal confirmation flows\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the sidecar summary tracks destination, blocker, and selection changes\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 15"
+    },
+    {
+      "title": "Phase 16 exit gate",
+      "milestone": "Phase 16 - Export Bundle Composition and Handoff Packaging",
+      "labels": [
+        "phase:16",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 16 export bundle composition and handoff packaging criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 16 milestone state\n- merged PR state for queue sync and handoff-packaging work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 16 closeout decision\n- documented stop condition for the Phase 16 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 16 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 16"
+    },
+    {
+      "title": "Phase 16: sync bootstrap spec and docs to the active handoff-packaging queue",
+      "milestone": "Phase 16 - Export Bundle Composition and Handoff Packaging",
+      "labels": [
+        "phase:16",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 15 baseline to the active Phase 16 queue so docs, bootstrap metadata, and README reflect the new handoff-packaging track.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `README.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- current live GitHub milestone and issue state\n\n## output\n- `phase:16` and Phase 16 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 16 as the active successor queue\n- no stale Phase 15 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- handoff-packaging UI changes\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 16"
+    },
+    {
+      "title": "Phase 16: add composed handoff-bundle preview for export, rationale note, and sidecar summary",
+      "milestone": "Phase 16 - Export Bundle Composition and Handoff Packaging",
+      "labels": [
+        "phase:16",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a composed handoff-bundle preview so an operator can see the current export, rationale note, and sidecar summary together before copy or handoff.\n\n## input\n- current selected export\n- current rationale note preview and copy-sidecar summary surfaces\n- current guided export layout\n\n## output\n- a combined bundle preview that shows how the current export companions fit together\n- no backend API calls and no new artifact files\n- no packet schema changes\n\n## out-of-scope\n- auto-posting to GitHub\n- changing the underlying export payload generation rules\n- queue-governance changes\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the bundle preview updates when export selection or rationale changes\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 16"
+    },
+    {
+      "title": "Phase 16: add destination-specific attachment order and companion checklist for handoff packaging",
+      "milestone": "Phase 16 - Export Bundle Composition and Handoff Packaging",
+      "labels": [
+        "phase:16",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd destination-specific attachment order and companion checklist cues so an operator knows how to package the current export, rationale note, and sidecar for the selected handoff destination.\n\n## input\n- current destination-aware recommendation flow\n- current rationale layer, copy sidecar, and copy preflight surfaces\n- current guided export layout\n\n## output\n- clear attachment-order guidance for PR comments, closeout notes, and pickup handoffs\n- a lightweight companion checklist that shows which pieces should travel together\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- auto-posting to GitHub\n- changing export packet schemas or backend review state\n- adding persistent package templates\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the attachment guidance changes with destination and selected export state\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 16"
     }
   ]
 }
