@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 17 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 18 queue resumption.
 
 ## Current Gate State
 
@@ -20,7 +20,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 14 exit gate: closed
 - Phase 15 exit gate: closed
 - Phase 16 exit gate: closed
-- Phase 17 exit gate: open
+- Phase 17 exit gate: closed
+- Phase 18 exit gate: open
 
 Local phase audits currently report:
 
@@ -96,15 +97,19 @@ Local phase audits currently report:
 - milestone `Phase 15 - Override Rationale and Delivery Confidence`
   - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 17 queue kickoff
+  - no open pull requests remain after the Phase 18 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 17 - Final Bundle Delivery and Handoff Manifest` is open.
-- `#116` `Phase 17 exit gate`
+- milestone `Phase 18 - Bundle Variants and Receiver Guidance` is open.
+- `#123` `Phase 18 exit gate`
   - open
-- blocked until the Phase 17 final bundle delivery and handoff manifest slice is complete
-- The current Phase 17 execution slice is tracked through:
+- blocked until the Phase 18 bundle variants and receiver guidance slice is complete
+- The current Phase 18 execution slice is tracked through:
+  - `#124` `Phase 18: sync bootstrap spec and docs to the active bundle-variants queue`
+  - `#125` `Phase 18: add compact-versus-full final bundle variant chooser for destination-specific delivery`
+  - `#126` `Phase 18: add receiver action checklist and reply-prompt cues for final bundle handoff`
+- The completed Phase 17 slice was tracked through:
   - `#117` `Phase 17: sync bootstrap spec and docs to the active final-bundle-delivery queue`
   - `#118` `Phase 17: add recipient-facing handoff cover sheet for the composed bundle`
   - `#119` `Phase 17: add one-step final bundle copy and package manifest for handoff delivery`
