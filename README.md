@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-14 gates, and resumed the successor queue as `Phase 15 - Override Rationale and Delivery Confidence`.
+The repository has completed Day 0 bootstrap, closed the Phase 1-15 gates, and resumed the successor queue as `Phase 16 - Export Bundle Composition and Handoff Packaging`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -35,8 +35,9 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-14 gates, and r
   - milestone `Phase 12 - Delivery Preset Refinement and Comparison Flow` is closed
   - milestone `Phase 13 - Guided Export Payload Review` is closed
   - milestone `Phase 14 - Export Delta and Copy Confidence` is closed
-  - milestone `Phase 15 - Override Rationale and Delivery Confidence` is open
-  - Phase 15 queue is initialized through issues `#102-#105`
+  - milestone `Phase 15 - Override Rationale and Delivery Confidence` is closed
+  - milestone `Phase 16 - Export Bundle Composition and Handoff Packaging` is open
+  - Phase 16 queue is initialized through issues `#109-#112`
 
 Local phase audits currently show:
 
@@ -91,7 +92,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): review workbench with Phase 14 diff-highlights and copy-preflight surfaces landed and the current Phase 15 override-confidence queue still consuming the same artifact surface
+- [frontend](/D:/mirror/frontend): review workbench with Phase 15 rationale and copy-sidecar surfaces landed and the current Phase 16 handoff-packaging queue still consuming the same artifact surface
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -136,10 +137,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 14 closeout are complete. Phase 15 is now the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 15 closeout are complete. Phase 16 is now the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may resume pickup guidance only against the Phase 15 queue and must stop again if `audit-github-queue` leaves `ready`.
+- The local heartbeat automation may resume pickup guidance only against the Phase 16 queue and must stop again if `audit-github-queue` leaves `ready`.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals
