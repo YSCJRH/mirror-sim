@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete and Phase 5 closeout is complete.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, and Phase 6 is now the active queue-resumption track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -19,6 +19,9 @@ Day 0 bootstrap is complete and Phase 5 closeout is complete.
 - Phase 5 is closed locally and in GitHub.
 - Phase 5 exit issue `#31` is closed and milestone `Phase 5 - Review Sign-off and Evidence Packaging` is closed.
 - The Phase 5 queue was completed through issues `#31-#35`.
+- Phase 6 is the active successor queue.
+- milestone `Phase 6 - Automation Activation and Queue Hygiene` is open.
+- The Phase 6 queue is initialized through issues `#40-#43`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 
@@ -72,4 +75,4 @@ Before builder automation is allowed to write code or auto-merge:
 - Any open `status:needs-adr` or `risk:safety` label blocks auto-merge.
 - Long-running execution must run from isolated worktrees rather than the current `main` checkout.
 - Queue pickup order, one-writer ownership, and branch hygiene should follow `docs/plans/long-running-loop-runbook.md`.
-- When no open milestone exists, the correct queue state is `paused`, and the next action is to open a fresh successor milestone plus a blocked protected-core exit gate before resuming builder automation.
+- When the active milestone exists and the queue reports `ready`, the builder may resume against that milestone only.
