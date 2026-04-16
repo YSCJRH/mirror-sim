@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, and Phase 18 is now the active bundle-variants track.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, and Phase 19 is now the active receiver-routing track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -55,9 +55,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 17 is closed locally and in GitHub.
 - Phase 17 exit issue `#116` is closed and milestone `Phase 17 - Final Bundle Delivery and Handoff Manifest` is closed.
 - The Phase 17 queue was completed through issues `#116-#119`.
-- Phase 18 is the active successor queue.
-- milestone `Phase 18 - Bundle Variants and Receiver Guidance` is open.
-- The Phase 18 queue is initialized through issues `#123-#126`.
+- Phase 18 is closed locally and in GitHub.
+- Phase 18 exit issue `#123` is closed and milestone `Phase 18 - Bundle Variants and Receiver Guidance` is closed.
+- The Phase 18 queue was completed through issues `#123-#126`.
+- Phase 19 is the active successor queue.
+- milestone `Phase 19 - Receiver Roles and Follow-Through Routing` is open.
+- The Phase 19 queue is initialized through issues `#130-#133`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.
