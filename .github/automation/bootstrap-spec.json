@@ -27,6 +27,10 @@
     {
       "title": "Phase 7 - Operator Handoff and Review Delivery",
       "description": "Turn the resumed queue into a reviewer-to-operator handoff loop by adding GitHub-ready delivery surfaces in the workbench without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 8 - Closeout Delivery and Pickup Routing",
+      "description": "Turn the new operator handoff surfaces into exit-gate-ready closeout packets and lane-aware pickup guidance without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -64,6 +68,11 @@
       "name": "phase:7",
       "color": "1f8f99",
       "description": "Phase 7 operator handoff and review delivery work."
+    },
+    {
+      "name": "phase:8",
+      "color": "236f85",
+      "description": "Phase 8 closeout delivery and pickup routing work."
     },
     {
       "name": "area:backend",
@@ -360,6 +369,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a decision brief and next-action handoff panel to the workbench so the reviewer can package a recommended next step, blockers, and sign-off posture for the next operator pickup.\n\n## input\n- current reviewer scorecard and notes state\n- current packet export state\n- existing eval summary and claim/timeline context from the Phase 5 workbench\n\n## output\n- a handoff-focused decision brief panel in the workbench\n- structured next-action / blocker / recommendation sections derived from existing frontend state\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- live GitHub issue mutation\n- simulation, report, rubric, or queue contract changes\n- local automation schedule changes\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the brief can be copied as an operator handoff summary without editing raw JSON\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 7"
+    },
+    {
+      "title": "Phase 8 exit gate",
+      "milestone": "Phase 8 - Closeout Delivery and Pickup Routing",
+      "labels": [
+        "phase:8",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 8 closeout delivery and pickup routing criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 8 milestone state\n- merged PR state for queue sync and closeout-delivery work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 8 closeout decision\n- documented stop condition for the Phase 8 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 8 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 8"
+    },
+    {
+      "title": "Phase 8: sync bootstrap spec and docs to the active closeout-delivery queue",
+      "milestone": "Phase 8 - Closeout Delivery and Pickup Routing",
+      "labels": [
+        "phase:8",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 7 baseline to the active Phase 8 queue so docs, bootstrap metadata, and README reflect the new closeout-delivery track.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `README.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- current live GitHub milestone and issue state\n\n## output\n- `phase:8` and Phase 8 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 8 as the active successor queue\n- no stale Phase 7 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- closeout packet UI work\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 8"
+    },
+    {
+      "title": "Phase 8: add exit-gate-ready closeout packet sections in the workbench",
+      "milestone": "Phase 8 - Closeout Delivery and Pickup Routing",
+      "labels": [
+        "phase:8",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a closeout-focused packet to the workbench so an operator can copy a phase or issue closeout summary into an exit gate or milestone note without rebuilding the current review state by hand.\n\n## input\n- current reviewer scorecard, issue-comment packet, and decision-brief state\n- existing eval summary and claim/timeline context from the current workbench\n- current validation command set already trusted in the repo\n\n## output\n- copyable closeout packet sections in the workbench\n- closeout copy that includes sign-off posture, validation checklist, carry-forward evidence anchors, and reviewer notes\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing eval, report, or trace schemas\n- introducing persistent closeout artifacts under `artifacts/`\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the copied packet reads cleanly as an exit-gate or milestone closeout comment\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 8"
+    },
+    {
+      "title": "Phase 8: add lane-aware pickup checklist and handoff routing panel in the workbench",
+      "milestone": "Phase 8 - Closeout Delivery and Pickup Routing",
+      "labels": [
+        "phase:8",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a lane-aware pickup panel to the workbench so the next operator can see different handoff and review steps for `lane:auto-safe` versus `lane:protected-core` without leaving the workbench.\n\n## input\n- current decision-brief and issue-comment packet state\n- `docs/plans/long-running-loop-runbook.md`\n- current claim and timeline context already rendered in the workbench\n\n## output\n- a toggleable lane-specific pickup checklist and routing panel in the workbench\n- copyable guidance that stays aligned with the current runbook without mutating GitHub state\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- changing lane-classifier rules\n- changing runbook governance contracts\n- storing per-user preferences or workflow state\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that switching lanes updates the checklist and handoff guidance copy\n\n## touches contract\nNo. This issue must remain frontend-only and repo-read-only.\n\n## phase\nPhase 8"
     }
   ]
 }
