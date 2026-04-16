@@ -1088,6 +1088,117 @@ function buildHandoffBundlePreview(
   };
 }
 
+function buildAttachmentOrderGuidance(
+  destination: DeliveryDestination,
+  selectedExportId: ExportSurfaceId,
+  recommendedExportId: ExportSurfaceId,
+  rationaleNote: string | null,
+  copyPreflight: ReturnType<typeof buildCopyPreflightChecklist>,
+  blockerCount: number
+) {
+  const isOverride = selectedExportId !== recommendedExportId;
+  const includeRationale = isOverride || copyPreflight.tone !== "ready";
+  const includeSidecar = destination !== "pr-comment" || blockerCount > 0 || copyPreflight.tone !== "ready";
+
+  const stepsByDestination: Record<
+    DeliveryDestination,
+    Array<{ key: string; title: string; detail: string; active: boolean }>
+  > = {
+    "pr-comment": [
+      {
+        key: "export",
+        title: "Primary export first",
+        detail: `${exportSurfaces[selectedExportId].label} should stay first because the thread still needs the main handoff payload upfront.`,
+        active: true
+      },
+      {
+        key: "rationale",
+        title: "Rationale note second",
+        detail: isOverride
+          ? "Attach the rationale note right after the export so readers understand why you overrode the default recommendation."
+          : "Attach the rationale note only when the current choice still needs explanation or when readiness remains discussion-first.",
+        active: includeRationale
+      },
+      {
+        key: "sidecar",
+        title: "Sidecar last",
+        detail: "Use the sidecar as a compact trailing companion when blocker acknowledgement or confidence cues still matter in the thread.",
+        active: includeSidecar
+      }
+    ],
+    closeout: [
+      {
+        key: "export",
+        title: "Closeout export first",
+        detail: `${exportSurfaces[selectedExportId].label} should anchor the package because the closeout note still needs the main evidence-bearing export first.`,
+        active: true
+      },
+      {
+        key: "sidecar",
+        title: "Sidecar second",
+        detail: "Keep blocker acknowledgement and selection confidence immediately after the export so closure readers do not miss them.",
+        active: true
+      },
+      {
+        key: "rationale",
+        title: "Rationale note third",
+        detail: isOverride
+          ? "Append the rationale note after the sidecar when reviewers need an explicit explanation for the override."
+          : "Use the rationale note as an optional tail note when the closeout choice still needs extra explanation.",
+        active: includeRationale
+      }
+    ],
+    "pickup-handoff": [
+      {
+        key: "export",
+        title: "Primary export first",
+        detail: `${exportSurfaces[selectedExportId].label} should lead the handoff so the next operator sees the main task payload before the companions.`,
+        active: true
+      },
+      {
+        key: "rationale",
+        title: "Rationale note second",
+        detail: isOverride
+          ? "Keep the rationale note near the top so the next operator sees why the fallback was chosen."
+          : "Use the rationale note as a quick justification when the next operator needs to know why the recommendation still stands.",
+        active: includeRationale
+      },
+      {
+        key: "sidecar",
+        title: "Sidecar third",
+        detail: "Finish with the sidecar so destination fit, blockers, and selection confidence stay available as the next-step companion.",
+        active: includeSidecar
+      }
+    ]
+  };
+
+  const steps = stepsByDestination[destination].map((step, index) => ({
+    order: index + 1,
+    ...step
+  }));
+
+  const checklist = [
+    `Lead with ${exportSurfaces[selectedExportId].label}.`,
+    ...(includeRationale
+      ? [rationaleNote ? `Keep the rationale note attached: ${rationaleNote}` : "Keep a rationale note attached to explain the current choice."]
+      : ["A separate rationale note is optional for this handoff."]),
+    ...(includeSidecar
+      ? ["Carry the copy sidecar with the package so destination fit, blockers, and confidence stay visible."]
+      : ["The copy sidecar can stay optional unless blockers or confidence cues need extra emphasis."])
+  ];
+
+  return {
+    summary:
+      destination === "pr-comment"
+        ? "Package the handoff for a GitHub thread by leading with the export and attaching companions only when they add real review value."
+        : destination === "closeout"
+          ? "Package the handoff as a closure bundle by keeping blocker and confidence cues close to the main export."
+          : "Package the handoff for the next operator by keeping the main export first and the companions close behind it.",
+    steps,
+    checklist
+  };
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -1186,6 +1297,14 @@ export function ReviewScorecard({
     recommendedExport.exportId,
     copyPreflight,
     blockers
+  );
+  const attachmentOrder = buildAttachmentOrderGuidance(
+    selectedDestination,
+    selectedExport,
+    recommendedExport.exportId,
+    selectedRationale?.note ?? null,
+    copyPreflight,
+    blockers.length
   );
   const claimChipPreview =
     claimPackets.length > 0
@@ -2049,6 +2168,40 @@ export function ReviewScorecard({
                 Use this preview to sanity-check the current package composition before you copy the main export and its companions into the next handoff.
               </p>
             </article>
+
+            <div className="attachmentBoard">
+              <div className="claimHeader">
+                <strong>Attachment order</strong>
+                <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+              </div>
+              <p className="scoreHint">{attachmentOrder.summary}</p>
+
+              <div className="attachmentStepGrid">
+                {attachmentOrder.steps.map((step) => (
+                  <article
+                    key={step.key}
+                    className={`attachmentStepCard${step.active ? " attachmentStepCardActive" : ""}`}
+                  >
+                    <div className="claimHeader">
+                      <strong>{step.order}. {step.title}</strong>
+                      <span className={`statusPill statusPill${step.active ? "ready" : "followup"}`}>
+                        {step.active ? "attach" : "optional"}
+                      </span>
+                    </div>
+                    <p className="scoreHint">{step.detail}</p>
+                  </article>
+                ))}
+              </div>
+
+              <div className="handoffSection">
+                <h3>Companion checklist</h3>
+                <ul className="checklist compact">
+                  {attachmentOrder.checklist.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
 
             <div className="handoffSection">
               <h3>Carry-forward context</h3>
