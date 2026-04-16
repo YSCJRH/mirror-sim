@@ -1817,6 +1817,8 @@ export function ReviewScorecard({
   const [receiverRole, setReceiverRole] = useState<ReceiverRole>("operator");
   const [finalBundleCopyState, setFinalBundleCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [decisionTemplateCopyState, setDecisionTemplateCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [responseShortcutCopyState, setResponseShortcutCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [lastShortcutLabel, setLastShortcutLabel] = useState<string>("");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -2106,6 +2108,8 @@ export function ReviewScorecard({
     receiverGuidance,
     followThroughRouting
   );
+  const primaryResponseShortcut =
+    decisionTemplates.templates.find((template) => template.tone === "ready") ?? decisionTemplates.templates[0];
   const finalBundlePackage = buildFinalBundlePackage(
     bundleVariant,
     selectedDestination,
@@ -3126,6 +3130,64 @@ export function ReviewScorecard({
                   </button>
                 </div>
                 <p className="scoreHint">{decisionTemplates.summary}</p>
+
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <strong>Response-packaging shortcuts</strong>
+                    <span className="pill">{primaryResponseShortcut.label}</span>
+                  </div>
+                  <p className="scoreHint">
+                    Use the shortcut strip when you already know which response path you need and want the current
+                    role-aware template without re-copying the whole template set.
+                  </p>
+                  <div className="shortcutActions">
+                    <button
+                      type="button"
+                      className="actionButton"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(primaryResponseShortcut.markdown);
+                          setLastShortcutLabel(primaryResponseShortcut.label);
+                          setResponseShortcutCopyState("copied");
+                        } catch {
+                          setLastShortcutLabel(primaryResponseShortcut.label);
+                          setResponseShortcutCopyState("failed");
+                        }
+                      }}
+                    >
+                      Copy {primaryResponseShortcut.label}
+                    </button>
+                  </div>
+                  <div className="shortcutAltList">
+                    {decisionTemplates.templates.map((template) => (
+                      <button
+                        key={template.key}
+                        type="button"
+                        className="laneToggleButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(template.markdown);
+                            setLastShortcutLabel(template.label);
+                            setResponseShortcutCopyState("copied");
+                          } catch {
+                            setLastShortcutLabel(template.label);
+                            setResponseShortcutCopyState("failed");
+                          }
+                        }}
+                      >
+                        {template.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="scoreHint">
+                    {responseShortcutCopyState === "copied"
+                      ? `${lastShortcutLabel} shortcut copied to clipboard.`
+                      : responseShortcutCopyState === "failed"
+                        ? `Clipboard copy failed for ${lastShortcutLabel || "the selected"} shortcut.`
+                        : "Use the shortcut buttons for a fast per-route response template without leaving the final bundle surface."}
+                  </p>
+                </div>
+
                 <div className="manifestGrid">
                   {decisionTemplates.templates.map((template) => (
                     <article key={template.key} className="manifestCard">
