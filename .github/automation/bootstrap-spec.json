@@ -67,6 +67,10 @@
     {
       "title": "Phase 17 - Final Bundle Delivery and Handoff Manifest",
       "description": "Turn the Phase 16 handoff package preview into a final, low-friction delivery step by adding recipient-facing cover context and one-step bundle copy surfaces without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 18 - Bundle Variants and Receiver Guidance",
+      "description": "Turn the Phase 17 final bundle into a more receiver-specific delivery artifact by adding compact/full bundle variants and explicit receiver follow-through cues without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -154,6 +158,11 @@
       "name": "phase:17",
       "color": "B45F06",
       "description": "Phase 17 final bundle delivery and handoff manifest work."
+    },
+    {
+      "name": "phase:18",
+      "color": "C27BA0",
+      "description": "Phase 18 bundle variants and receiver guidance work."
     },
     {
       "name": "area:backend",
@@ -900,6 +909,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a one-step final bundle copy surface and package manifest so an operator can copy the current export plus companions as a coherent delivery artifact without manually stitching the pieces together.\n\n## input\n- current `frontend/src/app/review-scorecard.tsx`\n- current bundle preview, attachment-order guidance, and destination-aware export state\n- existing demo artifacts under `artifacts/demo/**`\n\n## output\n- a copyable final-bundle payload derived entirely in the frontend\n- package-manifest cues that show which companions are included, optional, or intentionally omitted for the current destination\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- auto-posting to GitHub\n- changing export packet schemas or review-state contracts\n- writing bundle files under `artifacts/`\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the final bundle copy and manifest change with destination, rationale, and blocker state\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 17"
+    },
+    {
+      "title": "Phase 18 exit gate",
+      "milestone": "Phase 18 - Bundle Variants and Receiver Guidance",
+      "labels": [
+        "phase:18",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 18 bundle variants and receiver guidance criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 18 milestone state\n- merged PR state for queue sync and bundle-guidance work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 18 closeout decision\n- documented stop condition for the Phase 18 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 18 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 18"
+    },
+    {
+      "title": "Phase 18: sync bootstrap spec and docs to the active bundle-variants queue",
+      "milestone": "Phase 18 - Bundle Variants and Receiver Guidance",
+      "labels": [
+        "phase:18",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 17 baseline to the active Phase 18 queue so docs, bootstrap metadata, and README reflect the new bundle-variants track.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `README.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- current live GitHub milestone and issue state\n\n## output\n- `phase:18` and Phase 18 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 18 as the active successor queue\n- no stale Phase 17 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- bundle-variant UI changes\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 18"
+    },
+    {
+      "title": "Phase 18: add compact-versus-full final bundle variant chooser for destination-specific delivery",
+      "milestone": "Phase 18 - Bundle Variants and Receiver Guidance",
+      "labels": [
+        "phase:18",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd compact-versus-full final bundle variants so an operator can tailor the copied delivery artifact to the selected destination without manually editing the current package.\n\n## input\n- current `frontend/src/app/review-scorecard.tsx`\n- current recipient cover sheet, final bundle copy, manifest, and destination-aware export state\n- existing demo artifacts under `artifacts/demo/**`\n\n## output\n- a frontend-only bundle-variant chooser for compact versus full delivery shapes\n- copyable variant output that still preserves the current export and companion logic\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or review-state contracts\n- adding persistent user preferences\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that changing variant mode updates the final bundle copy for the current destination\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 18"
+    },
+    {
+      "title": "Phase 18: add receiver action checklist and reply-prompt cues for final bundle handoff",
+      "milestone": "Phase 18 - Bundle Variants and Receiver Guidance",
+      "labels": [
+        "phase:18",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd receiver action checklist and reply-prompt cues so the final bundle tells the next reviewer or operator what to do after they receive it, not just what the current package contains.\n\n## input\n- current `frontend/src/app/review-scorecard.tsx`\n- current final bundle copy, manifest, destination-aware guidance, and next-action state\n- existing demo artifacts under `artifacts/demo/**`\n\n## output\n- a frontend-only receiver-action checklist tied to the current destination and package posture\n- reply-prompt or follow-through cues that can travel with the copied handoff without changing the underlying artifacts\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or queue-governance contracts\n- storing receiver acknowledgements\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the receiver checklist and reply cues react to destination, rationale, and blocker state\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 18"
     }
   ]
 }

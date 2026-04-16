@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, and Phase 17 is now the active final-bundle-delivery track.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, and Phase 18 is now the active bundle-variants track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -52,9 +52,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 16 is closed locally and in GitHub.
 - Phase 16 exit issue `#109` is closed and milestone `Phase 16 - Export Bundle Composition and Handoff Packaging` is closed.
 - The Phase 16 queue was completed through issues `#109-#112`.
-- Phase 17 is the active successor queue.
-- milestone `Phase 17 - Final Bundle Delivery and Handoff Manifest` is open.
-- The Phase 17 queue is initialized through issues `#116-#119`.
+- Phase 17 is closed locally and in GitHub.
+- Phase 17 exit issue `#116` is closed and milestone `Phase 17 - Final Bundle Delivery and Handoff Manifest` is closed.
+- The Phase 17 queue was completed through issues `#116-#119`.
+- Phase 18 is the active successor queue.
+- milestone `Phase 18 - Bundle Variants and Receiver Guidance` is open.
+- The Phase 18 queue is initialized through issues `#123-#126`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.
