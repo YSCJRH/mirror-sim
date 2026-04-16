@@ -696,6 +696,10 @@ code {
   border: 1px solid rgba(15, 107, 99, 0.14);
 }
 
+.sidecarCard {
+  align-content: start;
+}
+
 .copyPreflightBoard {
   display: grid;
   gap: 12px;
