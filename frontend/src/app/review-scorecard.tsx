@@ -9,24 +9,35 @@ type RubricRow = {
   five: string;
 };
 
+type DecisionSummary = {
+  label: string;
+  tone: "incomplete" | "ready" | "followup" | "hold";
+  summary: string;
+  average: string;
+};
+
+type ClaimPacket = {
+  claimId: string;
+  text: string;
+  relatedTurnIds: string[];
+};
+
+type DivergentTurn = {
+  turnIndex: number;
+  baselineTurnId: string | null;
+  baselineAction: string | null;
+  interventionTurnId: string | null;
+  interventionAction: string | null;
+};
+
 type ReviewScorecardProps = {
   rubricRows: RubricRow[];
   claimCount: number;
   divergentTurnCount: number;
   evalName: string;
   evalStatus: string;
-  claimPackets: Array<{
-    claimId: string;
-    text: string;
-    relatedTurnIds: string[];
-  }>;
-  divergentTurns: Array<{
-    turnIndex: number;
-    baselineTurnId: string | null;
-    baselineAction: string | null;
-    interventionTurnId: string | null;
-    interventionAction: string | null;
-  }>;
+  claimPackets: ClaimPacket[];
+  divergentTurns: DivergentTurn[];
 };
 
 const scoreOptions = [1, 2, 3, 4, 5] as const;
@@ -51,12 +62,7 @@ function currentAnchor(row: RubricRow, score: number | null) {
 function decisionFromScores(
   scores: Record<string, number | null>,
   totalRows: number
-): {
-  label: string;
-  tone: "incomplete" | "ready" | "followup" | "hold";
-  summary: string;
-  average: string;
-} {
+): DecisionSummary {
   const selectedScores = Object.values(scores).filter((value): value is number => value !== null);
   if (selectedScores.length < totalRows) {
     return {
@@ -96,6 +102,112 @@ function decisionFromScores(
   };
 }
 
+function recommendationFromState(
+  decision: DecisionSummary,
+  unscoredDimensions: RubricRow[],
+  weakDimensions: RubricRow[]
+) {
+  if (unscoredDimensions.length > 0) {
+    return "Complete the remaining rubric dimensions before handing this branch off for sign-off or escalation.";
+  }
+
+  if (decision.tone === "ready") {
+    return "Carry the current packet forward, ask for sign-off, and preserve the claim and timeline evidence as the operator replay path.";
+  }
+
+  if (decision.tone === "followup") {
+    return `Run one focused cleanup pass on ${weakDimensions.map((row) => row.dimension).join(", ")} and replay the highlighted divergent turns before requesting sign-off.`;
+  }
+
+  return `Pause sign-off and treat the branch as an active revision lane until ${weakDimensions.map((row) => row.dimension).join(", ")} reads as evidence-grounded and replayable.`;
+}
+
+function buildNextActions(
+  decision: DecisionSummary,
+  unscoredDimensions: RubricRow[],
+  weakDimensions: RubricRow[],
+  divergentTurns: DivergentTurn[],
+  claimPackets: ClaimPacket[],
+  notes: string
+) {
+  const actions: string[] = [];
+
+  if (unscoredDimensions.length > 0) {
+    actions.push(`Score the remaining rubric dimensions: ${unscoredDimensions.map((row) => row.dimension).join(", ")}.`);
+  }
+
+  if (weakDimensions.length > 0) {
+    actions.push(`Rework the weakest dimensions first: ${weakDimensions.map((row) => row.dimension).join(", ")}.`);
+  }
+
+  if (divergentTurns.length > 0) {
+    actions.push(`Replay divergent turns ${divergentTurns.slice(0, 3).map((turn) => turn.turnIndex).join(", ")} to confirm the branch comparison still supports the recommendation.`);
+  } else {
+    actions.push("Keep the current baseline and intervention timeline comparison attached as the operator replay path.");
+  }
+
+  if (claimPackets.length > 0) {
+    actions.push(`Carry forward claim IDs ${claimPackets.slice(0, 3).map((claim) => claim.claimId).join(", ")} as the minimum evidence packet for the next operator.`);
+  }
+
+  if (decision.tone === "ready") {
+    actions.push("Paste the issue comment packet into the next PR or issue touchpoint so sign-off context stays attached to the branch.");
+  }
+
+  if (!notes.trim()) {
+    actions.push("Add a concise reviewer note that names the strongest evidence boundary before handoff.");
+  }
+
+  return actions;
+}
+
+function buildBlockers(
+  decision: DecisionSummary,
+  unscoredDimensions: RubricRow[],
+  weakDimensions: RubricRow[],
+  notes: string
+) {
+  const blockers: string[] = [];
+
+  if (unscoredDimensions.length > 0) {
+    blockers.push(`The worksheet is still incomplete across ${unscoredDimensions.length} dimension(s).`);
+  }
+
+  if (weakDimensions.length > 0) {
+    blockers.push(`The lowest-confidence dimensions are ${weakDimensions.map((row) => row.dimension).join(", ")}.`);
+  }
+
+  if (decision.tone !== "ready") {
+    blockers.push(`Current sign-off posture is ${decision.label}, so this branch should not be presented as fully cleared yet.`);
+  }
+
+  if (!notes.trim()) {
+    blockers.push("Reviewer notes are still empty, which weakens the operator handoff context.");
+  }
+
+  return blockers.length > 0
+    ? blockers
+    : ["No blocking issues surfaced in the current frontend-only review state."];
+}
+
+function buildCarryForwardAnchors(claimPackets: ClaimPacket[], divergentTurns: DivergentTurn[]) {
+  const anchors = claimPackets.slice(0, 3).map((claim) => {
+    const relatedTurns = claim.relatedTurnIds.length > 0 ? claim.relatedTurnIds.join(", ") : "no related turns";
+    return `${claim.claimId}: keep with ${relatedTurns}.`;
+  });
+
+  if (divergentTurns.length > 0) {
+    anchors.push(
+      `Replay turn ${divergentTurns
+        .slice(0, 2)
+        .map((turn) => turn.turnIndex)
+        .join(" and ")} when the next operator needs to verify the baseline/intervention split.`
+    );
+  }
+
+  return anchors.length > 0 ? anchors : ["No claims or divergent turns are loaded into the current packet."];
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -111,13 +223,26 @@ export function ReviewScorecard({
   const [notes, setNotes] = useState("");
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [issueCommentCopyState, setIssueCommentCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [handoffCopyState, setHandoffCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
+  const unscoredDimensions = rubricRows.filter((row) => scores[row.dimension] === null);
   const weakDimensions = rubricRows.filter((row) => {
     const score = scores[row.dimension];
     return score !== null && score < 3;
   });
+  const recommendation = recommendationFromState(decision, unscoredDimensions, weakDimensions);
+  const nextActions = buildNextActions(
+    decision,
+    unscoredDimensions,
+    weakDimensions,
+    divergentTurns,
+    claimPackets,
+    notes
+  );
+  const blockers = buildBlockers(decision, unscoredDimensions, weakDimensions, notes);
+  const carryForwardAnchors = buildCarryForwardAnchors(claimPackets, divergentTurns);
   const packetMarkdown = [
     "# Mirror Review Packet",
     "",
@@ -152,6 +277,29 @@ export function ReviewScorecard({
       `  - 3: ${row.three}`,
       `  - 5: ${row.five}`
     ]),
+    "",
+    "## Reviewer Notes",
+    notes.trim() ? notes : "- No reviewer notes captured yet."
+  ].join("\n");
+  const handoffMarkdown = [
+    "## Operator Decision Brief",
+    `- Sign-off posture: ${decision.label}`,
+    `- Eval: ${evalName} (${evalStatus})`,
+    `- Claims in scope: ${claimCount}`,
+    `- Divergent turns in scope: ${divergentTurnCount}`,
+    `- Scorecard coverage: ${filledCount}/${rubricRows.length} dimensions scored`,
+    "",
+    "## Recommendation",
+    `- ${recommendation}`,
+    "",
+    "## Immediate Next Actions",
+    ...nextActions.map((action) => `- ${action}`),
+    "",
+    "## Current Blockers",
+    ...blockers.map((blocker) => `- ${blocker}`),
+    "",
+    "## Carry-Forward Anchors",
+    ...carryForwardAnchors.map((anchor) => `- ${anchor}`),
     "",
     "## Reviewer Notes",
     notes.trim() ? notes : "- No reviewer notes captured yet."
@@ -290,6 +438,79 @@ export function ReviewScorecard({
                 </p>
               </div>
             ) : null}
+          </article>
+
+          <article className="artifactCard handoffCard">
+            <div className="artifactMeta">
+              <span>handoff</span>
+              <code>operator pickup brief</code>
+            </div>
+            <div className="claimHeader">
+              <strong>Decision brief</strong>
+              <button
+                type="button"
+                className="actionButton"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(handoffMarkdown);
+                    setHandoffCopyState("copied");
+                  } catch {
+                    setHandoffCopyState("failed");
+                  }
+                }}
+              >
+                Copy handoff brief
+              </button>
+            </div>
+            <p className="scoreHint">
+              This panel turns the live worksheet into an operator-ready decision brief, with a recommended next step,
+              blockers, and carry-forward evidence anchors.
+            </p>
+            <div className="claimHeader">
+              <strong>Recommended next step</strong>
+              <span className={`statusPill statusPill${decision.tone}`}>
+                {decision.label}
+              </span>
+            </div>
+            <p>{recommendation}</p>
+
+            <div className="handoffSections">
+              <div className="handoffSection">
+                <h3>Immediate next actions</h3>
+                <ul className="checklist compact">
+                  {nextActions.map((action) => (
+                    <li key={action}>{action}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="handoffSection">
+                <h3>Current blockers</h3>
+                <ul className="checklist compact">
+                  {blockers.map((blocker) => (
+                    <li key={blocker}>{blocker}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="handoffSection">
+                <h3>Carry-forward anchors</h3>
+                <ul className="checklist compact">
+                  {carryForwardAnchors.map((anchor) => (
+                    <li key={anchor}>{anchor}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <textarea className="packetField packetFieldCompact" readOnly value={handoffMarkdown} />
+            <p className="scoreHint">
+              {handoffCopyState === "copied"
+                ? "Handoff brief copied to clipboard."
+                : handoffCopyState === "failed"
+                  ? "Clipboard copy failed. You can still copy from the packet field."
+                  : "Use this field when the next operator needs a concise decision brief instead of the full review packet."}
+            </p>
           </article>
 
           <article className="artifactCard reviewerNotesCard">
