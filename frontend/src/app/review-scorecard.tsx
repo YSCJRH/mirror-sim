@@ -497,6 +497,23 @@ function recommendedExportForDestination(
   };
 }
 
+function alternativeExportsForDestination(
+  destination: DeliveryDestination,
+  recommendedExportId: ExportSurfaceId,
+  pickupLane: PickupLane
+) {
+  const candidates: ExportSurfaceId[] =
+    destination === "pr-comment"
+      ? ["decision-brief", "review-packet", "pickup-routing"]
+      : destination === "closeout"
+        ? ["pickup-routing", "decision-brief", "issue-comment"]
+        : pickupLane === "lane:protected-core"
+          ? ["decision-brief", "issue-comment", "closeout-packet"]
+          : ["pickup-routing", "issue-comment", "review-packet"];
+
+  return candidates.filter((exportId) => exportId !== recommendedExportId).slice(0, 2);
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -519,6 +536,7 @@ export function ReviewScorecard({
   const [selectedExport, setSelectedExport] = useState<ExportSurfaceId>("issue-comment");
   const [selectedDestination, setSelectedDestination] = useState<DeliveryDestination>("pr-comment");
   const [recommendedCopyState, setRecommendedCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [shortcutCopyState, setShortcutCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -552,6 +570,11 @@ export function ReviewScorecard({
   );
   const recommendedExport = recommendedExportForDestination(selectedDestination, pickupLane, deliveryReadiness);
   const recommendedExportSurface = exportSurfaces[recommendedExport.exportId];
+  const shortcutAlternatives = alternativeExportsForDestination(
+    selectedDestination,
+    recommendedExport.exportId,
+    pickupLane
+  );
   const presetRecommendations = deliveryDestinationOrder.map((destination) => {
     const recommendation = recommendedExportForDestination(destination, pickupLane, deliveryReadiness);
     return {
@@ -890,6 +913,69 @@ export function ReviewScorecard({
                   </article>
                 );
               })}
+            </div>
+
+            <div className="shortcutStrip">
+              <div className="shortcutHeader">
+                <strong>Quick-export strip</strong>
+                <span className="pill">{recommendedExportSurface.label}</span>
+              </div>
+              <p className="scoreHint">
+                Use the fastest path for the current destination, or pivot to one of the nearby alternatives without leaving the guide surface.
+              </p>
+              <div className="shortcutActions">
+                <button
+                  type="button"
+                  className="actionButton"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(exportMarkdownById[recommendedExport.exportId]);
+                      setShortcutCopyState("copied");
+                    } catch {
+                      setShortcutCopyState("failed");
+                    }
+                  }}
+                >
+                  Copy {recommendedExportSurface.label}
+                </button>
+                <button
+                  type="button"
+                  className="actionButton"
+                  onClick={() => {
+                    document.getElementById(recommendedExportSurface.targetId)?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start"
+                    });
+                  }}
+                >
+                  Jump to {recommendedExportSurface.label}
+                </button>
+              </div>
+              <div className="shortcutAltList">
+                {shortcutAlternatives.map((exportId) => (
+                  <button
+                    key={exportId}
+                    type="button"
+                    className="laneToggleButton"
+                    onClick={() => {
+                      setSelectedExport(exportId);
+                      document.getElementById(exportSurfaces[exportId].targetId)?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                      });
+                    }}
+                  >
+                    Try {exportSurfaces[exportId].label}
+                  </button>
+                ))}
+              </div>
+              <p className="scoreHint">
+                {shortcutCopyState === "copied"
+                  ? `${recommendedExportSurface.label} copied from the shortcut strip.`
+                  : shortcutCopyState === "failed"
+                    ? "Clipboard copy failed. You can still copy from the recommended export card below."
+                    : "Use the shortcut strip when you already trust the current recommendation and want the fastest copy or jump action."}
+              </p>
             </div>
 
             <div className="handoffSections">
