@@ -14,7 +14,10 @@ Day 0 bootstrap is complete.
 - Phase 1 and Phase 2 gates are closed.
 - Phase 3 is closed locally and in GitHub.
 - Phase 3 exit issue `#4` is closed and milestone `Phase 3 - Eval/UI/Demo` is closed.
-- No active implementation queue is currently open; builder automation should remain paused until a fresh issue and milestone are opened.
+- Phase 4 is the active successor queue.
+- milestone `Phase 4 - Review Workflow and Ops Hardening` is open.
+- The Phase 4 queue is initialized through issues `#26-#29`.
+- Builder state should now be derived from `audit-github-queue`, not from doc-only convention.
 
 ## Day 0 Bootstrap
 
@@ -36,6 +39,8 @@ Before builder automation is allowed to write code or auto-merge:
   - classify a change set into `lane:auto-safe` or `lane:protected-core`
 - `python -m backend.app.cli audit-phase phase1`
   - run the Phase 1 local exit audit
+- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
+  - report whether the successor GitHub queue is `paused`, `ready`, or structurally invalid
 
 ## Execution Roles
 
@@ -54,7 +59,7 @@ Before builder automation is allowed to write code or auto-merge:
 - `mirror-phase-auditor`
   - run local phase audits
   - compare against milestone state
-  - keep automation paused once the active phase is complete and no new milestone has been opened
+  - keep automation paused when no valid successor queue is open
 
 ## Guardrails
 
@@ -66,4 +71,4 @@ Before builder automation is allowed to write code or auto-merge:
 ## TODO[verify]
 
 - TODO[verify]: Codex cron automations should target worktrees, not the current dirty `main` checkout.
-- TODO[verify]: if a new milestone opens after Phase 3, create a fresh exit-gate issue instead of reusing the closed Phase 3 closeout thread.
+- TODO[verify]: after the initial Phase 4 implementation issues land, decide whether `Phase 4 exit gate` should remain blocked for a final closeout PR or close directly from reviewed artifact evidence.

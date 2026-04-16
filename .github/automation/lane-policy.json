@@ -11,8 +11,12 @@
     "risk:safety"
   ],
   "protected_core_prefixes": [
+    ".github/ISSUE_TEMPLATE/",
+    ".github/automation/",
     "docs/architecture/contracts.md",
     "docs/decisions/",
+    "scripts/bootstrap_github.py",
+    "backend/app/automation/",
     "backend/app/domain/",
     "backend/app/scenarios/",
     "backend/app/simulation/",

@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from backend.app.automation.service import classify_git_refs, classify_paths, run_phase_audit
+from backend.app.automation.service import audit_github_queue, classify_git_refs, classify_paths, run_phase_audit
 from backend.app.config import get_settings
 from backend.app.evals.service import run_phase0_demo
 from backend.app.graph.service import build_graph
@@ -62,6 +62,9 @@ def build_parser() -> argparse.ArgumentParser:
     audit = subparsers.add_parser("audit-phase", help="Run the local phase exit audit")
     audit.add_argument("phase", choices=["phase1", "phase2", "phase3"])
     audit.add_argument("--artifacts-root")
+
+    queue = subparsers.add_parser("audit-github-queue", help="Audit whether the GitHub successor queue is paused, ready, or structurally invalid")
+    queue.add_argument("--repo", required=True)
 
     subparsers.add_parser("eval-demo", help="Run the full Phase 0 demo pipeline")
     subparsers.add_parser("smoke", help="Run the end-to-end smoke pipeline")
@@ -126,6 +129,11 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(json.dumps(audit.as_dict(), indent=2, ensure_ascii=False))
         return 0 if audit.status == "pass" else 1
+
+    if args.command == "audit-github-queue":
+        audit = audit_github_queue(args.repo, repo_root=settings.repo_root)
+        print(json.dumps(audit.as_dict(), indent=2, ensure_ascii=False))
+        return 0 if audit.status in {"ready", "paused"} else 1
 
     if args.command in {"eval-demo", "smoke"}:
         result = run_phase0_demo(settings=settings)
