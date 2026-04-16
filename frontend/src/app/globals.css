@@ -687,6 +687,15 @@ code {
   border: 1px solid var(--border);
 }
 
+.selectionRationaleBoard {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(15, 107, 99, 0.06);
+  border: 1px solid rgba(15, 107, 99, 0.14);
+}
+
 .copyPreflightBoard {
   display: grid;
   gap: 12px;
