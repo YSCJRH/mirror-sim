@@ -2,16 +2,12 @@ name: Mirror Phase Exit Gate
 description: Track the explicit exit criteria that must pass before automation can advance to the next phase.
 title: "[phase-exit] "
 body:
-  - type: dropdown
+  - type: input
     id: phase
     attributes:
-      label: Phase
-      description: Which phase exit gate is this?
-      options:
-        - Phase 1 - World/Persona Modeling
-        - Phase 2 - Scenario/Simulation Loop
-        - Phase 3 - Eval/UI/Demo
-        - Phase 4 - Review Workflow and Ops Hardening
+      label: Phase / Milestone
+      description: Enter the active GitHub milestone title for this exit gate.
+      placeholder: Phase 5 - Review Sign-off and Evidence Packaging
     validations:
       required: true
   - type: textarea

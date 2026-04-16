@@ -85,12 +85,13 @@ def test_cli_audit_phase_outputs_json(tmp_path: Path, capsys) -> None:
 
 
 def test_cli_audit_github_queue_outputs_json(monkeypatch, capsys) -> None:
+    milestone_title = "Current Active Queue"
     monkeypatch.setattr(
         "backend.app.cli.audit_github_queue",
         lambda repo, repo_root=None: GitHubQueueAudit(
             repo=repo,
             status="ready",
-            active_milestone="Phase 4 - Review Workflow and Ops Hardening",
+            active_milestone=milestone_title,
             checks=[AuditCheck(name="single_open_milestone", passed=True, details="ok")],
             failures=[],
             notes=["ok"],
@@ -99,7 +100,7 @@ def test_cli_audit_github_queue_outputs_json(monkeypatch, capsys) -> None:
     assert main(["audit-github-queue", "--repo", "YSCJRH/mirror-sim"]) == 0
     payload = json.loads(capsys.readouterr().out)
     assert payload["status"] == "ready"
-    assert payload["active_milestone"] == "Phase 4 - Review Workflow and Ops Hardening"
+    assert payload["active_milestone"] == milestone_title
 
 
 def test_safety_blocks_redline_payload() -> None:

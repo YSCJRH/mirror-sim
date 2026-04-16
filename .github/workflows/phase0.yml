@@ -38,6 +38,9 @@ jobs:
       - name: Audit Phase 2
         run: python -m backend.app.cli audit-phase phase2
 
+      - name: Audit Phase 3
+        run: python -m backend.app.cli audit-phase phase3
+
       - name: Upload demo artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -78,3 +81,7 @@ jobs:
       - name: Audit Phase 2
         shell: pwsh
         run: python -m backend.app.cli audit-phase phase2
+
+      - name: Audit Phase 3
+        shell: pwsh
+        run: python -m backend.app.cli audit-phase phase3

@@ -66,20 +66,25 @@ def test_audit_github_queue_pauses_without_open_milestone(monkeypatch) -> None:
 
 
 def test_audit_github_queue_ready_with_single_milestone_and_ready_issue(monkeypatch) -> None:
+    milestone_number = 5
+    milestone_title = "Current Active Queue"
+    exit_gate_title = "Current exit gate"
+    ready_title = "Current ready work item"
+
     def fake_gh_json(args: list[str], *, repo_root=None):
         if "milestones?state=open" in args[1]:
-            return [{"number": 4, "title": "Phase 4 - Review Workflow and Ops Hardening"}]
-        if "issues?state=open&milestone=4" in args[1]:
+            return [{"number": milestone_number, "title": milestone_title}]
+        if f"issues?state=open&milestone={milestone_number}" in args[1]:
             return [
                 {
-                    "title": "Phase 4 exit gate",
+                    "title": exit_gate_title,
                     "labels": [
                         {"name": "lane:protected-core"},
                         {"name": "status:blocked"},
                     ],
                 },
                 {
-                    "title": "Phase 4: add claim -> evidence drill-down in the workbench",
+                    "title": ready_title,
                     "labels": [
                         {"name": "status:ready"},
                         {"name": "lane:auto-safe"},
@@ -91,15 +96,15 @@ def test_audit_github_queue_ready_with_single_milestone_and_ready_issue(monkeypa
     monkeypatch.setattr("backend.app.automation.service._gh_json", fake_gh_json)
     audit = audit_github_queue("YSCJRH/mirror-sim")
     assert audit.status == "ready"
-    assert audit.active_milestone == "Phase 4 - Review Workflow and Ops Hardening"
+    assert audit.active_milestone == milestone_title
 
 
 def test_audit_github_queue_fails_with_multiple_open_milestones(monkeypatch) -> None:
     def fake_gh_json(args: list[str], *, repo_root=None):
         assert "milestones?state=open" in args[1]
         return [
-            {"number": 4, "title": "Phase 4 - Review Workflow and Ops Hardening"},
-            {"number": 5, "title": "Phase 5 - Placeholder"},
+            {"number": 4, "title": "Active Queue A"},
+            {"number": 5, "title": "Active Queue B"},
         ]
 
     monkeypatch.setattr("backend.app.automation.service._gh_json", fake_gh_json)
