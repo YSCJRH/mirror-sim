@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 21 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 22 queue resumption.
 
 ## Current Gate State
 
@@ -24,7 +24,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 18 exit gate: closed
 - Phase 19 exit gate: closed
 - Phase 20 exit gate: closed
-- Phase 21 exit gate: open
+- Phase 21 exit gate: closed
+- Phase 22 exit gate: open
 
 Local phase audits currently report:
 
@@ -100,15 +101,19 @@ Local phase audits currently report:
 - milestone `Phase 15 - Override Rationale and Delivery Confidence`
   - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 21 queue kickoff
+  - no open pull requests remain after the Phase 22 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 21 - Role Presets and Response Packaging` is open.
-- `#144` `Phase 21 exit gate`
+- milestone `Phase 22 - Preset Workflow and Packed Responses` is open.
+- `#151` `Phase 22 exit gate`
   - open
-- blocked until the Phase 21 role presets and response packaging slice is complete
-- The current Phase 21 execution slice is tracked through:
+- blocked until the Phase 22 preset workflow and packed response slice is complete
+- The current Phase 22 execution slice is tracked through:
+  - `#152` `Phase 22: sync bootstrap spec and docs to the active preset-workflow queue`
+  - `#153` `Phase 22: add apply-and-copy preset actions for reviewer, approver, and operator modes`
+  - `#154` `Phase 22: add grouped response-pack export for acknowledge, request-more-context, and escalate templates`
+- The completed Phase 21 slice was tracked through:
   - `#145` `Phase 21: sync bootstrap spec and docs to the active role-preset queue`
   - `#146` `Phase 21: add role preset cards for reviewer, approver, and operator bundle modes`
   - `#147` `Phase 21: add response-packaging shortcuts for acknowledge, request-more-context, and escalate templates`
