@@ -1819,6 +1819,8 @@ export function ReviewScorecard({
   const [decisionTemplateCopyState, setDecisionTemplateCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [responseShortcutCopyState, setResponseShortcutCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [lastShortcutLabel, setLastShortcutLabel] = useState<string>("");
+  const [presetActionCopyState, setPresetActionCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [lastPresetLabel, setLastPresetLabel] = useState<string>("");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -1919,17 +1921,6 @@ export function ReviewScorecard({
     const recommendation = recommendedExportForDestination(destination, pickupLane, deliveryReadiness);
     return {
       destination,
-      recommendation,
-      exportSurface: exportSurfaces[recommendation.exportId]
-    };
-  });
-  const rolePresetCards = (["reviewer", "approver", "operator"] as ReceiverRole[]).map((role) => {
-    const preset = rolePresetProfiles[role];
-    const recommendation = recommendedExportForDestination(preset.destination, pickupLane, deliveryReadiness);
-
-    return {
-      role,
-      preset,
       recommendation,
       exportSurface: exportSurfaces[recommendation.exportId]
     };
@@ -2127,6 +2118,101 @@ export function ReviewScorecard({
     copyPreflight,
     blockers
   );
+  const rolePresetCards = (["reviewer", "approver", "operator"] as ReceiverRole[]).map((role) => {
+    const preset = rolePresetProfiles[role];
+    const recommendation = recommendedExportForDestination(preset.destination, pickupLane, deliveryReadiness);
+    const exportId = recommendation.exportId;
+    const presetCoverage = exportCoverage[exportId];
+    const presetCopyPreflight = buildCopyPreflightChecklist(
+      preset.destination,
+      exportId,
+      recommendation.exportId,
+      presetCoverage,
+      deliveryReadiness,
+      blockers.length
+    );
+    const presetRationaleOptions = buildSelectionRationaleOptions(
+      preset.destination,
+      exportId,
+      recommendation.exportId,
+      presetCoverage,
+      exportCoverage[recommendation.exportId],
+      deliveryReadiness,
+      blockers.length
+    );
+    const presetRationale = presetRationaleOptions[0];
+    const presetCopySidecar = buildCopySidecarSummary(
+      preset.destination,
+      exportId,
+      recommendation.exportId,
+      presetCopyPreflight,
+      blockers
+    );
+    const presetRecipientCoverSheet = buildRecipientCoverSheet(
+      preset.destination,
+      exportId,
+      recommendation.exportId,
+      presetRationale?.note ?? null,
+      presetCopyPreflight,
+      blockers
+    );
+    const presetAttachmentOrder = buildAttachmentOrderGuidance(
+      preset.destination,
+      exportId,
+      recommendation.exportId,
+      presetRationale?.note ?? null,
+      presetCopyPreflight,
+      blockers.length
+    );
+    const presetReceiverGuidance = buildReceiverGuidance(
+      preset.destination,
+      preset.variant,
+      role,
+      presetCopyPreflight,
+      nextActions,
+      blockers
+    );
+    const presetFollowThroughRouting = buildFollowThroughRouting(
+      preset.destination,
+      preset.variant,
+      role,
+      presetCopyPreflight,
+      blockers,
+      nextActions
+    );
+    const presetDecisionTemplates = buildDecisionTemplates(
+      preset.destination,
+      preset.variant,
+      role,
+      presetReceiverGuidance,
+      presetFollowThroughRouting
+    );
+    const presetFinalBundle = buildFinalBundlePackage(
+      preset.variant,
+      preset.destination,
+      role,
+      exportId,
+      exportMarkdownById[exportId],
+      recommendation.exportId,
+      presetRationale?.note ?? null,
+      presetCopySidecar.markdown,
+      presetRecipientCoverSheet.markdown,
+      presetReceiverGuidance,
+      presetFollowThroughRouting,
+      presetDecisionTemplates,
+      presetAttachmentOrder,
+      presetCopyPreflight,
+      blockers
+    );
+
+    return {
+      role,
+      preset,
+      recommendation,
+      exportSurface: exportSurfaces[recommendation.exportId],
+      finalBundleMarkdown: presetFinalBundle.markdown
+    };
+  });
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
     : (shortcutAlternatives[0] ?? recommendedExport.exportId);
@@ -3007,7 +3093,7 @@ export function ReviewScorecard({
               <p className="scoreHint">{receiverRoleProfiles[receiverRole].summary}</p>
 
               <div className="presetGrid">
-                {rolePresetCards.map(({ role, preset, recommendation, exportSurface }) => {
+                {rolePresetCards.map(({ role, preset, recommendation, exportSurface, finalBundleMarkdown }) => {
                   const isActive =
                     receiverRole === role &&
                     bundleVariant === preset.variant &&
@@ -3034,22 +3120,52 @@ export function ReviewScorecard({
                         <strong>Emphasis:</strong> {preset.emphasis}
                       </p>
                       <p className="scoreHint">{recommendation.reason}</p>
-                      <button
-                        type="button"
-                        className="actionButton"
-                        onClick={() => {
-                          setReceiverRole(role);
-                          setBundleVariant(preset.variant);
-                          setSelectedDestination(preset.destination);
-                          setSelectedExport(recommendation.exportId);
-                        }}
-                      >
-                        {isActive ? "Preset active" : "Use preset"}
-                      </button>
+                      <div className="shortcutActions">
+                        <button
+                          type="button"
+                          className="actionButton"
+                          onClick={() => {
+                            setReceiverRole(role);
+                            setBundleVariant(preset.variant);
+                            setSelectedDestination(preset.destination);
+                            setSelectedExport(recommendation.exportId);
+                          }}
+                        >
+                          {isActive ? "Preset active" : "Use preset"}
+                        </button>
+                        <button
+                          type="button"
+                          className="actionButton"
+                          onClick={async () => {
+                            setReceiverRole(role);
+                            setBundleVariant(preset.variant);
+                            setSelectedDestination(preset.destination);
+                            setSelectedExport(recommendation.exportId);
+
+                            try {
+                              await navigator.clipboard.writeText(finalBundleMarkdown);
+                              setLastPresetLabel(receiverRoleProfiles[role].label);
+                              setPresetActionCopyState("copied");
+                            } catch {
+                              setLastPresetLabel(receiverRoleProfiles[role].label);
+                              setPresetActionCopyState("failed");
+                            }
+                          }}
+                        >
+                          Apply and copy
+                        </button>
+                      </div>
                     </article>
                   );
                 })}
               </div>
+              <p className="scoreHint">
+                {presetActionCopyState === "copied"
+                  ? `${lastPresetLabel} preset applied and copied.`
+                  : presetActionCopyState === "failed"
+                    ? `Clipboard copy failed for the ${lastPresetLabel || "selected"} preset.`
+                    : "Use preset to only switch the bundle posture, or Apply and copy to switch and immediately copy the recommended package."}
+              </p>
 
               <div className="statusRow">
                 <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
