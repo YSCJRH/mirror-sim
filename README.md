@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap and closed the Phase 1, Phase 2, and Phase 3 gates. The current `main` branch is in a post-Phase-3 handoff and maintenance state rather than an active implementation queue.
+The repository has completed Day 0 bootstrap, closed the Phase 1-3 gates, and opened the successor queue as `Phase 4 - Review Workflow and Ops Hardening`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -17,13 +17,14 @@ The repository has completed Day 0 bootstrap and closed the Phase 1, Phase 2, an
   - GitHub issue and PR templates
   - lane policy and bootstrap spec
   - CI upgraded to a long-running quality gate
-  - local lane-classification and phase-audit commands
+  - local lane-classification, phase-audit, and GitHub queue-audit commands
   - protected `main` with required status checks and auto-merge for safe-lane PRs
-  - a browser workbench shell that now renders report, claims, eval summary, rubric, corpus, graph, and scenarios
-- GitHub closeout is aligned with the local baseline:
+  - a browser workbench that now supports claim -> evidence drill-down and baseline/intervention trace review
+- GitHub queue state is aligned with the local baseline:
   - Phase 3 exit issue `#4` is closed
   - milestone `Phase 3 - Eval/UI/Demo` is closed
-  - future work should open a fresh GitHub issue and milestone instead of reusing the Phase 3 queue
+  - milestone `Phase 4 - Review Workflow and Ops Hardening` is open
+  - Phase 4 queue is initialized through issues `#26-#29`
 
 Local phase audits currently show:
 
@@ -61,6 +62,7 @@ python -m backend.app.cli report artifacts/demo/run/reporter_detained --baseline
 python -m backend.app.cli inspect-world --kind entity --id entity_east_gate --graph artifacts/demo/graph/graph.json --personas artifacts/demo/personas/personas.json
 python -m backend.app.cli classify-lane --files README.md backend/app/cli.py
 python -m backend.app.cli audit-phase phase1
+python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 ```
 
 ## Repo Map
@@ -76,7 +78,7 @@ python -m backend.app.cli audit-phase phase1
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): active Phase 3 workbench shell
+- [frontend](/D:/mirror/frontend): active Phase 4 review workflow workbench
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -117,10 +119,11 @@ Repository-side automation assets:
 - `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`
 - `python -m backend.app.cli classify-lane ...`
 - `python -m backend.app.cli audit-phase ...`
+- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 3 closeout are complete. Any future execution queue should be opened in GitHub before builder automation resumes.
+- Day 0 bootstrap and Phase 3 closeout are complete. Phase 4 is the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Protected-core changes still must not auto-merge just because checks are green.
 

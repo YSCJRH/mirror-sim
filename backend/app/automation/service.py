@@ -59,10 +59,49 @@ class PhaseAudit:
         }
 
 
+@dataclass(frozen=True)
+class GitHubQueueAudit:
+    repo: str
+    status: str
+    active_milestone: str | None = None
+    checks: list[AuditCheck] = field(default_factory=list)
+    failures: list[str] = field(default_factory=list)
+    notes: list[str] = field(default_factory=list)
+
+    def as_dict(self) -> dict:
+        return {
+            "repo": self.repo,
+            "status": self.status,
+            "active_milestone": self.active_milestone,
+            "checks": [check.as_dict() for check in self.checks],
+            "failures": self.failures,
+            "notes": self.notes,
+        }
+
+
 def _repo_root_from_path(path: Path | None = None) -> Path:
     if path is not None:
         return path
     return Path(__file__).resolve().parents[3]
+
+
+def _gh_json(args: list[str], *, repo_root: Path | None = None) -> object:
+    root = _repo_root_from_path(repo_root)
+    try:
+        result = subprocess.run(
+            ["gh", *args],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        stderr = exc.stderr.strip() if exc.stderr else "unknown gh failure"
+        raise RuntimeError(
+            "GitHub queue audit requires an authenticated `gh` context with repo access. "
+            f"Command failed: gh {' '.join(args)}. stderr: {stderr}"
+        ) from exc
+    return json.loads(result.stdout) if result.stdout.strip() else None
 
 
 def load_lane_policy(policy_path: Path | None = None) -> dict:
@@ -113,6 +152,113 @@ def classify_git_refs(base: str, head: str, repo_root: Path | None = None, polic
     )
     paths = [line.strip().replace("\\", "/") for line in result.stdout.splitlines() if line.strip()]
     return classify_paths(paths, policy_path=policy_path)
+
+
+def _has_label(issue: dict, label_name: str) -> bool:
+    return any(label["name"] == label_name for label in issue.get("labels", []))
+
+
+def audit_github_queue(repo: str, *, repo_root: Path | None = None) -> GitHubQueueAudit:
+    root = _repo_root_from_path(repo_root)
+    open_milestones = _gh_json(["api", f"repos/{repo}/milestones?state=open"], repo_root=root)
+    milestone_count = len(open_milestones)
+
+    if milestone_count == 0:
+        checks = [
+            _make_check("single_open_milestone", True, "No open milestone exists; the builder queue should remain paused."),
+            _make_check("protected_exit_gate", True, "No active milestone means no exit gate is expected yet."),
+            _make_check("ready_work_items", True, "No active milestone means no ready work items are expected yet."),
+        ]
+        return GitHubQueueAudit(
+            repo=repo,
+            status="paused",
+            checks=checks,
+            notes=["Queue is paused until a fresh milestone and exit-gate issue are opened."],
+        )
+
+    milestone_titles = [milestone["title"] for milestone in open_milestones]
+    single_open_milestone = milestone_count == 1
+    checks = [
+        _make_check(
+            "single_open_milestone",
+            single_open_milestone,
+            "Open milestones: " + ", ".join(milestone_titles),
+        )
+    ]
+    if not single_open_milestone:
+        failures = [f"{check.name}: {check.details}" for check in checks if not check.passed]
+        return GitHubQueueAudit(
+            repo=repo,
+            status="fail",
+            checks=checks,
+            failures=failures,
+            notes=["Queue is ambiguous while more than one milestone is open."],
+        )
+
+    active_milestone = open_milestones[0]
+    milestone_issues = _gh_json(
+        ["api", f"repos/{repo}/issues?state=open&milestone={active_milestone['number']}&per_page=100"],
+        repo_root=root,
+    )
+    open_issues = [issue for issue in milestone_issues if "pull_request" not in issue]
+    exit_gates = [issue for issue in open_issues if issue["title"].lower().endswith("exit gate")]
+    ready_items = [issue for issue in open_issues if _has_label(issue, "status:ready")]
+
+    protected_exit_gate = (
+        len(exit_gates) == 1
+        and _has_label(exit_gates[0], "lane:protected-core")
+        and _has_label(exit_gates[0], "status:blocked")
+    )
+    ready_work_items = len(ready_items) > 0
+
+    checks.extend(
+        [
+            _make_check(
+                "protected_exit_gate",
+                protected_exit_gate,
+                "Open exit gate issues: "
+                + (
+                    ", ".join(issue["title"] for issue in exit_gates)
+                    if exit_gates
+                    else "none"
+                ),
+            ),
+            _make_check(
+                "ready_work_items",
+                ready_work_items,
+                "Open ready issues: "
+                + (", ".join(issue["title"] for issue in ready_items) if ready_items else "none"),
+            ),
+        ]
+    )
+
+    failures = [f"{check.name}: {check.details}" for check in checks if not check.passed and check.name != "ready_work_items"]
+    if failures:
+        return GitHubQueueAudit(
+            repo=repo,
+            status="fail",
+            active_milestone=active_milestone["title"],
+            checks=checks,
+            failures=failures,
+            notes=["Queue structure is invalid and should be repaired before builder automation resumes."],
+        )
+
+    if not ready_work_items:
+        return GitHubQueueAudit(
+            repo=repo,
+            status="paused",
+            active_milestone=active_milestone["title"],
+            checks=checks,
+            notes=["Queue remains paused because the active milestone has no ready work items."],
+        )
+
+    return GitHubQueueAudit(
+        repo=repo,
+        status="ready",
+        active_milestone=active_milestone["title"],
+        checks=checks,
+        notes=["Exactly one open milestone exists with a protected blocked exit gate and ready work items."],
+    )
 
 
 def _make_check(name: str, passed: bool, details: str) -> AuditCheck:
@@ -294,7 +440,7 @@ def run_phase_audit(
         notes = ["TODO[verify]: Deterministic replay across independent reruns is enforced by eval-demo, not by this artifact-only audit."]
     elif phase == "phase3":
         checks = _phase3_checks(settings, artifacts_root)
-        notes = ["TODO[verify]: Open a fresh GitHub milestone and exit-gate issue before resuming builder automation beyond the closed Phase 3 queue."]
+        notes = ["TODO[verify]: Use `audit-github-queue` to confirm the successor queue is ready before resuming builder automation beyond the closed Phase 3 queue."]
     else:
         raise ValueError(f"Unsupported phase: {phase}")
 

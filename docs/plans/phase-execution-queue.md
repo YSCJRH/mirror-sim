@@ -1,12 +1,13 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 3 closeout.
+This note records the current post-Day-0 execution status for Mirror after the Phase 4 queue kickoff.
 
 ## Current Gate State
 
 - Phase 1 exit gate: closed
 - Phase 2 exit gate: closed
 - Phase 3 exit gate: closed
+- Phase 4 exit gate: open
 
 Local phase audits currently report:
 
@@ -32,19 +33,25 @@ Local phase audits currently report:
 - milestone `Phase 3 - Eval/UI/Demo`
   - closed
 - GitHub remote state
-  - no open issues
-  - no open pull requests
+  - no open issues or pull requests remained after Phase 3 closeout
 
 ## Current Queue
 
-- No active implementation queue is open on `main`.
-- GitHub remains the operational source of truth for any future queue.
+- milestone `Phase 4 - Review Workflow and Ops Hardening` is open.
+- `#26` `Phase 4 exit gate`
+  - open
+  - blocked until the first implementation slice is reviewed and merged
+- The first Phase 4 execution slice is tracked through:
+  - `#27` `Phase 4: harden successor-milestone bootstrap and builder pause/resume rules`
+  - `#28` `Phase 4: add claim -> evidence drill-down in the workbench`
+  - `#29` `Phase 4: add baseline/intervention trace timeline in the workbench`
+- GitHub remains the operational source of truth for the queue.
 - `backlog/sprint-01.md` remains a historical seed backlog only.
-- Future implementation should start from a fresh GitHub issue and milestone instead of reopening the closed Phase 3 queue.
+- Successor queue health should be checked with `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`.
 
 ## Automation Guidance
 
-- Builder should prefer the earliest unfinished open milestone once a new queue exists.
+- Builder should prefer the earliest unfinished open milestone once a valid queue exists.
 - Closed exit-gate issues and milestones should remain archived history, not be reused as active work trackers.
 - Safe-lane PRs may auto-merge once checks are green and no blocking labels are present.
 - Protected-core changes still require explicit review and must not auto-merge.

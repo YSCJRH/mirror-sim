@@ -11,6 +11,10 @@
     {
       "title": "Phase 3 - Eval/UI/Demo",
       "description": "Finish the workbench, final demo loop, and review-grade presentation layer."
+    },
+    {
+      "title": "Phase 4 - Review Workflow and Ops Hardening",
+      "description": "Restart the GitHub execution queue, harden successor-phase automation, and upgrade the workbench into a review workflow without expanding core simulation/report contracts."
     }
   ],
   "labels": [
@@ -28,6 +32,11 @@
       "name": "phase:3",
       "color": "5319e7",
       "description": "Phase 3 UI, eval, and demo work."
+    },
+    {
+      "name": "phase:4",
+      "color": "8a63d2",
+      "description": "Phase 4 review workflow and ops hardening work."
     },
     {
       "name": "area:backend",
@@ -130,6 +139,51 @@
         "lane:protected-core"
       ],
       "body": "## goal\nConfirm that all blueprint Phase 3 criteria are satisfied and the automation system can pause permanently.\n\n## input\n- final artifacts and frontend workbench\n- current milestone and PR state\n- human review rubric output\n\n## output\n- final completion report\n- PAUSED automation state\n- documented stop condition\n\n## out-of-scope\n- follow-on enterprise productization\n\n## minimal test\n- `python -m backend.app.cli audit-phase phase3`\n\n## touches contract\nYes. This issue controls the project stop condition.\n\n## phase\nPhase 3"
+    },
+    {
+      "title": "Phase 4 exit gate",
+      "milestone": "Phase 4 - Review Workflow and Ops Hardening",
+      "labels": [
+        "phase:4",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 4 review workflow and ops hardening criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 4 milestone state\n- merged PR state for bootstrap/governance and workbench review workflow work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 4 closeout decision\n- documented stop condition for the Phase 4 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone\n- engine/schema/report contract expansion beyond the approved Phase 4 slice\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 4"
+    },
+    {
+      "title": "Phase 4: harden successor-milestone bootstrap and builder pause/resume rules",
+      "milestone": "Phase 4 - Review Workflow and Ops Hardening",
+      "labels": [
+        "phase:4",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nHarden successor-milestone bootstrap and builder pause/resume rules so post-Phase-3 work is governed by executable repo rules instead of docs-only convention.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `.github/ISSUE_TEMPLATE/work-item.yml`\n- `.github/ISSUE_TEMPLATE/phase-exit.yml`\n- `backend/app/automation/service.py`\n- current post-Phase-3 handoff docs\n\n## output\n- `phase:4` added to repo taxonomy and bootstrap spec\n- issue templates updated to support Phase 4\n- local automation/CLI rule that treats missing open successor milestone or exit gate as paused-by-rule\n- docs aligned to the hardened successor-phase flow\n\n## out-of-scope\n- changing simulation/report/claim/evidence/scenario contracts\n- building product-facing review workflow UI\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/ISSUE_TEMPLATE/work-item.yml .github/ISSUE_TEMPLATE/phase-exit.yml .github/automation/bootstrap-spec.json backend/app/automation/service.py`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-phase phase3`\n\n## touches contract\nYes. This work changes automation governance and successor-phase execution rules.\n\n## phase\nPhase 4"
+    },
+    {
+      "title": "Phase 4: add claim -> evidence drill-down in the workbench",
+      "milestone": "Phase 4 - Review Workflow and Ops Hardening",
+      "labels": [
+        "phase:4",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd claim -> evidence drill-down in the workbench so reviewers can move from a claim card to the supporting corpus, graph, scenario, and trace context without leaving the UI.\n\n## input\n- `artifacts/demo/report/claims.json`\n- `artifacts/demo/ingest/chunks.jsonl`\n- `artifacts/demo/ingest/documents.jsonl`\n- `artifacts/demo/graph/graph.json`\n- `artifacts/demo/scenario/*.json`\n- `artifacts/demo/run/*/run_trace.jsonl`\n- current `frontend/src/app/page.tsx`\n\n## output\n- actionable claim review panel in the workbench\n- evidence drill-down using existing artifact files only\n- no backend API expansion and no artifact schema changes\n\n## out-of-scope\n- editing or regenerating artifacts from the browser\n- changing report, claim, scenario, or run-trace contracts\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n\n## touches contract\nNo. This issue must stay frontend-only and consume current artifacts unchanged.\n\n## phase\nPhase 4"
+    },
+    {
+      "title": "Phase 4: add baseline/intervention trace timeline in the workbench",
+      "milestone": "Phase 4 - Review Workflow and Ops Hardening",
+      "labels": [
+        "phase:4",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a baseline/intervention trace timeline in the workbench so reviewers can compare branch evolution turn by turn using existing run artifacts.\n\n## input\n- `artifacts/demo/run/baseline/run_trace.jsonl`\n- `artifacts/demo/run/reporter_detained/run_trace.jsonl`\n- `artifacts/demo/run/*/snapshots/*.json`\n- `artifacts/demo/report/claims.json`\n- current workbench frontend\n\n## output\n- reviewer-readable branch timeline and turn comparison view\n- timeline links that connect related claim turns to baseline/intervention run context\n- no new derived artifact files and no simulation output changes in the first slice\n\n## out-of-scope\n- changing simulation semantics\n- adding new backend endpoints or new persistent artifact formats\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n\n## touches contract\nNo. This issue must remain a UI-only consumer of existing run artifacts.\n\n## phase\nPhase 4"
     }
   ]
 }

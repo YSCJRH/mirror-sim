@@ -11,6 +11,7 @@ body:
         - Phase 1 - World/Persona Modeling
         - Phase 2 - Scenario/Simulation Loop
         - Phase 3 - Eval/UI/Demo
+        - Phase 4 - Review Workflow and Ops Hardening
     validations:
       required: true
   - type: textarea

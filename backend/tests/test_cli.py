@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from backend.app.cli import main
+from backend.app.automation.service import GitHubQueueAudit, AuditCheck
 from backend.app.config import get_settings
 from backend.app.safety.service import ensure_safe_scenario
 
@@ -81,6 +82,24 @@ def test_cli_audit_phase_outputs_json(tmp_path: Path, capsys) -> None:
     assert result == 0
     assert payload["phase"] == "phase1"
     assert payload["status"] == "pass"
+
+
+def test_cli_audit_github_queue_outputs_json(monkeypatch, capsys) -> None:
+    monkeypatch.setattr(
+        "backend.app.cli.audit_github_queue",
+        lambda repo, repo_root=None: GitHubQueueAudit(
+            repo=repo,
+            status="ready",
+            active_milestone="Phase 4 - Review Workflow and Ops Hardening",
+            checks=[AuditCheck(name="single_open_milestone", passed=True, details="ok")],
+            failures=[],
+            notes=["ok"],
+        ),
+    )
+    assert main(["audit-github-queue", "--repo", "YSCJRH/mirror-sim"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["status"] == "ready"
+    assert payload["active_milestone"] == "Phase 4 - Review Workflow and Ops Hardening"
 
 
 def test_safety_blocks_redline_payload() -> None:

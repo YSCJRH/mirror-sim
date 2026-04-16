@@ -43,7 +43,7 @@ def bootstrap_github(repo: str, spec_path: Path, *, apply: bool) -> None:
     cwd = spec_path.resolve().parents[2]
     spec = json.loads(spec_path.read_text(encoding="utf-8"))
     existing_labels = _gh_json(["api", f"repos/{repo}/labels", "--paginate"], cwd=cwd)
-    existing_milestones = _gh_json(["api", f"repos/{repo}/milestones"], cwd=cwd)
+    existing_milestones = _gh_json(["api", f"repos/{repo}/milestones?state=all", "--paginate"], cwd=cwd)
     existing_issues = _gh_json(["api", f"repos/{repo}/issues?state=all", "--paginate"], cwd=cwd)
     milestone_numbers: dict[str, int] = {}
 
@@ -71,7 +71,7 @@ def bootstrap_github(repo: str, spec_path: Path, *, apply: bool) -> None:
             milestone_numbers[milestone["title"]] = created["number"]
 
     if apply:
-        refreshed_milestones = _gh_json(["api", f"repos/{repo}/milestones"], cwd=cwd)
+        refreshed_milestones = _gh_json(["api", f"repos/{repo}/milestones?state=all", "--paginate"], cwd=cwd)
         for milestone in refreshed_milestones:
             milestone_numbers[milestone["title"]] = milestone["number"]
 
