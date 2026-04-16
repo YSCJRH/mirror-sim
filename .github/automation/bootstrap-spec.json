@@ -43,6 +43,10 @@
     {
       "title": "Phase 11 - Export Presets and Delivery Shortcuts",
       "description": "Reduce operator decision friction by adding export presets, delivery shortcuts, and clearer guided handoff entry points without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 12 - Delivery Preset Refinement and Comparison Flow",
+      "description": "Refine the new delivery presets and shortcut surfaces with clearer comparison and context carry-forward, without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -100,6 +104,11 @@
       "name": "phase:11",
       "color": "4b4fb6",
       "description": "Phase 11 export presets and delivery shortcuts work."
+    },
+    {
+      "name": "phase:12",
+      "color": "5b48c8",
+      "description": "Phase 12 delivery preset refinement and comparison work."
     },
     {
       "name": "area:backend",
@@ -576,6 +585,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a compact quick-export shortcut strip to the workbench so the operator can copy the current recommended export, jump to its detailed card, or pivot to the next-best export without scrolling through the full sidebar.\n\n## input\n- current destination-aware recommendation banner\n- current packet chooser and coverage matrix\n- current workbench layout\n\n## output\n- a shortcut strip for the current recommended path with copy and jump actions\n- a lightweight path to alternative exports when the operator does not want the default recommendation\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas, scoring contracts, or queue-governance rules\n- removing the existing detailed export cards\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the shortcut strip stays aligned with the current recommended export\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 11"
+    },
+    {
+      "title": "Phase 12 exit gate",
+      "milestone": "Phase 12 - Delivery Preset Refinement and Comparison Flow",
+      "labels": [
+        "phase:12",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 12 delivery preset refinement and comparison criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 12 milestone state\n- merged PR state for queue sync and preset-refinement work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 12 closeout decision\n- documented stop condition for the Phase 12 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 12 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 12"
+    },
+    {
+      "title": "Phase 12: sync bootstrap spec and docs to the active preset-refinement queue",
+      "milestone": "Phase 12 - Delivery Preset Refinement and Comparison Flow",
+      "labels": [
+        "phase:12",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 11 baseline to the active Phase 12 queue so docs, bootstrap metadata, and README reflect the new preset-refinement track.\n\n## input\n- `.github/automation/bootstrap-spec.json`\n- `README.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- current live GitHub milestone and issue state\n\n## output\n- `phase:12` and Phase 12 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 12 as the active successor queue\n- no stale Phase 11 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- preset-refinement UI changes\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 12"
+    },
+    {
+      "title": "Phase 12: add preset comparison cards with expected omissions and best-fit destinations",
+      "milestone": "Phase 12 - Delivery Preset Refinement and Comparison Flow",
+      "labels": [
+        "phase:12",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd richer preset comparison cards to the workbench so an operator can compare the current PR-comment, closeout, and pickup presets by what they omit, what they emphasize, and where they fit best before choosing one.\n\n## input\n- current delivery preset cards\n- current destination-aware recommendation banner and coverage matrix\n- current workbench layout\n\n## output\n- more informative preset cards with clearer omission and best-fit signals\n- no backend API calls and no new artifact files\n- the existing detailed export controls remain available\n\n## out-of-scope\n- changing packet schemas or queue-governance rules\n- posting directly to GitHub\n- removing the current preset entry points\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the preset cards better differentiate when to use each flow\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 12"
+    },
+    {
+      "title": "Phase 12: add context carry-forward chips for claims, blockers, and validation steps across guided exports",
+      "milestone": "Phase 12 - Delivery Preset Refinement and Comparison Flow",
+      "labels": [
+        "phase:12",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd context carry-forward chips to the guided export area so an operator can see at a glance which claims, blockers, and validation steps will travel with the current preset or recommended export.\n\n## input\n- current recommendation banner, readiness panel, coverage matrix, and detailed export surfaces\n- current claim, blocker, and validation-command context already rendered in the workbench\n- current workbench layout\n\n## output\n- lightweight carry-forward chips or tags that make the export payload more legible before copy\n- no backend API calls and no new artifact files\n- no packet schema changes\n\n## out-of-scope\n- persistent selection state across sessions\n- posting directly to GitHub\n- changing existing packet contents or queue-governance rules\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the carry-forward chips visibly track the current preset/recommended export context\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 12"
     }
   ]
 }

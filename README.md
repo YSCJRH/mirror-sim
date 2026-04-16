@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-10 gates, and resumed the successor queue as `Phase 11 - Export Presets and Delivery Shortcuts`.
+The repository has completed Day 0 bootstrap, closed the Phase 1-11 gates, and resumed the successor queue as `Phase 12 - Delivery Preset Refinement and Comparison Flow`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -31,8 +31,9 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-10 gates, and r
   - milestone `Phase 8 - Closeout Delivery and Pickup Routing` is closed
   - milestone `Phase 9 - Review Delivery Polish and Completeness` is closed
   - milestone `Phase 10 - Guided Delivery and Quick Export` is closed
-  - milestone `Phase 11 - Export Presets and Delivery Shortcuts` is open
-  - Phase 11 queue is initialized through issues `#74-#77`
+  - milestone `Phase 11 - Export Presets and Delivery Shortcuts` is closed
+  - milestone `Phase 12 - Delivery Preset Refinement and Comparison Flow` is open
+  - Phase 12 queue is initialized through issues `#81-#84`
 
 Local phase audits currently show:
 
@@ -87,7 +88,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): review workbench with Phase 10 guided-export surfaces landed and the current Phase 11 export-shortcut queue still consuming the same artifact surface
+- [frontend](/D:/mirror/frontend): review workbench with Phase 11 preset and shortcut surfaces landed and the current Phase 12 preset-refinement queue still consuming the same artifact surface
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -132,10 +133,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 10 closeout are complete. Phase 11 is now the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 11 closeout are complete. Phase 12 is now the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may resume pickup guidance only against the Phase 11 queue and must stop again if `audit-github-queue` leaves `ready`.
+- The local heartbeat automation may resume pickup guidance only against the Phase 12 queue and must stop again if `audit-github-queue` leaves `ready`.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals

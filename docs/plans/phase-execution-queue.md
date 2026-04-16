@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 11 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 12 queue resumption.
 
 ## Current Gate State
 
@@ -14,7 +14,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 8 exit gate: closed
 - Phase 9 exit gate: closed
 - Phase 10 exit gate: closed
-- Phase 11 exit gate: open
+- Phase 11 exit gate: closed
+- Phase 12 exit gate: open
 
 Local phase audits currently report:
 
@@ -69,16 +70,24 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 10 - Guided Delivery and Quick Export`
   - closed
+- Phase 11 exit issue `#74`
+  - closed
+- milestone `Phase 11 - Export Presets and Delivery Shortcuts`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 11 queue kickoff
+  - no open pull requests remain after the Phase 12 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 11 - Export Presets and Delivery Shortcuts` is open.
-- `#74` `Phase 11 exit gate`
+- milestone `Phase 12 - Delivery Preset Refinement and Comparison Flow` is open.
+- `#81` `Phase 12 exit gate`
   - open
-  - blocked until the Phase 11 export presets and delivery shortcuts slice is complete
-- The current Phase 11 execution slice is tracked through:
+-  - blocked until the Phase 12 delivery preset refinement and comparison slice is complete
+- The current Phase 12 execution slice is tracked through:
+  - `#82` `Phase 12: sync bootstrap spec and docs to the active preset-refinement queue`
+  - `#83` `Phase 12: add preset comparison cards with expected omissions and best-fit destinations`
+  - `#84` `Phase 12: add context carry-forward chips for claims, blockers, and validation steps across guided exports`
+- The completed Phase 11 slice was tracked through:
   - `#75` `Phase 11: sync bootstrap spec and docs to the active export-shortcut queue`
   - `#76` `Phase 11: add delivery preset cards for PR comment, closeout, and pickup handoff`
   - `#77` `Phase 11: add quick-export shortcut strip with copy and jump actions for the current recommended path`
