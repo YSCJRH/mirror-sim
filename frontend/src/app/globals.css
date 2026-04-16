@@ -474,6 +474,37 @@ code {
   margin: 0;
 }
 
+.laneToggleGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.laneToggleButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 107, 99, 0.2);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--accent-strong);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.laneToggleButton:hover {
+  border-color: rgba(15, 107, 99, 0.45);
+  color: var(--accent);
+}
+
+.laneToggleButtonActive {
+  background: var(--accent);
+  color: #f7fbfa;
+  border-color: var(--accent-strong);
+}
+
 .reviewerNotesCard {
   align-content: start;
 }
