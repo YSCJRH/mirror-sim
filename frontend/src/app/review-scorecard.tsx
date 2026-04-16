@@ -1474,9 +1474,104 @@ function buildFollowThroughRouting(
   };
 }
 
+function buildRoleSpecificBundlePlan(
+  role: ReceiverRole,
+  includeRationale: boolean,
+  includeSidecar: boolean,
+  variant: BundleVariant
+) {
+  const baseOrderByRole: Record<ReceiverRole, string[]> = {
+    reviewer: [
+      "primary-export",
+      "receiver-follow-through",
+      "rationale-note",
+      "follow-through-routing",
+      "manifest",
+      "copy-sidecar",
+      "bundle-order"
+    ],
+    approver: [
+      "receiver-follow-through",
+      "follow-through-routing",
+      "manifest",
+      "primary-export",
+      "rationale-note",
+      "copy-sidecar",
+      "bundle-order"
+    ],
+    operator: [
+      "primary-export",
+      "receiver-follow-through",
+      "copy-sidecar",
+      "follow-through-routing",
+      "manifest",
+      "rationale-note",
+      "bundle-order"
+    ]
+  };
+  const detailByRole: Record<ReceiverRole, Record<string, string>> = {
+    reviewer: {
+      "primary-export": "Lead with the evidence-bearing export so the reviewer can judge whether the packet is strong enough without hunting for the core payload.",
+      "receiver-follow-through": "Keep the review checklist near the top so the reviewer can quickly say whether the packet is sufficient.",
+      "rationale-note": "Keep rationale visible when the reviewer needs to understand why this package shape was chosen.",
+      "follow-through-routing": "Show routing early so the reviewer can choose between acknowledge, request-more-context, and escalate paths.",
+      manifest: "Keep the manifest visible so the reviewer can see what is included before asking for more context.",
+      "copy-sidecar": "Keep destination-fit and blocker confidence nearby when a fuller review path still matters.",
+      "bundle-order": "Show packaging order last as a reference once review priorities are already clear."
+    },
+    approver: {
+      "primary-export": "Keep the main export high enough that the approver can inspect the core evidence before deciding.",
+      "receiver-follow-through": "Put the decision-facing checklist first so the approver can issue approve, hold, or escalate posture quickly.",
+      "rationale-note": "Keep rationale visible when the approver needs to understand why the current package shape should stand.",
+      "follow-through-routing": "Keep routing near the top because the approver mainly needs the decision paths, not just the packet contents.",
+      manifest: "Keep the manifest visible so the approver sees the package scope before clearing it.",
+      "copy-sidecar": "Keep blocker and confidence cues nearby when the approval decision still depends on delivery posture.",
+      "bundle-order": "Keep packaging order as a lower-priority reference after the decision path is already visible."
+    },
+    operator: {
+      "primary-export": "Lead with the operational payload so the next owner can act without scrolling through meta sections first.",
+      "receiver-follow-through": "Keep the action checklist high because the operator mainly needs the first next step and reply checkpoint.",
+      "rationale-note": "Keep rationale available, but lower, when the operator mainly needs execution context instead of decision framing.",
+      "follow-through-routing": "Show routing before the manifest so the operator sees whether to acknowledge, ask for more context, or escalate.",
+      manifest: "Keep the manifest visible as a quick inventory after the action path is already understood.",
+      "copy-sidecar": "Keep the sidecar high when the operator still needs blocker and destination-fit context beside the main export.",
+      "bundle-order": "Keep packaging order last because it matters less than starting execution."
+    }
+  };
+  const labelByKey: Record<string, string> = {
+    "primary-export": "Primary export",
+    "receiver-follow-through": "Receiver follow-through",
+    "rationale-note": "Rationale note",
+    "follow-through-routing": "Routing strip",
+    manifest: "Package manifest",
+    "copy-sidecar": "Copy sidecar",
+    "bundle-order": "Bundle order guidance"
+  };
+  const available = new Set([
+    "primary-export",
+    "receiver-follow-through",
+    "follow-through-routing",
+    "manifest",
+    ...(includeRationale ? ["rationale-note"] : []),
+    ...(includeSidecar ? ["copy-sidecar"] : []),
+    ...(variant === "full" ? ["bundle-order"] : [])
+  ]);
+  const orderedKeys = baseOrderByRole[role].filter((key) => available.has(key));
+
+  return {
+    orderedKeys,
+    orderedLabels: orderedKeys.map((key) => labelByKey[key] ?? key),
+    pinnedSections: orderedKeys.slice(0, 3).map((key) => ({
+      label: labelByKey[key] ?? key,
+      detail: detailByRole[role][key]
+    }))
+  };
+}
+
 function buildFinalBundlePackage(
   variant: BundleVariant,
   destination: DeliveryDestination,
+  role: ReceiverRole,
   selectedExportId: ExportSurfaceId,
   selectedExportMarkdown: string,
   recommendedExportId: ExportSurfaceId,
@@ -1496,6 +1591,7 @@ function buildFinalBundlePackage(
   const requiredSidecar = destination !== "pr-comment" || blockers.length > 0 || copyPreflight.tone !== "ready";
   const includeRationale = variant === "full" ? true : requiredRationale;
   const includeSidecar = variant === "full" ? true : requiredSidecar;
+  const rolePlan = buildRoleSpecificBundlePlan(role, includeRationale, includeSidecar, variant);
   const manifestItems = [
     {
       label: "Recipient cover sheet",
@@ -1548,14 +1644,35 @@ function buildFinalBundlePackage(
       detail: "Leave packet chooser, routing guidance, and the rest of the workbench scaffolding behind; the final bundle should travel as a compact delivery artifact."
     }
   ];
-  const orderedSections = [
-    "Cover sheet lead-in",
-    "Package manifest",
-    "Primary export",
-    ...(includeRationale ? ["Rationale note"] : []),
-    ...(includeSidecar ? ["Copy sidecar"] : []),
-    ...(variant === "full" ? ["Bundle order guidance"] : [])
-  ];
+  const sectionBlocks: Record<string, string[]> = {
+    manifest: [
+      variant === "full" ? "## Full Package Manifest" : "## Compact Package Manifest",
+      ...manifestItems.map((item) => `- ${item.label}: ${item.status}. ${item.detail}`)
+    ],
+    "bundle-order": [
+      "## Bundle Order",
+      ...attachmentOrder.steps.filter((step) => step.active).map((step) => `- ${step.order}. ${step.title}: ${step.detail}`)
+    ],
+    "follow-through-routing": [
+      "## Follow-Through Routing",
+      ...followThroughRouting.routes.flatMap((route) => [
+        `- ${route.label}: ${route.detail}`,
+        `  - Prompt: ${route.prompt}`
+      ])
+    ],
+    "receiver-follow-through": [
+      "## Receiver Follow-Through",
+      `- Receiver role: ${receiverGuidance.roleLabel}`,
+      ...receiverGuidance.checklist.map((item) => `- ${item}`)
+    ],
+    "primary-export": [selectedExportMarkdown],
+    "rationale-note": [
+      "## Rationale Note",
+      rationaleNote ? `- ${rationaleNote}` : "- Keep the rationale note attached with the copied package."
+    ],
+    "copy-sidecar": [copySidecarMarkdown]
+  };
+  const orderedSections = ["Cover sheet lead-in", ...rolePlan.orderedLabels];
   const summary =
     variant === "full"
       ? "Copy a fuller delivery bundle that always carries the cover sheet, manifest, primary export, and both companion surfaces."
@@ -1565,44 +1682,17 @@ function buildFinalBundlePackage(
 
   return {
     variantLabel: bundleVariantProfiles[variant].label,
+    roleLabel: receiverGuidance.roleLabel,
     summary,
     manifestItems,
+    pinnedSections: rolePlan.pinnedSections,
     orderedSections,
     markdown: [
       recipientCoverSheetMarkdown,
-      "",
-      variant === "full" ? "## Full Package Manifest" : "## Compact Package Manifest",
-      ...manifestItems.map((item) => `- ${item.label}: ${item.status}. ${item.detail}`),
-      ...(variant === "full"
-        ? [
-            "",
-            "## Bundle Order",
-            ...attachmentOrder.steps.filter((step) => step.active).map((step) => `- ${step.order}. ${step.title}: ${step.detail}`)
-          ]
-        : []),
-      "",
-      "## Follow-Through Routing",
-      ...followThroughRouting.routes.flatMap((route) => [
-        `- ${route.label}: ${route.detail}`,
-        `  - Prompt: ${route.prompt}`
-      ]),
-      "",
-      "## Receiver Follow-Through",
-      `- Receiver role: ${receiverGuidance.roleLabel}`,
-      ...receiverGuidance.checklist.map((item) => `- ${item}`),
+      ...rolePlan.orderedKeys.flatMap((key) => ["", ...sectionBlocks[key]]),
       "",
       "## Suggested Reply Prompt",
-      `- ${receiverGuidance.replyPrompt}`,
-      "",
-      selectedExportMarkdown,
-      ...(includeRationale
-        ? [
-            "",
-            "## Rationale Note",
-            rationaleNote ? `- ${rationaleNote}` : "- Keep the rationale note attached with the copied package."
-          ]
-        : []),
-      ...(includeSidecar ? ["", copySidecarMarkdown] : [])
+      `- ${receiverGuidance.replyPrompt}`
     ].join("\n")
   };
 }
@@ -1910,6 +2000,7 @@ export function ReviewScorecard({
   const finalBundlePackage = buildFinalBundlePackage(
     bundleVariant,
     selectedDestination,
+    receiverRole,
     selectedExport,
     exportMarkdownById[selectedExport],
     recommendedExport.exportId,
@@ -2804,8 +2895,23 @@ export function ReviewScorecard({
               <div className="statusRow">
                 <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
                 <span className="pill">{finalBundlePackage.variantLabel}</span>
-                <span className="pill">{receiverGuidance.roleLabel}</span>
+                <span className="pill">{finalBundlePackage.roleLabel}</span>
                 <span className="pill">{selectedExportSurface.label}</span>
+              </div>
+
+              <div className="handoffSection">
+                <h3>Role-pinned sections</h3>
+                <div className="manifestGrid">
+                  {finalBundlePackage.pinnedSections.map((section) => (
+                    <article key={section.label} className="manifestCard">
+                      <div className="claimHeader">
+                        <strong>{section.label}</strong>
+                        <span className="statusPill statusPillready">pinned</span>
+                      </div>
+                      <p className="scoreHint">{section.detail}</p>
+                    </article>
+                  ))}
+                </div>
               </div>
 
               <div className="manifestGrid">
