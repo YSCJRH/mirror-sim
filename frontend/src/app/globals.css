@@ -474,6 +474,16 @@ code {
   margin: 0;
 }
 
+.handoffSectionWarning {
+  background: rgba(191, 120, 72, 0.12);
+  border-color: rgba(191, 120, 72, 0.22);
+}
+
+.handoffSectionReady {
+  background: rgba(15, 107, 99, 0.12);
+  border-color: rgba(15, 107, 99, 0.22);
+}
+
 .laneToggleGroup {
   display: flex;
   flex-wrap: wrap;

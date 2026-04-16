@@ -52,6 +52,14 @@ type ExportSurface = {
   targetId: string;
 };
 
+type DeliveryReadiness = {
+  label: string;
+  tone: "incomplete" | "ready" | "followup" | "hold";
+  summary: string;
+  warnings: string[];
+  readyItems: string[];
+};
+
 type ReviewScorecardProps = {
   rubricRows: RubricRow[];
   claimCount: number;
@@ -312,6 +320,88 @@ function buildCarryForwardAnchors(claimPackets: ClaimPacket[], divergentTurns: D
   return anchors.length > 0 ? anchors : ["No claims or divergent turns are loaded into the current packet."];
 }
 
+function buildDeliveryReadiness(
+  decision: DecisionSummary,
+  filledCount: number,
+  totalRows: number,
+  unscoredDimensions: RubricRow[],
+  weakDimensions: RubricRow[],
+  notes: string,
+  claimCount: number,
+  divergentTurnCount: number
+): DeliveryReadiness {
+  const warnings: string[] = [];
+  const readyItems: string[] = [];
+
+  if (unscoredDimensions.length > 0) {
+    warnings.push(`Unscored rubric dimensions: ${unscoredDimensions.map((row) => row.dimension).join(", ")}.`);
+  } else {
+    readyItems.push("All rubric dimensions are scored.");
+  }
+
+  if (!notes.trim()) {
+    warnings.push("Reviewer notes are still empty.");
+  } else {
+    readyItems.push("Reviewer notes are captured.");
+  }
+
+  if (weakDimensions.length > 0) {
+    warnings.push(`Lowest-confidence dimensions still need attention: ${weakDimensions.map((row) => row.dimension).join(", ")}.`);
+  }
+
+  if (decision.tone !== "ready") {
+    warnings.push(`Current sign-off posture is ${decision.label}.`);
+  } else {
+    readyItems.push("Sign-off posture is currently ready to sign off.");
+  }
+
+  if (claimCount > 0) {
+    readyItems.push(`${claimCount} claim(s) are available for export.`);
+  }
+
+  if (divergentTurnCount > 0) {
+    readyItems.push(`${divergentTurnCount} divergent turn(s) are mapped for replay.`);
+  }
+
+  if (warnings.length === 0) {
+    return {
+      label: "delivery-ready",
+      tone: "ready",
+      summary: "The current scorecard, notes, and evidence anchors are complete enough to support review, closeout, and pickup exports without obvious missing inputs.",
+      warnings: ["No missing inputs are currently blocking export use."],
+      readyItems
+    };
+  }
+
+  if (unscoredDimensions.length > 0 || !notes.trim()) {
+    return {
+      label: "missing inputs",
+      tone: "incomplete",
+      summary: `Complete ${filledCount}/${totalRows} scored dimensions and capture reviewer notes before treating the packet set as handoff-ready.`,
+      warnings,
+      readyItems
+    };
+  }
+
+  if (decision.tone === "followup") {
+    return {
+      label: "needs targeted cleanup",
+      tone: "followup",
+      summary: "Exports are usable for discussion, but the weakest dimensions still need focused cleanup before a confident handoff or closeout.",
+      warnings,
+      readyItems
+    };
+  }
+
+  return {
+    label: "not ready for closeout",
+    tone: "hold",
+    summary: "The current packet set still carries meaningful delivery risk. Treat warnings as blockers until the sign-off posture improves.",
+    warnings,
+    readyItems
+  };
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -353,6 +443,16 @@ export function ReviewScorecard({
   const carryForwardAnchors = buildCarryForwardAnchors(claimPackets, divergentTurns);
   const pickupRoute = laneRoutes[pickupLane];
   const selectedExportSurface = exportSurfaces[selectedExport];
+  const deliveryReadiness = buildDeliveryReadiness(
+    decision,
+    filledCount,
+    rubricRows.length,
+    unscoredDimensions,
+    weakDimensions,
+    notes,
+    claimCount,
+    divergentTurnCount
+  );
   const packetMarkdown = [
     "# Mirror Review Packet",
     "",
@@ -652,6 +752,44 @@ export function ReviewScorecard({
                   <li>{selectedExportSurface.destination}</li>
                   <li>Current sign-off posture: {decision.label}.</li>
                   <li>Current blockers surfaced: {blockers.length}.</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article className="artifactCard handoffCard">
+            <div className="artifactMeta">
+              <span>readiness</span>
+              <code>delivery completeness</code>
+            </div>
+            <div className="claimHeader">
+              <strong>Delivery readiness</strong>
+              <span className={`statusPill statusPill${deliveryReadiness.tone}`}>
+                {deliveryReadiness.label}
+              </span>
+            </div>
+            <p>{deliveryReadiness.summary}</p>
+
+            <div className="handoffSections">
+              <div
+                className={`handoffSection${
+                  deliveryReadiness.tone === "ready" ? " handoffSectionReady" : " handoffSectionWarning"
+                }`}
+              >
+                <h3>Warnings</h3>
+                <ul className="checklist compact">
+                  {deliveryReadiness.warnings.map((warning) => (
+                    <li key={warning}>{warning}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="handoffSection">
+                <h3>Already covered</h3>
+                <ul className="checklist compact">
+                  {deliveryReadiness.readyItems.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
                 </ul>
               </div>
             </div>
