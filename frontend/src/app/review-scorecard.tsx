@@ -734,6 +734,135 @@ function buildTradeoffGuidance(
   };
 }
 
+function buildCopyPreflightChecklist(
+  destination: DeliveryDestination,
+  selectedExportId: ExportSurfaceId,
+  recommendedExportId: ExportSurfaceId,
+  selectedExportCoverage: ExportCoverage,
+  deliveryReadiness: DeliveryReadiness,
+  blockerCount: number
+) {
+  const items: Array<{ label: string; tone: "ready" | "followup" | "hold"; detail: string }> = [];
+
+  items.push(
+    selectedExportId === recommendedExportId
+      ? {
+          label: "Recommendation fit",
+          tone: "ready",
+          detail: "The current export still matches the workbench recommendation for this destination."
+        }
+      : {
+          label: "Recommendation fit",
+          tone: "followup",
+          detail: `You are overriding the current recommendation. Confirm why ${exportSurfaces[selectedExportId].label.toLowerCase()} is the better handoff for this destination.`
+        }
+  );
+
+  if (destination === "pr-comment") {
+    items.push(
+      selectedExportId === "issue-comment" || selectedExportId === "decision-brief"
+        ? {
+            label: "GitHub-ready brevity",
+            tone: "ready",
+            detail: "The current export is short enough to paste into a PR or issue thread without major reshaping."
+          }
+        : {
+            label: "GitHub-ready brevity",
+            tone: "followup",
+            detail: "The current export is wider than a typical PR comment. Keep it only if the extra context is intentional."
+          }
+    );
+  } else if (destination === "closeout") {
+    const hasValidation = selectedExportCoverage.includes.includes("Validation commands");
+    const hasBlockers = selectedExportCoverage.includes.includes("Blockers");
+    items.push(
+      hasValidation && hasBlockers
+        ? {
+            label: "Closeout evidence",
+            tone: "ready",
+            detail: "The current export keeps validation commands and blocker context attached for a closeout note."
+          }
+        : {
+            label: "Closeout evidence",
+            tone: "hold",
+            detail: "This export omits part of the closeout evidence bundle. Widen the packet before treating it as a final closeout note."
+          }
+    );
+  } else {
+    const hasLaneGuidance = selectedExportCoverage.includes.includes("Lane guidance");
+    items.push(
+      hasLaneGuidance || selectedExportId === "decision-brief"
+        ? {
+            label: "Pickup clarity",
+            tone: "ready",
+            detail: "The current export keeps either explicit lane guidance or a concise next-step brief for the next operator."
+          }
+        : {
+            label: "Pickup clarity",
+            tone: "followup",
+            detail: "The current export is usable, but the next operator may still need routing or next-step context before acting."
+          }
+    );
+  }
+
+  items.push(
+    blockerCount === 0
+      ? {
+          label: "Blocker visibility",
+          tone: "ready",
+          detail: "No active blockers are forcing a wider export or special acknowledgement before copy."
+        }
+      : selectedExportCoverage.includes.includes("Blockers")
+        ? {
+            label: "Blocker visibility",
+            tone: "followup",
+            detail: "Active blockers exist, but the current export carries them. Keep the acknowledgement visible when you paste."
+          }
+        : {
+            label: "Blocker visibility",
+            tone: "hold",
+            detail: "Active blockers exist, but the current export omits them. Widen the packet or acknowledge blockers before copy."
+          }
+  );
+
+  items.push(
+    deliveryReadiness.tone === "ready"
+      ? {
+          label: "Readiness posture",
+          tone: "ready",
+          detail: "Current scorecard, notes, and evidence coverage are strong enough for direct copy."
+        }
+      : deliveryReadiness.tone === "followup"
+        ? {
+            label: "Readiness posture",
+            tone: "followup",
+            detail: "You can copy this export for discussion, but targeted cleanup is still recommended before treating it as final."
+          }
+        : {
+            label: "Readiness posture",
+            tone: "hold",
+            detail: "The current readiness state still has blocking gaps. Treat copy as a draft handoff rather than a clean final deliverable."
+          }
+  );
+
+  const summaryTone = items.some((item) => item.tone === "hold")
+    ? "hold"
+    : items.some((item) => item.tone === "followup")
+      ? "followup"
+      : "ready";
+
+  return {
+    tone: summaryTone,
+    items,
+    summary:
+      summaryTone === "ready"
+        ? "The current export is aligned closely enough with the selected destination that a direct copy is low-friction."
+        : summaryTone === "followup"
+          ? "The current export is usable, but at least one destination or blocker cue still deserves a quick operator check before copy."
+          : "The current export should not be treated as copy-safe without acknowledging the highlighted gaps first."
+  };
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -803,6 +932,14 @@ export function ReviewScorecard({
     deliveryReadiness,
     blockers.length,
     shortcutAlternatives
+  );
+  const copyPreflight = buildCopyPreflightChecklist(
+    selectedDestination,
+    selectedExport,
+    recommendedExport.exportId,
+    selectedExportCoverage,
+    deliveryReadiness,
+    blockers.length
   );
   const claimChipPreview =
     claimPackets.length > 0
@@ -1445,6 +1582,56 @@ export function ReviewScorecard({
                       </button>
                   </article>
                 ))}
+              </div>
+            </div>
+
+            <div className="copyPreflightBoard">
+              <div className="claimHeader">
+                <strong>Copy preflight</strong>
+                <span className={`statusPill statusPill${copyPreflight.tone}`}>{copyPreflight.tone}</span>
+              </div>
+              <p className="scoreHint">
+                {copyPreflight.summary}
+              </p>
+              <div className="statusRow">
+                <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                <span className="pill">{selectedExportSurface.label}</span>
+              </div>
+
+              <div className="preflightGrid">
+                {copyPreflight.items.map((item) => (
+                  <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                    <div className="claimHeader">
+                      <strong>{item.label}</strong>
+                      <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                    </div>
+                    <p className="scoreHint">{item.detail}</p>
+                  </article>
+                ))}
+              </div>
+
+              <div
+                className={`handoffSection${
+                  blockers.length > 0 ? " handoffSectionWarning" : " handoffSectionReady"
+                }`}
+              >
+                <h3>Blocker acknowledgement</h3>
+                <p className="scoreHint">
+                  {blockers.length > 0
+                    ? "These blocker cues should stay visible if you copy the current export into a live handoff."
+                    : "No blockers are currently asking for extra acknowledgement before copy."}
+                </p>
+                <div className="chipRow">
+                  {blockers.length > 0 ? (
+                    blockerChipPreview.map((blocker) => (
+                      <span key={blocker} className="metaChip">
+                        {blocker}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="metaChip metaChipMuted">No blockers surfaced</span>
+                  )}
+                </div>
               </div>
             </div>
 
