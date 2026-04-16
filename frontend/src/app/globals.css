@@ -730,6 +730,33 @@ code {
   white-space: pre-wrap;
 }
 
+.attachmentBoard {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(191, 120, 72, 0.06);
+  border: 1px solid rgba(191, 120, 72, 0.14);
+}
+
+.attachmentStepGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.attachmentStepCard {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--border);
+}
+
+.attachmentStepCardActive {
+  border-color: rgba(15, 107, 99, 0.24);
+}
+
 .copyPreflightBoard {
   display: grid;
   gap: 12px;
