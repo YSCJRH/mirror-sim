@@ -575,6 +575,11 @@ code {
   border: 1px solid rgba(15, 107, 99, 0.14);
 }
 
+.payloadComparePicker {
+  display: grid;
+  gap: 10px;
+}
+
 .payloadPreviewGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -621,6 +626,42 @@ code {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+}
+
+.payloadDiffBoard {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(15, 107, 99, 0.07);
+  border: 1px solid rgba(15, 107, 99, 0.14);
+}
+
+.payloadDiffGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.payloadDiffCard {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border);
+}
+
+.payloadDiffCardrecommendedonly {
+  border-color: rgba(15, 107, 99, 0.28);
+}
+
+.payloadDiffCardfallbackonly {
+  border-color: rgba(191, 120, 72, 0.28);
+}
+
+.payloadDiffCardrecommendedheavier,
+.payloadDiffCardfallbackheavier {
+  border-color: rgba(30, 26, 22, 0.16);
 }
 
 .tradeoffBoard {
