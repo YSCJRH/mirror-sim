@@ -459,6 +459,16 @@ code {
   align-content: start;
 }
 
+.packetStack {
+  display: grid;
+  gap: 18px;
+}
+
+.packetSection {
+  display: grid;
+  gap: 12px;
+}
+
 .noteLabel {
   font-weight: 700;
   color: var(--accent-strong);
@@ -493,6 +503,10 @@ code {
   font: inherit;
   line-height: 1.55;
   resize: vertical;
+}
+
+.packetFieldCompact {
+  min-height: 220px;
 }
 
 .actionButton {
