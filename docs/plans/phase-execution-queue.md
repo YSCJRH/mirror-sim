@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 16 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 17 queue resumption.
 
 ## Current Gate State
 
@@ -19,7 +19,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 13 exit gate: closed
 - Phase 14 exit gate: closed
 - Phase 15 exit gate: closed
-- Phase 16 exit gate: open
+- Phase 16 exit gate: closed
+- Phase 17 exit gate: open
 
 Local phase audits currently report:
 
@@ -95,15 +96,19 @@ Local phase audits currently report:
 - milestone `Phase 15 - Override Rationale and Delivery Confidence`
   - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 16 queue kickoff
+  - no open pull requests remain after the Phase 17 queue kickoff
 
 ## Current Queue
 
-- milestone `Phase 16 - Export Bundle Composition and Handoff Packaging` is open.
-- `#109` `Phase 16 exit gate`
+- milestone `Phase 17 - Final Bundle Delivery and Handoff Manifest` is open.
+- `#116` `Phase 17 exit gate`
   - open
-- blocked until the Phase 16 export bundle composition and handoff packaging slice is complete
-- The current Phase 16 execution slice is tracked through:
+- blocked until the Phase 17 final bundle delivery and handoff manifest slice is complete
+- The current Phase 17 execution slice is tracked through:
+  - `#117` `Phase 17: sync bootstrap spec and docs to the active final-bundle-delivery queue`
+  - `#118` `Phase 17: add recipient-facing handoff cover sheet for the composed bundle`
+  - `#119` `Phase 17: add one-step final bundle copy and package manifest for handoff delivery`
+- The completed Phase 16 slice was tracked through:
   - `#110` `Phase 16: sync bootstrap spec and docs to the active handoff-packaging queue`
   - `#111` `Phase 16: add composed handoff-bundle preview for export, rationale note, and sidecar summary`
   - `#112` `Phase 16: add destination-specific attachment order and companion checklist for handoff packaging`
