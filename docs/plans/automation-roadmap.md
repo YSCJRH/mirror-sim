@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete.
+Day 0 bootstrap is complete and the repo-first Phase 5 closure is now the active track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -14,10 +14,13 @@ Day 0 bootstrap is complete.
 - Phase 1 and Phase 2 gates are closed.
 - Phase 3 is closed locally and in GitHub.
 - Phase 3 exit issue `#4` is closed and milestone `Phase 3 - Eval/UI/Demo` is closed.
-- Phase 4 is the active successor queue.
-- milestone `Phase 4 - Review Workflow and Ops Hardening` is open.
-- The Phase 4 queue is initialized through issues `#26-#29`.
+- Phase 4 is closed locally and in GitHub.
+- Phase 4 exit issue `#26` is closed and milestone `Phase 4 - Review Workflow and Ops Hardening` is closed.
+- Phase 5 is the active successor queue.
+- milestone `Phase 5 - Review Sign-off and Evidence Packaging` is open.
+- The Phase 5 queue is initialized through issues `#31-#35`.
 - Builder state should now be derived from `audit-github-queue`, not from doc-only convention.
+- The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 
 ## Day 0 Bootstrap
 
@@ -67,8 +70,5 @@ Before builder automation is allowed to write code or auto-merge:
 - Path hits under that policy force `lane:protected-core`.
 - Protected-core PRs may be automated, but they must not auto-merge.
 - Any open `status:needs-adr` or `risk:safety` label blocks auto-merge.
-
-## TODO[verify]
-
-- TODO[verify]: Codex cron automations should target worktrees, not the current dirty `main` checkout.
-- TODO[verify]: after the initial Phase 4 implementation issues land, decide whether `Phase 4 exit gate` should remain blocked for a final closeout PR or close directly from reviewed artifact evidence.
+- Long-running execution must run from isolated worktrees rather than the current `main` checkout.
+- Queue pickup order, one-writer ownership, and branch hygiene should follow `docs/plans/long-running-loop-runbook.md`.

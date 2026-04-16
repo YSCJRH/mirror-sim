@@ -2,16 +2,12 @@ name: Mirror Work Item
 description: Create a Codex-friendly implementation task with explicit inputs, outputs, and tests.
 title: "[work-item] "
 body:
-  - type: dropdown
+  - type: input
     id: phase
     attributes:
-      label: Phase
-      description: Which blueprint phase does this work belong to?
-      options:
-        - Phase 1 - World/Persona Modeling
-        - Phase 2 - Scenario/Simulation Loop
-        - Phase 3 - Eval/UI/Demo
-        - Phase 4 - Review Workflow and Ops Hardening
+      label: Phase / Milestone
+      description: Enter the active GitHub milestone title for this work item.
+      placeholder: Phase 5 - Review Sign-off and Evidence Packaging
     validations:
       required: true
   - type: dropdown

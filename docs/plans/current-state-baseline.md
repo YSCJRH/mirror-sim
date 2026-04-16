@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the current successor-queue baseline after the Phase 4 kickoff.
+This note is the current successor-queue baseline after the Phase 5 repo-first kickoff.
 
 ## Snapshot
 
@@ -20,11 +20,15 @@ This note is the current successor-queue baseline after the Phase 4 kickoff.
   - `gh api repos/YSCJRH/mirror-sim/milestones/3`
     - milestone `Phase 3 - Eval/UI/Demo` is `closed`
   - `gh api repos/YSCJRH/mirror-sim/milestones/4`
-    - milestone `Phase 4 - Review Workflow and Ops Hardening` is `open`
-  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=4"`
-    - Phase 4 queue is initialized through issues `#26-#29`
+    - milestone `Phase 4 - Review Workflow and Ops Hardening` is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/issues/26`
+    - Phase 4 exit issue is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/milestones/5`
+    - milestone `Phase 5 - Review Sign-off and Evidence Packaging` is `open`
+  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=5"`
+    - Phase 5 queue is initialized through issues `#31-#35`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - successor queue reports `ready` while open ready work items remain under the active milestone, and `paused` once only the blocked exit gate remains
+    - successor queue currently reports `ready` for the active Phase 5 milestone because one blocked protected exit gate and multiple ready work items are present
 
 ## Trusted Source Of Truth
 
@@ -32,18 +36,21 @@ This note is the current successor-queue baseline after the Phase 4 kickoff.
 - Local phase audits remain the contract-aligned source of truth for whether the current repo state is runnable and reviewable.
 - `audit-github-queue` is the executable local rule for whether builder automation should remain `paused` or can resume against the successor queue.
 - `backlog/sprint-01.md` is historical seed material only and should not be used as the live queue.
-- Remote `origin/codex/*` branches should be treated as historical and superseded by `main` unless a future issue explicitly revives one.
+- Remote `origin/codex/*` branches are historical and superseded by `main`.
+- Delete a historical remote branch once it is tied only to merged or closed work and no open issue, PR, or runbook step still references it.
+- Keep a historical remote branch only when an open issue or unresolved forensic comparison explicitly names it.
+- Revive a historical remote branch only by opening a new issue that states why `main` is insufficient.
 
 ## Current Main Capabilities
 
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
 - The workbench now also supports claim -> evidence drill-down and baseline/intervention trace review without introducing backend API expansion.
-- The current repository state is in an active Phase 4 successor queue, not a post-Phase-3 idle handoff.
+- The current repository state is in an active Phase 5 successor queue, not a post-Phase-4 idle handoff.
 
 ## Next Entry Point
 
-- Phase 4 is the active milestone and the first execution slice is tracked by issues `#26-#29`.
-- New implementation work should attach to the existing Phase 4 queue until its exit gate is closed, instead of opening a parallel successor milestone.
+- Phase 5 is the active milestone and the current repo-first slice is tracked by issues `#31-#35`.
+- New implementation work should attach to the existing Phase 5 queue until its exit gate is closed, instead of opening a parallel successor milestone.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
-- TODO[verify]: delete or archive the superseded remote `codex/*` branches during the next repository cleanup window.
+- `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.

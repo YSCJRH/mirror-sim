@@ -15,6 +15,10 @@
     {
       "title": "Phase 4 - Review Workflow and Ops Hardening",
       "description": "Restart the GitHub execution queue, harden successor-phase automation, and upgrade the workbench into a review workflow without expanding core simulation/report contracts."
+    },
+    {
+      "title": "Phase 5 - Review Sign-off and Evidence Packaging",
+      "description": "Turn the Phase 4 review workflow into a usable sign-off flow, package review output for handoff, and remove repeated successor-queue bootstrap friction without expanding simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -37,6 +41,11 @@
       "name": "phase:4",
       "color": "8a63d2",
       "description": "Phase 4 review workflow and ops hardening work."
+    },
+    {
+      "name": "phase:5",
+      "color": "5319e7",
+      "description": "Phase 5 review sign-off and evidence packaging work."
     },
     {
       "name": "area:backend",
@@ -184,6 +193,63 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a baseline/intervention trace timeline in the workbench so reviewers can compare branch evolution turn by turn using existing run artifacts.\n\n## input\n- `artifacts/demo/run/baseline/run_trace.jsonl`\n- `artifacts/demo/run/reporter_detained/run_trace.jsonl`\n- `artifacts/demo/run/*/snapshots/*.json`\n- `artifacts/demo/report/claims.json`\n- current workbench frontend\n\n## output\n- reviewer-readable branch timeline and turn comparison view\n- timeline links that connect related claim turns to baseline/intervention run context\n- no new derived artifact files and no simulation output changes in the first slice\n\n## out-of-scope\n- changing simulation semantics\n- adding new backend endpoints or new persistent artifact formats\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n\n## touches contract\nNo. This issue must remain a UI-only consumer of existing run artifacts.\n\n## phase\nPhase 4"
+    },
+    {
+      "title": "Phase 5 exit gate",
+      "milestone": "Phase 5 - Review Sign-off and Evidence Packaging",
+      "labels": [
+        "phase:5",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 5 review sign-off and evidence packaging criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 5 milestone state\n- merged PR state for review sign-off workflow and evidence packaging work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 5 closeout decision\n- documented stop condition for the Phase 5 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 5 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 5"
+    },
+    {
+      "title": "Phase 5: decouple successor bootstrap from hardcoded phase templates and sync queue docs",
+      "milestone": "Phase 5 - Review Sign-off and Evidence Packaging",
+      "labels": [
+        "phase:5",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nRemove repeated successor-phase bootstrap friction by decoupling phase handling from hardcoded issue form/template enumerations and syncing the queue docs to the new active Phase 5 state.\n\n## input\n- `.github/ISSUE_TEMPLATE/work-item.yml`\n- `.github/ISSUE_TEMPLATE/phase-exit.yml`\n- `.github/automation/bootstrap-spec.json`\n- queue state docs under `docs/plans/`\n- current `audit-github-queue` behavior\n\n## output\n- issue/template handling no longer requires a manual hardcoded phase dropdown patch for each successor phase\n- bootstrap metadata and queue docs aligned with Phase 5 as the only active execution milestone\n- protected-core governance note for how future phases should be introduced\n\n## out-of-scope\n- simulation, report, claim, evidence, scenario, or artifact contract changes\n- new frontend review features\n\n## minimal test\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files .github/ISSUE_TEMPLATE/work-item.yml .github/ISSUE_TEMPLATE/phase-exit.yml .github/automation/bootstrap-spec.json docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- `./make.ps1 test`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. This work changes queue governance and external GitHub intake behavior.\n\n## phase\nPhase 5"
+    },
+    {
+      "title": "Phase 5: add reviewer scorecard and sign-off worksheet in the workbench",
+      "milestone": "Phase 5 - Review Sign-off and Evidence Packaging",
+      "labels": [
+        "phase:5",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nTurn the static human review rubric into an actionable reviewer scorecard and sign-off worksheet inside the workbench.\n\n## input\n- `docs/rubrics/human-review.md`\n- `artifacts/demo/report/claims.json`\n- `artifacts/demo/eval/summary.json`\n- `artifacts/demo/run/*/run_trace.jsonl`\n- current `frontend/src/app/page.tsx`\n\n## output\n- reviewer-facing 1-5 score controls for Usefulness, Credibility, Explainability, and Actionability\n- sign-off worksheet summary and reviewer notes region generated directly in the workbench\n- frontend-only derived state that still consumes existing artifacts unchanged\n\n## out-of-scope\n- backend APIs, persistent reviewer storage, or new artifact files\n- changes to report schema, claim labels, or evidence semantics\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that worksheet text updates when rubric scores change\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 5"
+    },
+    {
+      "title": "Phase 5: add shareable review packet export from claims, timeline, and rubric",
+      "milestone": "Phase 5 - Review Sign-off and Evidence Packaging",
+      "labels": [
+        "phase:5",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a shareable review packet export so a reviewer can package claims, divergent turns, eval summary, and rubric context into a reusable handoff artifact without leaving the workbench.\n\n## input\n- `artifacts/demo/report/claims.json`\n- `artifacts/demo/run/baseline/run_trace.jsonl`\n- `artifacts/demo/run/reporter_detained/run_trace.jsonl`\n- `artifacts/demo/eval/summary.json`\n- `docs/rubrics/human-review.md`\n- current workbench frontend\n\n## output\n- a copyable Markdown review packet derived entirely in the frontend\n- exported content that includes claim IDs, turn IDs, rubric dimensions, and current summary context\n- no backend export endpoint and no new persistent artifact format in this slice\n\n## out-of-scope\n- posting directly to GitHub\n- changing report or trace schemas\n- generating new saved files under `artifacts/`\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that exported Markdown includes claim IDs and turn IDs\n\n## touches contract\nNo. This issue must remain a frontend-only consumer of the current artifact tree.\n\n## phase\nPhase 5"
+    },
+    {
+      "title": "Phase 5: codify worktree-based orchestrator pickup and handoff runbook",
+      "milestone": "Phase 5 - Review Sign-off and Evidence Packaging",
+      "labels": [
+        "phase:5",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nCodify the worktree-based orchestrator pickup and handoff runbook so long-running execution no longer depends on oral convention.\n\n## input\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- active GitHub Phase 5 queue state\n- `audit-github-queue` and phase audit commands\n\n## output\n- `docs/plans/long-running-loop-runbook.md`\n- a documented pickup order for authenticated queue audit, worktree naming, one-writer issue ownership, lane-specific review paths, and post-merge re-audit\n- explicit branch hygiene rules for historical `origin/codex/*` branches\n\n## out-of-scope\n- local automation cards, heartbeat schedules, or cron setup\n- new worktree wrapper scripts\n- simulation, report, or artifact contract changes\n\n## minimal test\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli classify-lane --files docs/plans/long-running-loop-runbook.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md`\n- manual review that the runbook can drive pickup -> worktree -> PR -> checkpoint without unstated steps\n\n## touches contract\nYes. This work defines the operational execution surface for long-running queue consumption.\n\n## phase\nPhase 5"
     }
   ]
 }
