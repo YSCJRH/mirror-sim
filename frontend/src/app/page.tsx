@@ -911,6 +911,23 @@ export default async function Page() {
         )).length}
         evalName={evalSummary.eval_name}
         evalStatus={evalSummary.status}
+        claimPackets={claims.map((claim) => ({
+          claimId: claim.claim_id,
+          text: claim.text,
+          relatedTurnIds: claim.related_turn_ids.filter(Boolean)
+        }))}
+        divergentTurns={timelineRows
+          .filter(({ baseline, intervention }) => (
+            baseline?.turn.action_type !== intervention?.turn.action_type ||
+            baseline?.turn.target_id !== intervention?.turn.target_id
+          ))
+          .map(({ turnIndex, baseline, intervention }) => ({
+            turnIndex,
+            baselineTurnId: baseline?.turn.turn_id ?? null,
+            baselineAction: baseline?.turn.action_type ?? null,
+            interventionTurnId: intervention?.turn.turn_id ?? null,
+            interventionAction: intervention?.turn.action_type ?? null
+          }))}
       />
     </main>
   );
