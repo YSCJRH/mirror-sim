@@ -62,6 +62,12 @@ type DeliveryReadiness = {
 
 type DeliveryDestination = "pr-comment" | "closeout" | "pickup-handoff";
 
+type ExportCoverage = {
+  includes: string[];
+  omits: string[];
+  note: string;
+};
+
 type ReviewScorecardProps = {
   rubricRows: RubricRow[];
   claimCount: number;
@@ -167,6 +173,33 @@ const deliveryDestinations: Record<DeliveryDestination, { label: string; summary
   "pickup-handoff": {
     label: "Pickup handoff",
     summary: "Use when the next operator needs the clearest next step for continuing the work."
+  }
+};
+const exportCoverage: Record<ExportSurfaceId, ExportCoverage> = {
+  "decision-brief": {
+    includes: ["Claim context", "Blockers", "Reviewer notes"],
+    omits: ["Validation commands", "Lane guidance"],
+    note: "Optimized for a concise narrative handoff rather than a full validation or governance bundle."
+  },
+  "review-packet": {
+    includes: ["Claim context", "Reviewer notes"],
+    omits: ["Blockers", "Validation commands", "Lane guidance"],
+    note: "Best when the next reader still needs the broadest artifact context."
+  },
+  "issue-comment": {
+    includes: ["Claim context", "Reviewer notes"],
+    omits: ["Blockers", "Validation commands", "Lane guidance"],
+    note: "Trimmed for GitHub comments, so it favors concise context over full delivery scaffolding."
+  },
+  "closeout-packet": {
+    includes: ["Claim context", "Blockers", "Validation commands", "Reviewer notes"],
+    omits: ["Lane guidance"],
+    note: "Designed for exit gates and milestone notes where validation evidence must stay visible."
+  },
+  "pickup-routing": {
+    includes: ["Claim context", "Blockers", "Validation commands", "Lane guidance", "Reviewer notes"],
+    omits: [],
+    note: "Carries the fullest operator-routing context, especially when lane rules and post-merge checks matter."
   }
 };
 
@@ -927,6 +960,63 @@ export function ReviewScorecard({
                   ))}
                 </ul>
               </div>
+            </div>
+          </article>
+
+          <article className="artifactCard handoffCard">
+            <div className="artifactMeta">
+              <span>coverage</span>
+              <code>destination inclusion preview</code>
+            </div>
+            <div className="claimHeader">
+              <strong>Coverage matrix</strong>
+              <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+            </div>
+            <p className="scoreHint">
+              Compare what each export includes before you copy it. The highlighted card matches the current recommended export.
+            </p>
+
+            <div className="coverageGrid">
+              {(Object.keys(exportSurfaces) as ExportSurfaceId[]).map((exportId) => {
+                const coverage = exportCoverage[exportId];
+                const isRecommended = recommendedExport.exportId === exportId;
+                return (
+                  <article
+                    key={exportId}
+                    className={`coverageCard${isRecommended ? " coverageCardActive" : ""}`}
+                  >
+                    <div className="claimHeader">
+                      <strong>{exportSurfaces[exportId].label}</strong>
+                      {isRecommended ? <span className="statusPill statusPillready">recommended</span> : null}
+                    </div>
+                    <p className="scoreHint">{exportSurfaces[exportId].destination}</p>
+
+                    <div className="coverageLists">
+                      <div className="coverageList">
+                        <h3>Includes</h3>
+                        <ul className="checklist compact">
+                          {coverage.includes.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="coverageList">
+                        <h3>Omits</h3>
+                        <ul className="checklist compact">
+                          {coverage.omits.length > 0 ? (
+                            coverage.omits.map((item) => <li key={item}>{item}</li>)
+                          ) : (
+                            <li>No key delivery fields omitted in this export.</li>
+                          )}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <p className="scoreHint">{coverage.note}</p>
+                  </article>
+                );
+              })}
             </div>
           </article>
 

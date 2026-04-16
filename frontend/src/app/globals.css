@@ -484,6 +484,39 @@ code {
   border-color: rgba(15, 107, 99, 0.22);
 }
 
+.coverageGrid {
+  display: grid;
+  gap: 14px;
+}
+
+.coverageCard {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid var(--border);
+}
+
+.coverageCardActive {
+  border-color: rgba(15, 107, 99, 0.32);
+  box-shadow: 0 14px 30px rgba(15, 107, 99, 0.1);
+}
+
+.coverageLists {
+  display: grid;
+  gap: 12px;
+}
+
+.coverageList {
+  display: grid;
+  gap: 8px;
+}
+
+.coverageList h3 {
+  margin: 0;
+}
+
 .laneToggleGroup {
   display: flex;
   flex-wrap: wrap;
