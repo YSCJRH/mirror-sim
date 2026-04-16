@@ -536,6 +536,12 @@ code {
   font-weight: 700;
 }
 
+.metaChipMuted {
+  background: rgba(102, 88, 74, 0.08);
+  border-color: rgba(102, 88, 74, 0.16);
+  color: var(--muted);
+}
+
 .shortcutStrip {
   display: grid;
   gap: 12px;
