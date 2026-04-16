@@ -566,6 +566,63 @@ code {
   gap: 10px;
 }
 
+.payloadPreviewBoard {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(230, 217, 198, 0.46));
+  border: 1px solid rgba(15, 107, 99, 0.14);
+}
+
+.payloadPreviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.payloadPreviewCard {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--border);
+}
+
+.payloadPreviewCardPrimary {
+  border-color: rgba(15, 107, 99, 0.32);
+  box-shadow: 0 14px 30px rgba(15, 107, 99, 0.1);
+}
+
+.payloadPreviewMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.payloadPreviewPre {
+  margin: 0;
+  min-height: 220px;
+  padding: 14px;
+  border-radius: 18px;
+  background: #1f1d1a;
+  color: #f5efe4;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.payloadPreviewFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .coverageGrid {
   display: grid;
   gap: 14px;
@@ -819,6 +876,10 @@ code {
   }
 
   .timelineCards {
+    grid-template-columns: 1fr;
+  }
+
+  .payloadPreviewGrid {
     grid-template-columns: 1fr;
   }
 }
