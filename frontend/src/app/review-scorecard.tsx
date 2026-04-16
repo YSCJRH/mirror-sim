@@ -546,6 +546,95 @@ function buildPayloadPreview(markdown: string, previewLineCount = 10) {
   };
 }
 
+function tradeoffSummaryForExport(exportId: ExportSurfaceId) {
+  switch (exportId) {
+    case "issue-comment":
+      return "Favor speed and GitHub-ready brevity, but widen the packet if the next reader also needs blockers, validation commands, or routing context.";
+    case "closeout-packet":
+      return "Favor a fuller closeout-ready packet, but pivot when the audience only needs a shorter update or next-step summary.";
+    case "pickup-routing":
+      return "Favor operator continuation safety, but pivot when the next handoff is discussion-first and does not need the full lane checklist.";
+    case "decision-brief":
+      return "Favor the shortest narrative summary, but pivot when validation evidence or routing rules need to stay attached.";
+    case "review-packet":
+      return "Favor the widest review context, but pivot when the handoff needs to be shorter or more operationally focused.";
+  }
+}
+
+function fallbackNoteForExport(exportId: ExportSurfaceId, pickupLane: PickupLane) {
+  switch (exportId) {
+    case "decision-brief":
+      return {
+        when: "Use when the next operator needs the current recommendation, blockers, and next actions in the shortest readable form.",
+        tradeoff: "You gain speed, but you leave detailed validation commands and lane-routing steps behind."
+      };
+    case "review-packet":
+      return {
+        when: "Use when a reviewer still needs the broadest claim, timeline, and rubric context before deciding what to do next.",
+        tradeoff: "You gain wider evidence context, but the packet is less GitHub-ready and less operationally focused."
+      };
+    case "issue-comment":
+      return {
+        when: "Use when the next touchpoint is a PR or issue thread and the payload needs to paste cleanly into GitHub.",
+        tradeoff: "You gain comment-ready brevity, but blockers, validation commands, and lane rules may be less visible."
+      };
+    case "closeout-packet":
+      return {
+        when: "Use when sign-off posture, blockers, and trusted validation commands need to travel together into a milestone or exit-gate note.",
+        tradeoff: "You gain stronger closeout evidence, but the packet is heavier than a quick handoff or discussion note."
+      };
+    case "pickup-routing":
+      return {
+        when: pickupLane === "lane:protected-core"
+          ? "Use when the next operator must keep protected-core review, merge, and post-merge checkpoint rules in view."
+          : "Use when the next operator needs an explicit continuation path and checkpoint sequence rather than just a narrative summary.",
+        tradeoff: "You gain safer continuation guidance, but the export is more operational and less conversational."
+      };
+  }
+}
+
+function buildTradeoffGuidance(
+  destination: DeliveryDestination,
+  recommendedExportId: ExportSurfaceId,
+  pickupLane: PickupLane,
+  deliveryReadiness: DeliveryReadiness,
+  blockerCount: number,
+  alternativeExportIds: ExportSurfaceId[]
+) {
+  const recommendedSurface = exportSurfaces[recommendedExportId];
+  const acceptWhen = [
+    `the next touchpoint really is ${deliveryDestinations[destination].label.toLowerCase()} and ${recommendedSurface.label.toLowerCase()} already matches that handoff shape`,
+    blockerCount === 0
+      ? "no blockers need extra visibility beyond the current recommendation"
+      : `${blockerCount} blocker(s) are acceptable to carry in the current recommendation without widening the payload`,
+    deliveryReadiness.tone === "ready"
+      ? "the current scorecard and notes are strong enough that you do not need a heavier fallback packet"
+      : "you need a progress snapshot, not a final sign-off or closure record"
+  ];
+  const pivotWhen = [
+    deliveryReadiness.tone === "ready"
+      ? "the next reader needs more operational detail than the recommended export keeps visible"
+      : "readiness warnings make the current recommendation feel too light for the next handoff",
+    recommendedExportId === "issue-comment"
+      ? "validation commands, blockers, or lane-routing rules need to stay attached to the exported payload"
+      : recommendedExportId === "closeout-packet"
+        ? "the audience only needs a shorter progress update instead of a full closeout note"
+        : recommendedExportId === "pickup-routing"
+          ? "the next touchpoint is discussion-first and does not need the full routing checklist"
+          : "the next reader needs either broader evidence context or stronger operational scaffolding than the current recommendation provides"
+  ];
+
+  return {
+    summary: tradeoffSummaryForExport(recommendedExportId),
+    acceptWhen,
+    pivotWhen,
+    fallbackOptions: alternativeExportIds.map((exportId) => ({
+      exportId,
+      ...fallbackNoteForExport(exportId, pickupLane)
+    }))
+  };
+}
+
 export function ReviewScorecard({
   rubricRows,
   claimCount,
@@ -607,6 +696,14 @@ export function ReviewScorecard({
     selectedDestination,
     recommendedExport.exportId,
     pickupLane
+  );
+  const tradeoffGuidance = buildTradeoffGuidance(
+    selectedDestination,
+    recommendedExport.exportId,
+    pickupLane,
+    deliveryReadiness,
+    blockers.length,
+    shortcutAlternatives
   );
   const claimChipPreview =
     claimPackets.length > 0
@@ -1137,6 +1234,62 @@ export function ReviewScorecard({
                         Focus {card.surface.label}
                       </button>
                     </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            <div className="tradeoffBoard">
+              <div className="claimHeader">
+                <strong>Tradeoff notes</strong>
+                <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+              </div>
+              <p className="scoreHint">{tradeoffGuidance.summary}</p>
+
+              <div className="handoffSections">
+                <div className="handoffSection handoffSectionReady">
+                  <h3>Accept the recommendation when</h3>
+                  <ul className="checklist compact">
+                    {tradeoffGuidance.acceptWhen.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="handoffSection handoffSectionWarning">
+                  <h3>Pivot to a fallback when</h3>
+                  <ul className="checklist compact">
+                    {tradeoffGuidance.pivotWhen.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="fallbackGrid">
+                {tradeoffGuidance.fallbackOptions.map((option) => (
+                  <article key={option.exportId} className="fallbackCard">
+                    <div className="claimHeader">
+                      <strong>{exportSurfaces[option.exportId].label}</strong>
+                      <span className="statusPill statusPillfollowup">fallback</span>
+                    </div>
+                    <p className="scoreHint">{option.when}</p>
+                    <p className="scoreHint">
+                      <strong>Tradeoff:</strong> {option.tradeoff}
+                    </p>
+                    <button
+                      type="button"
+                      className="actionButton"
+                      onClick={() => {
+                        setSelectedExport(option.exportId);
+                        document.getElementById(exportSurfaces[option.exportId].targetId)?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start"
+                        });
+                      }}
+                      >
+                        Try {exportSurfaces[option.exportId].label}
+                      </button>
                   </article>
                 ))}
               </div>
