@@ -507,6 +507,30 @@ code {
   margin: 0;
 }
 
+.shortcutStrip {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(15, 107, 99, 0.08);
+  border: 1px solid rgba(15, 107, 99, 0.14);
+}
+
+.shortcutHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.shortcutActions,
+.shortcutAltList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .coverageGrid {
   display: grid;
   gap: 14px;
