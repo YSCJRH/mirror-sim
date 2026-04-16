@@ -484,6 +484,29 @@ code {
   border-color: rgba(15, 107, 99, 0.22);
 }
 
+.presetGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.presetCard {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid var(--border);
+}
+
+.presetCardActive {
+  border-color: rgba(15, 107, 99, 0.32);
+  box-shadow: 0 14px 30px rgba(15, 107, 99, 0.1);
+}
+
+.presetCard p {
+  margin: 0;
+}
+
 .coverageGrid {
   display: grid;
   gap: 14px;
