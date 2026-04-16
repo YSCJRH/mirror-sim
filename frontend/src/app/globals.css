@@ -451,6 +451,29 @@ code {
   gap: 8px;
 }
 
+.handoffCard {
+  align-content: start;
+}
+
+.handoffSections {
+  display: grid;
+  gap: 14px;
+}
+
+.handoffSection {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--border);
+}
+
+.handoffSection h3,
+.handoffSection p {
+  margin: 0;
+}
+
 .reviewerNotesCard {
   align-content: start;
 }
