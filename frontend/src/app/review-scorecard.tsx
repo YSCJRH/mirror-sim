@@ -1903,6 +1903,7 @@ export function ReviewScorecard({
   const [packetVariantDiffCopyState, setPacketVariantDiffCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [packetRecommendationCopyState, setPacketRecommendationCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [finalSendSummaryCopyState, setFinalSendSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [finalSendChecklistCopyState, setFinalSendChecklistCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -2749,6 +2750,104 @@ export function ReviewScorecard({
     `- Route cue: ${routeFilteredResponseKit.summary}`,
     `- Receiver cue: ${receiverGuidance.replyPrompt}`,
     `- Top blocker cue: ${blockers[0]}`
+  ].join("\n");
+  const finalSendChecklistDecisionTone =
+    copyPreflight.tone === "hold"
+      ? "hold"
+      : bundleVariant !== recommendedPacketVariant || !hasCleanPacketBlockers || copyPreflight.tone === "followup"
+        ? "followup"
+        : "ready";
+  const finalSendChecklistDecisionLabel =
+    finalSendChecklistDecisionTone === "ready"
+      ? "send"
+      : finalSendChecklistDecisionTone === "hold"
+        ? "hold"
+        : "widen before send";
+  const finalSendChecklistSummary =
+    finalSendChecklistDecisionTone === "ready"
+      ? "The current packet, recommendation, and readiness posture are aligned closely enough to send without widening the handoff."
+      : finalSendChecklistDecisionTone === "hold"
+        ? "The current handoff should stay on hold until the blocked send cues are resolved."
+        : "The current handoff is usable, but at least one cue still argues for widening or rechecking the packet before sending.";
+  const finalSendChecklistCards = [
+    {
+      label: "Send decision",
+      value: finalSendChecklistDecisionLabel,
+      detail: finalSendChecklistSummary
+    },
+    {
+      label: "Recommended packet",
+      value: bundleVariantProfiles[recommendedPacketVariant].label,
+      detail: packetRecommendationSummary
+    },
+    {
+      label: "Current packet",
+      value: bundleVariantProfiles[bundleVariant].label,
+      detail: packetRecommendationAlignment
+    },
+    {
+      label: "Top blocker cue",
+      value: hasCleanPacketBlockers ? "No blockers surfaced" : blockers[0].replace(/\.$/, ""),
+      detail: hasCleanPacketBlockers
+        ? "No extra blocker acknowledgement is currently forcing a wider or held send posture."
+        : "Keep this blocker visible near the top of the outgoing handoff before you send."
+    }
+  ];
+  const finalSendChecklistItems = [
+    {
+      label: "Recommended packet is selected",
+      tone: bundleVariant === recommendedPacketVariant ? "ready" : "followup",
+      detail:
+        bundleVariant === recommendedPacketVariant
+          ? `The current packet already matches the ${bundleVariantProfiles[recommendedPacketVariant].label.toLowerCase()} recommendation for this destination.`
+          : `Switch from ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} to ${bundleVariantProfiles[recommendedPacketVariant].label.toLowerCase()} if you want the preferred destination fit before sending.`
+    },
+    {
+      label: "Final send summary is aligned",
+      tone: finalSendChecklistDecisionTone,
+      detail: finalSendSummaryLead
+    },
+    {
+      label: "Route and receiver posture are explicit",
+      tone: routeCarriesMultiplePaths && bundleVariant !== "full" ? "followup" : "ready",
+      detail:
+        routeCarriesMultiplePaths
+          ? `The route cue is ${routeFilteredResponseKit.filterLabel}, so keep the fuller packet or visibly acknowledge that multiple paths remain in play.`
+          : `The route cue is ${routeFilteredResponseKit.filterLabel}, and ${receiverGuidance.roleLabel.toLowerCase()} posture is already explicit for this send step.`
+    },
+    {
+      label: "Blocker acknowledgement is acceptable",
+      tone: hasCleanPacketBlockers ? "ready" : copyPreflight.tone === "hold" ? "hold" : "followup",
+      detail:
+        hasCleanPacketBlockers
+          ? "No active blocker is asking for extra acknowledgement before the handoff leaves the workbench."
+          : `Carry the blocker cue forward before sending: ${blockers[0]}`
+    },
+    {
+      label: "Send posture is acceptable",
+      tone: copyPreflight.tone,
+      detail: copyPreflight.summary
+    }
+  ];
+  const finalSendChecklistMarkdown = [
+    "# Final Send Checklist",
+    "",
+    `- Decision: ${finalSendChecklistDecisionLabel}`,
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Recommended packet: ${bundleVariantProfiles[recommendedPacketVariant].label}`,
+    `- Current packet: ${bundleVariantProfiles[bundleVariant].label}`,
+    `- Route cue: ${routeFilteredResponseKit.filterLabel}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    "",
+    "## Checklist",
+    ...finalSendChecklistItems.map((item) => `- [${item.tone}] ${item.label}: ${item.detail}`),
+    "",
+    "## Next Send Action",
+    finalSendChecklistDecisionTone === "ready"
+      ? "- Send the current packet and keep the final send summary attached as the outgoing overview."
+      : finalSendChecklistDecisionTone === "hold"
+        ? "- Hold the send and resolve the blocked readiness or blocker cues before the handoff leaves the workbench."
+        : `- Widen or recheck the handoff before sending, starting with: ${bundleVariant === recommendedPacketVariant ? blockers[0] : packetRecommendationAlignment}`
   ].join("\n");
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
@@ -4344,6 +4443,62 @@ export function ReviewScorecard({
                       : finalSendSummaryCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the send-summary preview."
                         : "Use this summary card when you want one outgoing handoff view that keeps the sender note, packet mode, and route posture visible together."}
+                  </p>
+                </div>
+                <div className="copyPreflightBoard">
+                  <div className="claimHeader">
+                    <strong>Final send checklist</strong>
+                    <button
+                      type="button"
+                      className="actionButton"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(finalSendChecklistMarkdown);
+                          setFinalSendChecklistCopyState("copied");
+                        } catch {
+                          setFinalSendChecklistCopyState("failed");
+                        }
+                      }}
+                    >
+                      Copy send checklist
+                    </button>
+                  </div>
+                  <p className="scoreHint">{finalSendChecklistSummary}</p>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{bundleVariantProfiles[recommendedPacketVariant].label} recommended</span>
+                    <span className="pill">{bundleVariantProfiles[bundleVariant].label} current</span>
+                    <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {finalSendChecklistCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {finalSendChecklistItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{finalSendChecklistMarkdown}</pre>
+                  <p className="scoreHint">
+                    {finalSendChecklistCopyState === "copied"
+                      ? "Final send checklist copied to clipboard."
+                      : finalSendChecklistCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the send-checklist preview."
+                        : "Use this checklist when you want a send, widen, or hold decision that ties together the recommendation, summary, and readiness cues."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
