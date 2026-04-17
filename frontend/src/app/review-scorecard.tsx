@@ -1914,6 +1914,7 @@ export function ReviewScorecard({
   const [resolutionStatusBoardCopyState, setResolutionStatusBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [nextStepRoutingPackCopyState, setNextStepRoutingPackCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [actionReadinessBoardCopyState, setActionReadinessBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [escalationHandoffPacketCopyState, setEscalationHandoffPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -3662,6 +3663,88 @@ export function ReviewScorecard({
     `- Resolution status board: ${resolutionStatusBoardLead}`,
     `- Next-step routing pack: ${nextStepRoutingPackLead}`,
     `- Outcome tracker: ${replyOutcomeTrackerLead}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const escalationHandoffPacketLead =
+    selectedDestination === "pr-comment"
+      ? "Use this packet when the current GitHub-facing path needs to escalate and the status, routing, and fallback cues should travel together."
+      : selectedDestination === "closeout"
+        ? "Use this packet when the closeout flow needs to escalate and keep the current status and routing posture visible together."
+        : "Use this packet when the next operator needs a clean escalation handoff without rebuilding the current status and route context by hand.";
+  const escalationHandoffSummaryLine =
+    finalSendChecklistDecisionTone === "hold"
+      ? "The current state already points toward escalation because the hold-state blocker posture remains visible."
+      : `Escalation remains the fallback route while the current ${receiverResponseActiveTemplate.label.toLowerCase()} path stays primary.`;
+  const escalationHandoffPacketCards = [
+    {
+      label: "Escalation route",
+      value: resolutionEscalationRoute.label,
+      detail: resolutionEscalationRoute.prompt
+    },
+    {
+      label: "Current status",
+      value: finalSendChecklistDecisionLabel,
+      detail: resolutionStatusSummaryLine
+    },
+    {
+      label: "Current route",
+      value: receiverResponseActiveTemplate.label,
+      detail: nextStepRoutingSummaryLine
+    },
+    {
+      label: "Top blocker cue",
+      value: finalSendChecklistDecisionTone === "hold" ? "Blocked" : "Visible fallback cue",
+      detail: receiverFollowUpBlockerCue
+    }
+  ];
+  const escalationHandoffPacketItems = [
+    {
+      label: "Escalation path is explicit",
+      tone: resolutionEscalationRoute.tone,
+      detail: resolutionEscalationRoute.detail
+    },
+    {
+      label: "Current status is attached",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "hold"
+            : "followup",
+      detail: resolutionStatusSummaryLine
+    },
+    {
+      label: "Fallback context is attached",
+      tone: blockers.length > 0 ? "followup" : "ready",
+      detail: receiverFollowUpBlockerCue
+    }
+  ];
+  const escalationHandoffPacketMarkdown = [
+    "# Escalation Handoff Packet",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Escalation route: ${resolutionEscalationRoute.label}`,
+    `- Current status: ${finalSendChecklistDecisionLabel}`,
+    "",
+    "## Escalation Summary",
+    `- ${escalationHandoffSummaryLine}`,
+    `- Escalate when: ${resolutionEscalationRoute.prompt}`,
+    `- Current route summary: ${nextStepRoutingSummaryLine}`,
+    "",
+    "## Current Status Board",
+    resolutionStatusBoardMarkdown,
+    "",
+    "## Current Routing Pack",
+    nextStepRoutingPackMarkdown,
+    "",
+    "## Carry Forward",
+    `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
+    `- Next open state: ${receiverFollowUpNextAction}`,
+    `- Alternate routes: ${receiverResponseAlternateTemplates.length > 0 ? receiverResponseAlternateTemplates.map((template) => template.label).join(", ") : "none"}`,
     "",
     "## Escalate When",
     `- ${resolutionEscalationRoute.prompt}`
@@ -5894,6 +5977,67 @@ export function ReviewScorecard({
                       : actionReadinessBoardCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the readiness-board preview."
                         : "Use this board when you want one readiness check that confirms whether the next action is clear to execute."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Escalation handoff packet</strong>
+                      <p className="scoreHint">{escalationHandoffPacketLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${resolutionEscalationRoute.tone}`}>{resolutionEscalationRoute.label}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(escalationHandoffPacketMarkdown);
+                            setEscalationHandoffPacketCopyState("copied");
+                          } catch {
+                            setEscalationHandoffPacketCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy escalation packet
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {escalationHandoffPacketCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {escalationHandoffPacketItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{escalationHandoffPacketMarkdown}</pre>
+                  <p className="scoreHint">
+                    {escalationHandoffPacketCopyState === "copied"
+                      ? "Escalation handoff packet copied to clipboard."
+                      : escalationHandoffPacketCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the escalation-packet preview."
+                        : "Use this packet when the current status, routing posture, and fallback path should travel together for escalation."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
