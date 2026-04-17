@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 41 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 42 queue resumption.
 
 ## Current Gate State
 
@@ -44,7 +44,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 38 exit gate: closed
 - Phase 39 exit gate: closed
 - Phase 40 exit gate: closed
-- Phase 41 exit gate: open
+- Phase 41 exit gate: closed
+- Phase 42 exit gate: open
 
 Local phase audits currently report:
 
@@ -313,16 +314,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 40 - Recovery Clearance and Escalation Acknowledgment`
   - closed
+- Phase 41 queue sync
+  - merged via PR `#292`
+- Phase 41 execution recovery release board
+  - merged via PR `#293`
+- Phase 41 escalation closure packet
+  - merged via PR `#294`
+- Phase 41 exit issue `#288`
+  - closed
+- milestone `Phase 41 - Recovery Release and Escalation Closure`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 40 closeout
+  - no open pull requests remain after the Phase 41 closeout
 
 ## Current Queue
 
-- milestone `Phase 41 - Recovery Release and Escalation Closure` is open.
-- `#288` `Phase 41 exit gate`
+- milestone `Phase 42 - Recovery Completion and Escalation Finalization` is open.
+- `#295` `Phase 42 exit gate`
   - open
-- blocked until the Phase 41 recovery-release and escalation-closure slice is complete
-- The current Phase 41 execution slice is tracked through:
+- blocked until the Phase 42 recovery-completion and escalation-finalization slice is complete
+- The current Phase 42 execution slice is tracked through:
+  - `#296` `Phase 42: sync repo truth to Phase 42 queue`
+  - `#297` `Phase 42: add execution recovery completion board`
+  - `#298` `Phase 42: add escalation finalization packet`
+- The completed Phase 41 slice was tracked through:
   - `#289` `Phase 41: sync repo truth to Phase 41 queue`
   - `#290` `Phase 41: add execution recovery release board`
   - `#291` `Phase 41: add escalation closure packet`
