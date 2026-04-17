@@ -1916,6 +1916,7 @@ export function ReviewScorecard({
   const [actionReadinessBoardCopyState, setActionReadinessBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationHandoffPacketCopyState, setEscalationHandoffPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionKickoffBoardCopyState, setExecutionKickoffBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [escalationDecisionGuideCopyState, setEscalationDecisionGuideCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -3838,6 +3839,104 @@ export function ReviewScorecard({
     `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
     `- Next open state: ${receiverFollowUpNextAction}`,
     `- Alternate routes: ${receiverResponseAlternateTemplates.length > 0 ? receiverResponseAlternateTemplates.map((template) => template.label).join(", ") : "none"}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const escalationDecisionGuideLead =
+    selectedDestination === "pr-comment"
+      ? "Use this guide when you want one GitHub-facing escalation decision surface that says whether escalation should happen now or stay as fallback."
+      : selectedDestination === "closeout"
+        ? "Use this guide when the closeout flow needs a compact answer on whether escalation is the right next move."
+        : "Use this guide when the next operator needs a clear escalation yes-or-not-yet decision without rebuilding the current context by hand.";
+  const escalationDecisionSummaryLine =
+    finalSendChecklistDecisionTone === "hold"
+      ? "Escalation should stay foregrounded because the current blocker posture still points to a hold-state handoff."
+      : blockers.length > 0
+        ? "Escalation remains available but should stay secondary while the current route still has a viable next step."
+        : "Escalation is available as fallback, but the current route and readiness posture still support normal continuation.";
+  const escalationDecisionGuideCards = [
+    {
+      label: "Escalation decision",
+      value:
+        finalSendChecklistDecisionTone === "hold"
+          ? "Escalate now"
+          : blockers.length > 0
+            ? "Escalate if blocker persists"
+            : "Keep as fallback",
+      detail: escalationDecisionSummaryLine
+    },
+    {
+      label: "Current readiness",
+      value:
+        finalSendChecklistDecisionTone === "ready"
+          ? "Ready to act"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "Hold before action"
+            : "Needs follow-up",
+      detail: actionReadinessSummaryLine
+    },
+    {
+      label: "Fallback threshold",
+      value: resolutionEscalationRoute.label,
+      detail: resolutionEscalationRoute.prompt
+    },
+    {
+      label: "Current blocker cue",
+      value: blockers.length > 0 ? "Visible blocker" : "No top blocker",
+      detail: receiverFollowUpBlockerCue
+    }
+  ];
+  const escalationDecisionGuideItems = [
+    {
+      label: "Escalation threshold is explicit",
+      tone: resolutionEscalationRoute.tone,
+      detail: resolutionEscalationRoute.detail
+    },
+    {
+      label: "Readiness threshold is explicit",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "hold"
+            : "followup",
+      detail: actionReadinessSummaryLine
+    },
+    {
+      label: "Blocker threshold stays visible",
+      tone:
+        finalSendChecklistDecisionTone === "hold"
+          ? "hold"
+          : blockers.length > 0
+            ? "followup"
+            : "ready",
+      detail: receiverFollowUpBlockerCue
+    }
+  ];
+  const escalationDecisionGuideMarkdown = [
+    "# Escalation Decision Guide",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Escalation route: ${resolutionEscalationRoute.label}`,
+    `- Current readiness: ${finalSendChecklistDecisionTone === "ready" ? "Ready to act" : finalSendChecklistDecisionTone === "hold" ? "Hold before action" : "Needs follow-up"}`,
+    "",
+    "## Decision Summary",
+    `- ${escalationDecisionSummaryLine}`,
+    `- Current readiness: ${actionReadinessSummaryLine}`,
+    `- Fallback threshold: ${resolutionEscalationRoute.prompt}`,
+    "",
+    "## Decision Thresholds",
+    `- Blocker cue: ${receiverFollowUpBlockerCue}`,
+    `- Next step if not escalating: ${nextStepRoutingPrimaryStep}`,
+    `- Current routing summary: ${nextStepRoutingSummaryLine}`,
+    "",
+    "## Keep Nearby",
+    `- Action readiness board: ${actionReadinessBoardLead}`,
+    `- Escalation handoff packet: ${escalationHandoffPacketLead}`,
+    `- Next-step routing pack: ${nextStepRoutingPackLead}`,
     "",
     "## Escalate When",
     `- ${resolutionEscalationRoute.prompt}`
@@ -6188,10 +6287,71 @@ export function ReviewScorecard({
                   <pre className="bundlePreviewPre">{escalationHandoffPacketMarkdown}</pre>
                   <p className="scoreHint">
                     {escalationHandoffPacketCopyState === "copied"
-                      ? "Escalation handoff packet copied to clipboard."
+                        ? "Escalation handoff packet copied to clipboard."
                       : escalationHandoffPacketCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the escalation-packet preview."
                         : "Use this packet when the current status, routing posture, and fallback path should travel together for escalation."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Escalation decision guide</strong>
+                      <p className="scoreHint">{escalationDecisionGuideLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${resolutionEscalationRoute.tone}`}>{resolutionEscalationRoute.label}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(escalationDecisionGuideMarkdown);
+                            setEscalationDecisionGuideCopyState("copied");
+                          } catch {
+                            setEscalationDecisionGuideCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy decision guide
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {escalationDecisionGuideCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {escalationDecisionGuideItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{escalationDecisionGuideMarkdown}</pre>
+                  <p className="scoreHint">
+                    {escalationDecisionGuideCopyState === "copied"
+                      ? "Escalation decision guide copied to clipboard."
+                      : escalationDecisionGuideCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the decision-guide preview."
+                        : "Use this guide when you want one escalation decision surface that keeps readiness, blocker posture, and fallback thresholds visible together."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
