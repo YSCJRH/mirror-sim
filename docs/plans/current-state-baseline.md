@@ -128,7 +128,9 @@ This note is the current Phase 28 active-queue baseline.
 - Local phase audits remain the contract-aligned source of truth for whether the current repo state is runnable and reviewable.
 - `audit-github-queue` is the executable local rule for whether builder automation should remain `paused` or can resume against the successor queue.
 - `backlog/sprint-01.md` is historical seed material only and should not be used as the live queue.
-- Remote `origin/codex/*` branches are historical and superseded by `main`.
+- Remote `origin/codex/*` branches should now be limited to active open-PR work and reviewed exceptions, not used as a standing backlog.
+- The current reviewed branch-hygiene baseline lives in `docs/plans/codex-branch-classification-baseline.md`.
+- Current live remote exceptions are `origin/codex/phase28-send-checklist` (open PR) and `origin/codex/phase23-session-summary` (`TODO[verify]`).
 - Delete a historical remote branch once it is tied only to merged or closed work and no open issue, PR, or runbook step still references it.
 - Keep a historical remote branch only when an open issue or unresolved forensic comparison explicitly names it.
 - Revive a historical remote branch only by opening a new issue that states why `main` is insufficient.

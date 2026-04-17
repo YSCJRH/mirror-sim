@@ -57,7 +57,7 @@ If the queue becomes `fail`, stop pickup and repair the milestone, exit gate, or
 
 ## Branch Hygiene
 
-- Treat current `origin/codex/*` branches as historical and superseded by `main`.
+- Treat `origin/codex/*` branches as temporary execution state by default; once a branch is no longer tied to open work, it should become historical and be reconciled against `main`.
 - Delete a historical branch once it is tied only to merged or closed work and no open issue, PR, or runbook step still references it.
 - Keep a historical branch only when an open issue or unresolved forensic comparison explicitly depends on it.
 - Revive a historical branch only through a new issue that names the branch and explains why `main` is insufficient.
