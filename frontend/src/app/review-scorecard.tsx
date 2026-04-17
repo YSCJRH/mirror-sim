@@ -1901,6 +1901,7 @@ export function ReviewScorecard({
   const [sessionSendCueCopyState, setSessionSendCueCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSenderNoteCopyState, setSessionSenderNoteCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [packetVariantDiffCopyState, setPacketVariantDiffCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [packetRecommendationCopyState, setPacketRecommendationCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [finalSendSummaryCopyState, setFinalSendSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
@@ -2617,8 +2618,75 @@ export function ReviewScorecard({
         `- ${highlight.title}: ${highlight.kind.replace(/-/g, " ")}. ${highlight.note} (full ${highlight.recommendedLines} lines vs compact ${highlight.fallbackLines} lines)`
     )
   ].join("\n");
+  const hasCleanPacketBlockers = blockers[0] === "No blocking issues surfaced in the current frontend-only review state.";
+  const routeCarriesMultiplePaths = routeFilteredResponseKit.templates.length > 1;
+  const recommendedPacketVariant: BundleVariant =
+    selectedDestination === "closeout"
+      ? "full"
+      : routeCarriesMultiplePaths
+        ? "full"
+        : selectedDestination === "pickup-handoff"
+          ? receiverRole === "operator" && copyPreflight.tone === "ready" && hasCleanPacketBlockers
+            ? "compact"
+            : "full"
+          : copyPreflight.tone === "ready" && hasCleanPacketBlockers && receiverRole !== "approver"
+            ? "compact"
+            : "full";
+  const fallbackPacketVariant: BundleVariant = recommendedPacketVariant === "full" ? "compact" : "full";
+  const packetRecommendationReasons = [
+    selectedDestination === "closeout"
+      ? "Closeout delivery benefits from the fuller packet because send-readiness cues and route comparison context should stay attached."
+      : selectedDestination === "pickup-handoff"
+        ? recommendedPacketVariant === "compact"
+          ? "Pickup handoff currently favors the lighter packet because the next operator mainly needs a fast action-first package."
+          : "Pickup handoff currently favors the fuller packet because the next operator still needs extra send context before moving."
+        : recommendedPacketVariant === "compact"
+          ? "PR-comment delivery currently favors the lighter packet because the handoff can stay brief without losing critical context."
+          : "PR-comment delivery currently favors the fuller packet because the handoff still needs more delivery context than a short packet can carry cleanly.",
+    routeCarriesMultiplePaths
+      ? "The route kit is carrying multiple response paths, so the fuller packet keeps alternate-route context visible."
+      : `The current route cue is ${routeFilteredResponseKit.filterLabel}, so the packet does not need extra route-comparison overhead.`,
+    receiverRole === "approver"
+      ? "Approver posture benefits from fuller packet context so sign-off or hold decisions stay visible."
+      : receiverRole === "operator" && recommendedPacketVariant === "compact"
+        ? "Operator posture benefits from a shorter packet when the current route already points to a concrete next action."
+        : `The ${receiverGuidance.roleLabel.toLowerCase()} posture still fits the ${bundleVariantProfiles[recommendedPacketVariant].label.toLowerCase()} packet.`,
+    hasCleanPacketBlockers && copyPreflight.tone === "ready"
+      ? "Current blocker and readiness posture are clean enough that the recommendation does not need extra defensive context."
+      : "Current blocker or readiness cues still argue for keeping more delivery context attached."
+  ];
+  const fallbackPacketRationale =
+    recommendedPacketVariant === "full"
+      ? "Fallback to the compact packet only when the next touchpoint truly needs a shorter update and can live without the fuller send-readiness or route-comparison context."
+      : "Fallback to the full packet when the receiver needs send-readiness cues, route comparison, or blocker acknowledgement to stay attached.";
+  const packetRecommendationSummary =
+    recommendedPacketVariant === "full"
+      ? `Recommend the full packet for this ${deliveryDestinations[selectedDestination].label.toLowerCase()} handoff because the current route and receiver posture still benefit from fuller send context.`
+      : `Recommend the compact packet for this ${deliveryDestinations[selectedDestination].label.toLowerCase()} handoff because the current route and receiver posture already fit a lighter outgoing packet.`;
+  const packetRecommendationAlignment =
+    bundleVariant === recommendedPacketVariant
+      ? "The current selection already matches the recommendation."
+      : `The current selection is acting as the fallback packet. Switch to ${bundleVariantProfiles[recommendedPacketVariant].label.toLowerCase()} if you want the preferred destination fit.`;
+  const packetRecommendationMarkdown = [
+    "# Packet Recommendation",
+    "",
+    `- Recommended packet: ${bundleVariantProfiles[recommendedPacketVariant].label}`,
+    `- Current packet: ${bundleVariantProfiles[bundleVariant].label}`,
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver role: ${receiverGuidance.roleLabel}`,
+    `- Route cue: ${routeFilteredResponseKit.filterLabel}`,
+    `- Send posture: ${copyPreflight.tone}`,
+    "",
+    "## Why This Packet Fits",
+    ...packetRecommendationReasons.map((reason) => `- ${reason}`),
+    "",
+    "## Fallback Rationale",
+    `- Keep ${bundleVariantProfiles[fallbackPacketVariant].label.toLowerCase()} available when the handoff shape changes mid-flight or the next reader wants a different context level.`,
+    `- ${fallbackPacketRationale}`,
+    `- ${packetRecommendationAlignment}`
+  ].join("\n");
   const activeSessionPacketPreview = buildPayloadPreview(activeSessionHandoffPacketMarkdown, 10);
-  const noBlockingIssueVisible = blockers[0] === "No blocking issues surfaced in the current frontend-only review state.";
+  const noBlockingIssueVisible = hasCleanPacketBlockers;
   const finalSendSummaryLead =
     selectedDestination === "pr-comment"
       ? `Review the current sender note, ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} packet, and route cue together before pasting the outgoing handoff into GitHub.`
@@ -4027,6 +4095,58 @@ export function ReviewScorecard({
                       : sessionSenderNoteCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the sender-note preview."
                         : "Use this note when the packet needs a destination-specific subject line and delivery context before it leaves the workbench."}
+                  </p>
+                </div>
+                <div className="copyPreflightBoard">
+                  <div className="claimHeader">
+                    <strong>Packet recommendation</strong>
+                    <button
+                      type="button"
+                      className="actionButton"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(packetRecommendationMarkdown);
+                          setPacketRecommendationCopyState("copied");
+                        } catch {
+                          setPacketRecommendationCopyState("failed");
+                        }
+                      }}
+                    >
+                      Copy recommendation
+                    </button>
+                  </div>
+                  <p className="scoreHint">{packetRecommendationSummary}</p>
+                  <div className="statusRow">
+                    <span className="pill">Recommended: {bundleVariantProfiles[recommendedPacketVariant].label}</span>
+                    <span className="pill">Current: {bundleVariantProfiles[bundleVariant].label}</span>
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className={`statusPill statusPill${bundleVariant === recommendedPacketVariant ? "ready" : "followup"}`}>
+                      {bundleVariant === recommendedPacketVariant ? "aligned" : "fallback active"}
+                    </span>
+                  </div>
+                  <div className="handoffSections">
+                    <div className="handoffSection handoffSectionReady">
+                      <h3>Why this packet fits</h3>
+                      <ul className="checklist compact">
+                        {packetRecommendationReasons.map((reason) => (
+                          <li key={reason}>{reason}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="handoffSection handoffSectionWarning">
+                      <h3>Fallback rationale</h3>
+                      <p>{fallbackPacketRationale}</p>
+                      <p className="scoreHint">{packetRecommendationAlignment}</p>
+                    </div>
+                  </div>
+                  <pre className="bundlePreviewPre">{packetRecommendationMarkdown}</pre>
+                  <p className="scoreHint">
+                    {packetRecommendationCopyState === "copied"
+                      ? "Packet recommendation copied to clipboard."
+                      : packetRecommendationCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the recommendation preview."
+                        : "Use this banner when you want the workbench to name the preferred packet mode and explain when the fallback still makes sense."}
                   </p>
                 </div>
                 <div className="laneToggleGroup" role="tablist" aria-label="Session handoff packet variant chooser">
