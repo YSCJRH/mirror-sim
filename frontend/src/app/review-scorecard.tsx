@@ -1913,6 +1913,7 @@ export function ReviewScorecard({
   const [resolutionHandoffPackCopyState, setResolutionHandoffPackCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [resolutionStatusBoardCopyState, setResolutionStatusBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [nextStepRoutingPackCopyState, setNextStepRoutingPackCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [actionReadinessBoardCopyState, setActionReadinessBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -3569,6 +3570,98 @@ export function ReviewScorecard({
     `- ${receiverFollowUpNextAction}`,
     `- ${receiverFollowUpBlockerCue}`,
     `- Alternate reply routes: ${receiverResponseAlternateTemplates.length > 0 ? receiverResponseAlternateTemplates.map((template) => template.label).join(", ") : "none"}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const actionReadinessBoardLead =
+    selectedDestination === "pr-comment"
+      ? "Use this board when you want one GitHub-facing readiness readout that says whether the next action is clear to execute."
+      : selectedDestination === "closeout"
+        ? "Use this board when the closeout flow needs a compact check on whether the next action is ready to execute."
+        : "Use this board when the next operator needs a fast answer to whether the current state is ready for action.";
+  const actionReadinessSummaryLine =
+    finalSendChecklistDecisionTone === "ready" && receiverResponseActiveTemplate.tone === "ready"
+      ? `The next action is ready to execute on the current ${receiverResponseActiveTemplate.label.toLowerCase()} route, with escalation still visible as a fallback.`
+      : finalSendChecklistDecisionTone === "hold"
+        ? "The next action is not ready to execute yet because the current blocker posture still requires a hold-state resolution step."
+        : `The next action is only partially ready, so the current route should travel with the remaining checkpoint and blocker cues.`;
+  const actionReadinessBoardCards = [
+    {
+      label: "Readiness state",
+      value:
+        finalSendChecklistDecisionTone === "ready"
+          ? "Ready to act"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "Hold before action"
+            : "Needs follow-up",
+      detail: actionReadinessSummaryLine
+    },
+    {
+      label: "Primary route",
+      value: receiverResponseActiveTemplate.label,
+      detail: nextStepRoutingPrimaryStep
+    },
+    {
+      label: "Blocker posture",
+      value: finalSendChecklistDecisionTone === "hold" ? "Blocked" : blockers.length > 0 ? "Visible blocker" : "No top blocker",
+      detail: receiverFollowUpBlockerCue
+    },
+    {
+      label: "Fallback path",
+      value: resolutionEscalationRoute.label,
+      detail: resolutionEscalationRoute.prompt
+    }
+  ];
+  const actionReadinessBoardItems = [
+    {
+      label: "Current route is actionable",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : receiverResponseActiveTemplate.tone === "hold"
+            ? "hold"
+            : "followup",
+      detail: nextStepRoutingSummaryLine
+    },
+    {
+      label: "Blocker posture stays visible",
+      tone:
+        finalSendChecklistDecisionTone === "hold"
+          ? "hold"
+          : blockers.length > 0
+            ? "followup"
+            : "ready",
+      detail: receiverFollowUpBlockerCue
+    },
+    {
+      label: "Fallback path is ready",
+      tone: resolutionEscalationRoute.tone,
+      detail: resolutionEscalationRoute.detail
+    }
+  ];
+  const actionReadinessBoardMarkdown = [
+    "# Action Readiness Board",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Readiness state: ${finalSendChecklistDecisionTone === "ready" ? "Ready to act" : finalSendChecklistDecisionTone === "hold" ? "Hold before action" : "Needs follow-up"}`,
+    `- Fallback path: ${resolutionEscalationRoute.label}`,
+    "",
+    "## Readiness Summary",
+    `- ${actionReadinessSummaryLine}`,
+    `- ${nextStepRoutingSummaryLine}`,
+    `- Primary next step: ${nextStepRoutingPrimaryStep}`,
+    "",
+    "## Blocker Posture",
+    `- ${receiverFollowUpBlockerCue}`,
+    `- Current status: ${resolutionStatusSummaryLine}`,
+    "",
+    "## Keep Nearby",
+    `- Resolution status board: ${resolutionStatusBoardLead}`,
+    `- Next-step routing pack: ${nextStepRoutingPackLead}`,
+    `- Outcome tracker: ${replyOutcomeTrackerLead}`,
     "",
     "## Escalate When",
     `- ${resolutionEscalationRoute.prompt}`
@@ -5736,10 +5829,71 @@ export function ReviewScorecard({
                   <pre className="bundlePreviewPre">{nextStepRoutingPackMarkdown}</pre>
                   <p className="scoreHint">
                     {nextStepRoutingPackCopyState === "copied"
-                      ? "Next-step routing pack copied to clipboard."
+                        ? "Next-step routing pack copied to clipboard."
                       : nextStepRoutingPackCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the routing-pack preview."
                         : "Use this pack when you want one routing summary that keeps the next action, fallback path, and open-state cue visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Action readiness board</strong>
+                      <p className="scoreHint">{actionReadinessBoardLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(actionReadinessBoardMarkdown);
+                            setActionReadinessBoardCopyState("copied");
+                          } catch {
+                            setActionReadinessBoardCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy readiness board
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {actionReadinessBoardCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {actionReadinessBoardItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{actionReadinessBoardMarkdown}</pre>
+                  <p className="scoreHint">
+                    {actionReadinessBoardCopyState === "copied"
+                      ? "Action readiness board copied to clipboard."
+                      : actionReadinessBoardCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the readiness-board preview."
+                        : "Use this board when you want one readiness check that confirms whether the next action is clear to execute."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
