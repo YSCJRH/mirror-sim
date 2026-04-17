@@ -1907,6 +1907,7 @@ export function ReviewScorecard({
   const [deliveryScriptCopyState, setDeliveryScriptCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [deliveryBundleCopyState, setDeliveryBundleCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [receiverFollowUpPackCopyState, setReceiverFollowUpPackCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [deliveryCheckpointCopyState, setDeliveryCheckpointCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -3031,6 +3032,97 @@ export function ReviewScorecard({
     "## Keep Visible",
     `- Route detail: ${receiverFollowUpPrimaryTemplate.detail}`,
     `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
+    `- Final send summary: ${finalSendSummaryLead}`,
+    "",
+    "## Escalate When",
+    `- ${followThroughRouting.routes.find((route) => route.key === "escalate")?.prompt ?? "Escalate when the current lane is no longer sufficient for the next reply."}`
+  ].join("\n");
+  const deliveryCheckpointLead =
+    selectedDestination === "pr-comment"
+      ? "Use this board when you want one post-send checkpoint that confirms what traveled in the GitHub handoff and what receiver reply posture is expected next."
+      : selectedDestination === "closeout"
+        ? "Use this board when you want a compact closeout checkpoint that keeps the sent package, route cue, and next reply posture visible together."
+        : "Use this board when you want the next operator checkpoint to show what was handed off and what follow-up posture should drive the next reply.";
+  const deliveryCheckpointSummaryLine =
+    finalSendChecklistDecisionTone === "ready"
+      ? `The current ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} handoff is ready to move with ${routeFilteredResponseKit.filterLabel.toLowerCase()} visible for ${receiverGuidance.roleLabel.toLowerCase()} follow-up.`
+      : finalSendChecklistDecisionTone === "hold"
+        ? `The current ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} handoff remains on hold, so the next checkpoint should stay anchored to the blocked send cues before another reply is sent.`
+        : `The current ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} handoff still needs widening or recheck work before the next reply checkpoint should move forward.`;
+  const deliveryCheckpointCards = [
+    {
+      label: "Sent bundle",
+      value: bundleVariantProfiles[bundleVariant].label,
+      detail: deliveryCheckpointSummaryLine
+    },
+    {
+      label: "Recommended packet",
+      value: bundleVariantProfiles[recommendedPacketVariant].label,
+      detail: packetRecommendationSummary
+    },
+    {
+      label: "Route cue",
+      value: routeFilteredResponseKit.filterLabel,
+      detail: routeFilteredResponseKit.summary
+    },
+    {
+      label: "Follow-up route",
+      value: receiverFollowUpPrimaryTemplate.label,
+      detail: receiverFollowUpPrimaryTemplate.prompt
+    }
+  ];
+  const deliveryCheckpointItems = [
+    {
+      label: "Sent package is explicit",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "hold"
+            : "followup",
+      detail:
+        bundleVariant === recommendedPacketVariant
+          ? `The current handoff is using the recommended ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} package.`
+          : `The current handoff is using the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} package while the recommendation remains ${bundleVariantProfiles[recommendedPacketVariant].label.toLowerCase()}.`
+    },
+    {
+      label: "Follow-up posture is explicit",
+      tone: receiverFollowUpPrimaryTemplate.tone,
+      detail: `${receiverFollowUpPrimaryTemplate.label}: ${receiverFollowUpPrimaryTemplate.detail}`
+    },
+    {
+      label: "Next checkpoint is visible",
+      tone: finalSendChecklistDecisionTone === "hold" ? "hold" : copyPreflight.tone === "ready" ? "ready" : "followup",
+      detail:
+        finalSendChecklistDecisionTone === "hold"
+          ? receiverFollowUpBlockerCue
+          : `Confirm the next reply checkpoint with: ${receiverFollowUpNextAction}`
+    }
+  ];
+  const deliveryCheckpointMarkdown = [
+    "# Delivery Checkpoint Board",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Sent bundle mode: ${bundleVariantProfiles[bundleVariant].label}`,
+    `- Recommended packet: ${bundleVariantProfiles[recommendedPacketVariant].label}`,
+    `- Route cue: ${routeFilteredResponseKit.filterLabel}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Send posture: ${finalSendChecklistDecisionLabel}`,
+    `- Follow-up route: ${receiverFollowUpPrimaryTemplate.label}`,
+    "",
+    "## Checkpoint Summary",
+    `- ${deliveryCheckpointSummaryLine}`,
+    `- ${receiverFollowUpPostureLine}`,
+    `- Expected reply cue: ${receiverFollowUpPrimaryTemplate.prompt}`,
+    "",
+    "## Confirm Next",
+    `- ${receiverGuidance.replyPrompt}`,
+    `- Next checkpoint: ${receiverFollowUpNextAction}`,
+    `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
+    "",
+    "## Keep Nearby",
+    `- Delivery bundle: ${deliveryBundleLead}`,
+    `- Follow-up pack: ${receiverFollowUpLead}`,
     `- Final send summary: ${finalSendSummaryLead}`,
     "",
     "## Escalate When",
@@ -4836,6 +4928,68 @@ export function ReviewScorecard({
                       : receiverFollowUpPackCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the follow-up-pack preview."
                         : "Use this pack when you want a compact follow-up note that keeps the current route cue, receiver ask, and send posture aligned."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Delivery checkpoint board</strong>
+                      <p className="scoreHint">{deliveryCheckpointLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(deliveryCheckpointMarkdown);
+                            setDeliveryCheckpointCopyState("copied");
+                          } catch {
+                            setDeliveryCheckpointCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy checkpoint board
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{bundleVariantProfiles[bundleVariant].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {deliveryCheckpointCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {deliveryCheckpointItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{deliveryCheckpointMarkdown}</pre>
+                  <p className="scoreHint">
+                    {deliveryCheckpointCopyState === "copied"
+                      ? "Delivery checkpoint board copied to clipboard."
+                      : deliveryCheckpointCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the checkpoint-board preview."
+                        : "Use this board when you want one post-send checkpoint that keeps the sent package, route cue, and next reply posture visible together."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
