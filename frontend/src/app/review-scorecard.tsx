@@ -1917,6 +1917,7 @@ export function ReviewScorecard({
   const [escalationHandoffPacketCopyState, setEscalationHandoffPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionKickoffBoardCopyState, setExecutionKickoffBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionProgressTrackerCopyState, setExecutionProgressTrackerCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [executionOutcomeBoardCopyState, setExecutionOutcomeBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDecisionGuideCopyState, setEscalationDecisionGuideCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationTriggerPacketCopyState, setEscalationTriggerPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
@@ -3862,6 +3863,101 @@ export function ReviewScorecard({
     "",
     "## Keep Nearby",
     `- Execution kickoff board: ${executionKickoffBoardLead}`,
+    `- Delivery checkpoint board: ${deliveryCheckpointLead}`,
+    `- Receiver response packet: ${receiverResponsePacketLead}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const executionOutcomeTone =
+    executionProgressTone === "ready" && receiverResponseActiveTemplate.tone === "ready"
+      ? "ready"
+      : finalSendChecklistDecisionTone === "hold" || receiverResponseActiveTemplate.tone === "hold"
+        ? "hold"
+        : "followup";
+  const executionOutcomeLabel =
+    executionOutcomeTone === "ready"
+      ? "Completed cleanly"
+      : executionOutcomeTone === "hold"
+        ? "Needs correction"
+        : "Still provisional";
+  const executionOutcomeBoardLead =
+    selectedDestination === "pr-comment"
+      ? "Use this board when you want one GitHub-facing execution outcome surface that says whether the current route completed cleanly, stayed provisional, or needs correction."
+      : selectedDestination === "closeout"
+        ? "Use this board when the closeout flow needs a compact read on the current execution outcome before deciding the next step."
+        : "Use this board when the next operator needs one outcome surface that keeps execution progress, checkpoint posture, and response posture visible together.";
+  const executionOutcomeSummaryLine =
+    executionOutcomeTone === "ready"
+      ? `The current ${receiverResponseActiveTemplate.label.toLowerCase()} route has landed cleanly enough that the execution outcome can be treated as stable for the next handoff.`
+      : executionOutcomeTone === "hold"
+        ? "The current execution outcome needs correction because the checkpoint or response posture still points to a blocked or unstable route."
+        : "The current execution outcome is still provisional, so the route should keep traveling with visible checkpoint and response cues.";
+  const executionOutcomeBoardCards = [
+    {
+      label: "Outcome state",
+      value: executionOutcomeLabel,
+      detail: executionOutcomeSummaryLine
+    },
+    {
+      label: "Progress state",
+      value: executionProgressLabel,
+      detail: executionProgressSummaryLine
+    },
+    {
+      label: "Checkpoint state",
+      value: finalSendChecklistDecisionLabel,
+      detail: deliveryCheckpointSummaryLine
+    },
+    {
+      label: "Response posture",
+      value: receiverResponseActiveTemplate.label,
+      detail: receiverResponseActiveTemplate.prompt
+    }
+  ];
+  const executionOutcomeBoardItems = [
+    {
+      label: "Progress signal stays visible",
+      tone: executionProgressTone,
+      detail: executionProgressSummaryLine
+    },
+    {
+      label: "Checkpoint posture stays visible",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "hold"
+            : "followup",
+      detail: deliveryCheckpointSummaryLine
+    },
+    {
+      label: "Response posture stays visible",
+      tone: receiverResponseActiveTemplate.tone,
+      detail: receiverResponseActiveTemplate.detail
+    }
+  ];
+  const executionOutcomeBoardMarkdown = [
+    "# Execution Outcome Board",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Outcome state: ${executionOutcomeLabel}`,
+    `- Checkpoint state: ${finalSendChecklistDecisionLabel}`,
+    "",
+    "## Outcome Summary",
+    `- ${executionOutcomeSummaryLine}`,
+    `- Progress state: ${executionProgressSummaryLine}`,
+    `- Response posture: ${receiverResponseActiveTemplate.prompt}`,
+    "",
+    "## Current Signals",
+    `- ${deliveryCheckpointSummaryLine}`,
+    `- Next checkpoint: ${receiverFollowUpNextAction}`,
+    `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
+    "",
+    "## Keep Nearby",
+    `- Execution progress tracker: ${executionProgressTrackerLead}`,
     `- Delivery checkpoint board: ${deliveryCheckpointLead}`,
     `- Receiver response packet: ${receiverResponsePacketLead}`,
     "",
@@ -6498,6 +6594,67 @@ export function ReviewScorecard({
                       : executionProgressTrackerCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the progress-tracker preview."
                         : "Use this tracker when you want one execution-progress surface that keeps kickoff, checkpoint, and receiver response cues visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Execution outcome board</strong>
+                      <p className="scoreHint">{executionOutcomeBoardLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${executionOutcomeTone}`}>{executionOutcomeLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(executionOutcomeBoardMarkdown);
+                            setExecutionOutcomeBoardCopyState("copied");
+                          } catch {
+                            setExecutionOutcomeBoardCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy outcome board
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${executionOutcomeTone}`}>{executionOutcomeLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {executionOutcomeBoardCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {executionOutcomeBoardItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{executionOutcomeBoardMarkdown}</pre>
+                  <p className="scoreHint">
+                    {executionOutcomeBoardCopyState === "copied"
+                      ? "Execution outcome board copied to clipboard."
+                      : executionOutcomeBoardCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the outcome-board preview."
+                        : "Use this board when you want one execution-outcome surface that keeps progress, checkpoint, and response posture visible together."}
                   </p>
                 </div>
                 <div className="shortcutStrip">
