@@ -118,7 +118,7 @@ This note is the current Phase 28 active-queue baseline.
   - `gh api repos/YSCJRH/mirror-sim/milestones/28`
     - milestone `Phase 28 - Send Decision and Delivery Checklist` is `open`
   - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=28"`
-    - Phase 28 queue is initialized through issues `#193-#196`
+    - Phase 28 queue is initialized through issues `#193-#196` plus branch-hygiene governance issues `#199-#200`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
     - successor queue currently reports `ready` because Phase 28 has one blocked protected-core exit gate and multiple ready work items
 
@@ -142,7 +142,7 @@ This note is the current Phase 28 active-queue baseline.
 
 ## Next Entry Point
 
-- Phase 28 is the active milestone and the current send-decision slice is tracked by issues `#193-#196`.
+- Phase 28 is the active milestone and the current send-decision-plus-branch-hygiene slice is tracked by issues `#193-#196` and `#199-#200`.
 - New implementation work should attach to the existing Phase 28 queue until its exit gate is closed, instead of opening a parallel successor milestone.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.

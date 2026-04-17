@@ -1494,6 +1494,30 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a final send checklist that combines the packet recommendation, final send summary, and send-readiness cues so the operator can confirm whether to send, hold, or widen the packet without changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current packet recommendation, final send summary, sender note, and send-readiness surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only send checklist derived from the current recommendation, readiness, and route posture\n- no backend API calls and no new artifact files\n- copyable send/hold checklist cues that stay aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or review-state contracts\n- storing send decisions\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the checklist updates with destination, route, receiver, recommendation, and readiness posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 28"
+    },
+    {
+      "title": "Phase 28: classify superseded remote codex branches against live GitHub state",
+      "milestone": "Phase 28 - Send Decision and Delivery Checklist",
+      "labels": [
+        "phase:28",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nProduce a live inventory and classification baseline for remote origin/codex/* branches so branch hygiene decisions are driven by current GitHub state instead of stale docs or ancestry-only heuristics.\n\n## input\n- authenticated gh pr list / gh issue list / milestone state\n- git branch -r and remote merge ancestry checks\n- merged PR head refs\n- repo docs and runbook references to branch hygiene\n\n## output\n- a per-branch classification baseline for origin/codex/* using delete / keep / revive / TODO[verify]\n- evidence for PR state, issue/milestone linkage, merged PR head matches, and docs/runbook references\n- explicit identification of any branches that must remain protected because they are tied to open work\n\n## out-of-scope\n- deleting branches\n- mutating GitHub branch protection or queue structure beyond classification artifacts\n- changing simulation, report, claim, evidence, scenario, or artifact contracts\n\n## minimal test\n- authenticated gh pr list --state open\n- authenticated gh issue list --state open\n- git branch -r\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nYes. This work defines the operational branch-hygiene truth surface that later cleanup will execute against.\n\n## phase\nPhase 28"
+    },
+    {
+      "title": "Phase 28: apply reviewed codex branch cleanup and sync branch-hygiene docs",
+      "milestone": "Phase 28 - Send Decision and Delivery Checklist",
+      "labels": [
+        "phase:28",
+        "area:docs-evals",
+        "risk:ci",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nApply the reviewed remote/local codex branch cleanup set and sync branch-hygiene docs after the classification baseline is complete.\n\n## input\n- reviewed branch classification baseline from the preceding Phase 28 classification issue\n- live GitHub PR/issue state\n- remote and local branch inventories\n- current branch-hygiene docs\n\n## output\n- remote branch deletions only for branches classified as delete\n- local tracking-ref pruning and local historical branch cleanup consistent with the reviewed classification\n- docs updated so branch-hygiene state descriptions match live GitHub reality\n\n## out-of-scope\n- deleting any branch that is still tied to open PRs, open issues, runbook references, or unresolved forensic comparisons\n- opening a second execution milestone\n- changing simulation, report, claim, evidence, scenario, or artifact contracts\n\n## minimal test\n- authenticated gh pr list --state open\n- authenticated gh issue list --state open\n- git branch -r\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md docs/plans/long-running-loop-runbook.md\n- ./make.ps1 test\n- authenticated python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nYes. This work changes the operational GitHub branch surface and the docs that define branch-hygiene truth.\n\n## phase\nPhase 28"
     }
   ]
 }

@@ -55,7 +55,7 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-27 gates, and r
   - milestone `Phase 27 - Sendoff Summary and Packet Recommendation` is closed
   - Phase 27 queue was completed through issues `#186-#189`
   - milestone `Phase 28 - Send Decision and Delivery Checklist` is open
-  - Phase 28 queue is initialized through issues `#193-#196`
+  - Phase 28 queue is initialized through issues `#193-#196` plus branch-hygiene governance issues `#199-#200`
 
 Local phase audits currently show:
 

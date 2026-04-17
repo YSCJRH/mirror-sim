@@ -87,7 +87,7 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - The Phase 27 queue was completed through issues `#186-#189`.
 - Phase 28 is the active successor queue.
 - milestone `Phase 28 - Send Decision and Delivery Checklist` is open.
-- The Phase 28 queue is initialized through issues `#193-#196`.
+- The Phase 28 queue is initialized through issues `#193-#196` plus branch-hygiene governance issues `#199-#200`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.
