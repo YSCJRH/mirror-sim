@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-39 gates, and resumed the successor queue as `Phase 40 - Recovery Clearance and Escalation Acknowledgment`.
+The repository has completed Day 0 bootstrap, closed the Phase 1-40 gates, and resumed the successor queue as `Phase 41 - Recovery Release and Escalation Closure`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -19,7 +19,7 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-39 gates, and r
   - CI upgraded to a long-running quality gate
   - local lane-classification, phase-audit, and GitHub queue-audit commands
   - protected `main` with required status checks and auto-merge for safe-lane PRs
-  - a browser workbench that now supports claim -> evidence drill-down, trace review, reviewer scorecards, issue-comment packets, operator handoff briefs, execution kickoff boards, execution progress trackers, execution outcome boards, execution correction boards, execution recovery boards, execution recovery checkpoint boards, escalation decision guides, escalation trigger packets, escalation dispatch packets, escalation delivery packets, escalation confirmation packets, and escalation receipt packets
+  - a browser workbench that now supports claim -> evidence drill-down, trace review, reviewer scorecards, issue-comment packets, operator handoff briefs, execution kickoff boards, execution progress trackers, execution outcome boards, execution correction boards, execution recovery boards, execution recovery checkpoint boards, execution recovery clearance boards, escalation decision guides, escalation trigger packets, escalation dispatch packets, escalation delivery packets, escalation confirmation packets, escalation receipt packets, and escalation acknowledgment packets
   - a documented worktree-based pickup and handoff path for long-running queue execution
 - GitHub queue state is aligned with the local baseline:
   - Phase 3 exit issue `#4` is closed
@@ -78,8 +78,10 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-39 gates, and r
   - Phase 38 queue was completed through issues `#267-#270`
   - milestone `Phase 39 - Recovery Checkpoint and Escalation Receipt` is closed
   - Phase 39 queue was completed through issues `#274-#277`
-  - milestone `Phase 40 - Recovery Clearance and Escalation Acknowledgment` is open
-  - Phase 40 queue is initialized through issues `#281-#284`
+  - milestone `Phase 40 - Recovery Clearance and Escalation Acknowledgment` is closed
+  - Phase 40 queue was completed through issues `#281-#284`
+  - milestone `Phase 41 - Recovery Release and Escalation Closure` is open
+  - Phase 41 queue is initialized through issues `#288-#291`
 
 Local phase audits currently show:
 
@@ -134,7 +136,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): review workbench with Phase 39 recovery-checkpoint and escalation-receipt surfaces landed while the current Phase 40 clearance-and-acknowledgment queue continues to consume the same artifact surface
+- [frontend](/D:/mirror/frontend): review workbench with Phase 40 recovery-clearance and escalation-acknowledgment surfaces landed while the current Phase 41 release-and-closure queue continues to consume the same artifact surface
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -179,10 +181,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 39 closeout are complete. Phase 40 is now the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 40 closeout are complete. Phase 41 is now the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may resume pickup guidance only against the Phase 40 queue and must stop again if `audit-github-queue` leaves `ready`.
+- The local heartbeat automation may resume pickup guidance only against the Phase 41 queue and must stop again if `audit-github-queue` leaves `ready`.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals
