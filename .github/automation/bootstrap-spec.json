@@ -123,6 +123,10 @@
     {
       "title": "Phase 31 - Reply Outcome and Resolution Handoff",
       "description": "Turn the current delivery checkpoint and receiver-response surfaces into a clearer reply-outcome and resolution handoff workflow without changing simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 32 - Resolution Status and Next-Step Routing",
+      "description": "Turn the current outcome and resolution handoff surfaces into a clearer resolution-status and next-step routing workflow without changing simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -280,6 +284,11 @@
       "name": "phase:31",
       "color": "7A8796",
       "description": "Phase 31 reply outcome and resolution handoff work."
+    },
+    {
+      "name": "phase:32",
+      "color": "8892A0",
+      "description": "Phase 32 resolution status and next-step routing work."
     },
     {
       "name": "area:backend",
@@ -1680,6 +1689,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a resolution handoff pack that combines the current checkpoint board, receiver response packet, and escalation cues so the operator can hand over the remaining resolution context without rebuilding it by hand.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current delivery checkpoint board, receiver response packet, and escalation/follow-through cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only resolution handoff pack derived from the current checkpoint posture, response packet, and escalation path\n- copyable resolution handoff cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing resolution history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the resolution handoff pack updates with checkpoint state, response posture, and escalation cues\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 31"
+    },
+    {
+      "title": "Phase 32 exit gate",
+      "milestone": "Phase 32 - Resolution Status and Next-Step Routing",
+      "labels": [
+        "phase:32",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nClose Phase 32 only after the queue-sync issue and both resolution-routing workflow issues land on main.\n\n## completion standard\n- the Phase 32 queue is fully synced in repo truth\n- the resolution status board and next-step routing pack are merged\n- smoke/test/eval-demo and audit-phase phase1/phase2/phase3 pass\n- audit-github-queue returns ready with a successor queue already opened\n\n## phase\nPhase 32"
+    },
+    {
+      "title": "Phase 32: sync bootstrap spec and docs to the active resolution-status queue",
+      "milestone": "Phase 32 - Resolution Status and Next-Step Routing",
+      "labels": [
+        "phase:32",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repo source of truth to the active Phase 32 resolution-status queue so docs, bootstrap metadata, and queue fixtures stop referring to Phase 31 as the active milestone.\n\n## input\n- current README.md\n- current docs/plans/automation-roadmap.md\n- current docs/plans/current-state-baseline.md\n- current docs/plans/phase-execution-queue.md\n- current .github/automation/bootstrap-spec.json\n- current queue-related tests under backend/tests/**\n\n## output\n- Phase 32 becomes the documented active queue across README, plans, bootstrap spec, and queue fixtures\n- Phase 31 is recorded as closed once its exit gate is completed\n- bootstrap metadata includes the Phase 32 milestone, label, and issues created on GitHub\n\n## out-of-scope\n- simulation/report/artifact/schema changes\n- new frontend workflow features beyond queue sync\n- deleting or reopening historical milestones\n\n## minimal test\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md\n- ./make.ps1 test\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nNo. Repo governance only.\n\n## phase\nPhase 32"
+    },
+    {
+      "title": "Phase 32: add resolution status board from outcome tracker, handoff pack, and escalation path",
+      "milestone": "Phase 32 - Resolution Status and Next-Step Routing",
+      "labels": [
+        "phase:32",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a resolution status board that turns the current reply outcome tracker, resolution handoff pack, and escalation path into one operator-readable status surface.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current reply outcome tracker, resolution handoff pack, and follow-through routing surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only status board derived from the current outcome route, checkpoint posture, and escalation path\n- copyable status text that can be used to confirm what has been resolved and what remains open\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing resolution history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the status board updates with outcome route, checkpoint posture, and escalation path\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 32"
+    },
+    {
+      "title": "Phase 32: add next-step routing pack from outcome tracker, handoff pack, and open-state cues",
+      "milestone": "Phase 32 - Resolution Status and Next-Step Routing",
+      "labels": [
+        "phase:32",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a next-step routing pack that combines the current outcome tracker, resolution handoff pack, and open-state cues so the operator can route the next action without rebuilding the context by hand.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current reply outcome tracker, resolution handoff pack, and next-checkpoint/open-state cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only routing pack derived from the current outcome route, open-state cues, and resolution posture\n- copyable next-step routing cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing routing history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the routing pack updates with outcome route, next open state, and resolution posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 32"
     }
   ]
 }

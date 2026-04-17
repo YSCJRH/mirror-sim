@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 31 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 32 queue resumption.
 
 ## Current Gate State
 
@@ -34,7 +34,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 28 exit gate: closed
 - Phase 29 exit gate: closed
 - Phase 30 exit gate: closed
-- Phase 31 exit gate: open
+- Phase 31 exit gate: closed
+- Phase 32 exit gate: open
 
 Local phase audits currently report:
 
@@ -203,16 +204,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 30 - Delivery Confirmation and Receiver Response`
   - closed
+- Phase 31 queue sync
+  - merged via PR `#222`
+- Phase 31 reply outcome tracker
+  - merged via PR `#223`
+- Phase 31 resolution handoff pack
+  - merged via PR `#224`
+- Phase 31 exit issue `#218`
+  - closed
+- milestone `Phase 31 - Reply Outcome and Resolution Handoff`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 30 closeout
+  - no open pull requests remain after the Phase 31 closeout
 
 ## Current Queue
 
-- milestone `Phase 31 - Reply Outcome and Resolution Handoff` is open.
-- `#218` `Phase 31 exit gate`
+- milestone `Phase 32 - Resolution Status and Next-Step Routing` is open.
+- `#225` `Phase 32 exit gate`
   - open
-- blocked until the Phase 31 reply-resolution and resolution-handoff slice is complete
-- The current Phase 31 execution slice is tracked through:
+- blocked until the Phase 32 resolution-status and next-step-routing slice is complete
+- The current Phase 32 execution slice is tracked through:
+  - `#227` `Phase 32: sync bootstrap spec and docs to the active resolution-status queue`
+  - `#226` `Phase 32: add resolution status board from outcome tracker, handoff pack, and escalation path`
+  - `#228` `Phase 32: add next-step routing pack from outcome tracker, handoff pack, and open-state cues`
+- The completed Phase 31 slice was tracked through:
   - `#221` `Phase 31: sync bootstrap spec and docs to the active reply-resolution queue`
   - `#219` `Phase 31: add reply outcome tracker from response packet, route cue, and checkpoint board`
   - `#220` `Phase 31: add resolution handoff pack from checkpoint board, response packet, and escalation cues`
