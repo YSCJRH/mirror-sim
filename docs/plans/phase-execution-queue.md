@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 28 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 29 queue resumption.
 
 ## Current Gate State
 
@@ -31,7 +31,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 25 exit gate: closed
 - Phase 26 exit gate: closed
 - Phase 27 exit gate: closed
-- Phase 28 exit gate: open
+- Phase 28 exit gate: closed
+- Phase 29 exit gate: open
 
 Local phase audits currently report:
 
@@ -166,22 +167,39 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 27 - Sendoff Summary and Packet Recommendation`
   - closed
+- Phase 28 queue sync
+  - merged via PR `#197`
+- Phase 28 final send checklist
+  - merged via PR `#198`
+- Phase 28 branch classification baseline
+  - merged via PR `#201`
+- Phase 28 reviewed branch cleanup
+  - merged via PR `#202`
+- Phase 28 delivery script
+  - merged via PR `#203`
+- Phase 28 exit issue `#193`
+  - closed
+- milestone `Phase 28 - Send Decision and Delivery Checklist`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 28 queue bootstrap
+  - no open pull requests remain after the Phase 29 queue bootstrap
 
 ## Current Queue
 
-- milestone `Phase 28 - Send Decision and Delivery Checklist` is open.
-- `#193` `Phase 28 exit gate`
+- milestone `Phase 29 - Delivery Bundle and Follow-up Pack` is open.
+- `#204` `Phase 29 exit gate`
   - open
-- blocked until the Phase 28 send-decision and branch-hygiene slice is complete
-- The current Phase 28 execution slice is tracked through:
+- blocked until the Phase 29 delivery-bundle and follow-up slice is complete
+- The current Phase 29 execution slice is tracked through:
+  - `#205` `Phase 29: sync bootstrap spec and docs to the active delivery-bundle queue`
+  - `#206` `Phase 29: add delivery bundle export from sender note, script, summary, and checklist`
+  - `#207` `Phase 29: add receiver follow-up pack from route cue, receiver ask, and send decision`
+- The completed Phase 28 slice was tracked through:
   - `#194` `Phase 28: sync bootstrap spec and docs to the active send-decision queue`
   - `#199` `Phase 28: classify superseded remote codex branches against live GitHub state`
   - `#196` `Phase 28: add final send checklist from packet recommendation, summary, and readiness cues`
   - `#195` `Phase 28: add destination-specific delivery script from sender note, recommendation, and receiver cue`
   - `#200` `Phase 28: apply reviewed codex branch cleanup and sync branch-hygiene docs`
-    - blocked until the classification baseline is complete and reviewed
 - The completed Phase 27 slice was tracked through:
   - `#188` `Phase 27: sync bootstrap spec and docs to the active sendoff-summary queue`
   - `#187` `Phase 27: add final send summary card from sender note, packet variant, and route cues`
