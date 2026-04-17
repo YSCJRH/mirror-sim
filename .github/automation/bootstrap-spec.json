@@ -163,6 +163,10 @@
     {
       "title": "Phase 41 - Recovery Release and Escalation Closure",
       "description": "Turn the current recovery-clearance and escalation-acknowledgment surfaces into a clearer recovery-release and escalation-closure workflow without changing simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 42 - Recovery Completion and Escalation Finalization",
+      "description": "Turn the current recovery-release and escalation-closure surfaces into a clearer recovery-completion and escalation-finalization workflow without changing simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -370,6 +374,11 @@
       "name": "phase:41",
       "color": "F1F5F8",
       "description": "Phase 41 recovery release and escalation closure work."
+    },
+    {
+      "name": "phase:42",
+      "color": "F7FAFC",
+      "description": "Phase 42 recovery completion and escalation finalization work."
     },
     {
       "name": "area:backend",
@@ -2220,6 +2229,51 @@
         "lane:auto-safe"
       ],
       "body": "## Summary\nAdd an escalation closure packet that turns the current acknowledgment surface into a clearer closure-ready handoff.\n\n## Scope\n- combine the existing escalation acknowledgment context into a closure-oriented packet for downstream completion and closeout\n- keep the packet frontend-only and derived from current artifacts\n- preserve the current in-workbench copy/export flow\n\n## Constraints\n- no backend API additions\n- no artifact schema changes\n- no simulation or report contract expansion"
+    },
+    {
+      "title": "Phase 42 exit gate",
+      "milestone": "Phase 42 - Recovery Completion and Escalation Finalization",
+      "labels": [
+        "phase:42",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "Close this issue only after the full Phase 42 queue is complete.\n\nExit criteria:\n- the Phase 42 queue-sync issue is merged\n- the execution recovery completion board is merged\n- the escalation finalization packet is merged\n- `./make.ps1 smoke` passes\n- `./make.ps1 test` passes\n- `./make.ps1 eval-demo` passes\n- `python -m backend.app.cli audit-phase phase1` passes\n- `python -m backend.app.cli audit-phase phase2` passes\n- `python -m backend.app.cli audit-phase phase3` passes\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` returns `ready` after successor bootstrap\n- only one execution milestone remains open after closeout"
+    },
+    {
+      "title": "Phase 42: sync repo truth to Phase 42 queue",
+      "milestone": "Phase 42 - Recovery Completion and Escalation Finalization",
+      "labels": [
+        "phase:42",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## Summary\nSync the repo truth to the Phase 42 queue and record the Phase 41 closeout baseline.\n\n## Scope\n- update the bootstrap spec and current-state docs to reflect Phase 42 as the active queue\n- record the Phase 41 closeout and successor bootstrap in the repo-facing documentation\n- keep Phase 42 as the sole active execution queue after closeout\n\n## Constraints\n- no simulation, report, claim, evidence, or schema contract changes\n- no new backend/runtime behavior beyond queue/governance sync"
+    },
+    {
+      "title": "Phase 42: add execution recovery completion board",
+      "milestone": "Phase 42 - Recovery Completion and Escalation Finalization",
+      "labels": [
+        "phase:42",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## Summary\nAdd an execution recovery completion board that turns the current release surface into a clearer completion-ready review board.\n\n## Scope\n- summarize current recovery completion posture, completion cues, and immediate post-completion checks in the workbench\n- keep the board frontend-only and driven by existing artifacts\n- stay inside the current review workflow without adding new backend APIs\n\n## Constraints\n- no artifact schema changes\n- no simulation or report contract expansion"
+    },
+    {
+      "title": "Phase 42: add escalation finalization packet",
+      "milestone": "Phase 42 - Recovery Completion and Escalation Finalization",
+      "labels": [
+        "phase:42",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## Summary\nAdd an escalation finalization packet that turns the current closure surface into a clearer finalization-ready handoff.\n\n## Scope\n- combine the existing escalation closure context into a finalization-oriented packet for downstream completion and archive-ready follow-through\n- keep the packet frontend-only and derived from current artifacts\n- preserve the current in-workbench copy/export flow\n\n## Constraints\n- no backend API additions\n- no artifact schema changes\n- no simulation or report contract expansion"
     }
   ]
 }
