@@ -1912,6 +1912,7 @@ export function ReviewScorecard({
   const [replyOutcomeTrackerCopyState, setReplyOutcomeTrackerCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [resolutionHandoffPackCopyState, setResolutionHandoffPackCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [resolutionStatusBoardCopyState, setResolutionStatusBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [nextStepRoutingPackCopyState, setNextStepRoutingPackCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -3477,6 +3478,97 @@ export function ReviewScorecard({
     `- Outcome tracker: ${replyOutcomeTrackerLead}`,
     `- Resolution handoff pack: ${resolutionHandoffPackLead}`,
     `- Receiver response packet: ${receiverResponsePacketLead}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const nextStepRoutingPackLead =
+    selectedDestination === "pr-comment"
+      ? "Use this pack when the next GitHub-facing step needs one routing summary that keeps the active outcome, current resolution status, and open-state cue together."
+      : selectedDestination === "closeout"
+        ? "Use this pack when the closeout flow needs a compact routing summary for the next resolution step."
+        : "Use this pack when the next operator needs the clearest route for the next action without rebuilding the outcome and status context by hand.";
+  const nextStepRoutingPrimaryStep =
+    finalSendChecklistDecisionTone === "hold"
+      ? `Resolve the blocker first: ${receiverFollowUpBlockerCue}`
+      : `${receiverResponseActiveTemplate.label}: ${receiverFollowUpNextAction}`;
+  const nextStepRoutingSummaryLine =
+    finalSendChecklistDecisionTone === "ready"
+      ? `Route the next action through ${receiverResponseActiveTemplate.label.toLowerCase()} while keeping ${resolutionEscalationRoute.label.toLowerCase()} visible as the fallback path.`
+      : finalSendChecklistDecisionTone === "hold"
+        ? "Route the next action through blocker resolution first, and keep the escalation path visible until the hold-state clears."
+        : `Route the next action through ${receiverResponseActiveTemplate.label.toLowerCase()} with a visible checkpoint handoff because the current status is still provisional.`;
+  const nextStepRoutingPackCards = [
+    {
+      label: "Next route",
+      value: receiverResponseActiveTemplate.label,
+      detail: nextStepRoutingSummaryLine
+    },
+    {
+      label: "Primary next step",
+      value: finalSendChecklistDecisionTone === "hold" ? "Resolve blocker" : "Advance current route",
+      detail: nextStepRoutingPrimaryStep
+    },
+    {
+      label: "Fallback route",
+      value: resolutionEscalationRoute.label,
+      detail: resolutionEscalationRoute.prompt
+    },
+    {
+      label: "Current status",
+      value: finalSendChecklistDecisionLabel,
+      detail: resolutionStatusSummaryLine
+    }
+  ];
+  const nextStepRoutingPackItems = [
+    {
+      label: "Primary route is explicit",
+      tone: receiverResponseActiveTemplate.tone,
+      detail: receiverResponseActiveTemplate.detail
+    },
+    {
+      label: "Open-state cue is explicit",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "hold"
+            : "followup",
+      detail:
+        finalSendChecklistDecisionTone === "hold"
+          ? receiverFollowUpBlockerCue
+          : `Next open state: ${receiverFollowUpNextAction}`
+    },
+    {
+      label: "Fallback path stays visible",
+      tone: resolutionEscalationRoute.tone,
+      detail: resolutionEscalationRoute.detail
+    }
+  ];
+  const nextStepRoutingPackMarkdown = [
+    "# Next-Step Routing Pack",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Route cue: ${routeFilteredResponseKit.filterLabel}`,
+    `- Next route: ${receiverResponseActiveTemplate.label}`,
+    `- Current status: ${finalSendChecklistDecisionLabel}`,
+    `- Fallback route: ${resolutionEscalationRoute.label}`,
+    "",
+    "## Routing Summary",
+    `- ${nextStepRoutingSummaryLine}`,
+    `- Primary next step: ${nextStepRoutingPrimaryStep}`,
+    `- Fallback route: ${resolutionEscalationRoute.prompt}`,
+    "",
+    "## Keep Visible",
+    `- Outcome tracker: ${replyOutcomeTrackerLead}`,
+    `- Resolution handoff pack: ${resolutionHandoffPackLead}`,
+    `- Resolution status board: ${resolutionStatusBoardLead}`,
+    "",
+    "## Remaining Open State",
+    `- ${receiverFollowUpNextAction}`,
+    `- ${receiverFollowUpBlockerCue}`,
+    `- Alternate reply routes: ${receiverResponseAlternateTemplates.length > 0 ? receiverResponseAlternateTemplates.map((template) => template.label).join(", ") : "none"}`,
     "",
     "## Escalate When",
     `- ${resolutionEscalationRoute.prompt}`
@@ -5583,10 +5675,71 @@ export function ReviewScorecard({
                   <pre className="bundlePreviewPre">{resolutionStatusBoardMarkdown}</pre>
                   <p className="scoreHint">
                     {resolutionStatusBoardCopyState === "copied"
-                      ? "Resolution status board copied to clipboard."
+                        ? "Resolution status board copied to clipboard."
                       : resolutionStatusBoardCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the status-board preview."
                         : "Use this board when you want one resolution snapshot that keeps current status, active outcome, and escalation posture visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Next-step routing pack</strong>
+                      <p className="scoreHint">{nextStepRoutingPackLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${receiverResponseActiveTemplate.tone}`}>{receiverResponseActiveTemplate.label}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(nextStepRoutingPackMarkdown);
+                            setNextStepRoutingPackCopyState("copied");
+                          } catch {
+                            setNextStepRoutingPackCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy routing pack
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {nextStepRoutingPackCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {nextStepRoutingPackItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{nextStepRoutingPackMarkdown}</pre>
+                  <p className="scoreHint">
+                    {nextStepRoutingPackCopyState === "copied"
+                      ? "Next-step routing pack copied to clipboard."
+                      : nextStepRoutingPackCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the routing-pack preview."
+                        : "Use this pack when you want one routing summary that keeps the next action, fallback path, and open-state cue visible together."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
