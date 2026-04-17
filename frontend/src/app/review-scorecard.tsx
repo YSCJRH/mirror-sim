@@ -1922,6 +1922,7 @@ export function ReviewScorecard({
   const [escalationDecisionGuideCopyState, setEscalationDecisionGuideCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationTriggerPacketCopyState, setEscalationTriggerPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDispatchPacketCopyState, setEscalationDispatchPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [escalationDeliveryPacketCopyState, setEscalationDeliveryPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -4440,6 +4441,99 @@ export function ReviewScorecard({
     "## Carry Forward",
     `- Escalation trigger packet: ${escalationTriggerPacketLead}`,
     `- Escalation decision guide: ${escalationDecisionGuideLead}`,
+    `- Next-step routing pack: ${nextStepRoutingPackLead}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const escalationDeliveryTone =
+    escalationDispatchTone === "hold"
+      ? "hold"
+      : escalationDispatchTone === "followup"
+        ? "followup"
+        : "ready";
+  const escalationDeliveryLabel =
+    escalationDeliveryTone === "hold"
+      ? "Deliver now"
+      : escalationDeliveryTone === "followup"
+        ? "Prepare delivery"
+        : "Hold delivery";
+  const escalationDeliveryPacketLead =
+    selectedDestination === "pr-comment"
+      ? "Use this packet when you want one GitHub-facing escalation delivery surface that says what should be delivered now and to whom."
+      : selectedDestination === "closeout"
+        ? "Use this packet when the closeout flow needs a compact escalation delivery summary that keeps the receiver cue and route guidance visible together."
+        : "Use this packet when the next operator needs a delivery-ready escalation handoff that keeps the receiver cue, destination, and route guidance visible together.";
+  const escalationDeliverySummaryLine =
+    escalationDeliveryTone === "hold"
+      ? `Escalation delivery should go out now to ${receiverGuidance.roleLabel.toLowerCase()} because the dispatch posture already says the current route is no longer sufficient.`
+      : escalationDeliveryTone === "followup"
+        ? `Escalation delivery should be prepared for ${receiverGuidance.roleLabel.toLowerCase()} so it can go out quickly if the visible trigger persists.`
+        : `Escalation delivery should stay on hold while the current ${routeFilteredResponseKit.filterLabel.toLowerCase()} route remains viable, but the packet should keep the receiver and destination guidance nearby.`;
+  const escalationDeliveryPacketCards = [
+    {
+      label: "Delivery state",
+      value: escalationDeliveryLabel,
+      detail: escalationDeliverySummaryLine
+    },
+    {
+      label: "Destination",
+      value: deliveryDestinations[selectedDestination].label,
+      detail: deliveryDestinations[selectedDestination].summary
+    },
+    {
+      label: "Receiver cue",
+      value: receiverGuidance.roleLabel,
+      detail: receiverGuidance.replyPrompt
+    },
+    {
+      label: "Route guidance",
+      value: routeFilteredResponseKit.filterLabel,
+      detail: nextStepRoutingSummaryLine
+    }
+  ];
+  const escalationDeliveryPacketItems = [
+    {
+      label: "Dispatch posture stays visible",
+      tone: escalationDispatchTone,
+      detail: escalationDispatchSummaryLine
+    },
+    {
+      label: "Receiver guidance stays visible",
+      tone: receiverGuidance.tone,
+      detail: receiverGuidance.summary
+    },
+    {
+      label: "Destination and route stay visible",
+      tone:
+        finalSendChecklistDecisionTone === "hold"
+          ? "hold"
+          : "followup",
+      detail: `${deliveryDestinations[selectedDestination].summary} ${nextStepRoutingSummaryLine}`
+    }
+  ];
+  const escalationDeliveryPacketMarkdown = [
+    "# Escalation Delivery Packet",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Route guidance: ${routeFilteredResponseKit.filterLabel}`,
+    `- Delivery state: ${escalationDeliveryLabel}`,
+    `- Escalation route: ${resolutionEscalationRoute.label}`,
+    "",
+    "## Delivery Summary",
+    `- ${escalationDeliverySummaryLine}`,
+    `- Dispatch posture: ${escalationDispatchSummaryLine}`,
+    `- Trigger posture: ${escalationTriggerSummaryLine}`,
+    "",
+    "## Receiver And Route Guidance",
+    `- Receiver guidance: ${receiverGuidance.summary}`,
+    `- Reply prompt: ${receiverGuidance.replyPrompt}`,
+    `- Current route summary: ${nextStepRoutingSummaryLine}`,
+    "",
+    "## Carry Forward",
+    `- Escalation dispatch packet: ${escalationDispatchPacketLead}`,
+    `- Delivery destination: ${deliveryDestinations[selectedDestination].summary}`,
     `- Next-step routing pack: ${nextStepRoutingPackLead}`,
     "",
     "## Escalate When",
@@ -7161,6 +7255,67 @@ export function ReviewScorecard({
                       : escalationDispatchPacketCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the dispatch-packet preview."
                         : "Use this packet when you want one dispatch-ready escalation surface that keeps the trigger posture, route cue, and decision context visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Escalation delivery packet</strong>
+                      <p className="scoreHint">{escalationDeliveryPacketLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${escalationDeliveryTone}`}>{escalationDeliveryLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(escalationDeliveryPacketMarkdown);
+                            setEscalationDeliveryPacketCopyState("copied");
+                          } catch {
+                            setEscalationDeliveryPacketCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy delivery packet
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${escalationDeliveryTone}`}>{escalationDeliveryLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {escalationDeliveryPacketCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {escalationDeliveryPacketItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{escalationDeliveryPacketMarkdown}</pre>
+                  <p className="scoreHint">
+                    {escalationDeliveryPacketCopyState === "copied"
+                      ? "Escalation delivery packet copied to clipboard."
+                      : escalationDeliveryPacketCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the delivery-packet preview."
+                        : "Use this packet when you want one delivery-ready escalation surface that keeps the dispatch posture, receiver cue, and route guidance visible together."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
