@@ -1896,6 +1896,7 @@ export function ReviewScorecard({
   const [lastPresetLabel, setLastPresetLabel] = useState<string>("");
   const [responsePackCopyState, setResponsePackCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [selectedResponseKitRoute, setSelectedResponseKitRoute] = useState<ResponseKitRouteFilter>("active");
+  const [responseKitComparisonCopyState, setResponseKitComparisonCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -2201,6 +2202,52 @@ export function ReviewScorecard({
       label: template.label
     }))
   ];
+  const comparisonAnchorRouteFilter = selectedResponseKitRoute === "all" ? ("active" as const) : selectedResponseKitRoute;
+  const comparisonAnchorKit = buildRouteFilteredResponseKit(
+    selectedDestination,
+    bundleVariant,
+    receiverRole,
+    comparisonAnchorRouteFilter,
+    primaryResponseShortcut.key,
+    decisionTemplates,
+    groupedResponsePack,
+    receiverGuidance.replyPrompt
+  );
+  const comparisonAnchorTemplate = comparisonAnchorKit.templates[0];
+  const alternateResponseKitCards = decisionTemplates.templates
+    .filter((template) => template.key !== comparisonAnchorTemplate.key)
+    .map((template) => {
+      const alternateKit = buildRouteFilteredResponseKit(
+        selectedDestination,
+        bundleVariant,
+        receiverRole,
+        template.key as ResponseKitRouteFilter,
+        primaryResponseShortcut.key,
+        decisionTemplates,
+        groupedResponsePack,
+        receiverGuidance.replyPrompt
+      );
+
+      return {
+        template,
+        alternateKit
+      };
+    });
+  const responseKitComparisonMarkdown = [
+    "# Response Kit Comparison",
+    "",
+    `- Anchor route: ${comparisonAnchorTemplate.label}`,
+    `- Current chooser: ${responseKitFilterOptions.find((option) => option.key === selectedResponseKitRoute)?.label ?? "Unknown"}`,
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Bundle mode: ${bundleVariantProfiles[bundleVariant].label}`,
+    `- Receiver role: ${receiverRoleProfiles[receiverRole].label}`,
+    "",
+    "## Anchor Route Kit",
+    comparisonAnchorKit.markdown,
+    "",
+    "## Alternate Route Kits",
+    ...alternateResponseKitCards.flatMap(({ alternateKit }) => ["", alternateKit.markdown])
+  ].join("\n");
   const finalBundlePackage = buildFinalBundlePackage(
     bundleVariant,
     selectedDestination,
@@ -3589,6 +3636,68 @@ export function ReviewScorecard({
                       : selectedResponseKitRoute === "all"
                         ? "Use All routes when you want the full acknowledge / request-more-context / escalate set in one packaged export."
                         : "Use the route chooser when the receiver only needs the active or selected response path without carrying the full grouped pack."}
+                </p>
+              </div>
+
+              <div className="handoffSection">
+                <div className="claimHeader">
+                  <h3>Route kit comparison</h3>
+                  <button
+                    type="button"
+                    className="actionButton"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(responseKitComparisonMarkdown);
+                        setResponseKitComparisonCopyState("copied");
+                      } catch {
+                        setResponseKitComparisonCopyState("failed");
+                      }
+                    }}
+                  >
+                    Copy comparison cues
+                  </button>
+                </div>
+                <p className="scoreHint">
+                  {selectedResponseKitRoute === "all"
+                    ? "The route chooser is currently showing All routes, so this comparison falls back to the active route and nearby alternates."
+                    : "Compare the current route kit against nearby alternate paths before deciding whether to keep the current handoff posture or pivot."}
+                </p>
+                <div className="payloadPreviewBoard">
+                  <div className="payloadPreviewGrid">
+                    <article className="payloadPreviewCard payloadPreviewCardPrimary">
+                      <div className="claimHeader">
+                        <strong>{comparisonAnchorTemplate.label}</strong>
+                        <span className={`statusPill statusPill${comparisonAnchorTemplate.tone}`}>current</span>
+                      </div>
+                      <div className="payloadPreviewMeta">
+                        <span className="pill">{comparisonAnchorKit.filterLabel}</span>
+                        <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                      </div>
+                      <p className="scoreHint">{comparisonAnchorTemplate.detail}</p>
+                      <pre className="payloadPreviewPre">{comparisonAnchorKit.markdown}</pre>
+                    </article>
+                    {alternateResponseKitCards.map(({ template, alternateKit }) => (
+                      <article key={template.key} className="payloadPreviewCard">
+                        <div className="claimHeader">
+                          <strong>{template.label}</strong>
+                          <span className={`statusPill statusPill${template.tone}`}>alternate</span>
+                        </div>
+                        <div className="payloadPreviewMeta">
+                          <span className="pill">{alternateKit.filterLabel}</span>
+                          <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                        </div>
+                        <p className="scoreHint">{template.detail}</p>
+                        <pre className="payloadPreviewPre">{alternateKit.markdown}</pre>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+                <p className="scoreHint">
+                  {responseKitComparisonCopyState === "copied"
+                    ? "Response kit comparison cues copied to clipboard."
+                    : responseKitComparisonCopyState === "failed"
+                      ? "Clipboard copy failed. You can still copy from the comparison previews."
+                      : "Use this board when the current route looks close to another path and you want the differences visible without leaving the workbench."}
                 </p>
               </div>
 
