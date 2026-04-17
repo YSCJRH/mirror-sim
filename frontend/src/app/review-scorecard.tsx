@@ -1906,6 +1906,7 @@ export function ReviewScorecard({
   const [finalSendChecklistCopyState, setFinalSendChecklistCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [deliveryScriptCopyState, setDeliveryScriptCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [deliveryBundleCopyState, setDeliveryBundleCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [receiverFollowUpPackCopyState, setReceiverFollowUpPackCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -2959,6 +2960,81 @@ export function ReviewScorecard({
     "",
     "## Final Send Checklist",
     finalSendChecklistMarkdown
+  ].join("\n");
+  const receiverFollowUpPrimaryTemplate =
+    selectedResponseKitRoute === "all"
+      ? primaryResponseShortcut
+      : (routeFilteredResponseKit.templates[0] ?? primaryResponseShortcut);
+  const receiverFollowUpLead =
+    selectedDestination === "pr-comment"
+      ? "Use this pack when the GitHub handoff is already moving and you want a short follow-up note that keeps the route cue, receiver ask, and send posture aligned."
+      : selectedDestination === "closeout"
+        ? "Use this pack when the closeout handoff needs a compact follow-up note that keeps approval posture, route cue, and the next reviewer ask visible."
+        : "Use this pack when the next operator touchpoint should restate the pickup route, receiver ask, and current send posture after the handoff moves forward.";
+  const receiverFollowUpNextAction = nextActions[0] ?? "Name the next missing context item before proceeding.";
+  const receiverFollowUpBlockerCue = blockers[0] ?? "No blocker currently needs top-level follow-up visibility.";
+  const receiverFollowUpCards = [
+    {
+      label: "Current route cue",
+      value: routeFilteredResponseKit.filterLabel,
+      detail:
+        selectedResponseKitRoute === "all"
+          ? `All routes remain visible, but ${receiverFollowUpPrimaryTemplate.label.toLowerCase()} is still the primary follow-up path.`
+          : routeFilteredResponseKit.summary
+    },
+    {
+      label: "Receiver ask",
+      value: receiverGuidance.roleLabel,
+      detail: receiverGuidance.replyPrompt
+    },
+    {
+      label: "Send posture",
+      value: finalSendChecklistDecisionLabel,
+      detail: finalSendChecklistSummary
+    },
+    {
+      label: "Primary follow-up route",
+      value: receiverFollowUpPrimaryTemplate.label,
+      detail: receiverFollowUpPrimaryTemplate.prompt
+    }
+  ];
+  const receiverFollowUpOpening =
+    selectedDestination === "pr-comment"
+      ? `Following up on the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} GitHub handoff for ${receiverGuidance.roleLabel.toLowerCase()} review. The current route cue is ${routeFilteredResponseKit.filterLabel.toLowerCase()}, and the send posture is ${finalSendChecklistDecisionLabel.toLowerCase()}.`
+      : selectedDestination === "closeout"
+        ? `Following up on the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} closeout handoff. The current route cue is ${routeFilteredResponseKit.filterLabel.toLowerCase()}, and the send posture is ${finalSendChecklistDecisionLabel.toLowerCase()}.`
+        : `Following up on the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} operator pickup handoff. The current route cue is ${routeFilteredResponseKit.filterLabel.toLowerCase()}, and the send posture is ${finalSendChecklistDecisionLabel.toLowerCase()}.`;
+  const receiverFollowUpPostureLine =
+    finalSendChecklistDecisionTone === "ready"
+      ? "The current handoff can keep moving, so the reply should confirm the next step without reopening the packet shape."
+      : finalSendChecklistDecisionTone === "hold"
+        ? "The handoff is still on hold, so the reply should keep the blocked cue visible until the send posture clears."
+        : "The handoff still needs widening or recheck work, so the reply should confirm what extra context needs to travel next.";
+  const receiverFollowUpMarkdown = [
+    "# Receiver Follow-up Pack",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Packet mode: ${bundleVariantProfiles[bundleVariant].label}`,
+    `- Route cue: ${routeFilteredResponseKit.filterLabel}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Send posture: ${finalSendChecklistDecisionLabel}`,
+    "",
+    "## Follow-up Note",
+    receiverFollowUpOpening,
+    `- ${receiverFollowUpPostureLine}`,
+    "",
+    "## Confirm In The Reply",
+    `- ${receiverGuidance.replyPrompt}`,
+    `- ${receiverFollowUpPrimaryTemplate.prompt}`,
+    `- Next action to confirm: ${receiverFollowUpNextAction}`,
+    "",
+    "## Keep Visible",
+    `- Route detail: ${receiverFollowUpPrimaryTemplate.detail}`,
+    `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
+    `- Final send summary: ${finalSendSummaryLead}`,
+    "",
+    "## Escalate When",
+    `- ${followThroughRouting.routes.find((route) => route.key === "escalate")?.prompt ?? "Escalate when the current lane is no longer sufficient for the next reply."}`
   ].join("\n");
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
@@ -4709,7 +4785,57 @@ export function ReviewScorecard({
                       ? "Destination-specific delivery script copied to clipboard."
                       : deliveryScriptCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the delivery-script preview."
-                        : "Use this script when you want the final outgoing delivery text to stay aligned with the sender note, packet recommendation, and receiver cue."}
+                      : "Use this script when you want the final outgoing delivery text to stay aligned with the sender note, packet recommendation, and receiver cue."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Receiver follow-up pack</strong>
+                      <p className="scoreHint">{receiverFollowUpLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(receiverFollowUpMarkdown);
+                            setReceiverFollowUpPackCopyState("copied");
+                          } catch {
+                            setReceiverFollowUpPackCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy follow-up pack
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {receiverFollowUpCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{receiverFollowUpMarkdown}</pre>
+                  <p className="scoreHint">
+                    {receiverFollowUpPackCopyState === "copied"
+                      ? "Receiver follow-up pack copied to clipboard."
+                      : receiverFollowUpPackCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the follow-up-pack preview."
+                        : "Use this pack when you want a compact follow-up note that keeps the current route cue, receiver ask, and send posture aligned."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
