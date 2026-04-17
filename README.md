@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-33 gates, and resumed the successor queue as `Phase 34 - Execution Kickoff and Escalation Decision`.
+The repository has completed Day 0 bootstrap, closed the Phase 1-34 gates, and resumed the successor queue as `Phase 35 - Execution Tracking and Escalation Trigger`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -19,7 +19,7 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-33 gates, and r
   - CI upgraded to a long-running quality gate
   - local lane-classification, phase-audit, and GitHub queue-audit commands
   - protected `main` with required status checks and auto-merge for safe-lane PRs
-  - a browser workbench that now supports claim -> evidence drill-down, trace review, reviewer scorecards, issue-comment packets, and operator handoff briefs
+  - a browser workbench that now supports claim -> evidence drill-down, trace review, reviewer scorecards, issue-comment packets, operator handoff briefs, execution kickoff boards, and escalation decision guides
   - a documented worktree-based pickup and handoff path for long-running queue execution
 - GitHub queue state is aligned with the local baseline:
   - Phase 3 exit issue `#4` is closed
@@ -66,8 +66,10 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-33 gates, and r
   - Phase 32 queue was completed through issues `#225-#228`
   - milestone `Phase 33 - Action Readiness and Escalation Packet` is closed
   - Phase 33 queue was completed through issues `#232-#235`
-  - milestone `Phase 34 - Execution Kickoff and Escalation Decision` is open
-  - Phase 34 queue is initialized through issues `#239-#242`
+  - milestone `Phase 34 - Execution Kickoff and Escalation Decision` is closed
+  - Phase 34 queue was completed through issues `#239-#242`
+  - milestone `Phase 35 - Execution Tracking and Escalation Trigger` is open
+  - Phase 35 queue is initialized through issues `#246-#249`
 
 Local phase audits currently show:
 
@@ -122,7 +124,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): review workbench with Phase 33 action-readiness and escalation-handoff surfaces landed while the current Phase 34 kickoff-decision queue continues to consume the same artifact surface
+- [frontend](/D:/mirror/frontend): review workbench with Phase 34 kickoff and escalation-decision surfaces landed while the current Phase 35 execution-tracking queue continues to consume the same artifact surface
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -167,10 +169,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 33 closeout are complete. Phase 34 is now the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 34 closeout are complete. Phase 35 is now the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may resume pickup guidance only against the Phase 34 queue and must stop again if `audit-github-queue` leaves `ready`.
+- The local heartbeat automation may resume pickup guidance only against the Phase 35 queue and must stop again if `audit-github-queue` leaves `ready`.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals
