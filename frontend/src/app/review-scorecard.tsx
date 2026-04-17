@@ -1897,6 +1897,7 @@ export function ReviewScorecard({
   const [responsePackCopyState, setResponsePackCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [selectedResponseKitRoute, setSelectedResponseKitRoute] = useState<ResponseKitRouteFilter>("active");
   const [responseKitComparisonCopyState, setResponseKitComparisonCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [sessionHandoffPacketCopyState, setSessionHandoffPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -2413,6 +2414,39 @@ export function ReviewScorecard({
     "",
     "## Session Note",
     `- ${sessionPresetDetail}`
+  ].join("\n");
+  const sessionHandoffPacketHighlights = [
+    {
+      label: "Session source",
+      value: sessionPresetLabel,
+      detail: sessionPresetDetail
+    },
+    {
+      label: "Selected route kit",
+      value: routeFilteredResponseKit.filterLabel,
+      detail: routeFilteredResponseKit.summary
+    },
+    {
+      label: "Send-ready use",
+      value: deliveryDestinations[selectedDestination].label,
+      detail: "Use this packet when the next reader should receive the active preset session context and the selected route kit together in one copyable handoff."
+    }
+  ];
+  const presetSessionHandoffPacketMarkdown = [
+    "# Preset Session Handoff Packet",
+    "",
+    `- Session: ${sessionPresetLabel}`,
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Bundle mode: ${bundleVariantProfiles[bundleVariant].label}`,
+    `- Receiver role: ${receiverRoleProfiles[receiverRole].label}`,
+    `- Primary export: ${selectedExportSurface.label}`,
+    `- Route kit: ${routeFilteredResponseKit.filterLabel}`,
+    "",
+    "## Active Session Summary",
+    presetSessionSummaryMarkdown,
+    "",
+    "## Selected Route Kit",
+    routeFilteredResponseKit.markdown
   ].join("\n");
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
@@ -3698,6 +3732,55 @@ export function ReviewScorecard({
                     : responseKitComparisonCopyState === "failed"
                       ? "Clipboard copy failed. You can still copy from the comparison previews."
                       : "Use this board when the current route looks close to another path and you want the differences visible without leaving the workbench."}
+                </p>
+              </div>
+
+              <div className="handoffSection">
+                <div className="claimHeader">
+                  <h3>Preset session handoff packet</h3>
+                  <button
+                    type="button"
+                    className="actionButton"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(presetSessionHandoffPacketMarkdown);
+                        setSessionHandoffPacketCopyState("copied");
+                      } catch {
+                        setSessionHandoffPacketCopyState("failed");
+                      }
+                    }}
+                  >
+                    Copy handoff packet
+                  </button>
+                </div>
+                <p className="scoreHint">
+                  Send the active preset session and the selected route kit together when the next reader should not have
+                  to reconstruct the current handoff posture from separate strips or exports.
+                </p>
+                <div className="statusRow">
+                  <span className="pill">{sessionPresetLabel}</span>
+                  <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                  <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                  <span className="pill">{receiverRoleProfiles[receiverRole].label}</span>
+                </div>
+                <div className="manifestGrid">
+                  {sessionHandoffPacketHighlights.map((item) => (
+                    <article key={item.label} className="manifestCard">
+                      <div className="claimHeader">
+                        <strong>{item.label}</strong>
+                        <span className="pill">{item.value}</span>
+                      </div>
+                      <p className="scoreHint">{item.detail}</p>
+                    </article>
+                  ))}
+                </div>
+                <pre className="bundlePreviewPre">{presetSessionHandoffPacketMarkdown}</pre>
+                <p className="scoreHint">
+                  {sessionHandoffPacketCopyState === "copied"
+                    ? "Preset session handoff packet copied to clipboard."
+                    : sessionHandoffPacketCopyState === "failed"
+                      ? "Clipboard copy failed. You can still copy from the handoff-packet preview."
+                      : "Use this packet when the selected route kit is ready to travel with the active session summary as one send-ready handoff."}
                 </p>
               </div>
 
