@@ -147,6 +147,10 @@
     {
       "title": "Phase 37 - Execution Correction and Escalation Delivery",
       "description": "Turn the current execution-outcome and escalation-dispatch surfaces into a clearer execution-correction and escalation-delivery workflow without changing simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 38 - Execution Recovery and Escalation Confirmation",
+      "description": "Turn the current execution-correction and escalation-delivery surfaces into a clearer execution-recovery and escalation-confirmation workflow without changing simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -334,6 +338,11 @@
       "name": "phase:37",
       "color": "CAD1D8",
       "description": "Phase 37 execution correction and escalation delivery work."
+    },
+    {
+      "name": "phase:38",
+      "color": "D3D9E0",
+      "description": "Phase 38 execution recovery and escalation confirmation work."
     },
     {
       "name": "area:backend",
@@ -2004,6 +2013,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd an escalation delivery packet that combines the current escalation dispatch packet, receiver cue, and route guidance so the operator can send a clearer delivery-ready escalation handoff.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current escalation dispatch packet, receiver guidance, and routing cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only escalation delivery packet derived from the current dispatch posture, receiver cue, and route guidance\n- copyable escalation-delivery cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing escalation delivery history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the escalation delivery packet updates with dispatch posture, receiver cue, and route guidance\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 37"
+    },
+    {
+      "title": "Phase 38 exit gate",
+      "milestone": "Phase 38 - Execution Recovery and Escalation Confirmation",
+      "labels": [
+        "phase:38",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nClose Phase 38 only after the queue-sync issue and both execution-recovery workflow issues land on main.\n\n## completion standard\n- the Phase 38 queue is fully synced in repo truth\n- the execution recovery board and escalation confirmation packet are merged\n- smoke/test/eval-demo and audit-phase phase1/phase2/phase3 pass\n- audit-github-queue returns ready with a successor queue already opened\n\n## phase\nPhase 38"
+    },
+    {
+      "title": "Phase 38: sync repo truth to the execution-recovery and escalation-confirmation queue",
+      "milestone": "Phase 38 - Execution Recovery and Escalation Confirmation",
+      "labels": [
+        "phase:38",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repo source of truth to the active Phase 38 execution-recovery queue so docs and bootstrap metadata stop referring to Phase 37 as the active milestone.\n\n## input\n- current README.md\n- current docs/plans/automation-roadmap.md\n- current docs/plans/current-state-baseline.md\n- current docs/plans/phase-execution-queue.md\n- current .github/automation/bootstrap-spec.json\n\n## output\n- Phase 38 becomes the documented active queue across README, plans, and bootstrap spec\n- Phase 37 is recorded as closed once its exit gate is completed\n- bootstrap metadata includes the Phase 38 milestone, label, and issues created on GitHub\n\n## out-of-scope\n- simulation/report/artifact/schema changes\n- new frontend workflow features beyond queue sync\n- deleting or reopening historical milestones\n\n## minimal test\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md\n- ./make.ps1 test\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nNo. Repo governance only.\n\n## phase\nPhase 38"
+    },
+    {
+      "title": "Phase 38: add execution recovery board from correction board, outcome board, and route reset cues",
+      "milestone": "Phase 38 - Execution Recovery and Escalation Confirmation",
+      "labels": [
+        "phase:38",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd an execution recovery board that turns the current execution correction board, execution outcome board, and route reset cues into one operator-readable recovery surface.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current execution correction board, execution outcome board, and route reset/open-state cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only execution recovery board derived from the current correction posture, outcome state, and route reset cues\n- copyable recovery text that can be used to confirm how the route should recover after correction work is identified\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing recovery history outside the current workbench state\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the execution recovery board updates with correction state, outcome state, and route reset cues\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 38"
+    },
+    {
+      "title": "Phase 38: add escalation confirmation packet from delivery packet, receiver checklist, and destination guidance",
+      "milestone": "Phase 38 - Execution Recovery and Escalation Confirmation",
+      "labels": [
+        "phase:38",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd an escalation confirmation packet that combines the current escalation delivery packet, receiver checklist, and destination guidance so the operator can send a clearer confirmation-ready escalation handoff.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current escalation delivery packet, receiver guidance/checklist, and destination guidance surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only escalation confirmation packet derived from the current delivery posture, receiver checklist, and destination guidance\n- copyable escalation-confirmation cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing escalation confirmation history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the escalation confirmation packet updates with delivery posture, receiver checklist, and destination guidance\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 38"
     }
   ]
 }
