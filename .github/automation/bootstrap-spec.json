@@ -131,6 +131,10 @@
     {
       "title": "Phase 33 - Action Readiness and Escalation Packet",
       "description": "Turn the current resolution status and next-step routing surfaces into a clearer action-readiness and escalation handoff workflow without changing simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 34 - Execution Kickoff and Escalation Decision",
+      "description": "Turn the current action-readiness and escalation-handoff surfaces into a clearer execution-kickoff and escalation-decision workflow without changing simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -298,6 +302,11 @@
       "name": "phase:33",
       "color": "96A1AE",
       "description": "Phase 33 action readiness and escalation packet work."
+    },
+    {
+      "name": "phase:34",
+      "color": "A3ACB8",
+      "description": "Phase 34 execution kickoff and escalation decision work."
     },
     {
       "name": "area:backend",
@@ -1788,6 +1797,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd an escalation handoff packet that combines the current resolution status board, next-step routing pack, and fallback cues so the operator can hand over the escalation path without rebuilding the context by hand.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current resolution status board, next-step routing pack, and escalation/fallback cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only escalation handoff packet derived from the current routing recommendation, status posture, and fallback route\n- copyable escalation handoff cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing escalation history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the escalation handoff packet updates with status posture, next route, and fallback cue\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 33"
+    },
+    {
+      "title": "Phase 34 exit gate",
+      "milestone": "Phase 34 - Execution Kickoff and Escalation Decision",
+      "labels": [
+        "phase:34",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nClose Phase 34 only after the queue-sync issue and both execution-decision workflow issues land on main.\n\n## completion standard\n- the Phase 34 queue is fully synced in repo truth\n- the execution kickoff board and escalation decision guide are merged\n- smoke/test/eval-demo and audit-phase phase1/phase2/phase3 pass\n- audit-github-queue returns ready with a successor queue already opened\n\n## phase\nPhase 34"
+    },
+    {
+      "title": "Phase 34: sync bootstrap spec and docs to the active kickoff-decision queue",
+      "milestone": "Phase 34 - Execution Kickoff and Escalation Decision",
+      "labels": [
+        "phase:34",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repo source of truth to the active Phase 34 kickoff-decision queue so docs, bootstrap metadata, and queue fixtures stop referring to Phase 33 as the active milestone.\n\n## input\n- current README.md\n- current docs/plans/automation-roadmap.md\n- current docs/plans/current-state-baseline.md\n- current docs/plans/phase-execution-queue.md\n- current .github/automation/bootstrap-spec.json\n- current queue-related tests under backend/tests/**\n\n## output\n- Phase 34 becomes the documented active queue across README, plans, bootstrap spec, and queue fixtures\n- Phase 33 is recorded as closed once its exit gate is completed\n- bootstrap metadata includes the Phase 34 milestone, label, and issues created on GitHub\n\n## out-of-scope\n- simulation/report/artifact/schema changes\n- new frontend workflow features beyond queue sync\n- deleting or reopening historical milestones\n\n## minimal test\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md\n- ./make.ps1 test\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nNo. Repo governance only.\n\n## phase\nPhase 34"
+    },
+    {
+      "title": "Phase 34: add execution kickoff board from readiness board, routing pack, and blocker posture",
+      "milestone": "Phase 34 - Execution Kickoff and Escalation Decision",
+      "labels": [
+        "phase:34",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd an execution kickoff board that turns the current action readiness board, next-step routing pack, and blocker posture into one operator-readable kickoff surface.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current action readiness board, next-step routing pack, and blocker/open-state cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only kickoff board derived from the current readiness state, routing recommendation, and blocker posture\n- copyable kickoff text that can be used to confirm whether execution should start now\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing kickoff history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the kickoff board updates with readiness state, route, and blocker posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 34"
+    },
+    {
+      "title": "Phase 34: add escalation decision guide from readiness board, handoff packet, and fallback thresholds",
+      "milestone": "Phase 34 - Execution Kickoff and Escalation Decision",
+      "labels": [
+        "phase:34",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd an escalation decision guide that combines the current action readiness board, escalation handoff packet, and fallback thresholds so the operator can decide whether to escalate without rebuilding the context by hand.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current action readiness board, escalation handoff packet, and fallback/escalation cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only escalation decision guide derived from the current readiness state, blocker posture, and fallback route\n- copyable escalation-decision cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing escalation decision history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the escalation decision guide updates with readiness state, blocker posture, and fallback route\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 34"
     }
   ]
 }

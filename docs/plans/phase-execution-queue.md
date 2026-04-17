@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 33 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 34 queue resumption.
 
 ## Current Gate State
 
@@ -36,7 +36,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 30 exit gate: closed
 - Phase 31 exit gate: closed
 - Phase 32 exit gate: closed
-- Phase 33 exit gate: open
+- Phase 33 exit gate: closed
+- Phase 34 exit gate: open
 
 Local phase audits currently report:
 
@@ -225,16 +226,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 32 - Resolution Status and Next-Step Routing`
   - closed
+- Phase 33 queue sync
+  - merged via PR `#236`
+- Phase 33 action readiness board
+  - merged via PR `#237`
+- Phase 33 escalation handoff packet
+  - merged via PR `#238`
+- Phase 33 exit issue `#234`
+  - closed
+- milestone `Phase 33 - Action Readiness and Escalation Packet`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 32 closeout
+  - no open pull requests remain after the Phase 33 closeout
 
 ## Current Queue
 
-- milestone `Phase 33 - Action Readiness and Escalation Packet` is open.
-- `#234` `Phase 33 exit gate`
+- milestone `Phase 34 - Execution Kickoff and Escalation Decision` is open.
+- `#239` `Phase 34 exit gate`
   - open
-- blocked until the Phase 33 action-readiness and escalation-packet slice is complete
-- The current Phase 33 execution slice is tracked through:
+- blocked until the Phase 34 execution-kickoff and escalation-decision slice is complete
+- The current Phase 34 execution slice is tracked through:
+  - `#240` `Phase 34: sync bootstrap spec and docs to the active kickoff-decision queue`
+  - `#241` `Phase 34: add execution kickoff board from readiness board, routing pack, and blocker posture`
+  - `#242` `Phase 34: add escalation decision guide from readiness board, handoff packet, and fallback thresholds`
+- The completed Phase 33 slice was tracked through:
   - `#232` `Phase 33: sync bootstrap spec and docs to the active action-readiness queue`
   - `#235` `Phase 33: add action readiness board from resolution status, routing pack, and blocker posture`
   - `#233` `Phase 33: add escalation handoff packet from status board, routing pack, and fallback cues`
