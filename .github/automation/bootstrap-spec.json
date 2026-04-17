@@ -127,6 +127,10 @@
     {
       "title": "Phase 32 - Resolution Status and Next-Step Routing",
       "description": "Turn the current outcome and resolution handoff surfaces into a clearer resolution-status and next-step routing workflow without changing simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 33 - Action Readiness and Escalation Packet",
+      "description": "Turn the current resolution status and next-step routing surfaces into a clearer action-readiness and escalation handoff workflow without changing simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -289,6 +293,11 @@
       "name": "phase:32",
       "color": "8892A0",
       "description": "Phase 32 resolution status and next-step routing work."
+    },
+    {
+      "name": "phase:33",
+      "color": "96A1AE",
+      "description": "Phase 33 action readiness and escalation packet work."
     },
     {
       "name": "area:backend",
@@ -1734,6 +1743,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a next-step routing pack that combines the current outcome tracker, resolution handoff pack, and open-state cues so the operator can route the next action without rebuilding the context by hand.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current reply outcome tracker, resolution handoff pack, and next-checkpoint/open-state cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only routing pack derived from the current outcome route, open-state cues, and resolution posture\n- copyable next-step routing cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing routing history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the routing pack updates with outcome route, next open state, and resolution posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 32"
+    },
+    {
+      "title": "Phase 33 exit gate",
+      "milestone": "Phase 33 - Action Readiness and Escalation Packet",
+      "labels": [
+        "phase:33",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nClose Phase 33 only after the queue-sync issue and both action-readiness workflow issues land on main.\n\n## completion standard\n- the Phase 33 queue is fully synced in repo truth\n- the action readiness board and escalation handoff packet are merged\n- smoke/test/eval-demo and audit-phase phase1/phase2/phase3 pass\n- audit-github-queue returns ready with a successor queue already opened\n\n## phase\nPhase 33"
+    },
+    {
+      "title": "Phase 33: sync bootstrap spec and docs to the active action-readiness queue",
+      "milestone": "Phase 33 - Action Readiness and Escalation Packet",
+      "labels": [
+        "phase:33",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repo source of truth to the active Phase 33 action-readiness queue so docs, bootstrap metadata, and queue fixtures stop referring to Phase 32 as the active milestone.\n\n## input\n- current README.md\n- current docs/plans/automation-roadmap.md\n- current docs/plans/current-state-baseline.md\n- current docs/plans/phase-execution-queue.md\n- current .github/automation/bootstrap-spec.json\n- current queue-related tests under backend/tests/**\n\n## output\n- Phase 33 becomes the documented active queue across README, plans, bootstrap spec, and queue fixtures\n- Phase 32 is recorded as closed once its exit gate is completed\n- bootstrap metadata includes the Phase 33 milestone, label, and issues created on GitHub\n\n## out-of-scope\n- simulation/report/artifact/schema changes\n- new frontend workflow features beyond queue sync\n- deleting or reopening historical milestones\n\n## minimal test\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md\n- ./make.ps1 test\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nNo. Repo governance only.\n\n## phase\nPhase 33"
+    },
+    {
+      "title": "Phase 33: add action readiness board from resolution status, routing pack, and blocker posture",
+      "milestone": "Phase 33 - Action Readiness and Escalation Packet",
+      "labels": [
+        "phase:33",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd an action readiness board that turns the current resolution status board, next-step routing pack, and blocker posture into one operator-readable readiness surface.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current resolution status board, next-step routing pack, and blocker/open-state cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only readiness board derived from the current routing recommendation, blocker posture, and resolution state\n- copyable readiness text that can be used to confirm whether the next action is clear to execute\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing readiness history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the readiness board updates with route, blocker posture, and resolution state\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 33"
+    },
+    {
+      "title": "Phase 33: add escalation handoff packet from status board, routing pack, and fallback cues",
+      "milestone": "Phase 33 - Action Readiness and Escalation Packet",
+      "labels": [
+        "phase:33",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd an escalation handoff packet that combines the current resolution status board, next-step routing pack, and fallback cues so the operator can hand over the escalation path without rebuilding the context by hand.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current resolution status board, next-step routing pack, and escalation/fallback cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only escalation handoff packet derived from the current routing recommendation, status posture, and fallback route\n- copyable escalation handoff cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing escalation history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the escalation handoff packet updates with status posture, next route, and fallback cue\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 33"
     }
   ]
 }

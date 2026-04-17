@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 32 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 33 queue resumption.
 
 ## Current Gate State
 
@@ -35,7 +35,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 29 exit gate: closed
 - Phase 30 exit gate: closed
 - Phase 31 exit gate: closed
-- Phase 32 exit gate: open
+- Phase 32 exit gate: closed
+- Phase 33 exit gate: open
 
 Local phase audits currently report:
 
@@ -214,16 +215,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 31 - Reply Outcome and Resolution Handoff`
   - closed
+- Phase 32 queue sync
+  - merged via PR `#229`
+- Phase 32 resolution status board
+  - merged via PR `#230`
+- Phase 32 next-step routing pack
+  - merged via PR `#231`
+- Phase 32 exit issue `#225`
+  - closed
+- milestone `Phase 32 - Resolution Status and Next-Step Routing`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 31 closeout
+  - no open pull requests remain after the Phase 32 closeout
 
 ## Current Queue
 
-- milestone `Phase 32 - Resolution Status and Next-Step Routing` is open.
-- `#225` `Phase 32 exit gate`
+- milestone `Phase 33 - Action Readiness and Escalation Packet` is open.
+- `#234` `Phase 33 exit gate`
   - open
-- blocked until the Phase 32 resolution-status and next-step-routing slice is complete
-- The current Phase 32 execution slice is tracked through:
+- blocked until the Phase 33 action-readiness and escalation-packet slice is complete
+- The current Phase 33 execution slice is tracked through:
+  - `#232` `Phase 33: sync bootstrap spec and docs to the active action-readiness queue`
+  - `#235` `Phase 33: add action readiness board from resolution status, routing pack, and blocker posture`
+  - `#233` `Phase 33: add escalation handoff packet from status board, routing pack, and fallback cues`
+- The completed Phase 32 slice was tracked through:
   - `#227` `Phase 32: sync bootstrap spec and docs to the active resolution-status queue`
   - `#226` `Phase 32: add resolution status board from outcome tracker, handoff pack, and escalation path`
   - `#228` `Phase 32: add next-step routing pack from outcome tracker, handoff pack, and open-state cues`
