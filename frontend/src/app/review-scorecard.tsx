@@ -1899,6 +1899,7 @@ export function ReviewScorecard({
   const [responseKitComparisonCopyState, setResponseKitComparisonCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionHandoffPacketCopyState, setSessionHandoffPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSendCueCopyState, setSessionSendCueCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [sessionSenderNoteCopyState, setSessionSenderNoteCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -2487,6 +2488,52 @@ export function ReviewScorecard({
     "",
     "## Send-Readiness Checklist",
     ...sessionSendChecklistItems.map((item) => `- [${item.tone}] ${item.label}: ${item.detail}`)
+  ].join("\n");
+  const sessionSenderSubjectLine =
+    selectedDestination === "pr-comment"
+      ? `Review handoff: ${routeFilteredResponseKit.filterLabel} for ${receiverGuidance.roleLabel}`
+      : selectedDestination === "closeout"
+        ? `Closeout handoff: ${sessionPresetLabel} / ${routeFilteredResponseKit.filterLabel}`
+        : `Pickup handoff: ${sessionPresetLabel} / ${routeFilteredResponseKit.filterLabel}`;
+  const sessionSenderHighlights = [
+    {
+      label: "Subject line",
+      value: sessionSenderSubjectLine,
+      detail: "Use this as the delivery subject when the handoff packet is leaving the workbench and needs a concise header."
+    },
+    {
+      label: "Destination",
+      value: deliveryDestinations[selectedDestination].label,
+      detail: deliveryDestinations[selectedDestination].summary
+    },
+    {
+      label: "Route",
+      value: routeFilteredResponseKit.filterLabel,
+      detail: routeFilteredResponseKit.summary
+    }
+  ];
+  const sessionSenderNoteMarkdown = [
+    "# Sender Note",
+    "",
+    `Subject: ${sessionSenderSubjectLine}`,
+    "",
+    selectedDestination === "pr-comment"
+      ? `Sharing the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} handoff packet for ${receiverGuidance.roleLabel.toLowerCase()} review. The current route cue is ${routeFilteredResponseKit.filterLabel.toLowerCase()}, and the packet is being sent with ${copyPreflight.tone} readiness posture.`
+      : selectedDestination === "closeout"
+        ? `Sharing the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} handoff packet for closeout-facing review. The current route cue is ${routeFilteredResponseKit.filterLabel.toLowerCase()}, and the packet is being sent with ${copyPreflight.tone} readiness posture.`
+        : `Sharing the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} handoff packet for the next operator pickup. The current route cue is ${routeFilteredResponseKit.filterLabel.toLowerCase()}, and the packet is being sent with ${copyPreflight.tone} readiness posture.`,
+    "",
+    "## Receiver Cue",
+    `- ${receiverGuidance.replyPrompt}`,
+    "",
+    "## Destination Cue",
+    `- ${deliveryDestinations[selectedDestination].summary}`,
+    "",
+    "## Top Blocker Cue",
+    `- ${blockers[0]}`,
+    "",
+    "## Suggested Note",
+    `- ${copyPreflight.summary}`
   ].join("\n");
   const fullSessionHandoffPacketMarkdown = [
     "# Full Preset Session Handoff Packet",
@@ -3843,6 +3890,44 @@ export function ReviewScorecard({
                   Send the active preset session and the selected route kit together when the next reader should not have
                   to reconstruct the current handoff posture from separate strips or exports.
                 </p>
+                <div className="selectionRationaleBoard">
+                  <div className="claimHeader">
+                    <strong>Sender note</strong>
+                    <button
+                      type="button"
+                      className="actionButton"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(sessionSenderNoteMarkdown);
+                          setSessionSenderNoteCopyState("copied");
+                        } catch {
+                          setSessionSenderNoteCopyState("failed");
+                        }
+                      }}
+                    >
+                      Copy sender note
+                    </button>
+                  </div>
+                  <div className="manifestGrid">
+                    {sessionSenderHighlights.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{sessionSenderNoteMarkdown}</pre>
+                  <p className="scoreHint">
+                    {sessionSenderNoteCopyState === "copied"
+                      ? "Sender note copied to clipboard."
+                      : sessionSenderNoteCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the sender-note preview."
+                        : "Use this note when the packet needs a destination-specific subject line and delivery context before it leaves the workbench."}
+                  </p>
+                </div>
                 <div className="laneToggleGroup" role="tablist" aria-label="Session handoff packet variant chooser">
                   {(["compact", "full"] as BundleVariant[]).map((variant) => (
                     <button
