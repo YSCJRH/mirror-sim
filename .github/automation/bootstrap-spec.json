@@ -91,6 +91,10 @@
     {
       "title": "Phase 23 - Preset Sessions and Response Kits",
       "description": "Turn the Phase 22 preset workflow into a more repeatable handoff session by surfacing active preset summaries and route-filtered response kits without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 24 - Session Handoff and Route Comparison",
+      "description": "Turn the preset session strip and route-filtered response kits into clearer send-ready handoff surfaces by comparing alternate routes and packaging the active session for downstream delivery without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -208,6 +212,11 @@
       "name": "phase:23",
       "color": "134F5C",
       "description": "Phase 23 preset sessions and response kit work."
+    },
+    {
+      "name": "phase:24",
+      "color": "1F6D78",
+      "description": "Phase 24 session handoff and route comparison work."
     },
     {
       "name": "area:backend",
@@ -1224,6 +1233,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd route-filtered response kit chooser so the current acknowledge, request-more-context, and escalate templates can be grouped and narrowed by the active route without changing artifact contracts.\n\n## input\n- current `frontend/src/app/review-scorecard.tsx`\n- current grouped response pack export, response shortcuts, role presets, and routing strip\n- existing demo artifacts under `artifacts/demo/**`\n\n## output\n- a frontend-only response kit chooser that filters the current response pack by active route\n- no backend API calls and no new artifact files\n- copyable grouped response kits that stay aligned with the active preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or queue-governance contracts\n- storing chooser history\n\n## minimal test\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 eval-demo`\n- manual review that the response kit chooser updates with role, route, and bundle posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 23"
+    },
+    {
+      "title": "Phase 24 exit gate",
+      "milestone": "Phase 24 - Session Handoff and Route Comparison",
+      "labels": [
+        "phase:24",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 24 session handoff and route comparison criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 24 milestone state\n- merged PR state for queue sync and session-handoff work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 24 closeout decision\n- documented stop condition for the Phase 24 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 24 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- ./make.ps1 smoke\n- ./make.ps1 test\n- ./make.ps1 eval-demo\n- python -m backend.app.cli audit-phase phase3\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 24"
+    },
+    {
+      "title": "Phase 24: sync bootstrap spec and docs to the active session-handoff queue",
+      "milestone": "Phase 24 - Session Handoff and Route Comparison",
+      "labels": [
+        "phase:24",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 23 baseline to the active Phase 24 queue so docs, bootstrap metadata, and README reflect the new session-handoff track.\n\n## input\n- .github/automation/bootstrap-spec.json\n- README.md\n- docs/plans/automation-roadmap.md\n- docs/plans/current-state-baseline.md\n- docs/plans/phase-execution-queue.md\n- current live GitHub milestone and issue state\n\n## output\n- phase:24 and Phase 24 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 24 as the active successor queue\n- no stale Phase 23 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- session-handoff UI changes\n\n## minimal test\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md\n- ./make.ps1 test\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 24"
+    },
+    {
+      "title": "Phase 24: add active-versus-alternate response kit comparison cards",
+      "milestone": "Phase 24 - Session Handoff and Route Comparison",
+      "labels": [
+        "phase:24",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd active-versus-alternate response kit comparison cards so the current route kit can be compared against nearby response paths without leaving the workbench or changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current route-filtered response kit chooser, response shortcuts, and follow-through routing strip\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only comparison board for the active route kit and nearby alternate response kits\n- no backend API calls and no new artifact files\n- copyable comparison cues that stay aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or queue-governance contracts\n- storing comparison history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the active and alternate route kits update with role, destination, and bundle posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 24"
+    },
+    {
+      "title": "Phase 24: add copyable preset session handoff packet from summary strip and selected route kit",
+      "milestone": "Phase 24 - Session Handoff and Route Comparison",
+      "labels": [
+        "phase:24",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a copyable preset session handoff packet that combines the active session summary strip and the selected route kit into one send-ready handoff artifact without changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current preset session summary strip, route-filtered response kit chooser, and final bundle surface\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only handoff packet built from the current preset session summary and selected route kit\n- no backend API calls and no new artifact files\n- a copyable send-ready packet that stays aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or review-state contracts\n- storing handoff history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the handoff packet updates with preset, route, role, and bundle posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 24"
     }
   ]
 }

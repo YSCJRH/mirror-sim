@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, and Phase 23 is now the active preset-session track.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, and Phase 24 is now the active session-handoff track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -70,9 +70,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 22 is closed locally and in GitHub.
 - Phase 22 exit issue `#151` is closed and milestone `Phase 22 - Preset Workflow and Packed Responses` is closed.
 - The Phase 22 queue was completed through issues `#151-#154`.
-- Phase 23 is the active successor queue.
-- milestone `Phase 23 - Preset Sessions and Response Kits` is open.
-- The Phase 23 queue is initialized through issues `#158-#161`.
+- Phase 23 is closed locally and in GitHub.
+- Phase 23 exit issue `#158` is closed and milestone `Phase 23 - Preset Sessions and Response Kits` is closed.
+- The Phase 23 queue was completed through issues `#158-#161`.
+- Phase 24 is the active successor queue.
+- milestone `Phase 24 - Session Handoff and Route Comparison` is open.
+- The Phase 24 queue is initialized through issues `#165-#168`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.
