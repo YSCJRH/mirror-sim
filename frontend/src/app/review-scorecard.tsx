@@ -1843,6 +1843,7 @@ export function ReviewScorecard({
   const [presetActionCopyState, setPresetActionCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [lastPresetLabel, setLastPresetLabel] = useState<string>("");
   const [responsePackCopyState, setResponsePackCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
   const decision = decisionFromScores(scores, rubricRows.length);
@@ -2241,6 +2242,60 @@ export function ReviewScorecard({
       finalBundleMarkdown: presetFinalBundle.markdown
     };
   });
+  const activePresetSession =
+    rolePresetCards.find(
+      ({ role, preset, recommendation }) =>
+        receiverRole === role &&
+        bundleVariant === preset.variant &&
+        selectedDestination === preset.destination &&
+        selectedExport === recommendation.exportId
+    ) ?? null;
+  const sessionPresetLabel = activePresetSession
+    ? `${receiverRoleProfiles[activePresetSession.role].label} preset`
+    : "Custom preset session";
+  const sessionPresetDetail = activePresetSession
+    ? activePresetSession.preset.summary
+    : `The current ${receiverRoleProfiles[receiverRole].label.toLowerCase()} handoff posture overrides at least one default preset choice while staying inside the same frontend-only workflow.`;
+  const sessionCueCards = [
+    {
+      label: "Role preset",
+      value: activePresetSession ? receiverRoleProfiles[activePresetSession.role].label : `${receiverRoleProfiles[receiverRole].label} (custom)`,
+      detail: activePresetSession
+        ? activePresetSession.preset.emphasis
+        : `Base role focus: ${receiverRoleProfiles[receiverRole].summary}`
+    },
+    {
+      label: "Bundle mode",
+      value: bundleVariantProfiles[bundleVariant].label,
+      detail: bundleVariantProfiles[bundleVariant].summary
+    },
+    {
+      label: "Destination",
+      value: deliveryDestinations[selectedDestination].label,
+      detail: activePresetSession ? activePresetSession.recommendation.reason : deliveryDestinations[selectedDestination].summary
+    },
+    {
+      label: "Response posture",
+      value: primaryResponseShortcut.label,
+      detail: primaryResponseShortcut.detail
+    }
+  ];
+  const presetSessionSummaryMarkdown = [
+    "## Active Preset Session",
+    `- Session: ${sessionPresetLabel}`,
+    `- Role preset: ${sessionCueCards[0].value}`,
+    `- Bundle mode: ${bundleVariantProfiles[bundleVariant].label}`,
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Recommended export: ${selectedExportSurface.label}`,
+    `- Response posture: ${primaryResponseShortcut.label} (${primaryResponseShortcut.tone})`,
+    `- Pickup lane: ${pickupLane}`,
+    "",
+    "## Session Cues",
+    ...sessionCueCards.map((cue) => `- ${cue.label}: ${cue.value} - ${cue.detail}`),
+    "",
+    "## Session Note",
+    `- ${sessionPresetDetail}`
+  ].join("\n");
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
     : (shortcutAlternatives[0] ?? recommendedExport.exportId);
@@ -3194,6 +3249,59 @@ export function ReviewScorecard({
                     ? `Clipboard copy failed for the ${lastPresetLabel || "selected"} preset.`
                     : "Use preset to only switch the bundle posture, or Apply and copy to switch and immediately copy the recommended package."}
               </p>
+
+              <div className="shortcutStrip">
+                <div className="shortcutHeader">
+                  <div>
+                    <strong>Active preset session</strong>
+                    <p className="scoreHint">{sessionPresetDetail}</p>
+                  </div>
+                  <div className="shortcutActions">
+                    <span className={`statusPill statusPill${primaryResponseShortcut.tone}`}>{primaryResponseShortcut.label}</span>
+                    <button
+                      type="button"
+                      className="actionButton"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(presetSessionSummaryMarkdown);
+                          setSessionSummaryCopyState("copied");
+                        } catch {
+                          setSessionSummaryCopyState("failed");
+                        }
+                      }}
+                    >
+                      Copy session summary
+                    </button>
+                  </div>
+                </div>
+
+                <div className="statusRow">
+                  <span className="pill">{sessionPresetLabel}</span>
+                  <span className="pill">{bundleVariantProfiles[bundleVariant].label}</span>
+                  <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                  <span className="pill">{selectedExportSurface.label}</span>
+                </div>
+
+                <div className="manifestGrid">
+                  {sessionCueCards.map((cue) => (
+                    <article key={cue.label} className="manifestCard">
+                      <div className="claimHeader">
+                        <strong>{cue.label}</strong>
+                        <span className="pill">{cue.value}</span>
+                      </div>
+                      <p className="scoreHint">{cue.detail}</p>
+                    </article>
+                  ))}
+                </div>
+
+                <p className="scoreHint">
+                  {sessionSummaryCopyState === "copied"
+                    ? "Preset session summary copied to clipboard."
+                    : sessionSummaryCopyState === "failed"
+                      ? "Clipboard copy failed for the preset session summary."
+                      : "Keep this strip visible while switching presets, bundle mode, destination, or response posture so the current handoff session never becomes implicit."}
+                </p>
+              </div>
 
               <div className="statusRow">
                 <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
