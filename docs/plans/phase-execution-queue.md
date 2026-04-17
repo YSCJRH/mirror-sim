@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 34 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 35 queue resumption.
 
 ## Current Gate State
 
@@ -37,7 +37,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 31 exit gate: closed
 - Phase 32 exit gate: closed
 - Phase 33 exit gate: closed
-- Phase 34 exit gate: open
+- Phase 34 exit gate: closed
+- Phase 35 exit gate: open
 
 Local phase audits currently report:
 
@@ -236,16 +237,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 33 - Action Readiness and Escalation Packet`
   - closed
+- Phase 34 queue sync
+  - merged via PR `#243`
+- Phase 34 execution kickoff board
+  - merged via PR `#244`
+- Phase 34 escalation decision guide
+  - merged via PR `#245`
+- Phase 34 exit issue `#239`
+  - closed
+- milestone `Phase 34 - Execution Kickoff and Escalation Decision`
+  - closed
 - GitHub remote state
   - no open pull requests remain after the Phase 33 closeout
 
 ## Current Queue
 
-- milestone `Phase 34 - Execution Kickoff and Escalation Decision` is open.
-- `#239` `Phase 34 exit gate`
+- milestone `Phase 35 - Execution Tracking and Escalation Trigger` is open.
+- `#246` `Phase 35 exit gate`
   - open
-- blocked until the Phase 34 execution-kickoff and escalation-decision slice is complete
-- The current Phase 34 execution slice is tracked through:
+- blocked until the Phase 35 execution-tracking and escalation-trigger slice is complete
+- The current Phase 35 execution slice is tracked through:
+  - `#247` `Phase 35: sync repo truth to the execution-tracking and escalation-trigger queue`
+  - `#248` `Phase 35: add execution progress tracker from kickoff board, checkpoint board, and receiver response packet`
+  - `#249` `Phase 35: add escalation trigger packet from decision guide, handoff packet, and blocker cues`
+- The completed Phase 34 slice was tracked through:
   - `#240` `Phase 34: sync bootstrap spec and docs to the active kickoff-decision queue`
   - `#241` `Phase 34: add execution kickoff board from readiness board, routing pack, and blocker posture`
   - `#242` `Phase 34: add escalation decision guide from readiness board, handoff packet, and fallback thresholds`
