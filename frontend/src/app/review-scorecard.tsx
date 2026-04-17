@@ -1926,6 +1926,7 @@ export function ReviewScorecard({
   const [escalationDispatchPacketCopyState, setEscalationDispatchPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDeliveryPacketCopyState, setEscalationDeliveryPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationConfirmationPacketCopyState, setEscalationConfirmationPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [escalationReceiptPacketCopyState, setEscalationReceiptPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -4817,6 +4818,101 @@ export function ReviewScorecard({
     "",
     "## Carry Forward",
     `- Escalation delivery packet: ${escalationDeliveryPacketLead}`,
+    `- Receiver guidance: ${receiverGuidance.summary}`,
+    `- Destination guidance: ${deliveryDestinations[selectedDestination].summary}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const escalationReceiptTone =
+    escalationConfirmationTone === "hold"
+      ? "hold"
+      : escalationConfirmationTone === "followup"
+        ? "followup"
+        : "ready";
+  const escalationReceiptLabel =
+    escalationReceiptTone === "hold"
+      ? "Receipt now"
+      : escalationReceiptTone === "followup"
+        ? "Prepare receipt"
+        : "Hold receipt";
+  const escalationReceiptPacketLead =
+    selectedDestination === "pr-comment"
+      ? "Use this packet when you want one GitHub-facing escalation receipt surface that says what the downstream receiver should acknowledge after confirmation."
+      : selectedDestination === "closeout"
+        ? "Use this packet when the closeout flow needs a compact escalation receipt summary that keeps the acknowledgment cue and destination guidance visible together."
+        : "Use this packet when the next operator needs a receipt-ready escalation handoff that keeps acknowledgment cues, destination guidance, and confirmation posture visible together.";
+  const escalationReceiptSummaryLine =
+    escalationReceiptTone === "hold"
+      ? `Escalation receipt should be captured now with ${receiverGuidance.roleLabel.toLowerCase()} because the current confirmation posture already needs an explicit acknowledgment loop.`
+      : escalationReceiptTone === "followup"
+        ? `Escalation receipt should be prepared for ${receiverGuidance.roleLabel.toLowerCase()} so the downstream receiver can acknowledge the handoff quickly if the current route keeps slipping.`
+        : `Escalation receipt can stay on hold while the current ${routeFilteredResponseKit.filterLabel.toLowerCase()} route remains viable, but the acknowledgment note should remain ready.`;
+  const escalationReceiptPacketCards = [
+    {
+      label: "Receipt state",
+      value: escalationReceiptLabel,
+      detail: escalationReceiptSummaryLine
+    },
+    {
+      label: "Acknowledgment cue",
+      value: receiverGuidance.roleLabel,
+      detail: `Reply prompt: ${receiverGuidance.replyPrompt}`
+    },
+    {
+      label: "Destination",
+      value: deliveryDestinations[selectedDestination].label,
+      detail: deliveryDestinations[selectedDestination].summary
+    },
+    {
+      label: "Confirmation posture",
+      value: escalationConfirmationLabel,
+      detail: escalationConfirmationSummaryLine
+    }
+  ];
+  const escalationReceiptPacketItems = [
+    {
+      label: "Receiver acknowledgment stays visible",
+      tone: receiverGuidance.tone,
+      detail: receiverGuidance.checklist.join(" | ")
+    },
+    {
+      label: "Confirmation posture stays visible",
+      tone: escalationConfirmationTone,
+      detail: escalationConfirmationSummaryLine
+    },
+    {
+      label: "Next receipt checkpoint stays visible",
+      tone: escalationReceiptTone,
+      detail: `Next checkpoint: ${receiverFollowUpNextAction}`
+    }
+  ];
+  const escalationReceiptPacketMarkdown = [
+    "# Escalation Receipt Packet",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Receipt state: ${escalationReceiptLabel}`,
+    `- Confirmation state: ${escalationConfirmationLabel}`,
+    `- Escalation route: ${resolutionEscalationRoute.label}`,
+    "",
+    "## Receipt Summary",
+    `- ${escalationReceiptSummaryLine}`,
+    `- Confirmation posture: ${escalationConfirmationSummaryLine}`,
+    `- Delivery posture: ${escalationDeliverySummaryLine}`,
+    "",
+    "## Acknowledge Back",
+    ...receiverGuidance.checklist.map((item) => `- ${item}`),
+    `- Reply prompt: ${receiverGuidance.replyPrompt}`,
+    `- Next checkpoint: ${receiverFollowUpNextAction}`,
+    "",
+    "## Destination Guidance",
+    `- ${deliveryDestinations[selectedDestination].summary}`,
+    `- Current route summary: ${nextStepRoutingSummaryLine}`,
+    `- Dispatch posture: ${escalationDispatchSummaryLine}`,
+    "",
+    "## Carry Forward",
+    `- Escalation confirmation packet: ${escalationConfirmationPacketLead}`,
     `- Receiver guidance: ${receiverGuidance.summary}`,
     `- Destination guidance: ${deliveryDestinations[selectedDestination].summary}`,
     "",
@@ -7783,6 +7879,67 @@ export function ReviewScorecard({
                       : escalationConfirmationPacketCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the confirmation-packet preview."
                         : "Use this packet when you want one confirmation-ready escalation surface that keeps the delivery posture, receiver checklist, and destination guidance visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Escalation receipt packet</strong>
+                      <p className="scoreHint">{escalationReceiptPacketLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${escalationReceiptTone}`}>{escalationReceiptLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(escalationReceiptPacketMarkdown);
+                            setEscalationReceiptPacketCopyState("copied");
+                          } catch {
+                            setEscalationReceiptPacketCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy receipt packet
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${escalationReceiptTone}`}>{escalationReceiptLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {escalationReceiptPacketCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {escalationReceiptPacketItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{escalationReceiptPacketMarkdown}</pre>
+                  <p className="scoreHint">
+                    {escalationReceiptPacketCopyState === "copied"
+                      ? "Escalation receipt packet copied to clipboard."
+                      : escalationReceiptPacketCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the receipt-packet preview."
+                        : "Use this packet when you want one receipt-ready escalation surface that keeps acknowledgment cues, destination guidance, and confirmation posture visible together."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
