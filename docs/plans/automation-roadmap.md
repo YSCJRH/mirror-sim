@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, and Phase 36 is now the active execution-outcome track.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, Phase 36 closeout is complete, and Phase 37 is now the active execution-correction track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -109,9 +109,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 35 is closed locally and in GitHub.
 - Phase 35 exit issue `#246` is closed and milestone `Phase 35 - Execution Tracking and Escalation Trigger` is closed.
 - The Phase 35 queue was completed through issues `#246-#249`.
-- Phase 36 is the active successor queue.
-- milestone `Phase 36 - Execution Outcome and Escalation Dispatch` is open.
-- The Phase 36 queue is initialized through issues `#253-#256`.
+- Phase 36 is closed locally and in GitHub.
+- Phase 36 exit issue `#253` is closed and milestone `Phase 36 - Execution Outcome and Escalation Dispatch` is closed.
+- The Phase 36 queue was completed through issues `#253-#256`.
+- Phase 37 is the active successor queue.
+- milestone `Phase 37 - Execution Correction and Escalation Delivery` is open.
+- The Phase 37 queue is initialized through issues `#260-#263`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.

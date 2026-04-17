@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 36 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 37 queue resumption.
 
 ## Current Gate State
 
@@ -39,7 +39,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 33 exit gate: closed
 - Phase 34 exit gate: closed
 - Phase 35 exit gate: closed
-- Phase 36 exit gate: open
+- Phase 36 exit gate: closed
+- Phase 37 exit gate: open
 
 Local phase audits currently report:
 
@@ -258,16 +259,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 35 - Execution Tracking and Escalation Trigger`
   - closed
+- Phase 36 queue sync
+  - merged via PR `#257`
+- Phase 36 execution outcome board
+  - merged via PR `#258`
+- Phase 36 escalation dispatch packet
+  - merged via PR `#259`
+- Phase 36 exit issue `#253`
+  - closed
+- milestone `Phase 36 - Execution Outcome and Escalation Dispatch`
+  - closed
 - GitHub remote state
   - no open pull requests remain after the Phase 33 closeout
 
 ## Current Queue
 
-- milestone `Phase 36 - Execution Outcome and Escalation Dispatch` is open.
-- `#253` `Phase 36 exit gate`
+- milestone `Phase 37 - Execution Correction and Escalation Delivery` is open.
+- `#260` `Phase 37 exit gate`
   - open
-- blocked until the Phase 36 execution-outcome and escalation-dispatch slice is complete
-- The current Phase 36 execution slice is tracked through:
+- blocked until the Phase 37 execution-correction and escalation-delivery slice is complete
+- The current Phase 37 execution slice is tracked through:
+  - `#261` `Phase 37: sync repo truth to the execution-correction and escalation-delivery queue`
+  - `#262` `Phase 37: add execution correction board from outcome board, blocker cues, and route alternatives`
+  - `#263` `Phase 37: add escalation delivery packet from dispatch packet, receiver cue, and route guidance`
+- The completed Phase 36 slice was tracked through:
   - `#254` `Phase 36: sync repo truth to the execution-outcome and escalation-dispatch queue`
   - `#255` `Phase 36: add execution outcome board from progress tracker, checkpoint board, and response posture`
   - `#256` `Phase 36: add escalation dispatch packet from trigger packet, decision guide, and route cues`
