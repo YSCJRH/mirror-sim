@@ -1919,6 +1919,7 @@ export function ReviewScorecard({
   const [executionProgressTrackerCopyState, setExecutionProgressTrackerCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionOutcomeBoardCopyState, setExecutionOutcomeBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionCorrectionBoardCopyState, setExecutionCorrectionBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [executionRecoveryBoardCopyState, setExecutionRecoveryBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDecisionGuideCopyState, setEscalationDecisionGuideCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationTriggerPacketCopyState, setEscalationTriggerPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDispatchPacketCopyState, setEscalationDispatchPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
@@ -4064,6 +4065,99 @@ export function ReviewScorecard({
     `- Execution outcome board: ${executionOutcomeBoardLead}`,
     `- Execution progress tracker: ${executionProgressTrackerLead}`,
     `- Receiver response packet: ${receiverResponsePacketLead}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const executionRecoveryTone =
+    executionCorrectionTone === "hold"
+      ? "hold"
+      : executionCorrectionTone === "followup"
+        ? "followup"
+        : "ready";
+  const executionRecoveryLabel =
+    executionRecoveryTone === "hold"
+      ? "Recover now"
+      : executionRecoveryTone === "followup"
+        ? "Prepare recovery"
+        : "Route recovered";
+  const executionRecoveryBoardLead =
+    selectedDestination === "pr-comment"
+      ? "Use this board when you want one GitHub-facing recovery surface that shows how the current route should recover after correction work is identified."
+      : selectedDestination === "closeout"
+        ? "Use this board when the closeout flow needs a compact read on how the route should recover from the current correction posture."
+        : "Use this board when the next operator needs one recovery surface that keeps correction posture, outcome state, and route reset cues visible together.";
+  const executionRecoverySummaryLine =
+    executionRecoveryTone === "hold"
+      ? "Recovery work should begin now because the route cannot stabilize until the visible blocker is corrected and the next checkpoint is explicitly reset."
+      : executionRecoveryTone === "followup"
+        ? "Recovery work should stay prepared because the route still needs visible reset cues even though it has not fully broken."
+        : "The route is currently stable enough that recovery can stay lightweight while the next checkpoint remains explicit.";
+  const executionRecoveryBoardCards = [
+    {
+      label: "Recovery state",
+      value: executionRecoveryLabel,
+      detail: executionRecoverySummaryLine
+    },
+    {
+      label: "Correction posture",
+      value: executionCorrectionLabel,
+      detail: executionCorrectionSummaryLine
+    },
+    {
+      label: "Outcome state",
+      value: executionOutcomeLabel,
+      detail: executionOutcomeSummaryLine
+    },
+    {
+      label: "Next route reset cue",
+      value: receiverFollowUpNextAction,
+      detail: nextStepRoutingSummaryLine
+    }
+  ];
+  const executionRecoveryBoardItems = [
+    {
+      label: "Correction posture stays visible",
+      tone: executionCorrectionTone,
+      detail: executionCorrectionSummaryLine
+    },
+    {
+      label: "Outcome posture stays visible",
+      tone: executionOutcomeTone,
+      detail: executionOutcomeSummaryLine
+    },
+    {
+      label: "Route reset cue stays visible",
+      tone:
+        executionRecoveryTone === "hold"
+          ? "hold"
+          : "followup",
+      detail: `Next checkpoint: ${receiverFollowUpNextAction}`
+    }
+  ];
+  const executionRecoveryBoardMarkdown = [
+    "# Execution Recovery Board",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Recovery state: ${executionRecoveryLabel}`,
+    `- Correction posture: ${executionCorrectionLabel}`,
+    "",
+    "## Recovery Summary",
+    `- ${executionRecoverySummaryLine}`,
+    `- Correction posture: ${executionCorrectionSummaryLine}`,
+    `- Outcome posture: ${executionOutcomeSummaryLine}`,
+    "",
+    "## Reset Cues",
+    `- Next checkpoint: ${receiverFollowUpNextAction}`,
+    `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
+    `- Route guidance: ${nextStepRoutingSummaryLine}`,
+    "",
+    "## Keep Nearby",
+    `- Execution correction board: ${executionCorrectionBoardLead}`,
+    `- Execution outcome board: ${executionOutcomeBoardLead}`,
+    `- Next-step routing pack: ${nextStepRoutingPackLead}`,
     "",
     "## Escalate When",
     `- ${resolutionEscalationRoute.prompt}`
@@ -7011,6 +7105,67 @@ export function ReviewScorecard({
                       : executionCorrectionBoardCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the correction-board preview."
                         : "Use this board when you want one correction surface that keeps the outcome posture, blocker cue, and route alternatives visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Execution recovery board</strong>
+                      <p className="scoreHint">{executionRecoveryBoardLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${executionRecoveryTone}`}>{executionRecoveryLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(executionRecoveryBoardMarkdown);
+                            setExecutionRecoveryBoardCopyState("copied");
+                          } catch {
+                            setExecutionRecoveryBoardCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy recovery board
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${executionRecoveryTone}`}>{executionRecoveryLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {executionRecoveryBoardCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {executionRecoveryBoardItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{executionRecoveryBoardMarkdown}</pre>
+                  <p className="scoreHint">
+                    {executionRecoveryBoardCopyState === "copied"
+                      ? "Execution recovery board copied to clipboard."
+                      : executionRecoveryBoardCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the recovery-board preview."
+                        : "Use this board when you want one recovery surface that keeps correction posture, outcome state, and route reset cues visible together."}
                   </p>
                 </div>
                 <div className="shortcutStrip">
