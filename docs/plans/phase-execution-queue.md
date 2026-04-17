@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 39 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 40 queue resumption.
 
 ## Current Gate State
 
@@ -42,7 +42,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 36 exit gate: closed
 - Phase 37 exit gate: closed
 - Phase 38 exit gate: closed
-- Phase 39 exit gate: open
+- Phase 39 exit gate: closed
+- Phase 40 exit gate: open
 
 Local phase audits currently report:
 
@@ -291,16 +292,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 38 - Execution Recovery and Escalation Confirmation`
   - closed
+- Phase 39 queue sync
+  - merged via PR `#278`
+- Phase 39 execution recovery checkpoint board
+  - merged via PR `#279`
+- Phase 39 escalation receipt packet
+  - merged via PR `#280`
+- Phase 39 exit issue `#274`
+  - closed
+- milestone `Phase 39 - Recovery Checkpoint and Escalation Receipt`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 38 closeout
+  - no open pull requests remain after the Phase 39 closeout
 
 ## Current Queue
 
-- milestone `Phase 39 - Recovery Checkpoint and Escalation Receipt` is open.
-- `#274` `Phase 39 exit gate`
+- milestone `Phase 40 - Recovery Clearance and Escalation Acknowledgment` is open.
+- `#281` `Phase 40 exit gate`
   - open
-- blocked until the Phase 39 recovery-checkpoint and escalation-receipt slice is complete
-- The current Phase 39 execution slice is tracked through:
+- blocked until the Phase 40 recovery-clearance and escalation-acknowledgment slice is complete
+- The current Phase 40 execution slice is tracked through:
+  - `#282` `Phase 40: sync repo truth to Phase 40 queue`
+  - `#283` `Phase 40: add execution recovery clearance board`
+  - `#284` `Phase 40: add escalation acknowledgment packet`
+- The completed Phase 39 slice was tracked through:
   - `#275` `Phase 39: sync repo truth to Phase 39 queue`
   - `#276` `Phase 39: add execution recovery checkpoint board`
   - `#277` `Phase 39: add escalation receipt packet`
