@@ -2488,6 +2488,52 @@ export function ReviewScorecard({
     "## Send-Readiness Checklist",
     ...sessionSendChecklistItems.map((item) => `- [${item.tone}] ${item.label}: ${item.detail}`)
   ].join("\n");
+  const fullSessionHandoffPacketMarkdown = [
+    "# Full Preset Session Handoff Packet",
+    "",
+    `- Session: ${sessionPresetLabel}`,
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Bundle mode: ${bundleVariantProfiles.full.label}`,
+    `- Receiver role: ${receiverRoleProfiles[receiverRole].label}`,
+    `- Primary export: ${selectedExportSurface.label}`,
+    `- Route kit: ${routeFilteredResponseKit.filterLabel}`,
+    "",
+    "## Active Session Summary",
+    presetSessionSummaryMarkdown,
+    "",
+    "## Selected Route Kit",
+    routeFilteredResponseKit.markdown,
+    "",
+    "## Send-Readiness Cues",
+    sessionSendCueMarkdown,
+    "",
+    "## Route Comparison",
+    responseKitComparisonMarkdown
+  ].join("\n");
+  const activeSessionHandoffPacketMarkdown =
+    bundleVariant === "full" ? fullSessionHandoffPacketMarkdown : presetSessionHandoffPacketMarkdown;
+  const sessionHandoffVariantCoverage: Record<
+    BundleVariant,
+    { summary: string; includes: string[]; omits: string[]; markdown: string }
+  > = {
+    compact: {
+      summary: "Carry the active session summary and selected route kit only, leaving the send cues and alternate-route context behind for the lighter handoff.",
+      includes: ["Active session summary", "Selected route kit", "Packet header metadata"],
+      omits: ["Send-readiness cues", "Alternate route comparison context"],
+      markdown: presetSessionHandoffPacketMarkdown
+    },
+    full: {
+      summary: "Carry the full session handoff packet with send-readiness cues and route-comparison context attached for a more review-heavy delivery.",
+      includes: [
+        "Active session summary",
+        "Selected route kit",
+        "Send-readiness cues",
+        "Alternate route comparison context"
+      ],
+      omits: [],
+      markdown: fullSessionHandoffPacketMarkdown
+    }
+  };
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
     : (shortcutAlternatives[0] ?? recommendedExport.exportId);
@@ -3777,26 +3823,75 @@ export function ReviewScorecard({
 
               <div className="handoffSection">
                 <div className="claimHeader">
-                  <h3>Preset session handoff packet</h3>
+                  <h3>Preset session handoff packet variants</h3>
                   <button
                     type="button"
                     className="actionButton"
                     onClick={async () => {
                       try {
-                        await navigator.clipboard.writeText(presetSessionHandoffPacketMarkdown);
+                        await navigator.clipboard.writeText(activeSessionHandoffPacketMarkdown);
                         setSessionHandoffPacketCopyState("copied");
                       } catch {
                         setSessionHandoffPacketCopyState("failed");
                       }
                     }}
                   >
-                    Copy handoff packet
+                    Copy {bundleVariantProfiles[bundleVariant].label.toLowerCase()} packet
                   </button>
                 </div>
                 <p className="scoreHint">
                   Send the active preset session and the selected route kit together when the next reader should not have
                   to reconstruct the current handoff posture from separate strips or exports.
                 </p>
+                <div className="laneToggleGroup" role="tablist" aria-label="Session handoff packet variant chooser">
+                  {(["compact", "full"] as BundleVariant[]).map((variant) => (
+                    <button
+                      key={variant}
+                      type="button"
+                      className={`laneToggleButton${bundleVariant === variant ? " laneToggleButtonActive" : ""}`}
+                      onClick={() => setBundleVariant(variant)}
+                    >
+                      {bundleVariantProfiles[variant].label}
+                    </button>
+                  ))}
+                </div>
+                <p className="scoreHint">{sessionHandoffVariantCoverage[bundleVariant].summary}</p>
+                <div className="coverageGrid">
+                  {(["compact", "full"] as BundleVariant[]).map((variant) => {
+                    const coverage = sessionHandoffVariantCoverage[variant];
+                    const isActive = bundleVariant === variant;
+
+                    return (
+                      <article key={variant} className={`coverageCard${isActive ? " coverageCardActive" : ""}`}>
+                        <div className="claimHeader">
+                          <strong>{bundleVariantProfiles[variant].label}</strong>
+                          {isActive ? <span className="statusPill statusPillready">active</span> : null}
+                        </div>
+                        <p className="scoreHint">{coverage.summary}</p>
+                        <div className="coverageLists">
+                          <div className="coverageList">
+                            <h3>Includes</h3>
+                            <ul className="checklist compact">
+                              {coverage.includes.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div className="coverageList">
+                            <h3>Leaves out</h3>
+                            <ul className="checklist compact">
+                              {coverage.omits.length > 0 ? (
+                                coverage.omits.map((item) => <li key={item}>{item}</li>)
+                              ) : (
+                                <li>No omissions in this fuller packet.</li>
+                              )}
+                            </ul>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
                 <div className="copyPreflightBoard">
                   <div className="claimHeader">
                     <strong>Send-readiness cues</strong>
@@ -3856,6 +3951,7 @@ export function ReviewScorecard({
                 </div>
                 <div className="statusRow">
                   <span className="pill">{sessionPresetLabel}</span>
+                  <span className="pill">{bundleVariantProfiles[bundleVariant].label}</span>
                   <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
                   <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
                   <span className="pill">{receiverRoleProfiles[receiverRole].label}</span>
@@ -3871,13 +3967,15 @@ export function ReviewScorecard({
                     </article>
                   ))}
                 </div>
-                <pre className="bundlePreviewPre">{presetSessionHandoffPacketMarkdown}</pre>
+                <pre className="bundlePreviewPre">{activeSessionHandoffPacketMarkdown}</pre>
                 <p className="scoreHint">
                   {sessionHandoffPacketCopyState === "copied"
-                    ? "Preset session handoff packet copied to clipboard."
+                    ? `${bundleVariantProfiles[bundleVariant].label} preset session handoff packet copied to clipboard.`
                     : sessionHandoffPacketCopyState === "failed"
                       ? "Clipboard copy failed. You can still copy from the handoff-packet preview."
-                      : "Use this packet when the selected route kit is ready to travel with the active session summary as one send-ready handoff."}
+                      : bundleVariant === "full"
+                        ? "Use the full packet when the receiver should get the active session, send-readiness cues, and route-comparison context together."
+                        : "Use the compact packet when the selected route kit is ready to travel with the active session summary as one lighter handoff."}
                 </p>
               </div>
 
