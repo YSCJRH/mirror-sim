@@ -1905,6 +1905,7 @@ export function ReviewScorecard({
   const [finalSendSummaryCopyState, setFinalSendSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [finalSendChecklistCopyState, setFinalSendChecklistCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [deliveryScriptCopyState, setDeliveryScriptCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [deliveryBundleCopyState, setDeliveryBundleCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -2910,6 +2911,54 @@ export function ReviewScorecard({
     "",
     "## Fallback Cue",
     `- ${fallbackPacketRationale}`
+  ].join("\n");
+  const deliveryBundleLead =
+    selectedDestination === "pr-comment"
+      ? "Use this bundle when the outgoing GitHub handoff should carry the sender note, delivery script, summary, and checklist together."
+      : selectedDestination === "closeout"
+        ? "Use this bundle when the outgoing closeout handoff should carry the sender note, delivery script, summary, and checklist together."
+        : "Use this bundle when the next operator should receive the full current delivery package in one copyable export.";
+  const deliveryBundleCards = [
+    {
+      label: "Bundle mode",
+      value: bundleVariantProfiles[bundleVariant].label,
+      detail: sessionHandoffVariantCoverage[bundleVariant].summary
+    },
+    {
+      label: "Delivery decision",
+      value: finalSendChecklistDecisionLabel,
+      detail: finalSendChecklistSummary
+    },
+    {
+      label: "Recommended packet",
+      value: bundleVariantProfiles[recommendedPacketVariant].label,
+      detail: packetRecommendationSummary
+    },
+    {
+      label: "Route cue",
+      value: routeFilteredResponseKit.filterLabel,
+      detail: routeFilteredResponseKit.summary
+    }
+  ];
+  const deliveryBundleMarkdown = [
+    "# Delivery Bundle",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Bundle mode: ${bundleVariantProfiles[bundleVariant].label}`,
+    `- Recommended packet: ${bundleVariantProfiles[recommendedPacketVariant].label}`,
+    `- Send decision: ${finalSendChecklistDecisionLabel}`,
+    "",
+    "## Sender Note",
+    sessionSenderNoteMarkdown,
+    "",
+    "## Delivery Script",
+    deliveryScriptMarkdown,
+    "",
+    "## Final Send Summary",
+    finalSendSummaryMarkdown,
+    "",
+    "## Final Send Checklist",
+    finalSendChecklistMarkdown
   ].join("\n");
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
@@ -4561,6 +4610,56 @@ export function ReviewScorecard({
                       : finalSendChecklistCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the send-checklist preview."
                         : "Use this checklist when you want a send, widen, or hold decision that ties together the recommendation, summary, and readiness cues."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Delivery bundle export</strong>
+                      <p className="scoreHint">{deliveryBundleLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(deliveryBundleMarkdown);
+                            setDeliveryBundleCopyState("copied");
+                          } catch {
+                            setDeliveryBundleCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy delivery bundle
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{bundleVariantProfiles[bundleVariant].label}</span>
+                    <span className="pill">{bundleVariantProfiles[recommendedPacketVariant].label} recommended</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {deliveryBundleCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{deliveryBundleMarkdown}</pre>
+                  <p className="scoreHint">
+                    {deliveryBundleCopyState === "copied"
+                      ? "Delivery bundle export copied to clipboard."
+                      : deliveryBundleCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the bundle preview."
+                        : "Use this bundle when the outgoing handoff should travel as one fuller package instead of separate send surfaces."}
                   </p>
                 </div>
                 <div className="shortcutStrip">
