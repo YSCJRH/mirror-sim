@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, and Phase 25 is now the active handoff-delivery track.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, and Phase 26 is now the active delivery-prep track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -76,9 +76,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 24 is closed locally and in GitHub.
 - Phase 24 exit issue `#165` is closed and milestone `Phase 24 - Session Handoff and Route Comparison` is closed.
 - The Phase 24 queue was completed through issues `#165-#168`.
-- Phase 25 is the active successor queue.
-- milestone `Phase 25 - Handoff Delivery and Packet Variants` is open.
-- The Phase 25 queue is initialized through issues `#172-#175`.
+- Phase 25 is closed locally and in GitHub.
+- Phase 25 exit issue `#172` is closed and milestone `Phase 25 - Handoff Delivery and Packet Variants` is closed.
+- The Phase 25 queue was completed through issues `#172-#175`.
+- Phase 26 is the active successor queue.
+- milestone `Phase 26 - Packet Delivery Prep and Sender Notes` is open.
+- The Phase 26 queue is initialized through issues `#179-#182`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.

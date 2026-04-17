@@ -99,6 +99,10 @@
     {
       "title": "Phase 25 - Handoff Delivery and Packet Variants",
       "description": "Turn the preset session handoff packet into clearer delivery surfaces by adding send-readiness cues and compact-versus-full packet variants without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 26 - Packet Delivery Prep and Sender Notes",
+      "description": "Turn the preset session handoff packet variants into clearer delivery-ready artifacts by adding destination-specific sender notes and packet-diff cues without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -226,6 +230,11 @@
       "name": "phase:25",
       "color": "2B7A78",
       "description": "Phase 25 handoff delivery and packet variants work."
+    },
+    {
+      "name": "phase:26",
+      "color": "356859",
+      "description": "Phase 26 packet delivery prep and sender note work."
     },
     {
       "name": "area:backend",
@@ -1332,6 +1341,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd compact-versus-full preset session handoff packet variants with coverage preview so the operator can choose how much packet context to send without changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current preset session handoff packet, final bundle variant cues, and route-filtered response kit surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only compact/full handoff packet variant chooser with visible coverage differences\n- no backend API calls and no new artifact files\n- copyable packet variants that stay aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or review-state contracts\n- storing packet-variant history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the compact/full packet variants update with preset, route, destination, and receiver posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 25"
+    },
+    {
+      "title": "Phase 26 exit gate",
+      "milestone": "Phase 26 - Packet Delivery Prep and Sender Notes",
+      "labels": [
+        "phase:26",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 26 packet delivery prep and sender note criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 26 milestone state\n- merged PR state for queue sync and delivery-prep work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 26 closeout decision\n- documented stop condition for the Phase 26 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 26 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- ./make.ps1 smoke\n- ./make.ps1 test\n- ./make.ps1 eval-demo\n- python -m backend.app.cli audit-phase phase3\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 26"
+    },
+    {
+      "title": "Phase 26: sync bootstrap spec and docs to the active delivery-prep queue",
+      "milestone": "Phase 26 - Packet Delivery Prep and Sender Notes",
+      "labels": [
+        "phase:26",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 25 baseline to the active Phase 26 queue so docs, bootstrap metadata, and README reflect the new delivery-prep track.\n\n## input\n- .github/automation/bootstrap-spec.json\n- README.md\n- docs/plans/automation-roadmap.md\n- docs/plans/current-state-baseline.md\n- docs/plans/phase-execution-queue.md\n- current live GitHub milestone and issue state\n\n## output\n- phase:26 and Phase 26 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 26 as the active successor queue\n- no stale Phase 25 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- delivery-prep UI changes\n\n## minimal test\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md\n- ./make.ps1 test\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 26"
+    },
+    {
+      "title": "Phase 26: add destination-specific sender note and subject line for the handoff packet",
+      "milestone": "Phase 26 - Packet Delivery Prep and Sender Notes",
+      "labels": [
+        "phase:26",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a destination-specific sender note and subject line for the preset session handoff packet so the operator can deliver the packet with clearer context without changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current preset session handoff packet, destination cue strip, and delivery guidance surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only sender note and subject-line surface derived from the current destination, route, and receiver posture\n- no backend API calls and no new artifact files\n- copyable delivery notes that stay aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or delivery-governance contracts\n- storing sender-note history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the sender note updates with preset, destination, route, and receiver posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 26"
+    },
+    {
+      "title": "Phase 26: add compact-versus-full handoff packet diff preview and omitted-section cues",
+      "milestone": "Phase 26 - Packet Delivery Prep and Sender Notes",
+      "labels": [
+        "phase:26",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a compact-versus-full handoff packet diff preview and omitted-section cues so the operator can see what changes between the two packet variants before sending without changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current handoff packet variants, coverage preview, and route-comparison surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only compact/full packet diff preview with explicit omitted-section cues\n- no backend API calls and no new artifact files\n- copyable diff cues that stay aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or review-state contracts\n- storing diff history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the packet diff preview updates with preset, route, destination, and receiver posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 26"
     }
   ]
 }

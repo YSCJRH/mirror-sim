@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 25 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 26 queue resumption.
 
 ## Current Gate State
 
@@ -28,7 +28,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 22 exit gate: closed
 - Phase 23 exit gate: closed
 - Phase 24 exit gate: closed
-- Phase 25 exit gate: open
+- Phase 25 exit gate: closed
+- Phase 26 exit gate: open
 
 Local phase audits currently report:
 
@@ -133,16 +134,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 24 - Session Handoff and Route Comparison`
   - closed
+- Phase 25 queue sync
+  - merged via PR `#176`
+- Phase 25 send-readiness cues
+  - merged via PR `#177`
+- Phase 25 handoff packet variants
+  - merged via PR `#178`
+- Phase 25 exit issue `#172`
+  - closed
+- milestone `Phase 25 - Handoff Delivery and Packet Variants`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 25 queue bootstrap
+  - no open pull requests remain after the Phase 26 queue bootstrap
 
 ## Current Queue
 
-- milestone `Phase 25 - Handoff Delivery and Packet Variants` is open.
-- `#172` `Phase 25 exit gate`
+- milestone `Phase 26 - Packet Delivery Prep and Sender Notes` is open.
+- `#179` `Phase 26 exit gate`
   - open
-- blocked until the Phase 25 handoff delivery and packet variants slice is complete
-- The current Phase 25 execution slice is tracked through:
+- blocked until the Phase 26 packet delivery prep and sender note slice is complete
+- The current Phase 26 execution slice is tracked through:
+  - `#180` `Phase 26: sync bootstrap spec and docs to the active delivery-prep queue`
+  - `#181` `Phase 26: add destination-specific sender note and subject line for the handoff packet`
+  - `#182` `Phase 26: add compact-versus-full handoff packet diff preview and omitted-section cues`
+- The completed Phase 25 slice was tracked through:
   - `#174` `Phase 25: sync bootstrap spec and docs to the active handoff-delivery queue`
   - `#173` `Phase 25: add send-readiness checklist and destination cue strip for the session handoff packet`
   - `#175` `Phase 25: add compact-versus-full preset session handoff packet variants with coverage preview`
