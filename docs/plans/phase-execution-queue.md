@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 35 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 36 queue resumption.
 
 ## Current Gate State
 
@@ -38,7 +38,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 32 exit gate: closed
 - Phase 33 exit gate: closed
 - Phase 34 exit gate: closed
-- Phase 35 exit gate: open
+- Phase 35 exit gate: closed
+- Phase 36 exit gate: open
 
 Local phase audits currently report:
 
@@ -247,16 +248,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 34 - Execution Kickoff and Escalation Decision`
   - closed
+- Phase 35 queue sync
+  - merged via PR `#250`
+- Phase 35 execution progress tracker
+  - merged via PR `#251`
+- Phase 35 escalation trigger packet
+  - merged via PR `#252`
+- Phase 35 exit issue `#246`
+  - closed
+- milestone `Phase 35 - Execution Tracking and Escalation Trigger`
+  - closed
 - GitHub remote state
   - no open pull requests remain after the Phase 33 closeout
 
 ## Current Queue
 
-- milestone `Phase 35 - Execution Tracking and Escalation Trigger` is open.
-- `#246` `Phase 35 exit gate`
+- milestone `Phase 36 - Execution Outcome and Escalation Dispatch` is open.
+- `#253` `Phase 36 exit gate`
   - open
-- blocked until the Phase 35 execution-tracking and escalation-trigger slice is complete
-- The current Phase 35 execution slice is tracked through:
+- blocked until the Phase 36 execution-outcome and escalation-dispatch slice is complete
+- The current Phase 36 execution slice is tracked through:
+  - `#254` `Phase 36: sync repo truth to the execution-outcome and escalation-dispatch queue`
+  - `#255` `Phase 36: add execution outcome board from progress tracker, checkpoint board, and response posture`
+  - `#256` `Phase 36: add escalation dispatch packet from trigger packet, decision guide, and route cues`
+- The completed Phase 35 slice was tracked through:
   - `#247` `Phase 35: sync repo truth to the execution-tracking and escalation-trigger queue`
   - `#248` `Phase 35: add execution progress tracker from kickoff board, checkpoint board, and receiver response packet`
   - `#249` `Phase 35: add escalation trigger packet from decision guide, handoff packet, and blocker cues`
