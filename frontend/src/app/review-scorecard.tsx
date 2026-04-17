@@ -1910,6 +1910,7 @@ export function ReviewScorecard({
   const [deliveryCheckpointCopyState, setDeliveryCheckpointCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [receiverResponsePacketCopyState, setReceiverResponsePacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [replyOutcomeTrackerCopyState, setReplyOutcomeTrackerCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [resolutionHandoffPackCopyState, setResolutionHandoffPackCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -3302,6 +3303,95 @@ export function ReviewScorecard({
     "",
     "## Escalate When",
     `- ${followThroughRouting.routes.find((route) => route.key === "escalate")?.prompt ?? "Escalate when the current lane is no longer sufficient for the next reply."}`
+  ].join("\n");
+  const resolutionEscalationRoute =
+    followThroughRouting.routes.find((route) => route.key === "escalate") ??
+    followThroughRouting.routes[followThroughRouting.routes.length - 1];
+  const resolutionHandoffPackLead =
+    selectedDestination === "pr-comment"
+      ? "Use this pack when the remaining GitHub-facing resolution context should travel with the checkpoint board, response packet, and escalation cue in one copyable export."
+      : selectedDestination === "closeout"
+        ? "Use this pack when the closeout flow should keep the active checkpoint posture, response packet, and escalation path together."
+        : "Use this pack when the next operator needs the remaining resolution context packaged with the checkpoint board and receiver response path.";
+  const resolutionHandoffCards = [
+    {
+      label: "Checkpoint state",
+      value: finalSendChecklistDecisionLabel,
+      detail: deliveryCheckpointSummaryLine
+    },
+    {
+      label: "Active response route",
+      value: receiverResponseActiveTemplate.label,
+      detail: receiverResponseActiveTemplate.prompt
+    },
+    {
+      label: "Escalation path",
+      value: resolutionEscalationRoute.label,
+      detail: resolutionEscalationRoute.prompt
+    },
+    {
+      label: "Next open state",
+      value: finalSendChecklistDecisionTone === "hold" ? "Resolve blocker first" : "Confirm next resolution checkpoint",
+      detail:
+        finalSendChecklistDecisionTone === "hold"
+          ? receiverFollowUpBlockerCue
+          : receiverFollowUpNextAction
+    }
+  ];
+  const resolutionHandoffItems = [
+    {
+      label: "Checkpoint context is attached",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "hold"
+            : "followup",
+      detail: deliveryCheckpointSummaryLine
+    },
+    {
+      label: "Response posture is attached",
+      tone: receiverResponseActiveTemplate.tone,
+      detail: receiverResponseActiveTemplate.detail
+    },
+    {
+      label: "Escalation path stays visible",
+      tone: resolutionEscalationRoute.tone,
+      detail: resolutionEscalationRoute.detail
+    }
+  ];
+  const resolutionHandoffPackMarkdown = [
+    "# Resolution Handoff Pack",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Route cue: ${routeFilteredResponseKit.filterLabel}`,
+    `- Active response route: ${receiverResponseActiveTemplate.label}`,
+    `- Checkpoint state: ${finalSendChecklistDecisionLabel}`,
+    `- Escalation path: ${resolutionEscalationRoute.label}`,
+    "",
+    "## Resolution Summary",
+    `- ${deliveryCheckpointSummaryLine}`,
+    `- ${receiverResponseActiveTemplate.prompt}`,
+    `- Escalate when: ${resolutionEscalationRoute.prompt}`,
+    "",
+    "## Current Checkpoint Board",
+    deliveryCheckpointMarkdown,
+    "",
+    "## Current Receiver Response Packet",
+    receiverResponsePacketMarkdown,
+    "",
+    "## Remaining Open State",
+    `- Next resolution checkpoint: ${receiverFollowUpNextAction}`,
+    `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
+    `- Keep ${receiverResponseAlternateTemplates.length > 0 ? receiverResponseAlternateTemplates.map((template) => template.label.toLowerCase()).join(" and ") : "the active route only"} visible while resolution is still open.`,
+    "",
+    "## Keep Nearby",
+    `- Follow-up pack: ${receiverFollowUpLead}`,
+    `- Final send summary: ${finalSendSummaryLead}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
   ].join("\n");
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
@@ -5259,7 +5349,7 @@ export function ReviewScorecard({
                     <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
                   </div>
                   <div className="manifestGrid">
-                    {replyOutcomeTrackerCards.map((item) => (
+                    {resolutionHandoffCards.map((item) => (
                       <article key={item.label} className="manifestCard">
                         <div className="claimHeader">
                           <strong>{item.label}</strong>
@@ -5287,6 +5377,67 @@ export function ReviewScorecard({
                       : replyOutcomeTrackerCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the outcome-tracker preview."
                         : "Use this tracker when you want one receiver-facing outcome summary that keeps the active reply path and remaining open state visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Resolution handoff pack</strong>
+                      <p className="scoreHint">{resolutionHandoffPackLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${resolutionEscalationRoute.tone}`}>{resolutionEscalationRoute.label}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(resolutionHandoffPackMarkdown);
+                            setResolutionHandoffPackCopyState("copied");
+                          } catch {
+                            setResolutionHandoffPackCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy resolution pack
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {resolutionHandoffCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {resolutionHandoffItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{resolutionHandoffPackMarkdown}</pre>
+                  <p className="scoreHint">
+                    {resolutionHandoffPackCopyState === "copied"
+                      ? "Resolution handoff pack copied to clipboard."
+                      : resolutionHandoffPackCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the resolution-pack preview."
+                        : "Use this pack when the remaining checkpoint, response, and escalation context should travel together for the next resolution handoff."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
