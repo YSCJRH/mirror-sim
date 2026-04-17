@@ -1898,6 +1898,7 @@ export function ReviewScorecard({
   const [selectedResponseKitRoute, setSelectedResponseKitRoute] = useState<ResponseKitRouteFilter>("active");
   const [responseKitComparisonCopyState, setResponseKitComparisonCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionHandoffPacketCopyState, setSessionHandoffPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [sessionSendCueCopyState, setSessionSendCueCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -2447,6 +2448,45 @@ export function ReviewScorecard({
     "",
     "## Selected Route Kit",
     routeFilteredResponseKit.markdown
+  ].join("\n");
+  const sessionSendCueCards = [
+    {
+      label: "Destination cue",
+      value: deliveryDestinations[selectedDestination].label,
+      detail: deliveryDestinations[selectedDestination].summary
+    },
+    {
+      label: "Route cue",
+      value: routeFilteredResponseKit.filterLabel,
+      detail: routeFilteredResponseKit.summary
+    },
+    {
+      label: "Receiver cue",
+      value: receiverGuidance.roleLabel,
+      detail: receiverGuidance.summary
+    }
+  ];
+  const sessionSendChecklistItems = [
+    ...copyPreflight.items,
+    {
+      label: "Receiver posture",
+      tone: receiverGuidance.tone,
+      detail: receiverGuidance.summary
+    }
+  ];
+  const sessionSendCueMarkdown = [
+    "# Session Handoff Send Cues",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Route cue: ${routeFilteredResponseKit.filterLabel}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Send readiness: ${copyPreflight.tone}`,
+    "",
+    "## Destination And Delivery Cues",
+    ...sessionSendCueCards.map((item) => `- ${item.label}: ${item.value} - ${item.detail}`),
+    "",
+    "## Send-Readiness Checklist",
+    ...sessionSendChecklistItems.map((item) => `- [${item.tone}] ${item.label}: ${item.detail}`)
   ].join("\n");
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
@@ -3757,6 +3797,63 @@ export function ReviewScorecard({
                   Send the active preset session and the selected route kit together when the next reader should not have
                   to reconstruct the current handoff posture from separate strips or exports.
                 </p>
+                <div className="copyPreflightBoard">
+                  <div className="claimHeader">
+                    <strong>Send-readiness cues</strong>
+                    <button
+                      type="button"
+                      className="actionButton"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(sessionSendCueMarkdown);
+                          setSessionSendCueCopyState("copied");
+                        } catch {
+                          setSessionSendCueCopyState("failed");
+                        }
+                      }}
+                    >
+                      Copy send cues
+                    </button>
+                  </div>
+                  <p className="scoreHint">
+                    {copyPreflight.summary}
+                  </p>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${copyPreflight.tone}`}>{copyPreflight.tone}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {sessionSendCueCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {sessionSendChecklistItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <p className="scoreHint">
+                    {sessionSendCueCopyState === "copied"
+                      ? "Session handoff send cues copied to clipboard."
+                      : sessionSendCueCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the visible readiness cues."
+                        : "Use these cues when you want to confirm that the current handoff packet is ready to send for this destination and receiver posture."}
+                  </p>
+                </div>
                 <div className="statusRow">
                   <span className="pill">{sessionPresetLabel}</span>
                   <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
