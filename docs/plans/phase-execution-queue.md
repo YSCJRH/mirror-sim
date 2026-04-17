@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 38 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 39 queue resumption.
 
 ## Current Gate State
 
@@ -41,7 +41,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 35 exit gate: closed
 - Phase 36 exit gate: closed
 - Phase 37 exit gate: closed
-- Phase 38 exit gate: open
+- Phase 38 exit gate: closed
+- Phase 39 exit gate: open
 
 Local phase audits currently report:
 
@@ -280,16 +281,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 37 - Execution Correction and Escalation Delivery`
   - closed
+- Phase 38 queue sync
+  - merged via PR `#271`
+- Phase 38 execution recovery board
+  - merged via PR `#272`
+- Phase 38 escalation confirmation packet
+  - merged via PR `#273`
+- Phase 38 exit issue `#267`
+  - closed
+- milestone `Phase 38 - Execution Recovery and Escalation Confirmation`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 33 closeout
+  - no open pull requests remain after the Phase 38 closeout
 
 ## Current Queue
 
-- milestone `Phase 38 - Execution Recovery and Escalation Confirmation` is open.
-- `#267` `Phase 38 exit gate`
+- milestone `Phase 39 - Recovery Checkpoint and Escalation Receipt` is open.
+- `#274` `Phase 39 exit gate`
   - open
-- blocked until the Phase 38 execution-recovery and escalation-confirmation slice is complete
-- The current Phase 38 execution slice is tracked through:
+- blocked until the Phase 39 recovery-checkpoint and escalation-receipt slice is complete
+- The current Phase 39 execution slice is tracked through:
+  - `#275` `Phase 39: sync repo truth to Phase 39 queue`
+  - `#276` `Phase 39: add execution recovery checkpoint board`
+  - `#277` `Phase 39: add escalation receipt packet`
+- The completed Phase 38 slice was tracked through:
   - `#268` `Phase 38: sync repo truth to the execution-recovery and escalation-confirmation queue`
   - `#269` `Phase 38: add execution recovery board from correction board, outcome board, and route reset cues`
   - `#270` `Phase 38: add escalation confirmation packet from delivery packet, receiver checklist, and destination guidance`

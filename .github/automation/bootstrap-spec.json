@@ -151,6 +151,10 @@
     {
       "title": "Phase 38 - Execution Recovery and Escalation Confirmation",
       "description": "Turn the current execution-correction and escalation-delivery surfaces into a clearer execution-recovery and escalation-confirmation workflow without changing simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 39 - Recovery Checkpoint and Escalation Receipt",
+      "description": "Turn the current execution-recovery and escalation-confirmation surfaces into a clearer recovery-checkpoint and escalation-receipt workflow without changing simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -343,6 +347,11 @@
       "name": "phase:38",
       "color": "D3D9E0",
       "description": "Phase 38 execution recovery and escalation confirmation work."
+    },
+    {
+      "name": "phase:39",
+      "color": "DDE5EA",
+      "description": "Phase 39 recovery checkpoint and escalation receipt work."
     },
     {
       "name": "area:backend",
@@ -2058,6 +2067,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd an escalation confirmation packet that combines the current escalation delivery packet, receiver checklist, and destination guidance so the operator can send a clearer confirmation-ready escalation handoff.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current escalation delivery packet, receiver guidance/checklist, and destination guidance surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only escalation confirmation packet derived from the current delivery posture, receiver checklist, and destination guidance\n- copyable escalation-confirmation cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing escalation confirmation history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the escalation confirmation packet updates with delivery posture, receiver checklist, and destination guidance\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 38"
+    },
+    {
+      "title": "Phase 39 exit gate",
+      "milestone": "Phase 39 - Recovery Checkpoint and Escalation Receipt",
+      "labels": [
+        "phase:39",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "Close this issue only after the full Phase 39 queue is complete.\n\nExit criteria:\n- the Phase 39 queue-sync issue is merged\n- the execution recovery checkpoint board is merged\n- the escalation receipt packet is merged\n- `./make.ps1 smoke` passes\n- `./make.ps1 test` passes\n- `./make.ps1 eval-demo` passes\n- `python -m backend.app.cli audit-phase phase1` passes\n- `python -m backend.app.cli audit-phase phase2` passes\n- `python -m backend.app.cli audit-phase phase3` passes\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` returns `ready` after successor bootstrap\n- only one execution milestone remains open after closeout"
+    },
+    {
+      "title": "Phase 39: sync repo truth to Phase 39 queue",
+      "milestone": "Phase 39 - Recovery Checkpoint and Escalation Receipt",
+      "labels": [
+        "phase:39",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## Summary\nSync the repo truth to the Phase 39 queue and record the Phase 38 closeout baseline.\n\n## Scope\n- update the bootstrap spec and current-state docs to reflect Phase 39 as the active queue\n- record the Phase 38 closeout and successor bootstrap in the repo-facing documentation\n- keep Phase 39 as the sole active execution queue after closeout\n\n## Constraints\n- no simulation, report, claim, evidence, or schema contract changes\n- no new backend/runtime behavior beyond queue/governance sync"
+    },
+    {
+      "title": "Phase 39: add execution recovery checkpoint board",
+      "milestone": "Phase 39 - Recovery Checkpoint and Escalation Receipt",
+      "labels": [
+        "phase:39",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## Summary\nAdd an execution recovery checkpoint board that turns the current recovery surface into a clearer checkpoint-ready review board.\n\n## Scope\n- summarize current recovery posture, blockers, and immediate checkpoint actions in the workbench\n- keep the board frontend-only and driven by existing artifacts\n- stay inside the current review workflow without adding new backend APIs\n\n## Constraints\n- no artifact schema changes\n- no simulation or report contract expansion"
+    },
+    {
+      "title": "Phase 39: add escalation receipt packet",
+      "milestone": "Phase 39 - Recovery Checkpoint and Escalation Receipt",
+      "labels": [
+        "phase:39",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## Summary\nAdd an escalation receipt packet that turns the current confirmation surface into a clearer receipt-ready handoff.\n\n## Scope\n- combine the existing escalation confirmation context into a receipt-oriented packet for downstream acknowledgment\n- keep the packet frontend-only and derived from current artifacts\n- preserve the current in-workbench copy/export flow\n\n## Constraints\n- no backend API additions\n- no artifact schema changes\n- no simulation or report contract expansion"
     }
   ]
 }
