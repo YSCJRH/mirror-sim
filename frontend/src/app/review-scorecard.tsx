@@ -1902,6 +1902,7 @@ export function ReviewScorecard({
   const [sessionSenderNoteCopyState, setSessionSenderNoteCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [packetVariantDiffCopyState, setPacketVariantDiffCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [packetRecommendationCopyState, setPacketRecommendationCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [finalSendSummaryCopyState, setFinalSendSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -2683,6 +2684,71 @@ export function ReviewScorecard({
     `- Keep ${bundleVariantProfiles[fallbackPacketVariant].label.toLowerCase()} available when the handoff shape changes mid-flight or the next reader wants a different context level.`,
     `- ${fallbackPacketRationale}`,
     `- ${packetRecommendationAlignment}`
+  ].join("\n");
+  const activeSessionPacketPreview = buildPayloadPreview(activeSessionHandoffPacketMarkdown, 10);
+  const noBlockingIssueVisible = hasCleanPacketBlockers;
+  const finalSendSummaryLead =
+    selectedDestination === "pr-comment"
+      ? `Review the current sender note, ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} packet, and route cue together before pasting the outgoing handoff into GitHub.`
+      : selectedDestination === "closeout"
+        ? `Review the current sender note, ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} packet, and route cue together before sending the closeout-facing handoff.`
+        : `Review the current sender note, ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} packet, and route cue together before handing the next operator their pickup context.`;
+  const finalSendSummaryCards = [
+    {
+      label: "Sender subject",
+      value: sessionSenderSubjectLine,
+      detail: "Carry this subject line or heading forward so the outgoing handoff stays recognizable outside the workbench."
+    },
+    {
+      label: "Packet mode",
+      value: `${bundleVariantProfiles[bundleVariant].label} packet`,
+      detail: `${sessionHandoffVariantCoverage[bundleVariant].summary} Preview size: ${activeSessionPacketPreview.lineCount} lines across ${activeSessionPacketPreview.sectionCount} section(s).`
+    },
+    {
+      label: "Route cue",
+      value: routeFilteredResponseKit.filterLabel,
+      detail: routeFilteredResponseKit.summary
+    },
+    {
+      label: "Receiver cue",
+      value: receiverGuidance.roleLabel,
+      detail: receiverGuidance.replyPrompt
+    },
+    {
+      label: "Top blocker cue",
+      value: noBlockingIssueVisible ? "No blockers surfaced" : blockers[0].replace(/\.$/, ""),
+      detail: noBlockingIssueVisible
+        ? "The current outgoing handoff does not need extra blocker acknowledgement beyond the normal send posture."
+        : "Keep this acknowledgement near the top of the sendoff so the receiver sees the current risk posture immediately."
+    }
+  ];
+  const finalSendSummaryMarkdown = [
+    "# Final Send Summary",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Packet mode: ${bundleVariantProfiles[bundleVariant].label}`,
+    `- Route cue: ${routeFilteredResponseKit.filterLabel}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Send posture: ${copyPreflight.tone}`,
+    `- Sender subject: ${sessionSenderSubjectLine}`,
+    "",
+    "## Outgoing Handoff",
+    selectedDestination === "pr-comment"
+      ? `- Send the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} packet as a GitHub-ready review handoff with the active route cue attached.`
+      : selectedDestination === "closeout"
+        ? `- Send the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} packet as a closeout-facing handoff with the current route cue and validation posture kept visible.`
+        : `- Send the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} packet as the next operator pickup handoff with the current route cue attached.`,
+    `- ${copyPreflight.summary}`,
+    "",
+    "## Packet Shape",
+    `- ${sessionHandoffVariantCoverage[bundleVariant].summary}`,
+    `- Includes: ${sessionHandoffVariantCoverage[bundleVariant].includes.join(", ")}`,
+    `- Leaves out: ${sessionHandoffVariantCoverage[bundleVariant].omits.length > 0 ? sessionHandoffVariantCoverage[bundleVariant].omits.join(", ") : "No omissions in this fuller packet."}`,
+    "",
+    "## Route And Receiver Cues",
+    `- Route cue: ${routeFilteredResponseKit.summary}`,
+    `- Receiver cue: ${receiverGuidance.replyPrompt}`,
+    `- Top blocker cue: ${blockers[0]}`
   ].join("\n");
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
@@ -4228,6 +4294,56 @@ export function ReviewScorecard({
                       : packetVariantDiffCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the visible diff cues."
                         : "Use this board when you need to see exactly what the full packet adds beyond the compact handoff before sending."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Final send summary</strong>
+                      <p className="scoreHint">{finalSendSummaryLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${copyPreflight.tone}`}>{copyPreflight.tone}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(finalSendSummaryMarkdown);
+                            setFinalSendSummaryCopyState("copied");
+                          } catch {
+                            setFinalSendSummaryCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy send summary
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{bundleVariantProfiles[bundleVariant].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {finalSendSummaryCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{finalSendSummaryMarkdown}</pre>
+                  <p className="scoreHint">
+                    {finalSendSummaryCopyState === "copied"
+                      ? "Final send summary copied to clipboard."
+                      : finalSendSummaryCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the send-summary preview."
+                        : "Use this summary card when you want one outgoing handoff view that keeps the sender note, packet mode, and route posture visible together."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
