@@ -111,6 +111,10 @@
     {
       "title": "Phase 28 - Send Decision and Delivery Checklist",
       "description": "Turn the new send summary and packet recommendation surfaces into a clearer final send-decision workflow by adding a delivery checklist and destination-specific send script without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 29 - Delivery Bundle and Follow-up Pack",
+      "description": "Turn the current send script, summary, and checklist surfaces into a fuller delivery bundle and receiver follow-up pack without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -253,6 +257,11 @@
       "name": "phase:28",
       "color": "4C6A92",
       "description": "Phase 28 send decision and delivery checklist work."
+    },
+    {
+      "name": "phase:29",
+      "color": "5B6F8C",
+      "description": "Phase 29 delivery bundle and follow-up pack work."
     },
     {
       "name": "area:backend",
@@ -1518,6 +1527,51 @@
         "lane:protected-core"
       ],
       "body": "## goal\nApply the reviewed remote/local codex branch cleanup set and sync branch-hygiene docs after the classification baseline is complete.\n\n## input\n- reviewed branch classification baseline from the preceding Phase 28 classification issue\n- live GitHub PR/issue state\n- remote and local branch inventories\n- current branch-hygiene docs\n\n## output\n- remote branch deletions only for branches classified as delete\n- local tracking-ref pruning and local historical branch cleanup consistent with the reviewed classification\n- docs updated so branch-hygiene state descriptions match live GitHub reality\n\n## out-of-scope\n- deleting any branch that is still tied to open PRs, open issues, runbook references, or unresolved forensic comparisons\n- opening a second execution milestone\n- changing simulation, report, claim, evidence, scenario, or artifact contracts\n\n## minimal test\n- authenticated gh pr list --state open\n- authenticated gh issue list --state open\n- git branch -r\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md docs/plans/long-running-loop-runbook.md\n- ./make.ps1 test\n- authenticated python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nYes. This work changes the operational GitHub branch surface and the docs that define branch-hygiene truth.\n\n## phase\nPhase 28"
+    },
+    {
+      "title": "Phase 29 exit gate",
+      "milestone": "Phase 29 - Delivery Bundle and Follow-up Pack",
+      "labels": [
+        "phase:29",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 29 delivery-bundle and follow-up-pack criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 29 milestone state\n- merged PR state for queue sync and delivery-bundle work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 29 closeout decision\n- documented stop condition for the Phase 29 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 29 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- ./make.ps1 smoke\n- ./make.ps1 test\n- ./make.ps1 eval-demo\n- python -m backend.app.cli audit-phase phase3\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 29"
+    },
+    {
+      "title": "Phase 29: sync bootstrap spec and docs to the active delivery-bundle queue",
+      "milestone": "Phase 29 - Delivery Bundle and Follow-up Pack",
+      "labels": [
+        "phase:29",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 28 baseline to the active Phase 29 queue so docs, bootstrap metadata, and README reflect the new delivery-bundle track.\n\n## input\n- .github/automation/bootstrap-spec.json\n- README.md\n- docs/plans/automation-roadmap.md\n- docs/plans/current-state-baseline.md\n- docs/plans/phase-execution-queue.md\n- current live GitHub milestone and issue state\n\n## output\n- phase:29 and Phase 29 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 29 as the active successor queue\n- no stale Phase 28 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- delivery-bundle UI changes\n\n## minimal test\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md\n- ./make.ps1 test\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 29"
+    },
+    {
+      "title": "Phase 29: add delivery bundle export from sender note, script, summary, and checklist",
+      "milestone": "Phase 29 - Delivery Bundle and Follow-up Pack",
+      "labels": [
+        "phase:29",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a delivery-bundle export that combines the sender note, delivery script, final send summary, and final send checklist so the operator can copy one fuller outgoing package without changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current sender note, delivery script, final send summary, and final send checklist surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only delivery bundle export derived from the current send surfaces\n- no backend API calls and no new artifact files\n- copyable delivery-bundle cues that stay aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or delivery-governance contracts\n- storing delivery-bundle history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the bundle export updates with destination, packet choice, route, and send posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 29"
+    },
+    {
+      "title": "Phase 29: add receiver follow-up pack from route cue, receiver ask, and send decision",
+      "milestone": "Phase 29 - Delivery Bundle and Follow-up Pack",
+      "labels": [
+        "phase:29",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a receiver follow-up pack that combines the current route cue, receiver ask, and send decision so the operator can copy a post-send follow-up note without changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current receiver guidance, route kit, delivery script, and final send checklist surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only follow-up pack derived from the current route, receiver posture, and send decision\n- no backend API calls and no new artifact files\n- copyable follow-up cues that stay aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing follow-up history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the follow-up pack updates with destination, route, receiver, and send decision posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 29"
     }
   ]
 }
