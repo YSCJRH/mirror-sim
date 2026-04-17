@@ -291,8 +291,10 @@ Local phase audits currently report:
 
 ## Historical Branch Status
 
-- No remote `origin/codex/*` branches remain after the Phase 6 branch-hygiene closeout.
-- Treat any future recreated `codex/*` remote branch as temporary execution state, not as a standing backlog.
+- Remote `origin/codex/*` branches have been reduced to the current open PR head and reviewed exception set, not fully eliminated.
+- The current reviewed baseline is recorded in `docs/plans/codex-branch-classification-baseline.md`.
+- Remaining live remote branches are `origin/codex/phase28-send-checklist` (active open PR) and `origin/codex/phase23-session-summary` (`TODO[verify]`).
+- Treat any future recreated or still-live `codex/*` remote branch as temporary execution state, not as a standing backlog.
 - Delete a historical branch when it is tied only to closed or merged work and no open issue, PR, or runbook step references it.
 - Keep a historical branch only when an open issue or unresolved forensic comparison explicitly depends on it.
 - Revive a historical branch only through a new issue that names the branch and explains why `main` is insufficient.
