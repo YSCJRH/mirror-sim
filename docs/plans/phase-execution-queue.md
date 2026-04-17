@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 27 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 28 queue resumption.
 
 ## Current Gate State
 
@@ -30,7 +30,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 24 exit gate: closed
 - Phase 25 exit gate: closed
 - Phase 26 exit gate: closed
-- Phase 27 exit gate: open
+- Phase 27 exit gate: closed
+- Phase 28 exit gate: open
 
 Local phase audits currently report:
 
@@ -155,16 +156,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 26 - Packet Delivery Prep and Sender Notes`
   - closed
+- Phase 27 queue sync
+  - merged via PR `#190`
+- Phase 27 final send summary
+  - merged via PR `#191`
+- Phase 27 packet recommendation
+  - merged via PR `#192`
+- Phase 27 exit issue `#186`
+  - closed
+- milestone `Phase 27 - Sendoff Summary and Packet Recommendation`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 27 queue bootstrap
+  - no open pull requests remain after the Phase 28 queue bootstrap
 
 ## Current Queue
 
-- milestone `Phase 27 - Sendoff Summary and Packet Recommendation` is open.
-- `#186` `Phase 27 exit gate`
+- milestone `Phase 28 - Send Decision and Delivery Checklist` is open.
+- `#193` `Phase 28 exit gate`
   - open
-- blocked until the Phase 27 sendoff-summary slice is complete
-- The current Phase 27 execution slice is tracked through:
+- blocked until the Phase 28 send-decision slice is complete
+- The current Phase 28 execution slice is tracked through:
+  - `#194` `Phase 28: sync bootstrap spec and docs to the active send-decision queue`
+  - `#196` `Phase 28: add final send checklist from packet recommendation, summary, and readiness cues`
+  - `#195` `Phase 28: add destination-specific delivery script from sender note, recommendation, and receiver cue`
+- The completed Phase 27 slice was tracked through:
   - `#188` `Phase 27: sync bootstrap spec and docs to the active sendoff-summary queue`
   - `#187` `Phase 27: add final send summary card from sender note, packet variant, and route cues`
   - `#189` `Phase 27: add destination-aware packet recommendation banner with fallback rationale`

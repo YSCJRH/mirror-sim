@@ -107,6 +107,10 @@
     {
       "title": "Phase 27 - Sendoff Summary and Packet Recommendation",
       "description": "Turn the new sender notes and packet diff cues into clearer sendoff decisions by surfacing a final send summary and destination-aware packet recommendation without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 28 - Send Decision and Delivery Checklist",
+      "description": "Turn the new send summary and packet recommendation surfaces into a clearer final send-decision workflow by adding a delivery checklist and destination-specific send script without changing core simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -244,6 +248,11 @@
       "name": "phase:27",
       "color": "3D6B6B",
       "description": "Phase 27 sendoff summary and packet recommendation work."
+    },
+    {
+      "name": "phase:28",
+      "color": "4C6A92",
+      "description": "Phase 28 send decision and delivery checklist work."
     },
     {
       "name": "area:backend",
@@ -1440,6 +1449,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a destination-aware packet recommendation banner with fallback rationale so the operator can tell which handoff packet variant is preferred for the current delivery target without changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current packet variants, sender note, send-readiness cues, and packet diff preview surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only recommended-packet banner with fallback rationale for the current destination and receiver posture\n- no backend API calls and no new artifact files\n- copyable recommendation cues that stay aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or review-state contracts\n- storing recommendation history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the recommendation banner updates with destination, route, receiver, and packet variant state\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 27"
+    },
+    {
+      "title": "Phase 28 exit gate",
+      "milestone": "Phase 28 - Send Decision and Delivery Checklist",
+      "labels": [
+        "phase:28",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nConfirm that the Phase 28 send-decision and delivery-checklist criteria are satisfied before the automation system advances again.\n\n## input\n- Phase 28 milestone state\n- merged PR state for queue sync and send-decision work\n- local validation commands and reviewed artifacts\n\n## output\n- explicit Phase 28 closeout decision\n- documented stop condition for the Phase 28 queue\n- gap issues if any execution issue remains incomplete\n\n## out-of-scope\n- opening the next successor milestone before Phase 28 completion\n- simulation, report, claim, evidence, scenario, or artifact contract expansion\n\n## minimal test\n- ./make.ps1 smoke\n- ./make.ps1 test\n- ./make.ps1 eval-demo\n- python -m backend.app.cli audit-phase phase3\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 28"
+    },
+    {
+      "title": "Phase 28: sync bootstrap spec and docs to the active send-decision queue",
+      "milestone": "Phase 28 - Send Decision and Delivery Checklist",
+      "labels": [
+        "phase:28",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repository source of truth from the closed Phase 27 baseline to the active Phase 28 queue so docs, bootstrap metadata, and README reflect the new send-decision track.\n\n## input\n- .github/automation/bootstrap-spec.json\n- README.md\n- docs/plans/automation-roadmap.md\n- docs/plans/current-state-baseline.md\n- docs/plans/phase-execution-queue.md\n- current live GitHub milestone and issue state\n\n## output\n- phase:28 and Phase 28 queue objects recorded in the bootstrap spec\n- README and planning docs updated to show Phase 28 as the active successor queue\n- no stale Phase 27 active-queue language remains in the active-state docs\n\n## out-of-scope\n- local automation card changes\n- simulation, report, or artifact contract changes\n- send-decision UI changes\n\n## minimal test\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md\n- ./make.ps1 test\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nYes. This work changes the active operational GitHub queue truth surface.\n\n## phase\nPhase 28"
+    },
+    {
+      "title": "Phase 28: add destination-specific delivery script from sender note, recommendation, and receiver cue",
+      "milestone": "Phase 28 - Send Decision and Delivery Checklist",
+      "labels": [
+        "phase:28",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a destination-specific delivery script that combines the sender note, packet recommendation, and receiver cue so the operator can copy a final outgoing handoff message without changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current sender note, final send summary, packet recommendation, and receiver guidance surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only delivery script derived from the current destination, recommendation, sender note, and receiver posture\n- no backend API calls and no new artifact files\n- copyable final delivery script cues that stay aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or delivery-governance contracts\n- storing delivery-script history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the delivery script updates with destination, route, receiver, and packet recommendation\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 28"
+    },
+    {
+      "title": "Phase 28: add final send checklist from packet recommendation, summary, and readiness cues",
+      "milestone": "Phase 28 - Send Decision and Delivery Checklist",
+      "labels": [
+        "phase:28",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a final send checklist that combines the packet recommendation, final send summary, and send-readiness cues so the operator can confirm whether to send, hold, or widen the packet without changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current packet recommendation, final send summary, sender note, and send-readiness surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only send checklist derived from the current recommendation, readiness, and route posture\n- no backend API calls and no new artifact files\n- copyable send/hold checklist cues that stay aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or review-state contracts\n- storing send decisions\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the checklist updates with destination, route, receiver, recommendation, and readiness posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 28"
     }
   ]
 }
