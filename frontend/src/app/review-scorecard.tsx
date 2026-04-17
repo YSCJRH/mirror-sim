@@ -1932,6 +1932,7 @@ export function ReviewScorecard({
   const [escalationReceiptPacketCopyState, setEscalationReceiptPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationAcknowledgmentPacketCopyState, setEscalationAcknowledgmentPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationClosurePacketCopyState, setEscalationClosurePacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [escalationFinalizationPacketCopyState, setEscalationFinalizationPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -5392,6 +5393,102 @@ export function ReviewScorecard({
     "## Escalate When",
     `- ${resolutionEscalationRoute.prompt}`
   ].join("\n");
+  const escalationFinalizationTone =
+    escalationClosureTone === "hold"
+      ? "hold"
+      : escalationClosureTone === "followup"
+        ? "followup"
+        : "ready";
+  const escalationFinalizationLabel =
+    escalationFinalizationTone === "hold"
+      ? "Finalize now"
+      : escalationFinalizationTone === "followup"
+        ? "Prepare finalization"
+        : "Hold finalization";
+  const escalationFinalizationPacketLead =
+    selectedDestination === "pr-comment"
+      ? "Use this packet when you want one GitHub-facing escalation finalization surface that says what the downstream receiver should finalize and how the end state should be confirmed."
+      : selectedDestination === "closeout"
+        ? "Use this packet when the closeout flow needs a compact escalation finalization summary that keeps the final completion cue and destination guidance visible together."
+        : "Use this packet when the next operator needs a finalization-ready escalation handoff that keeps final completion cues, destination guidance, and closure posture visible together.";
+  const escalationFinalizationSummaryLine =
+    escalationFinalizationTone === "hold"
+      ? `Escalation finalization should happen now with ${receiverGuidance.roleLabel.toLowerCase()} because the closure posture already supports explicit completion and archive-ready closeout.`
+      : escalationFinalizationTone === "followup"
+        ? `Escalation finalization should stay prepared for ${receiverGuidance.roleLabel.toLowerCase()} so the downstream receiver can confirm archive-ready completion and the final follow-through step without rebuilding context.`
+        : `Escalation finalization can stay on hold while the current ${routeFilteredResponseKit.filterLabel.toLowerCase()} route remains viable, but the archive-ready path should remain ready.`;
+  const escalationFinalizationPacketCards = [
+    {
+      label: "Finalization state",
+      value: escalationFinalizationLabel,
+      detail: escalationFinalizationSummaryLine
+    },
+    {
+      label: "Closure posture",
+      value: escalationClosureLabel,
+      detail: escalationClosureSummaryLine
+    },
+    {
+      label: "Final completion cue",
+      value: receiverResponseActiveTemplate.label,
+      detail: `Next checkpoint: ${receiverFollowUpNextAction}`
+    },
+    {
+      label: "Destination",
+      value: deliveryDestinations[selectedDestination].label,
+      detail: deliveryDestinations[selectedDestination].summary
+    }
+  ];
+  const escalationFinalizationPacketItems = [
+    {
+      label: "Closure posture stays visible",
+      tone: escalationClosureTone,
+      detail: escalationClosureSummaryLine
+    },
+    {
+      label: "Completion checklist stays visible",
+      tone: receiverGuidance.tone,
+      detail: receiverGuidance.checklist.join(" | ")
+    },
+    {
+      label: "Archive-ready cue stays visible",
+      tone: escalationFinalizationTone,
+      detail: `Primary route step: ${nextStepRoutingPrimaryStep}`
+    }
+  ];
+  const escalationFinalizationPacketMarkdown = [
+    "# Escalation Finalization Packet",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Finalization state: ${escalationFinalizationLabel}`,
+    `- Closure state: ${escalationClosureLabel}`,
+    `- Escalation route: ${resolutionEscalationRoute.label}`,
+    "",
+    "## Finalization Summary",
+    `- ${escalationFinalizationSummaryLine}`,
+    `- Closure posture: ${escalationClosureSummaryLine}`,
+    `- Acknowledgment posture: ${escalationAcknowledgmentSummaryLine}`,
+    "",
+    "## Final Completion Cues",
+    ...receiverGuidance.checklist.map((item) => `- ${item}`),
+    `- Reply prompt: ${receiverGuidance.replyPrompt}`,
+    `- Primary route step: ${nextStepRoutingPrimaryStep}`,
+    `- Next checkpoint: ${receiverFollowUpNextAction}`,
+    "",
+    "## Destination Guidance",
+    `- ${deliveryDestinations[selectedDestination].summary}`,
+    `- Current route summary: ${nextStepRoutingSummaryLine}`,
+    `- Dispatch posture: ${escalationDispatchSummaryLine}`,
+    "",
+    "## Carry Forward",
+    `- Escalation closure packet: ${escalationClosurePacketLead}`,
+    `- Receiver guidance: ${receiverGuidance.summary}`,
+    `- Destination guidance: ${deliveryDestinations[selectedDestination].summary}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
     : (shortcutAlternatives[0] ?? recommendedExport.exportId);
@@ -8718,6 +8815,67 @@ export function ReviewScorecard({
                       : escalationClosurePacketCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the closure-packet preview."
                         : "Use this packet when you want one closure-ready escalation surface that keeps completion cues, destination guidance, and acknowledgment posture visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Escalation finalization packet</strong>
+                      <p className="scoreHint">{escalationFinalizationPacketLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${escalationFinalizationTone}`}>{escalationFinalizationLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(escalationFinalizationPacketMarkdown);
+                            setEscalationFinalizationPacketCopyState("copied");
+                          } catch {
+                            setEscalationFinalizationPacketCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy finalization packet
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${escalationFinalizationTone}`}>{escalationFinalizationLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {escalationFinalizationPacketCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {escalationFinalizationPacketItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{escalationFinalizationPacketMarkdown}</pre>
+                  <p className="scoreHint">
+                    {escalationFinalizationPacketCopyState === "copied"
+                      ? "Escalation finalization packet copied to clipboard."
+                      : escalationFinalizationPacketCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the finalization-packet preview."
+                        : "Use this packet when you want one finalization-ready escalation surface that keeps final completion cues, destination guidance, and closure posture visible together."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
