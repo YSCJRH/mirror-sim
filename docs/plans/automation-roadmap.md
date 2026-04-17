@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, and Phase 29 is now the active delivery-bundle track.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, and Phase 30 is now the active delivery-confirmation track.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -88,9 +88,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 28 is closed locally and in GitHub.
 - Phase 28 exit issue `#193` is closed and milestone `Phase 28 - Send Decision and Delivery Checklist` is closed.
 - The Phase 28 queue was completed through issues `#193-#196` plus branch-hygiene governance issues `#199-#200`.
-- Phase 29 is the active successor queue.
-- milestone `Phase 29 - Delivery Bundle and Follow-up Pack` is open.
-- The Phase 29 queue is initialized through issues `#204-#207`.
+- Phase 29 is closed locally and in GitHub.
+- Phase 29 exit issue `#204` is closed and milestone `Phase 29 - Delivery Bundle and Follow-up Pack` is closed.
+- The Phase 29 queue was completed through issues `#204-#207`.
+- Phase 30 is the active successor queue.
+- milestone `Phase 30 - Delivery Confirmation and Receiver Response` is open.
+- The Phase 30 queue is initialized through issues `#211-#214`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
 - The local Codex queue heartbeat remains active as `mirror-queue-heartbeat`.

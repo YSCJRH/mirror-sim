@@ -115,6 +115,10 @@
     {
       "title": "Phase 29 - Delivery Bundle and Follow-up Pack",
       "description": "Turn the current send script, summary, and checklist surfaces into a fuller delivery bundle and receiver follow-up pack without changing core simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 30 - Delivery Confirmation and Receiver Response",
+      "description": "Turn the current delivery bundle and follow-up surfaces into a usable post-send checkpoint and receiver-response workflow without changing simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -262,6 +266,11 @@
       "name": "phase:29",
       "color": "5B6F8C",
       "description": "Phase 29 delivery bundle and follow-up pack work."
+    },
+    {
+      "name": "phase:30",
+      "color": "6C7B91",
+      "description": "Phase 30 delivery confirmation and receiver response work."
     },
     {
       "name": "area:backend",
@@ -1572,6 +1581,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a receiver follow-up pack that combines the current route cue, receiver ask, and send decision so the operator can copy a post-send follow-up note without changing artifact contracts.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current receiver guidance, route kit, delivery script, and final send checklist surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only follow-up pack derived from the current route, receiver posture, and send decision\n- no backend API calls and no new artifact files\n- copyable follow-up cues that stay aligned with the current preset workflow\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing follow-up history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the follow-up pack updates with destination, route, receiver, and send decision posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 29"
+    },
+    {
+      "title": "Phase 30 exit gate",
+      "milestone": "Phase 30 - Delivery Confirmation and Receiver Response",
+      "labels": [
+        "phase:30",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nClose Phase 30 only after the queue-sync issue and both receiver-response workflow issues land on main.\n\n## completion standard\n- the Phase 30 queue is fully synced in repo truth\n- the delivery checkpoint board and receiver response packet are merged\n- smoke/test/eval-demo and audit-phase phase1/phase2/phase3 pass\n- audit-github-queue returns ready with a successor queue already opened\n\n## phase\nPhase 30"
+    },
+    {
+      "title": "Phase 30: sync bootstrap spec and docs to the active delivery-confirmation queue",
+      "milestone": "Phase 30 - Delivery Confirmation and Receiver Response",
+      "labels": [
+        "phase:30",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repo source of truth to the active Phase 30 delivery-confirmation queue so docs, bootstrap metadata, and queue fixtures stop referring to Phase 29 as the active milestone.\n\n## input\n- current README.md\n- current docs/plans/automation-roadmap.md\n- current docs/plans/current-state-baseline.md\n- current docs/plans/phase-execution-queue.md\n- current .github/automation/bootstrap-spec.json\n- current queue-related tests under backend/tests/**\n\n## output\n- Phase 30 becomes the documented active queue across README, plans, bootstrap spec, and queue fixtures\n- Phase 29 is recorded as closed once its exit gate is completed\n- bootstrap metadata includes the Phase 30 milestone, label, and issues created on GitHub\n\n## out-of-scope\n- simulation/report/artifact/schema changes\n- new frontend workflow features beyond queue sync\n- deleting or reopening historical milestones\n\n## minimal test\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md\n- ./make.ps1 test\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nNo. Repo governance only.\n\n## phase\nPhase 30"
+    },
+    {
+      "title": "Phase 30: add delivery checkpoint board from send decision, bundle mode, and follow-up posture",
+      "milestone": "Phase 30 - Delivery Confirmation and Receiver Response",
+      "labels": [
+        "phase:30",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a delivery checkpoint board that turns the current send decision, bundle mode, and receiver follow-up posture into one operator-readable post-send checkpoint surface.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current final send summary, delivery bundle, and receiver follow-up pack surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only checkpoint board derived from the current destination, route cue, bundle mode, send posture, and follow-up posture\n- copyable checkpoint text that can be used to confirm what was sent and what reply posture is expected next\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing checkpoint history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the checkpoint board updates with destination, route, bundle mode, and send/follow-up posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 30"
+    },
+    {
+      "title": "Phase 30: add receiver response packet from follow-up pack, route template, and reply cues",
+      "milestone": "Phase 30 - Delivery Confirmation and Receiver Response",
+      "labels": [
+        "phase:30",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a receiver response packet that combines the current follow-up pack, active route template, and reply cues so the operator can hand over the next receiver-facing response without rebuilding it by hand.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current receiver follow-up pack, grouped response pack, route-filtered response kit, and receiver guidance surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only receiver response packet derived from the current route cue, receiver role, and follow-up posture\n- copyable acknowledge / request-more-context / escalate context that stays aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing receiver-response history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the response packet updates with route, receiver role, and follow-up posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 30"
     }
   ]
 }
