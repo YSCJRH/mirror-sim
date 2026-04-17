@@ -1923,6 +1923,7 @@ export function ReviewScorecard({
   const [executionRecoveryCheckpointBoardCopyState, setExecutionRecoveryCheckpointBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionRecoveryClearanceBoardCopyState, setExecutionRecoveryClearanceBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionRecoveryReleaseBoardCopyState, setExecutionRecoveryReleaseBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [executionRecoveryCompletionBoardCopyState, setExecutionRecoveryCompletionBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDecisionGuideCopyState, setEscalationDecisionGuideCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationTriggerPacketCopyState, setEscalationTriggerPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDispatchPacketCopyState, setEscalationDispatchPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
@@ -4443,6 +4444,98 @@ export function ReviewScorecard({
     "## Keep Nearby",
     `- Execution recovery clearance board: ${executionRecoveryClearanceBoardLead}`,
     `- Execution recovery checkpoint board: ${executionRecoveryCheckpointBoardLead}`,
+    `- Next-step routing pack: ${nextStepRoutingPackLead}`
+  ].join("\n");
+  const executionRecoveryCompletionTone =
+    executionRecoveryReleaseTone === "hold"
+      ? "hold"
+      : executionRecoveryReleaseTone === "followup"
+        ? "followup"
+        : "ready";
+  const executionRecoveryCompletionLabel =
+    executionRecoveryCompletionTone === "hold"
+      ? "Hold completion"
+      : executionRecoveryCompletionTone === "followup"
+        ? "Prepare completion"
+        : "Complete route";
+  const executionRecoveryCompletionBoardLead =
+    selectedDestination === "pr-comment"
+      ? "Use this board when you want one GitHub-facing recovery completion surface that makes the completion posture, completion cue, and first post-completion check explicit."
+      : selectedDestination === "closeout"
+        ? "Use this board when the closeout flow needs a compact completion read on the completion cue and first post-completion check."
+        : "Use this board when the next operator needs one completion-ready recovery surface that keeps the completion posture, completion cue, and first post-completion check visible together.";
+  const executionRecoveryCompletionSummaryLine =
+    executionRecoveryCompletionTone === "hold"
+      ? "Recovery completion should stay blocked because the completion cue is not yet strong enough to declare the route fully complete."
+      : executionRecoveryCompletionTone === "followup"
+        ? "Recovery completion should stay prepared because the route is nearly complete, but the first post-completion check still needs explicit review."
+        : "Recovery completion is ready because the route is complete enough to move into the immediate post-completion check with the current cue set.";
+  const executionRecoveryCompletionBoardCards = [
+    {
+      label: "Completion state",
+      value: executionRecoveryCompletionLabel,
+      detail: executionRecoveryCompletionSummaryLine
+    },
+    {
+      label: "Release posture",
+      value: executionRecoveryReleaseLabel,
+      detail: executionRecoveryReleaseSummaryLine
+    },
+    {
+      label: "Completion cue",
+      value: routeFilteredResponseKit.filterLabel,
+      detail: nextStepRoutingSummaryLine
+    },
+    {
+      label: "First post-completion check",
+      value: receiverResponseActiveTemplate.label,
+      detail: `Next checkpoint: ${receiverFollowUpNextAction}`
+    }
+  ];
+  const executionRecoveryCompletionBoardItems = [
+    {
+      label: "Release posture stays visible",
+      tone: executionRecoveryReleaseTone,
+      detail: executionRecoveryReleaseSummaryLine
+    },
+    {
+      label: "Completion cue stays visible",
+      tone: executionRecoveryCompletionTone,
+      detail: `Primary route step: ${nextStepRoutingPrimaryStep}`
+    },
+    {
+      label: "Immediate post-completion check stays visible",
+      tone: executionRecoveryCheckpointTone,
+      detail: `Next checkpoint: ${receiverFollowUpNextAction}`
+    }
+  ];
+  const executionRecoveryCompletionBoardMarkdown = [
+    "# Execution Recovery Completion Board",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Completion state: ${executionRecoveryCompletionLabel}`,
+    `- Release state: ${executionRecoveryReleaseLabel}`,
+    "",
+    "## Completion Summary",
+    `- ${executionRecoveryCompletionSummaryLine}`,
+    `- Release posture: ${executionRecoveryReleaseSummaryLine}`,
+    `- Route cue: ${nextStepRoutingSummaryLine}`,
+    "",
+    "## Completion Cues",
+    `- Primary route step: ${nextStepRoutingPrimaryStep}`,
+    `- Completion cue: ${routeFilteredResponseKit.filterLabel}`,
+    `- Recovery posture: ${executionRecoverySummaryLine}`,
+    "",
+    "## Immediate Post-Completion Check",
+    `- Next checkpoint: ${receiverFollowUpNextAction}`,
+    `- Active response route: ${receiverResponseActiveTemplate.prompt}`,
+    `- Escalate when: ${resolutionEscalationRoute.prompt}`,
+    "",
+    "## Keep Nearby",
+    `- Execution recovery release board: ${executionRecoveryReleaseBoardLead}`,
+    `- Execution recovery clearance board: ${executionRecoveryClearanceBoardLead}`,
     `- Next-step routing pack: ${nextStepRoutingPackLead}`
   ].join("\n");
   const escalationHandoffPacketLead =
@@ -8015,6 +8108,67 @@ export function ReviewScorecard({
                       : executionRecoveryReleaseBoardCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the release-board preview."
                         : "Use this board when you want one release-ready recovery surface that keeps the release posture, final cue, and first post-release check visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Execution recovery completion board</strong>
+                      <p className="scoreHint">{executionRecoveryCompletionBoardLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${executionRecoveryCompletionTone}`}>{executionRecoveryCompletionLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(executionRecoveryCompletionBoardMarkdown);
+                            setExecutionRecoveryCompletionBoardCopyState("copied");
+                          } catch {
+                            setExecutionRecoveryCompletionBoardCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy completion board
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${executionRecoveryCompletionTone}`}>{executionRecoveryCompletionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {executionRecoveryCompletionBoardCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {executionRecoveryCompletionBoardItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{executionRecoveryCompletionBoardMarkdown}</pre>
+                  <p className="scoreHint">
+                    {executionRecoveryCompletionBoardCopyState === "copied"
+                      ? "Execution recovery completion board copied to clipboard."
+                      : executionRecoveryCompletionBoardCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the completion-board preview."
+                        : "Use this board when you want one completion-ready recovery surface that keeps the completion posture, completion cue, and first post-completion check visible together."}
                   </p>
                 </div>
                 <div className="shortcutStrip">
