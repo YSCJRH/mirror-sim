@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 27 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 28 queue resumption.
 
 ## Current Gate State
 
@@ -30,7 +30,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 24 exit gate: closed
 - Phase 25 exit gate: closed
 - Phase 26 exit gate: closed
-- Phase 27 exit gate: open
+- Phase 27 exit gate: closed
+- Phase 28 exit gate: open
 
 Local phase audits currently report:
 
@@ -155,16 +156,33 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 26 - Packet Delivery Prep and Sender Notes`
   - closed
+- Phase 27 queue sync
+  - merged via PR `#190`
+- Phase 27 final send summary
+  - merged via PR `#191`
+- Phase 27 packet recommendation
+  - merged via PR `#192`
+- Phase 27 exit issue `#186`
+  - closed
+- milestone `Phase 27 - Sendoff Summary and Packet Recommendation`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 27 queue bootstrap
+  - no open pull requests remain after the Phase 28 queue bootstrap
 
 ## Current Queue
 
-- milestone `Phase 27 - Sendoff Summary and Packet Recommendation` is open.
-- `#186` `Phase 27 exit gate`
+- milestone `Phase 28 - Send Decision and Delivery Checklist` is open.
+- `#193` `Phase 28 exit gate`
   - open
-- blocked until the Phase 27 sendoff-summary slice is complete
-- The current Phase 27 execution slice is tracked through:
+- blocked until the Phase 28 send-decision and branch-hygiene slice is complete
+- The current Phase 28 execution slice is tracked through:
+  - `#194` `Phase 28: sync bootstrap spec and docs to the active send-decision queue`
+  - `#199` `Phase 28: classify superseded remote codex branches against live GitHub state`
+  - `#196` `Phase 28: add final send checklist from packet recommendation, summary, and readiness cues`
+  - `#195` `Phase 28: add destination-specific delivery script from sender note, recommendation, and receiver cue`
+  - `#200` `Phase 28: apply reviewed codex branch cleanup and sync branch-hygiene docs`
+    - blocked until the classification baseline is complete and reviewed
+- The completed Phase 27 slice was tracked through:
   - `#188` `Phase 27: sync bootstrap spec and docs to the active sendoff-summary queue`
   - `#187` `Phase 27: add final send summary card from sender note, packet variant, and route cues`
   - `#189` `Phase 27: add destination-aware packet recommendation banner with fallback rationale`
@@ -273,8 +291,10 @@ Local phase audits currently report:
 
 ## Historical Branch Status
 
-- No remote `origin/codex/*` branches remain after the Phase 6 branch-hygiene closeout.
-- Treat any future recreated `codex/*` remote branch as temporary execution state, not as a standing backlog.
+- Remote `origin/codex/*` branches have been reduced to the current open PR head and reviewed exception set, not fully eliminated.
+- The current reviewed baseline is recorded in `docs/plans/codex-branch-classification-baseline.md`.
+- Remaining live remote branches are `origin/codex/phase28-send-checklist` (active open PR) and `origin/codex/phase23-session-summary` (`TODO[verify]`).
+- Treat any future recreated or still-live `codex/*` remote branch as temporary execution state, not as a standing backlog.
 - Delete a historical branch when it is tied only to closed or merged work and no open issue, PR, or runbook step references it.
 - Keep a historical branch only when an open issue or unresolved forensic comparison explicitly depends on it.
 - Revive a historical branch only through a new issue that names the branch and explains why `main` is insufficient.
