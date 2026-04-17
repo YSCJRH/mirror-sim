@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the current Phase 29 active-queue baseline.
+This note is the current Phase 30 active-queue baseline.
 
 ## Snapshot
 
@@ -120,11 +120,15 @@ This note is the current Phase 29 active-queue baseline.
   - `gh api repos/YSCJRH/mirror-sim/issues/193`
     - Phase 28 exit issue is `closed`
   - `gh api repos/YSCJRH/mirror-sim/milestones/29`
-    - milestone `Phase 29 - Delivery Bundle and Follow-up Pack` is `open`
-  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=29"`
-    - Phase 29 queue is initialized through issues `#204-#207`
+    - milestone `Phase 29 - Delivery Bundle and Follow-up Pack` is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/issues/204`
+    - Phase 29 exit issue is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/milestones/30`
+    - milestone `Phase 30 - Delivery Confirmation and Receiver Response` is `open`
+  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=30"`
+    - Phase 30 queue is initialized through issues `#211-#214`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - successor queue currently reports `ready` because Phase 29 has one blocked protected-core exit gate and multiple ready work items
+    - successor queue currently reports `ready` because Phase 30 has one blocked protected-core exit gate and multiple ready work items
 
 ## Trusted Source Of Truth
 
@@ -134,7 +138,7 @@ This note is the current Phase 29 active-queue baseline.
 - `backlog/sprint-01.md` is historical seed material only and should not be used as the live queue.
 - Remote `origin/codex/*` branches should now be limited to active open-PR work and reviewed exceptions, not used as a standing backlog.
 - The current reviewed branch-hygiene baseline lives in `docs/plans/codex-branch-classification-baseline.md`.
-- Current live remote exceptions are `origin/codex/phase28-send-checklist` (open PR) and `origin/codex/phase23-session-summary` (`TODO[verify]`).
+- Current live remote exception is `origin/codex/phase23-session-summary` (`TODO[verify]`).
 - Delete a historical remote branch once it is tied only to merged or closed work and no open issue, PR, or runbook step still references it.
 - Keep a historical remote branch only when an open issue or unresolved forensic comparison explicitly names it.
 - Revive a historical remote branch only by opening a new issue that states why `main` is insufficient.
@@ -143,13 +147,13 @@ This note is the current Phase 29 active-queue baseline.
 
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
-- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, decision-template snippets, role preset cards, response-packaging shortcuts, apply-and-copy preset actions, grouped response-pack export, active preset session summary strips, route-filtered response kit choosers, route-kit comparison cards, preset session handoff packets, send-readiness cue strips, compact-versus-full handoff packet variants, destination-specific sender notes, compact-versus-full handoff packet diff previews, final send summary cards, and destination-aware packet recommendation banners without introducing backend API expansion.
-- The current repository state is in an active Phase 29 successor queue, not a closed Phase 28 baseline.
+- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, decision-template snippets, role preset cards, response-packaging shortcuts, apply-and-copy preset actions, grouped response-pack export, active preset session summary strips, route-filtered response kit choosers, route-kit comparison cards, preset session handoff packets, send-readiness cue strips, compact-versus-full handoff packet variants, destination-specific sender notes, compact-versus-full handoff packet diff previews, final send summary cards, destination-aware packet recommendation banners, delivery-bundle exports, and receiver follow-up packs without introducing backend API expansion.
+- The current repository state is in an active Phase 30 successor queue, not a closed Phase 29 baseline.
 
 ## Next Entry Point
 
-- Phase 29 is the active milestone and the current delivery-bundle slice is tracked by issues `#204-#207`.
-- New implementation work should attach to the existing Phase 29 queue until its exit gate is closed, instead of opening a parallel successor milestone.
+- Phase 30 is the active milestone and the current delivery-confirmation slice is tracked by issues `#211-#214`.
+- New implementation work should attach to the existing Phase 30 queue until its exit gate is closed, instead of opening a parallel successor milestone.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
 - The local queue heartbeat remains active as `mirror-queue-heartbeat` and should continue reporting the paused/ready state of the live queue.

@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 29 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 30 queue resumption.
 
 ## Current Gate State
 
@@ -32,7 +32,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 26 exit gate: closed
 - Phase 27 exit gate: closed
 - Phase 28 exit gate: closed
-- Phase 29 exit gate: open
+- Phase 29 exit gate: closed
+- Phase 30 exit gate: open
 
 Local phase audits currently report:
 
@@ -181,16 +182,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 28 - Send Decision and Delivery Checklist`
   - closed
+- Phase 29 queue sync
+  - merged via PR `#208`
+- Phase 29 delivery bundle export
+  - merged via PR `#209`
+- Phase 29 receiver follow-up pack
+  - merged via PR `#210`
+- Phase 29 exit issue `#204`
+  - closed
+- milestone `Phase 29 - Delivery Bundle and Follow-up Pack`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 29 queue bootstrap
+  - no open pull requests remain after the Phase 29 closeout
 
 ## Current Queue
 
-- milestone `Phase 29 - Delivery Bundle and Follow-up Pack` is open.
-- `#204` `Phase 29 exit gate`
+- milestone `Phase 30 - Delivery Confirmation and Receiver Response` is open.
+- `#211` `Phase 30 exit gate`
   - open
-- blocked until the Phase 29 delivery-bundle and follow-up slice is complete
-- The current Phase 29 execution slice is tracked through:
+- blocked until the Phase 30 delivery-confirmation and receiver-response slice is complete
+- The current Phase 30 execution slice is tracked through:
+  - `#212` `Phase 30: sync bootstrap spec and docs to the active delivery-confirmation queue`
+  - `#213` `Phase 30: add delivery checkpoint board from send decision, bundle mode, and follow-up posture`
+  - `#214` `Phase 30: add receiver response packet from follow-up pack, route template, and reply cues`
+- The completed Phase 29 slice was tracked through:
   - `#205` `Phase 29: sync bootstrap spec and docs to the active delivery-bundle queue`
   - `#206` `Phase 29: add delivery bundle export from sender note, script, summary, and checklist`
   - `#207` `Phase 29: add receiver follow-up pack from route cue, receiver ask, and send decision`
@@ -311,7 +326,7 @@ Local phase audits currently report:
 
 - Remote `origin/codex/*` branches have been reduced to the current open PR head and reviewed exception set, not fully eliminated.
 - The current reviewed baseline is recorded in `docs/plans/codex-branch-classification-baseline.md`.
-- Remaining live remote branches are `origin/codex/phase28-send-checklist` (active open PR) and `origin/codex/phase23-session-summary` (`TODO[verify]`).
+- Remaining live remote branch is `origin/codex/phase23-session-summary` (`TODO[verify]`).
 - Treat any future recreated or still-live `codex/*` remote branch as temporary execution state, not as a standing backlog.
 - Delete a historical branch when it is tied only to closed or merged work and no open issue, PR, or runbook step references it.
 - Keep a historical branch only when an open issue or unresolved forensic comparison explicitly depends on it.
