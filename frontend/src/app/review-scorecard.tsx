@@ -1920,6 +1920,7 @@ export function ReviewScorecard({
   const [executionOutcomeBoardCopyState, setExecutionOutcomeBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionCorrectionBoardCopyState, setExecutionCorrectionBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionRecoveryBoardCopyState, setExecutionRecoveryBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [executionRecoveryCheckpointBoardCopyState, setExecutionRecoveryCheckpointBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDecisionGuideCopyState, setEscalationDecisionGuideCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationTriggerPacketCopyState, setEscalationTriggerPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDispatchPacketCopyState, setEscalationDispatchPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
@@ -4162,6 +4163,98 @@ export function ReviewScorecard({
     "",
     "## Escalate When",
     `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const executionRecoveryCheckpointTone =
+    executionRecoveryTone === "hold"
+      ? "hold"
+      : executionRecoveryTone === "followup"
+        ? "followup"
+        : "ready";
+  const executionRecoveryCheckpointLabel =
+    executionRecoveryCheckpointTone === "hold"
+      ? "Checkpoint blocked"
+      : executionRecoveryCheckpointTone === "followup"
+        ? "Checkpoint pending"
+        : "Checkpoint ready";
+  const executionRecoveryCheckpointBoardLead =
+    selectedDestination === "pr-comment"
+      ? "Use this board when you want one GitHub-facing checkpoint surface that makes the current recovery posture, blocker review, and immediate next action explicit."
+      : selectedDestination === "closeout"
+        ? "Use this board when the closeout flow needs a compact checkpoint read on recovery posture, blocker review, and the next action."
+        : "Use this board when the next operator needs one checkpoint-ready recovery surface that keeps posture, blockers, and the immediate next action visible together.";
+  const executionRecoveryCheckpointSummaryLine =
+    executionRecoveryCheckpointTone === "hold"
+      ? "The recovery checkpoint stays blocked until the visible blocker is corrected and the next route reset is explicitly confirmed."
+      : executionRecoveryCheckpointTone === "followup"
+        ? "The recovery checkpoint stays pending while the route reset and blocker review remain visible before the handoff can be treated as stable."
+        : "The recovery checkpoint is ready to move forward because the route has stabilized enough to confirm the next action and downstream review.";
+  const executionRecoveryCheckpointBoardCards = [
+    {
+      label: "Checkpoint state",
+      value: executionRecoveryCheckpointLabel,
+      detail: executionRecoveryCheckpointSummaryLine
+    },
+    {
+      label: "Recovery posture",
+      value: executionRecoveryLabel,
+      detail: executionRecoverySummaryLine
+    },
+    {
+      label: "Blocker posture",
+      value: executionCorrectionLabel,
+      detail: `Top blocker cue: ${receiverFollowUpBlockerCue}`
+    },
+    {
+      label: "Current route",
+      value: receiverResponseActiveTemplate.label,
+      detail: `Next checkpoint: ${receiverFollowUpNextAction}`
+    }
+  ];
+  const executionRecoveryCheckpointBoardItems = [
+    {
+      label: "Recovery posture stays visible",
+      tone: executionRecoveryTone,
+      detail: executionRecoverySummaryLine
+    },
+    {
+      label: "Top blocker review stays visible",
+      tone: executionCorrectionTone,
+      detail: receiverFollowUpBlockerCue
+    },
+    {
+      label: "Immediate checkpoint action stays visible",
+      tone: executionRecoveryCheckpointTone,
+      detail: `Primary route step: ${nextStepRoutingPrimaryStep}`
+    }
+  ];
+  const executionRecoveryCheckpointBoardMarkdown = [
+    "# Execution Recovery Checkpoint Board",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Checkpoint state: ${executionRecoveryCheckpointLabel}`,
+    `- Recovery state: ${executionRecoveryLabel}`,
+    "",
+    "## Checkpoint Summary",
+    `- ${executionRecoveryCheckpointSummaryLine}`,
+    `- Recovery posture: ${executionRecoverySummaryLine}`,
+    `- Current route summary: ${nextStepRoutingSummaryLine}`,
+    "",
+    "## Blocker Review",
+    `- Correction posture: ${executionCorrectionSummaryLine}`,
+    `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
+    `- Outcome posture: ${executionOutcomeSummaryLine}`,
+    "",
+    "## Immediate Next Action",
+    `- Next checkpoint: ${receiverFollowUpNextAction}`,
+    `- Primary route step: ${nextStepRoutingPrimaryStep}`,
+    `- Escalate when: ${resolutionEscalationRoute.prompt}`,
+    "",
+    "## Keep Nearby",
+    `- Execution recovery board: ${executionRecoveryBoardLead}`,
+    `- Delivery checkpoint board: ${deliveryCheckpointLead}`,
+    `- Next-step routing pack: ${nextStepRoutingPackLead}`
   ].join("\n");
   const escalationHandoffPacketLead =
     selectedDestination === "pr-comment"
@@ -7263,6 +7356,67 @@ export function ReviewScorecard({
                       : executionRecoveryBoardCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the recovery-board preview."
                         : "Use this board when you want one recovery surface that keeps correction posture, outcome state, and route reset cues visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Execution recovery checkpoint board</strong>
+                      <p className="scoreHint">{executionRecoveryCheckpointBoardLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${executionRecoveryCheckpointTone}`}>{executionRecoveryCheckpointLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(executionRecoveryCheckpointBoardMarkdown);
+                            setExecutionRecoveryCheckpointBoardCopyState("copied");
+                          } catch {
+                            setExecutionRecoveryCheckpointBoardCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy recovery checkpoint
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${executionRecoveryCheckpointTone}`}>{executionRecoveryCheckpointLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {executionRecoveryCheckpointBoardCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {executionRecoveryCheckpointBoardItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{executionRecoveryCheckpointBoardMarkdown}</pre>
+                  <p className="scoreHint">
+                    {executionRecoveryCheckpointBoardCopyState === "copied"
+                      ? "Execution recovery checkpoint board copied to clipboard."
+                      : executionRecoveryCheckpointBoardCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the recovery-checkpoint preview."
+                        : "Use this board when you want one checkpoint-ready recovery surface that keeps posture, blockers, and the immediate next action visible together."}
                   </p>
                 </div>
                 <div className="shortcutStrip">
