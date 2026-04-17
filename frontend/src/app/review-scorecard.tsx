@@ -1921,6 +1921,7 @@ export function ReviewScorecard({
   const [executionCorrectionBoardCopyState, setExecutionCorrectionBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionRecoveryBoardCopyState, setExecutionRecoveryBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionRecoveryCheckpointBoardCopyState, setExecutionRecoveryCheckpointBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [executionRecoveryClearanceBoardCopyState, setExecutionRecoveryClearanceBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDecisionGuideCopyState, setEscalationDecisionGuideCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationTriggerPacketCopyState, setEscalationTriggerPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDispatchPacketCopyState, setEscalationDispatchPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
@@ -4255,6 +4256,98 @@ export function ReviewScorecard({
     "## Keep Nearby",
     `- Execution recovery board: ${executionRecoveryBoardLead}`,
     `- Delivery checkpoint board: ${deliveryCheckpointLead}`,
+    `- Next-step routing pack: ${nextStepRoutingPackLead}`
+  ].join("\n");
+  const executionRecoveryClearanceTone =
+    executionRecoveryCheckpointTone === "hold"
+      ? "hold"
+      : executionRecoveryCheckpointTone === "followup"
+        ? "followup"
+        : "ready";
+  const executionRecoveryClearanceLabel =
+    executionRecoveryClearanceTone === "hold"
+      ? "Hold clearance"
+      : executionRecoveryClearanceTone === "followup"
+        ? "Prepare clearance"
+        : "Clear route";
+  const executionRecoveryClearanceBoardLead =
+    selectedDestination === "pr-comment"
+      ? "Use this board when you want one GitHub-facing recovery clearance surface that makes the current checkpoint, remaining blocker, and final release cue explicit."
+      : selectedDestination === "closeout"
+        ? "Use this board when the closeout flow needs a compact clearance read on the current checkpoint, remaining blocker, and release cue."
+        : "Use this board when the next operator needs one clearance-ready recovery surface that keeps checkpoint posture, blocker review, and release cues visible together.";
+  const executionRecoveryClearanceSummaryLine =
+    executionRecoveryClearanceTone === "hold"
+      ? "Recovery clearance should stay blocked because the remaining blocker still needs visible correction before the route can be released."
+      : executionRecoveryClearanceTone === "followup"
+        ? "Recovery clearance should stay prepared because the route is stabilizing, but the final release cue still needs explicit review."
+        : "Recovery clearance is ready because the checkpoint posture is stable enough to release the route with the current cue set.";
+  const executionRecoveryClearanceBoardCards = [
+    {
+      label: "Clearance state",
+      value: executionRecoveryClearanceLabel,
+      detail: executionRecoveryClearanceSummaryLine
+    },
+    {
+      label: "Checkpoint posture",
+      value: executionRecoveryCheckpointLabel,
+      detail: executionRecoveryCheckpointSummaryLine
+    },
+    {
+      label: "Remaining blocker",
+      value: executionCorrectionLabel,
+      detail: receiverFollowUpBlockerCue
+    },
+    {
+      label: "Release cue",
+      value: routeFilteredResponseKit.filterLabel,
+      detail: `Primary route step: ${nextStepRoutingPrimaryStep}`
+    }
+  ];
+  const executionRecoveryClearanceBoardItems = [
+    {
+      label: "Checkpoint posture stays visible",
+      tone: executionRecoveryCheckpointTone,
+      detail: executionRecoveryCheckpointSummaryLine
+    },
+    {
+      label: "Remaining blocker stays visible",
+      tone: executionCorrectionTone,
+      detail: receiverFollowUpBlockerCue
+    },
+    {
+      label: "Final release cue stays visible",
+      tone: executionRecoveryClearanceTone,
+      detail: `Route cue: ${nextStepRoutingSummaryLine}`
+    }
+  ];
+  const executionRecoveryClearanceBoardMarkdown = [
+    "# Execution Recovery Clearance Board",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Clearance state: ${executionRecoveryClearanceLabel}`,
+    `- Checkpoint state: ${executionRecoveryCheckpointLabel}`,
+    "",
+    "## Clearance Summary",
+    `- ${executionRecoveryClearanceSummaryLine}`,
+    `- Checkpoint posture: ${executionRecoveryCheckpointSummaryLine}`,
+    `- Recovery posture: ${executionRecoverySummaryLine}`,
+    "",
+    "## Remaining Blockers",
+    `- Remaining blocker: ${receiverFollowUpBlockerCue}`,
+    `- Correction posture: ${executionCorrectionSummaryLine}`,
+    `- Outcome posture: ${executionOutcomeSummaryLine}`,
+    "",
+    "## Final Release Cues",
+    `- Route cue: ${nextStepRoutingSummaryLine}`,
+    `- Primary route step: ${nextStepRoutingPrimaryStep}`,
+    `- Next checkpoint after clearance: ${receiverFollowUpNextAction}`,
+    "",
+    "## Keep Nearby",
+    `- Execution recovery checkpoint board: ${executionRecoveryCheckpointBoardLead}`,
+    `- Execution recovery board: ${executionRecoveryBoardLead}`,
     `- Next-step routing pack: ${nextStepRoutingPackLead}`
   ].join("\n");
   const escalationHandoffPacketLead =
@@ -7513,6 +7606,67 @@ export function ReviewScorecard({
                       : executionRecoveryCheckpointBoardCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the recovery-checkpoint preview."
                         : "Use this board when you want one checkpoint-ready recovery surface that keeps posture, blockers, and the immediate next action visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Execution recovery clearance board</strong>
+                      <p className="scoreHint">{executionRecoveryClearanceBoardLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${executionRecoveryClearanceTone}`}>{executionRecoveryClearanceLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(executionRecoveryClearanceBoardMarkdown);
+                            setExecutionRecoveryClearanceBoardCopyState("copied");
+                          } catch {
+                            setExecutionRecoveryClearanceBoardCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy clearance board
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${executionRecoveryClearanceTone}`}>{executionRecoveryClearanceLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {executionRecoveryClearanceBoardCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {executionRecoveryClearanceBoardItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{executionRecoveryClearanceBoardMarkdown}</pre>
+                  <p className="scoreHint">
+                    {executionRecoveryClearanceBoardCopyState === "copied"
+                      ? "Execution recovery clearance board copied to clipboard."
+                      : executionRecoveryClearanceBoardCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the clearance-board preview."
+                        : "Use this board when you want one clearance-ready recovery surface that keeps checkpoint posture, blocker review, and release cues visible together."}
                   </p>
                 </div>
                 <div className="shortcutStrip">
