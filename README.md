@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-21 gates, and resumed the successor queue as `Phase 22 - Preset Workflow and Packed Responses`.
+The repository has completed Day 0 bootstrap, closed the Phase 1-22 gates, and resumed the successor queue as `Phase 23 - Preset Sessions and Response Kits`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -42,8 +42,10 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-21 gates, and r
   - milestone `Phase 19 - Receiver Roles and Follow-Through Routing` is closed
   - milestone `Phase 20 - Role-Specific Bundle Layout and Decision Templates` is closed
   - milestone `Phase 21 - Role Presets and Response Packaging` is closed
-  - milestone `Phase 22 - Preset Workflow and Packed Responses` is open
-  - Phase 22 queue is initialized through issues `#151-#154`
+  - milestone `Phase 22 - Preset Workflow and Packed Responses` is closed
+  - Phase 22 queue was completed through issues `#151-#154`
+  - milestone `Phase 23 - Preset Sessions and Response Kits` is open
+  - Phase 23 queue is initialized through issues `#158-#161`
 
 Local phase audits currently show:
 
@@ -98,7 +100,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): review workbench with Phase 21 preset-action and response-shortcut surfaces landed and the current Phase 22 preset-workflow queue still consuming the same artifact surface
+- [frontend](/D:/mirror/frontend): review workbench with Phase 22 apply-and-copy preset and grouped response-pack surfaces landed while the current Phase 23 preset-session queue continues to consume the same artifact surface
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -143,10 +145,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 21 closeout are complete. Phase 22 is now the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 22 closeout are complete. Phase 23 is now the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may resume pickup guidance only against the Phase 22 queue and must stop again if `audit-github-queue` leaves `ready`.
+- The local heartbeat automation may resume pickup guidance only against the Phase 23 queue and must stop again if `audit-github-queue` leaves `ready`.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals

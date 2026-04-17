@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 22 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 23 queue resumption.
 
 ## Current Gate State
 
@@ -25,7 +25,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 19 exit gate: closed
 - Phase 20 exit gate: closed
 - Phase 21 exit gate: closed
-- Phase 22 exit gate: open
+- Phase 22 exit gate: closed
+- Phase 23 exit gate: open
 
 Local phase audits currently report:
 
@@ -100,16 +101,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 15 - Override Rationale and Delivery Confidence`
   - closed
+- Phase 22 queue sync
+  - merged via PR `#155`
+- Phase 22 apply-and-copy preset actions
+  - merged via PR `#156`
+- Phase 22 grouped response-pack export
+  - merged via PR `#157`
+- Phase 22 exit issue `#151`
+  - closed
+- milestone `Phase 22 - Preset Workflow and Packed Responses`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 22 queue kickoff
+  - no open pull requests remain after the Phase 23 queue bootstrap
 
 ## Current Queue
 
-- milestone `Phase 22 - Preset Workflow and Packed Responses` is open.
-- `#151` `Phase 22 exit gate`
+- milestone `Phase 23 - Preset Sessions and Response Kits` is open.
+- `#158` `Phase 23 exit gate`
   - open
-- blocked until the Phase 22 preset workflow and packed response slice is complete
-- The current Phase 22 execution slice is tracked through:
+- blocked until the Phase 23 preset sessions and response kit slice is complete
+- The current Phase 23 execution slice is tracked through:
+  - `#159` `Phase 23: sync bootstrap spec and docs to the active preset-session queue`
+  - `#160` `Phase 23: add active preset session summary strip for current bundle posture`
+  - `#161` `Phase 23: add route-filtered response kit chooser for grouped template packs`
+- The completed Phase 22 slice was tracked through:
   - `#152` `Phase 22: sync bootstrap spec and docs to the active preset-workflow queue`
   - `#153` `Phase 22: add apply-and-copy preset actions for reviewer, approver, and operator modes`
   - `#154` `Phase 22: add grouped response-pack export for acknowledge, request-more-context, and escalate templates`
