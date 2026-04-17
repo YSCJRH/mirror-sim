@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-25 gates, and resumed the successor queue as `Phase 26 - Packet Delivery Prep and Sender Notes`.
+The repository has completed Day 0 bootstrap, closed the Phase 1-26 gates, and resumed the successor queue as `Phase 27 - Sendoff Summary and Packet Recommendation`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -50,8 +50,10 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-25 gates, and r
   - Phase 24 queue was completed through issues `#165-#168`
   - milestone `Phase 25 - Handoff Delivery and Packet Variants` is closed
   - Phase 25 queue was completed through issues `#172-#175`
-  - milestone `Phase 26 - Packet Delivery Prep and Sender Notes` is open
-  - Phase 26 queue is initialized through issues `#179-#182`
+  - milestone `Phase 26 - Packet Delivery Prep and Sender Notes` is closed
+  - Phase 26 queue was completed through issues `#179-#182`
+  - milestone `Phase 27 - Sendoff Summary and Packet Recommendation` is open
+  - Phase 27 queue is initialized through issues `#186-#189`
 
 Local phase audits currently show:
 
@@ -106,7 +108,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): review workbench with Phase 25 send-readiness and handoff-packet variant surfaces landed while the current Phase 26 delivery-prep queue continues to consume the same artifact surface
+- [frontend](/D:/mirror/frontend): review workbench with Phase 26 sender-note and handoff-packet diff surfaces landed while the current Phase 27 sendoff-summary queue continues to consume the same artifact surface
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -151,10 +153,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 25 closeout are complete. Phase 26 is now the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 26 closeout are complete. Phase 27 is now the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may resume pickup guidance only against the Phase 26 queue and must stop again if `audit-github-queue` leaves `ready`.
+- The local heartbeat automation may resume pickup guidance only against the Phase 27 queue and must stop again if `audit-github-queue` leaves `ready`.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals

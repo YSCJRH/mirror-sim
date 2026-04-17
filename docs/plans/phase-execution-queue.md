@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 26 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 27 queue resumption.
 
 ## Current Gate State
 
@@ -29,7 +29,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 23 exit gate: closed
 - Phase 24 exit gate: closed
 - Phase 25 exit gate: closed
-- Phase 26 exit gate: open
+- Phase 26 exit gate: closed
+- Phase 27 exit gate: open
 
 Local phase audits currently report:
 
@@ -144,16 +145,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 25 - Handoff Delivery and Packet Variants`
   - closed
+- Phase 26 queue sync
+  - merged via PR `#183`
+- Phase 26 sender note
+  - merged via PR `#184`
+- Phase 26 packet diff preview
+  - merged via PR `#185`
+- Phase 26 exit issue `#179`
+  - closed
+- milestone `Phase 26 - Packet Delivery Prep and Sender Notes`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 26 queue bootstrap
+  - no open pull requests remain after the Phase 27 queue bootstrap
 
 ## Current Queue
 
-- milestone `Phase 26 - Packet Delivery Prep and Sender Notes` is open.
-- `#179` `Phase 26 exit gate`
+- milestone `Phase 27 - Sendoff Summary and Packet Recommendation` is open.
+- `#186` `Phase 27 exit gate`
   - open
-- blocked until the Phase 26 packet delivery prep and sender note slice is complete
-- The current Phase 26 execution slice is tracked through:
+- blocked until the Phase 27 sendoff-summary slice is complete
+- The current Phase 27 execution slice is tracked through:
+  - `#188` `Phase 27: sync bootstrap spec and docs to the active sendoff-summary queue`
+  - `#187` `Phase 27: add final send summary card from sender note, packet variant, and route cues`
+  - `#189` `Phase 27: add destination-aware packet recommendation banner with fallback rationale`
+- The completed Phase 26 slice was tracked through:
   - `#180` `Phase 26: sync bootstrap spec and docs to the active delivery-prep queue`
   - `#181` `Phase 26: add destination-specific sender note and subject line for the handoff packet`
   - `#182` `Phase 26: add compact-versus-full handoff packet diff preview and omitted-section cues`
