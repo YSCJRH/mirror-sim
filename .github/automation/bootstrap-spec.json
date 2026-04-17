@@ -155,6 +155,10 @@
     {
       "title": "Phase 39 - Recovery Checkpoint and Escalation Receipt",
       "description": "Turn the current execution-recovery and escalation-confirmation surfaces into a clearer recovery-checkpoint and escalation-receipt workflow without changing simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 40 - Recovery Clearance and Escalation Acknowledgment",
+      "description": "Turn the current recovery-checkpoint and escalation-receipt surfaces into a clearer recovery-clearance and escalation-acknowledgment workflow without changing simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -352,6 +356,11 @@
       "name": "phase:39",
       "color": "DDE5EA",
       "description": "Phase 39 recovery checkpoint and escalation receipt work."
+    },
+    {
+      "name": "phase:40",
+      "color": "E6EDF1",
+      "description": "Phase 40 recovery clearance and escalation acknowledgment work."
     },
     {
       "name": "area:backend",
@@ -2112,6 +2121,51 @@
         "lane:auto-safe"
       ],
       "body": "## Summary\nAdd an escalation receipt packet that turns the current confirmation surface into a clearer receipt-ready handoff.\n\n## Scope\n- combine the existing escalation confirmation context into a receipt-oriented packet for downstream acknowledgment\n- keep the packet frontend-only and derived from current artifacts\n- preserve the current in-workbench copy/export flow\n\n## Constraints\n- no backend API additions\n- no artifact schema changes\n- no simulation or report contract expansion"
+    },
+    {
+      "title": "Phase 40 exit gate",
+      "milestone": "Phase 40 - Recovery Clearance and Escalation Acknowledgment",
+      "labels": [
+        "phase:40",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "Close this issue only after the full Phase 40 queue is complete.\n\nExit criteria:\n- the Phase 40 queue-sync issue is merged\n- the execution recovery clearance board is merged\n- the escalation acknowledgment packet is merged\n- `./make.ps1 smoke` passes\n- `./make.ps1 test` passes\n- `./make.ps1 eval-demo` passes\n- `python -m backend.app.cli audit-phase phase1` passes\n- `python -m backend.app.cli audit-phase phase2` passes\n- `python -m backend.app.cli audit-phase phase3` passes\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` returns `ready` after successor bootstrap\n- only one execution milestone remains open after closeout"
+    },
+    {
+      "title": "Phase 40: sync repo truth to Phase 40 queue",
+      "milestone": "Phase 40 - Recovery Clearance and Escalation Acknowledgment",
+      "labels": [
+        "phase:40",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## Summary\nSync the repo truth to the Phase 40 queue and record the Phase 39 closeout baseline.\n\n## Scope\n- update the bootstrap spec and current-state docs to reflect Phase 40 as the active queue\n- record the Phase 39 closeout and successor bootstrap in the repo-facing documentation\n- keep Phase 40 as the sole active execution queue after closeout\n\n## Constraints\n- no simulation, report, claim, evidence, or schema contract changes\n- no new backend/runtime behavior beyond queue/governance sync"
+    },
+    {
+      "title": "Phase 40: add execution recovery clearance board",
+      "milestone": "Phase 40 - Recovery Clearance and Escalation Acknowledgment",
+      "labels": [
+        "phase:40",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## Summary\nAdd an execution recovery clearance board that turns the current checkpoint surface into a clearer clearance-ready review board.\n\n## Scope\n- summarize current recovery clearance posture, remaining blockers, and final release cues in the workbench\n- keep the board frontend-only and driven by existing artifacts\n- stay inside the current review workflow without adding new backend APIs\n\n## Constraints\n- no artifact schema changes\n- no simulation or report contract expansion"
+    },
+    {
+      "title": "Phase 40: add escalation acknowledgment packet",
+      "milestone": "Phase 40 - Recovery Clearance and Escalation Acknowledgment",
+      "labels": [
+        "phase:40",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## Summary\nAdd an escalation acknowledgment packet that turns the current receipt surface into a clearer acknowledgment-ready handoff.\n\n## Scope\n- combine the existing escalation receipt context into an acknowledgment-oriented packet for downstream follow-through\n- keep the packet frontend-only and derived from current artifacts\n- preserve the current in-workbench copy/export flow\n\n## Constraints\n- no backend API additions\n- no artifact schema changes\n- no simulation or report contract expansion"
     }
   ]
 }
