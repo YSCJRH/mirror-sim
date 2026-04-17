@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-22 gates, and resumed the successor queue as `Phase 23 - Preset Sessions and Response Kits`.
+The repository has completed Day 0 bootstrap, closed the Phase 1-23 gates, and resumed the successor queue as `Phase 24 - Session Handoff and Route Comparison`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -44,8 +44,10 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-22 gates, and r
   - milestone `Phase 21 - Role Presets and Response Packaging` is closed
   - milestone `Phase 22 - Preset Workflow and Packed Responses` is closed
   - Phase 22 queue was completed through issues `#151-#154`
-  - milestone `Phase 23 - Preset Sessions and Response Kits` is open
-  - Phase 23 queue is initialized through issues `#158-#161`
+  - milestone `Phase 23 - Preset Sessions and Response Kits` is closed
+  - Phase 23 queue was completed through issues `#158-#161`
+  - milestone `Phase 24 - Session Handoff and Route Comparison` is open
+  - Phase 24 queue is initialized through issues `#165-#168`
 
 Local phase audits currently show:
 
@@ -100,7 +102,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): review workbench with Phase 22 apply-and-copy preset and grouped response-pack surfaces landed while the current Phase 23 preset-session queue continues to consume the same artifact surface
+- [frontend](/D:/mirror/frontend): review workbench with Phase 23 preset session summary and route-filtered response-kit surfaces landed while the current Phase 24 session-handoff queue continues to consume the same artifact surface
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -145,10 +147,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 22 closeout are complete. Phase 23 is now the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 23 closeout are complete. Phase 24 is now the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may resume pickup guidance only against the Phase 23 queue and must stop again if `audit-github-queue` leaves `ready`.
+- The local heartbeat automation may resume pickup guidance only against the Phase 24 queue and must stop again if `audit-github-queue` leaves `ready`.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals

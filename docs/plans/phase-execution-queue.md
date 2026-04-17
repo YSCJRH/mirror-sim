@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 23 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 24 queue resumption.
 
 ## Current Gate State
 
@@ -26,7 +26,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 20 exit gate: closed
 - Phase 21 exit gate: closed
 - Phase 22 exit gate: closed
-- Phase 23 exit gate: open
+- Phase 23 exit gate: closed
+- Phase 24 exit gate: open
 
 Local phase audits currently report:
 
@@ -111,16 +112,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 22 - Preset Workflow and Packed Responses`
   - closed
+- Phase 23 queue sync
+  - merged via PR `#162`
+- Phase 23 preset session summary strip
+  - merged via PR `#163`
+- Phase 23 route-filtered response kit chooser
+  - merged via PR `#164`
+- Phase 23 exit issue `#158`
+  - closed
+- milestone `Phase 23 - Preset Sessions and Response Kits`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 23 queue bootstrap
+  - no open pull requests remain after the Phase 24 queue bootstrap
 
 ## Current Queue
 
-- milestone `Phase 23 - Preset Sessions and Response Kits` is open.
-- `#158` `Phase 23 exit gate`
+- milestone `Phase 24 - Session Handoff and Route Comparison` is open.
+- `#165` `Phase 24 exit gate`
   - open
-- blocked until the Phase 23 preset sessions and response kit slice is complete
-- The current Phase 23 execution slice is tracked through:
+- blocked until the Phase 24 session handoff and route comparison slice is complete
+- The current Phase 24 execution slice is tracked through:
+  - `#168` `Phase 24: sync bootstrap spec and docs to the active session-handoff queue`
+  - `#166` `Phase 24: add active-versus-alternate response kit comparison cards`
+  - `#167` `Phase 24: add copyable preset session handoff packet from summary strip and selected route kit`
+- The completed Phase 23 slice was tracked through:
   - `#159` `Phase 23: sync bootstrap spec and docs to the active preset-session queue`
   - `#160` `Phase 23: add active preset session summary strip for current bundle posture`
   - `#161` `Phase 23: add route-filtered response kit chooser for grouped template packs`
