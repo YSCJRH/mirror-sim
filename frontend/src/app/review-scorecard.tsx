@@ -1918,6 +1918,7 @@ export function ReviewScorecard({
   const [executionKickoffBoardCopyState, setExecutionKickoffBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionProgressTrackerCopyState, setExecutionProgressTrackerCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDecisionGuideCopyState, setEscalationDecisionGuideCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [escalationTriggerPacketCopyState, setEscalationTriggerPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -4043,6 +4044,106 @@ export function ReviewScorecard({
     `- Action readiness board: ${actionReadinessBoardLead}`,
     `- Escalation handoff packet: ${escalationHandoffPacketLead}`,
     `- Next-step routing pack: ${nextStepRoutingPackLead}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const escalationTriggerTone =
+    finalSendChecklistDecisionTone === "hold"
+      ? "hold"
+      : blockers.length > 0
+        ? "followup"
+        : "ready";
+  const escalationTriggerLabel =
+    escalationTriggerTone === "hold"
+      ? "Trigger now"
+      : escalationTriggerTone === "followup"
+        ? "Watch trigger"
+        : "Standby";
+  const escalationTriggerPacketLead =
+    selectedDestination === "pr-comment"
+      ? "Use this packet when you want one GitHub-facing escalation trigger surface that says exactly when escalation should fire and what context should travel with it."
+      : selectedDestination === "closeout"
+        ? "Use this packet when the closeout flow needs a compact escalation trigger summary that keeps the threshold and carry-forward context visible together."
+        : "Use this packet when the next operator needs a clear escalation trigger handoff without rebuilding the current decision and blocker context by hand.";
+  const escalationTriggerSummaryLine =
+    escalationTriggerTone === "hold"
+      ? "Escalation should trigger now because the current blocker posture has already pushed the route into a hold-state handoff."
+      : escalationTriggerTone === "followup"
+        ? "Escalation should stay staged as the next trigger if the visible blocker persists or the current route stops advancing."
+        : "Escalation stays on standby while the current route remains viable, but the trigger threshold should stay nearby as carry-forward context.";
+  const escalationTriggerPacketCards = [
+    {
+      label: "Trigger state",
+      value: escalationTriggerLabel,
+      detail: escalationTriggerSummaryLine
+    },
+    {
+      label: "Decision posture",
+      value: finalSendChecklistDecisionLabel,
+      detail: escalationDecisionSummaryLine
+    },
+    {
+      label: "Escalation route",
+      value: resolutionEscalationRoute.label,
+      detail: resolutionEscalationRoute.prompt
+    },
+    {
+      label: "Blocker cue",
+      value:
+        finalSendChecklistDecisionTone === "hold"
+          ? "Active blocker"
+          : blockers.length > 0
+            ? "Visible blocker"
+            : "No top blocker",
+      detail: receiverFollowUpBlockerCue
+    }
+  ];
+  const escalationTriggerPacketItems = [
+    {
+      label: "Decision threshold stays explicit",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "hold"
+            : "followup",
+      detail: escalationDecisionSummaryLine
+    },
+    {
+      label: "Handoff context stays attached",
+      tone: resolutionEscalationRoute.tone,
+      detail: escalationHandoffSummaryLine
+    },
+    {
+      label: "Blocker trigger stays visible",
+      tone: escalationTriggerTone,
+      detail: receiverFollowUpBlockerCue
+    }
+  ];
+  const escalationTriggerPacketMarkdown = [
+    "# Escalation Trigger Packet",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Trigger state: ${escalationTriggerLabel}`,
+    `- Escalation route: ${resolutionEscalationRoute.label}`,
+    "",
+    "## Trigger Summary",
+    `- ${escalationTriggerSummaryLine}`,
+    `- Decision posture: ${escalationDecisionSummaryLine}`,
+    `- Handoff posture: ${escalationHandoffSummaryLine}`,
+    "",
+    "## Trigger Conditions",
+    `- Blocker cue: ${receiverFollowUpBlockerCue}`,
+    `- Escalation threshold: ${resolutionEscalationRoute.prompt}`,
+    `- Current route summary: ${nextStepRoutingSummaryLine}`,
+    "",
+    "## Carry Forward",
+    `- Escalation decision guide: ${escalationDecisionGuideLead}`,
+    `- Escalation handoff packet: ${escalationHandoffPacketLead}`,
+    `- Execution progress tracker: ${executionProgressTrackerLead}`,
     "",
     "## Escalate When",
     `- ${resolutionEscalationRoute.prompt}`
@@ -6519,6 +6620,67 @@ export function ReviewScorecard({
                       : escalationDecisionGuideCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the decision-guide preview."
                         : "Use this guide when you want one escalation decision surface that keeps readiness, blocker posture, and fallback thresholds visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Escalation trigger packet</strong>
+                      <p className="scoreHint">{escalationTriggerPacketLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${escalationTriggerTone}`}>{escalationTriggerLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(escalationTriggerPacketMarkdown);
+                            setEscalationTriggerPacketCopyState("copied");
+                          } catch {
+                            setEscalationTriggerPacketCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy trigger packet
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${escalationTriggerTone}`}>{escalationTriggerLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {escalationTriggerPacketCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {escalationTriggerPacketItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{escalationTriggerPacketMarkdown}</pre>
+                  <p className="scoreHint">
+                    {escalationTriggerPacketCopyState === "copied"
+                      ? "Escalation trigger packet copied to clipboard."
+                      : escalationTriggerPacketCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the trigger-packet preview."
+                        : "Use this packet when you want one escalation trigger surface that keeps the decision threshold, carry-forward context, and blocker cue visible together."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
