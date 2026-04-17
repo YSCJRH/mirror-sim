@@ -1904,6 +1904,7 @@ export function ReviewScorecard({
   const [packetRecommendationCopyState, setPacketRecommendationCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [finalSendSummaryCopyState, setFinalSendSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [finalSendChecklistCopyState, setFinalSendChecklistCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [deliveryScriptCopyState, setDeliveryScriptCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -2848,6 +2849,67 @@ export function ReviewScorecard({
       : finalSendChecklistDecisionTone === "hold"
         ? "- Hold the send and resolve the blocked readiness or blocker cues before the handoff leaves the workbench."
         : `- Widen or recheck the handoff before sending, starting with: ${bundleVariant === recommendedPacketVariant ? blockers[0] : packetRecommendationAlignment}`
+  ].join("\n");
+  const deliveryScriptLead =
+    selectedDestination === "pr-comment"
+      ? "Use this script when you want a final GitHub-ready delivery message that ties together the sender note, packet recommendation, and receiver ask."
+      : selectedDestination === "closeout"
+        ? "Use this script when you want a closeout-facing delivery message that keeps the recommendation and reviewer ask together."
+        : "Use this script when you want a final operator-facing handoff message that names the packet choice, route cue, and next ask in one place.";
+  const deliveryScriptCards = [
+    {
+      label: "Subject line",
+      value: sessionSenderSubjectLine,
+      detail: "Carry this heading forward so the outgoing message stays aligned with the sender note."
+    },
+    {
+      label: "Delivery decision",
+      value: finalSendChecklistDecisionLabel,
+      detail: finalSendChecklistSummary
+    },
+    {
+      label: "Recommended packet",
+      value: bundleVariantProfiles[recommendedPacketVariant].label,
+      detail: packetRecommendationSummary
+    },
+    {
+      label: "Receiver ask",
+      value: receiverGuidance.roleLabel,
+      detail: receiverGuidance.replyPrompt
+    }
+  ];
+  const deliveryScriptOpening =
+    selectedDestination === "pr-comment"
+      ? `Sharing the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} handoff packet for ${receiverGuidance.roleLabel.toLowerCase()} review. The current recommendation is ${bundleVariantProfiles[recommendedPacketVariant].label.toLowerCase()}, and the route cue is ${routeFilteredResponseKit.filterLabel.toLowerCase()}.`
+      : selectedDestination === "closeout"
+        ? `Sharing the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} handoff packet for closeout review. The current recommendation is ${bundleVariantProfiles[recommendedPacketVariant].label.toLowerCase()}, and the route cue is ${routeFilteredResponseKit.filterLabel.toLowerCase()}.`
+        : `Handing off the ${bundleVariantProfiles[bundleVariant].label.toLowerCase()} packet for the next operator pickup. The current recommendation is ${bundleVariantProfiles[recommendedPacketVariant].label.toLowerCase()}, and the route cue is ${routeFilteredResponseKit.filterLabel.toLowerCase()}.`;
+  const deliveryScriptDecisionLine =
+    finalSendChecklistDecisionTone === "ready"
+      ? "The current send posture is clear enough to proceed with the outgoing handoff."
+      : finalSendChecklistDecisionTone === "hold"
+        ? "The current handoff should stay on hold until the blocked send cues are resolved."
+        : "The current handoff should be widened or rechecked before it is sent.";
+  const deliveryScriptMarkdown = [
+    "# Delivery Script",
+    "",
+    `Subject: ${sessionSenderSubjectLine}`,
+    "",
+    deliveryScriptOpening,
+    "",
+    "## Recommended Script",
+    `- ${deliveryScriptDecisionLine}`,
+    `- ${packetRecommendationSummary}`,
+    `- ${packetRecommendationAlignment}`,
+    `- ${receiverGuidance.replyPrompt}`,
+    "",
+    "## Keep Attached",
+    `- Final send summary: ${finalSendSummaryLead}`,
+    `- Send checklist decision: ${finalSendChecklistDecisionLabel}`,
+    `- Top blocker cue: ${blockers[0]}`,
+    "",
+    "## Fallback Cue",
+    `- ${fallbackPacketRationale}`
   ].join("\n");
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
@@ -4499,6 +4561,56 @@ export function ReviewScorecard({
                       : finalSendChecklistCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the send-checklist preview."
                         : "Use this checklist when you want a send, widen, or hold decision that ties together the recommendation, summary, and readiness cues."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Destination-specific delivery script</strong>
+                      <p className="scoreHint">{deliveryScriptLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(deliveryScriptMarkdown);
+                            setDeliveryScriptCopyState("copied");
+                          } catch {
+                            setDeliveryScriptCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy delivery script
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{bundleVariantProfiles[recommendedPacketVariant].label} recommended</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {deliveryScriptCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{deliveryScriptMarkdown}</pre>
+                  <p className="scoreHint">
+                    {deliveryScriptCopyState === "copied"
+                      ? "Destination-specific delivery script copied to clipboard."
+                      : deliveryScriptCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the delivery-script preview."
+                        : "Use this script when you want the final outgoing delivery text to stay aligned with the sender note, packet recommendation, and receiver cue."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
