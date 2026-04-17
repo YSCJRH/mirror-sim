@@ -1916,6 +1916,7 @@ export function ReviewScorecard({
   const [actionReadinessBoardCopyState, setActionReadinessBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationHandoffPacketCopyState, setEscalationHandoffPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionKickoffBoardCopyState, setExecutionKickoffBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [executionProgressTrackerCopyState, setExecutionProgressTrackerCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDecisionGuideCopyState, setEscalationDecisionGuideCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
@@ -3757,6 +3758,111 @@ export function ReviewScorecard({
     `- Action readiness board: ${actionReadinessBoardLead}`,
     `- Next-step routing pack: ${nextStepRoutingPackLead}`,
     `- Resolution status board: ${resolutionStatusBoardLead}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const executionProgressTone =
+    finalSendChecklistDecisionTone === "hold"
+      ? "hold"
+      : finalSendChecklistDecisionTone === "ready" && receiverResponseActiveTemplate.tone === "ready"
+        ? "ready"
+        : "followup";
+  const executionProgressLabel =
+    executionProgressTone === "hold"
+      ? "Stalled"
+      : executionProgressTone === "ready"
+        ? "In progress"
+        : "Needs follow-up";
+  const executionProgressTrackerLead =
+    selectedDestination === "pr-comment"
+      ? "Use this tracker when you want one GitHub-facing execution-progress view that keeps kickoff state, checkpoint posture, and receiver response cues together."
+      : selectedDestination === "closeout"
+        ? "Use this tracker when the closeout flow needs a compact read on whether execution has started cleanly, moved forward, or stalled."
+        : "Use this tracker when the next operator needs one execution-progress surface that keeps kickoff posture, checkpoint state, and receiver response cues visible together.";
+  const executionProgressSummaryLine =
+    executionProgressTone === "ready"
+      ? `Execution is actively progressing on the current ${receiverResponseActiveTemplate.label.toLowerCase()} path because the kickoff, checkpoint, and response cues still line up.`
+      : executionProgressTone === "hold"
+        ? "Execution is stalled because the current blocker posture still prevents the route from advancing past the current checkpoint."
+        : "Execution is moving, but it still needs follow-up because the checkpoint or receiver response posture remains provisional.";
+  const executionProgressTrackerCards = [
+    {
+      label: "Progress state",
+      value: executionProgressLabel,
+      detail: executionProgressSummaryLine
+    },
+    {
+      label: "Kickoff posture",
+      value:
+        finalSendChecklistDecisionTone === "ready"
+          ? "Started now"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "Not started"
+            : "Preparing to start",
+      detail: executionKickoffSummaryLine
+    },
+    {
+      label: "Checkpoint state",
+      value: finalSendChecklistDecisionLabel,
+      detail: deliveryCheckpointSummaryLine
+    },
+    {
+      label: "Receiver response path",
+      value: receiverResponseActiveTemplate.label,
+      detail: receiverResponseActiveTemplate.prompt
+    }
+  ];
+  const executionProgressTrackerItems = [
+    {
+      label: "Kickoff posture stays visible",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "hold"
+            : "followup",
+      detail: executionKickoffSummaryLine
+    },
+    {
+      label: "Checkpoint state stays visible",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "hold"
+            : "followup",
+      detail: deliveryCheckpointSummaryLine
+    },
+    {
+      label: "Response posture stays visible",
+      tone: receiverResponseActiveTemplate.tone,
+      detail: receiverResponseActiveTemplate.detail
+    }
+  ];
+  const executionProgressTrackerMarkdown = [
+    "# Execution Progress Tracker",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Progress state: ${executionProgressLabel}`,
+    `- Checkpoint state: ${finalSendChecklistDecisionLabel}`,
+    "",
+    "## Progress Summary",
+    `- ${executionProgressSummaryLine}`,
+    `- Kickoff posture: ${executionKickoffSummaryLine}`,
+    `- Response posture: ${receiverResponseActiveTemplate.prompt}`,
+    "",
+    "## Current Signals",
+    `- ${deliveryCheckpointSummaryLine}`,
+    `- Next checkpoint: ${receiverFollowUpNextAction}`,
+    `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
+    "",
+    "## Keep Nearby",
+    `- Execution kickoff board: ${executionKickoffBoardLead}`,
+    `- Delivery checkpoint board: ${deliveryCheckpointLead}`,
+    `- Receiver response packet: ${receiverResponsePacketLead}`,
     "",
     "## Escalate When",
     `- ${resolutionEscalationRoute.prompt}`
@@ -6230,6 +6336,67 @@ export function ReviewScorecard({
                       : executionKickoffBoardCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the kickoff-board preview."
                         : "Use this board when you want one kickoff summary that confirms whether execution should start now."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Execution progress tracker</strong>
+                      <p className="scoreHint">{executionProgressTrackerLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${executionProgressTone}`}>{executionProgressLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(executionProgressTrackerMarkdown);
+                            setExecutionProgressTrackerCopyState("copied");
+                          } catch {
+                            setExecutionProgressTrackerCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy progress tracker
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${executionProgressTone}`}>{executionProgressLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {executionProgressTrackerCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {executionProgressTrackerItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{executionProgressTrackerMarkdown}</pre>
+                  <p className="scoreHint">
+                    {executionProgressTrackerCopyState === "copied"
+                      ? "Execution progress tracker copied to clipboard."
+                      : executionProgressTrackerCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the progress-tracker preview."
+                        : "Use this tracker when you want one execution-progress surface that keeps kickoff, checkpoint, and receiver response cues visible together."}
                   </p>
                 </div>
                 <div className="shortcutStrip">
