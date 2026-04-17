@@ -1900,6 +1900,7 @@ export function ReviewScorecard({
   const [sessionHandoffPacketCopyState, setSessionHandoffPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSendCueCopyState, setSessionSendCueCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSenderNoteCopyState, setSessionSenderNoteCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [packetVariantDiffCopyState, setPacketVariantDiffCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -2581,6 +2582,40 @@ export function ReviewScorecard({
       markdown: fullSessionHandoffPacketMarkdown
     }
   };
+  const handoffPacketVariantPreviewCards = (["compact", "full"] as BundleVariant[]).map((variant) => {
+    const coverage = sessionHandoffVariantCoverage[variant];
+    const preview = buildPayloadPreview(coverage.markdown, 12);
+
+    return {
+      variant,
+      coverage,
+      preview,
+      toneClass: bundleVariant === variant ? "statusPillready" : "statusPillfollowup"
+    };
+  });
+  const handoffPacketVariantDiffHighlights = buildSectionDiffHighlights(
+    fullSessionHandoffPacketMarkdown,
+    presetSessionHandoffPacketMarkdown
+  );
+  const handoffPacketVariantDiffMarkdown = [
+    "# Handoff Packet Variant Diff",
+    "",
+    `- Active variant: ${bundleVariantProfiles[bundleVariant].label}`,
+    "",
+    "## Compact Packet Coverage",
+    `- Includes: ${sessionHandoffVariantCoverage.compact.includes.join(", ")}`,
+    `- Leaves out: ${sessionHandoffVariantCoverage.compact.omits.join(", ")}`,
+    "",
+    "## Full Packet Coverage",
+    `- Includes: ${sessionHandoffVariantCoverage.full.includes.join(", ")}`,
+    `- Leaves out: ${sessionHandoffVariantCoverage.full.omits.length > 0 ? sessionHandoffVariantCoverage.full.omits.join(", ") : "No omissions"}`,
+    "",
+    "## Section Delta",
+    ...handoffPacketVariantDiffHighlights.map(
+      (highlight) =>
+        `- ${highlight.title}: ${highlight.kind.replace(/-/g, " ")}. ${highlight.note} (full ${highlight.recommendedLines} lines vs compact ${highlight.fallbackLines} lines)`
+    )
+  ].join("\n");
   const comparisonAlternativeId = shortcutAlternatives.includes(selectedExport)
     ? selectedExport
     : (shortcutAlternatives[0] ?? recommendedExport.exportId);
@@ -3976,6 +4011,104 @@ export function ReviewScorecard({
                       </article>
                     );
                   })}
+                </div>
+                <div className="payloadPreviewBoard">
+                  <div className="claimHeader">
+                    <strong>Packet diff preview</strong>
+                    <button
+                      type="button"
+                      className="actionButton"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(handoffPacketVariantDiffMarkdown);
+                          setPacketVariantDiffCopyState("copied");
+                        } catch {
+                          setPacketVariantDiffCopyState("failed");
+                        }
+                      }}
+                    >
+                      Copy diff cues
+                    </button>
+                  </div>
+                  <p className="scoreHint">
+                    Compare the compact and full handoff packet variants before sending so the omitted sections and extra
+                    delivery context stay explicit.
+                  </p>
+                  <div className="payloadPreviewGrid">
+                    {handoffPacketVariantPreviewCards.map((card) => (
+                      <article
+                        key={card.variant}
+                        className={`payloadPreviewCard${bundleVariant === card.variant ? " payloadPreviewCardPrimary" : ""}`}
+                      >
+                        <div className="claimHeader">
+                          <div>
+                            <strong>{bundleVariantProfiles[card.variant].label}</strong>
+                            <p className="scoreHint">{card.coverage.summary}</p>
+                          </div>
+                          <span className={`statusPill ${card.toneClass}`}>
+                            {bundleVariant === card.variant ? "active" : "alternate"}
+                          </span>
+                        </div>
+                        <div className="payloadPreviewMeta">
+                          <span className="metaChip">{card.preview.lineCount} lines</span>
+                          <span className="metaChip">{card.preview.sectionCount} sections</span>
+                          <span className="metaChip">
+                            {card.coverage.omits.length > 0 ? `${card.coverage.omits.length} omission cue(s)` : "no omissions"}
+                          </span>
+                        </div>
+                        <pre className="payloadPreviewPre">{card.preview.excerpt}</pre>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="handoffSections">
+                    <div className="handoffSection handoffSectionWarning">
+                      <h3>Compact leaves out</h3>
+                      <ul className="checklist compact">
+                        {sessionHandoffVariantCoverage.compact.omits.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="handoffSection handoffSectionReady">
+                      <h3>Full keeps attached</h3>
+                      <ul className="checklist compact">
+                        {sessionHandoffVariantCoverage.full.includes.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="payloadDiffBoard">
+                    <div className="claimHeader">
+                      <strong>Section-level delta</strong>
+                      <span className="pill">full vs compact</span>
+                    </div>
+                    <div className="payloadDiffGrid">
+                      {handoffPacketVariantDiffHighlights.map((highlight) => (
+                        <article
+                          key={highlight.title}
+                          className={`payloadDiffCard payloadDiffCard${highlight.kind.replace(/-/g, "")}`}
+                        >
+                          <div className="claimHeader">
+                            <strong>{highlight.title}</strong>
+                            <span className="statusPill statusPillfollowup">{highlight.kind.replace(/-/g, " ")}</span>
+                          </div>
+                          <p className="scoreHint">{highlight.note}</p>
+                          <div className="payloadPreviewMeta">
+                            <span className="metaChip">full: {highlight.recommendedLines} lines</span>
+                            <span className="metaChip">compact: {highlight.fallbackLines} lines</span>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                  <p className="scoreHint">
+                    {packetVariantDiffCopyState === "copied"
+                      ? "Packet diff cues copied to clipboard."
+                      : packetVariantDiffCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the visible diff cues."
+                        : "Use this board when you need to see exactly what the full packet adds beyond the compact handoff before sending."}
+                  </p>
                 </div>
                 <div className="copyPreflightBoard">
                   <div className="claimHeader">
