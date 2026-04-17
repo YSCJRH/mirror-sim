@@ -1908,6 +1908,7 @@ export function ReviewScorecard({
   const [deliveryBundleCopyState, setDeliveryBundleCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [receiverFollowUpPackCopyState, setReceiverFollowUpPackCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [deliveryCheckpointCopyState, setDeliveryCheckpointCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [receiverResponsePacketCopyState, setReceiverResponsePacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -3124,6 +3125,90 @@ export function ReviewScorecard({
     `- Delivery bundle: ${deliveryBundleLead}`,
     `- Follow-up pack: ${receiverFollowUpLead}`,
     `- Final send summary: ${finalSendSummaryLead}`,
+    "",
+    "## Escalate When",
+    `- ${followThroughRouting.routes.find((route) => route.key === "escalate")?.prompt ?? "Escalate when the current lane is no longer sufficient for the next reply."}`
+  ].join("\n");
+  const receiverResponseActiveTemplate =
+    selectedResponseKitRoute === "all"
+      ? primaryResponseShortcut
+      : (routeFilteredResponseKit.templates[0] ?? primaryResponseShortcut);
+  const receiverResponseAlternateTemplates = decisionTemplates.templates.filter(
+    (template) => template.key !== receiverResponseActiveTemplate.key
+  );
+  const receiverResponsePacketLead =
+    selectedDestination === "pr-comment"
+      ? "Use this packet when the next GitHub-facing reply should carry the current follow-up note, active route template, and fallback reply cues together."
+      : selectedDestination === "closeout"
+        ? "Use this packet when the next closeout reply should keep the active route template and the backup response paths visible together."
+        : "Use this packet when the next operator-facing reply should carry the current follow-up note and active route template without rebuilding the receiver response by hand.";
+  const receiverResponsePacketCards = [
+    {
+      label: "Route view",
+      value: routeFilteredResponseKit.filterLabel,
+      detail: routeFilteredResponseKit.summary
+    },
+    {
+      label: "Active reply route",
+      value: receiverResponseActiveTemplate.label,
+      detail: receiverResponseActiveTemplate.prompt
+    },
+    {
+      label: "Receiver cue",
+      value: receiverGuidance.roleLabel,
+      detail: receiverGuidance.replyPrompt
+    },
+    {
+      label: "Send posture",
+      value: finalSendChecklistDecisionLabel,
+      detail: receiverFollowUpPostureLine
+    }
+  ];
+  const receiverResponsePacketItems = [
+    {
+      label: "Active route is explicit",
+      tone: receiverResponseActiveTemplate.tone,
+      detail: receiverResponseActiveTemplate.detail
+    },
+    {
+      label: "Fallback reply paths stay visible",
+      tone: receiverResponseAlternateTemplates.length > 0 ? "followup" : "ready",
+      detail:
+        receiverResponseAlternateTemplates.length > 0
+          ? `Keep ${receiverResponseAlternateTemplates.map((template) => template.label.toLowerCase()).join(" and ")} available if the active path changes after the next receiver reply.`
+          : "No alternate reply path is currently competing with the active route."
+    },
+    {
+      label: "Next checkpoint is visible",
+      tone: finalSendChecklistDecisionTone === "hold" ? "hold" : "followup",
+      detail:
+        finalSendChecklistDecisionTone === "hold"
+          ? receiverFollowUpBlockerCue
+          : `Confirm the next receiver checkpoint with: ${receiverFollowUpNextAction}`
+    }
+  ];
+  const receiverResponsePacketMarkdown = [
+    "# Receiver Response Packet",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Route view: ${routeFilteredResponseKit.filterLabel}`,
+    `- Active reply route: ${receiverResponseActiveTemplate.label}`,
+    `- Send posture: ${finalSendChecklistDecisionLabel}`,
+    "",
+    "## Follow-up Pack",
+    receiverFollowUpMarkdown,
+    "",
+    "## Active Route Template",
+    receiverResponseActiveTemplate.markdown,
+    "",
+    "## Shared Reply Cues",
+    `- ${receiverGuidance.replyPrompt}`,
+    `- Next checkpoint: ${receiverFollowUpNextAction}`,
+    `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
+    "",
+    "## Alternate Reply Paths",
+    ...receiverResponseAlternateTemplates.map((template) => `- ${template.label}: ${template.prompt}`),
     "",
     "## Escalate When",
     `- ${followThroughRouting.routes.find((route) => route.key === "escalate")?.prompt ?? "Escalate when the current lane is no longer sufficient for the next reply."}`
@@ -4924,7 +5009,7 @@ export function ReviewScorecard({
                   <pre className="bundlePreviewPre">{receiverFollowUpMarkdown}</pre>
                   <p className="scoreHint">
                     {receiverFollowUpPackCopyState === "copied"
-                      ? "Receiver follow-up pack copied to clipboard."
+                        ? "Receiver follow-up pack copied to clipboard."
                       : receiverFollowUpPackCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the follow-up-pack preview."
                         : "Use this pack when you want a compact follow-up note that keeps the current route cue, receiver ask, and send posture aligned."}
@@ -4990,6 +5075,67 @@ export function ReviewScorecard({
                       : deliveryCheckpointCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the checkpoint-board preview."
                         : "Use this board when you want one post-send checkpoint that keeps the sent package, route cue, and next reply posture visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Receiver response packet</strong>
+                      <p className="scoreHint">{receiverResponsePacketLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${receiverResponseActiveTemplate.tone}`}>{receiverResponseActiveTemplate.label}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(receiverResponsePacketMarkdown);
+                            setReceiverResponsePacketCopyState("copied");
+                          } catch {
+                            setReceiverResponsePacketCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy response packet
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {receiverResponsePacketCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {receiverResponsePacketItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{receiverResponsePacketMarkdown}</pre>
+                  <p className="scoreHint">
+                    {receiverResponsePacketCopyState === "copied"
+                      ? "Receiver response packet copied to clipboard."
+                      : receiverResponsePacketCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the response-packet preview."
+                        : "Use this packet when you want the follow-up note, active route template, and fallback reply cues to travel together for the next receiver-facing response."}
                   </p>
                 </div>
                 <div className="copyPreflightBoard">
