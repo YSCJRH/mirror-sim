@@ -1918,6 +1918,7 @@ export function ReviewScorecard({
   const [executionKickoffBoardCopyState, setExecutionKickoffBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionProgressTrackerCopyState, setExecutionProgressTrackerCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [executionOutcomeBoardCopyState, setExecutionOutcomeBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [executionCorrectionBoardCopyState, setExecutionCorrectionBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDecisionGuideCopyState, setEscalationDecisionGuideCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationTriggerPacketCopyState, setEscalationTriggerPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationDispatchPacketCopyState, setEscalationDispatchPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
@@ -3960,6 +3961,107 @@ export function ReviewScorecard({
     "## Keep Nearby",
     `- Execution progress tracker: ${executionProgressTrackerLead}`,
     `- Delivery checkpoint board: ${deliveryCheckpointLead}`,
+    `- Receiver response packet: ${receiverResponsePacketLead}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const executionCorrectionTone =
+    executionOutcomeTone === "hold"
+      ? "hold"
+      : blockers.length > 0 || receiverResponseAlternateTemplates.length > 0
+        ? "followup"
+        : "ready";
+  const executionCorrectionLabel =
+    executionCorrectionTone === "hold"
+      ? "Correct now"
+      : executionCorrectionTone === "followup"
+        ? "Watch correction"
+        : "No correction needed";
+  const executionCorrectionBoardLead =
+    selectedDestination === "pr-comment"
+      ? "Use this board when you want one GitHub-facing correction surface that shows what still needs correction before the current route can stabilize."
+      : selectedDestination === "closeout"
+        ? "Use this board when the closeout flow needs a compact read on what correction work still stands between the current outcome and a stable route."
+        : "Use this board when the next operator needs one correction surface that keeps the current outcome, blocker cue, and route alternatives visible together.";
+  const executionCorrectionSummaryLine =
+    executionCorrectionTone === "hold"
+      ? "Correction work should start now because the current outcome is blocked and the route cannot stabilize without resolving the visible blocker."
+      : executionCorrectionTone === "followup"
+        ? "Correction work should stay nearby because the route still has visible blocker or alternate-path pressure even though it has not fully broken."
+        : "No immediate correction work is needed because the current outcome is stable and no competing blocker or route alternative is demanding attention.";
+  const executionCorrectionBoardCards = [
+    {
+      label: "Correction state",
+      value: executionCorrectionLabel,
+      detail: executionCorrectionSummaryLine
+    },
+    {
+      label: "Outcome state",
+      value: executionOutcomeLabel,
+      detail: executionOutcomeSummaryLine
+    },
+    {
+      label: "Top blocker cue",
+      value: blockers.length > 0 ? "Visible blocker" : "No top blocker",
+      detail: receiverFollowUpBlockerCue
+    },
+    {
+      label: "Route alternatives",
+      value: receiverResponseAlternateTemplates.length > 0 ? "Keep alternatives visible" : "Primary route only",
+      detail:
+        receiverResponseAlternateTemplates.length > 0
+          ? receiverResponseAlternateTemplates.map((template) => `${template.label}: ${template.prompt}`).join(" | ")
+          : "No alternate reply path is currently competing with the active route."
+    }
+  ];
+  const executionCorrectionBoardItems = [
+    {
+      label: "Outcome posture stays visible",
+      tone: executionOutcomeTone,
+      detail: executionOutcomeSummaryLine
+    },
+    {
+      label: "Blocker cue stays visible",
+      tone:
+        blockers.length > 0
+          ? executionOutcomeTone === "hold"
+            ? "hold"
+            : "followup"
+          : "ready",
+      detail: receiverFollowUpBlockerCue
+    },
+    {
+      label: "Route alternatives stay visible",
+      tone: receiverResponseAlternateTemplates.length > 0 ? "followup" : "ready",
+      detail:
+        receiverResponseAlternateTemplates.length > 0
+          ? `Keep ${receiverResponseAlternateTemplates.map((template) => template.label.toLowerCase()).join(" and ")} visible while correction work is still open.`
+          : "No alternate route currently needs correction-side attention."
+    }
+  ];
+  const executionCorrectionBoardMarkdown = [
+    "# Execution Correction Board",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Correction state: ${executionCorrectionLabel}`,
+    `- Outcome state: ${executionOutcomeLabel}`,
+    "",
+    "## Correction Summary",
+    `- ${executionCorrectionSummaryLine}`,
+    `- Outcome posture: ${executionOutcomeSummaryLine}`,
+    `- Progress posture: ${executionProgressSummaryLine}`,
+    "",
+    "## What Still Needs Correction",
+    `- Top blocker cue: ${receiverFollowUpBlockerCue}`,
+    `- Next checkpoint: ${receiverFollowUpNextAction}`,
+    ...receiverResponseAlternateTemplates.map((template) => `- Alternate route: ${template.label} -> ${template.prompt}`),
+    "",
+    "## Keep Nearby",
+    `- Execution outcome board: ${executionOutcomeBoardLead}`,
+    `- Execution progress tracker: ${executionProgressTrackerLead}`,
     `- Receiver response packet: ${receiverResponsePacketLead}`,
     "",
     "## Escalate When",
@@ -6754,6 +6856,67 @@ export function ReviewScorecard({
                       : executionOutcomeBoardCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the outcome-board preview."
                         : "Use this board when you want one execution-outcome surface that keeps progress, checkpoint, and response posture visible together."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Execution correction board</strong>
+                      <p className="scoreHint">{executionCorrectionBoardLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${executionCorrectionTone}`}>{executionCorrectionLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(executionCorrectionBoardMarkdown);
+                            setExecutionCorrectionBoardCopyState("copied");
+                          } catch {
+                            setExecutionCorrectionBoardCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy correction board
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${executionCorrectionTone}`}>{executionCorrectionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {executionCorrectionBoardCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {executionCorrectionBoardItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{executionCorrectionBoardMarkdown}</pre>
+                  <p className="scoreHint">
+                    {executionCorrectionBoardCopyState === "copied"
+                      ? "Execution correction board copied to clipboard."
+                      : executionCorrectionBoardCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the correction-board preview."
+                        : "Use this board when you want one correction surface that keeps the outcome posture, blocker cue, and route alternatives visible together."}
                   </p>
                 </div>
                 <div className="shortcutStrip">
