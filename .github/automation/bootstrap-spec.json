@@ -143,6 +143,10 @@
     {
       "title": "Phase 36 - Execution Outcome and Escalation Dispatch",
       "description": "Turn the current execution-progress and escalation-trigger surfaces into a clearer execution-outcome and escalation-dispatch workflow without changing simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 37 - Execution Correction and Escalation Delivery",
+      "description": "Turn the current execution-outcome and escalation-dispatch surfaces into a clearer execution-correction and escalation-delivery workflow without changing simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -325,6 +329,11 @@
       "name": "phase:36",
       "color": "BFC7CF",
       "description": "Phase 36 execution outcome and escalation dispatch work."
+    },
+    {
+      "name": "phase:37",
+      "color": "CAD1D8",
+      "description": "Phase 37 execution correction and escalation delivery work."
     },
     {
       "name": "area:backend",
@@ -1950,6 +1959,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd an escalation dispatch packet that combines the current escalation trigger packet, escalation decision guide, and route cues so the operator can send a clearer dispatch-ready escalation handoff.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current escalation trigger packet, escalation decision guide, and routing cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only escalation dispatch packet derived from the current trigger posture, route cue, and decision context\n- copyable escalation-dispatch cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing escalation dispatch history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the escalation dispatch packet updates with trigger posture, route cue, and decision context\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 36"
+    },
+    {
+      "title": "Phase 37 exit gate",
+      "milestone": "Phase 37 - Execution Correction and Escalation Delivery",
+      "labels": [
+        "phase:37",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nClose Phase 37 only after the queue-sync issue and both execution-correction workflow issues land on main.\n\n## completion standard\n- the Phase 37 queue is fully synced in repo truth\n- the execution correction board and escalation delivery packet are merged\n- smoke/test/eval-demo and audit-phase phase1/phase2/phase3 pass\n- audit-github-queue returns ready with a successor queue already opened\n\n## phase\nPhase 37"
+    },
+    {
+      "title": "Phase 37: sync repo truth to the execution-correction and escalation-delivery queue",
+      "milestone": "Phase 37 - Execution Correction and Escalation Delivery",
+      "labels": [
+        "phase:37",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repo source of truth to the active Phase 37 execution-correction queue so docs and bootstrap metadata stop referring to Phase 36 as the active milestone.\n\n## input\n- current README.md\n- current docs/plans/automation-roadmap.md\n- current docs/plans/current-state-baseline.md\n- current docs/plans/phase-execution-queue.md\n- current .github/automation/bootstrap-spec.json\n\n## output\n- Phase 37 becomes the documented active queue across README, plans, and bootstrap spec\n- Phase 36 is recorded as closed once its exit gate is completed\n- bootstrap metadata includes the Phase 37 milestone, label, and issues created on GitHub\n\n## out-of-scope\n- simulation/report/artifact/schema changes\n- new frontend workflow features beyond queue sync\n- deleting or reopening historical milestones\n\n## minimal test\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md\n- ./make.ps1 test\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nNo. Repo governance only.\n\n## phase\nPhase 37"
+    },
+    {
+      "title": "Phase 37: add execution correction board from outcome board, blocker cues, and route alternatives",
+      "milestone": "Phase 37 - Execution Correction and Escalation Delivery",
+      "labels": [
+        "phase:37",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd an execution correction board that turns the current execution outcome board, blocker cues, and route alternatives into one operator-readable correction surface.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current execution outcome board, blocker/open-state cues, and route alternative surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only execution correction board derived from the current outcome posture, blocker cue, and route alternatives\n- copyable correction text that can be used to confirm what needs correction before the route can stabilize again\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing correction history outside the current workbench state\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the execution correction board updates with outcome state, blocker cues, and route alternatives\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 37"
+    },
+    {
+      "title": "Phase 37: add escalation delivery packet from dispatch packet, receiver cue, and route guidance",
+      "milestone": "Phase 37 - Execution Correction and Escalation Delivery",
+      "labels": [
+        "phase:37",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd an escalation delivery packet that combines the current escalation dispatch packet, receiver cue, and route guidance so the operator can send a clearer delivery-ready escalation handoff.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current escalation dispatch packet, receiver guidance, and routing cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only escalation delivery packet derived from the current dispatch posture, receiver cue, and route guidance\n- copyable escalation-delivery cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing escalation delivery history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the escalation delivery packet updates with dispatch posture, receiver cue, and route guidance\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 37"
     }
   ]
 }

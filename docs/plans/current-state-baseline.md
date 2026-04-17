@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the current Phase 36 active-queue baseline.
+This note is the current Phase 37 active-queue baseline.
 
 ## Snapshot
 
@@ -147,12 +147,16 @@ This note is the current Phase 36 active-queue baseline.
     - Phase 35 exit issue is `closed`
   - `gh api repos/YSCJRH/mirror-sim/milestones/35`
     - milestone `Phase 35 - Execution Tracking and Escalation Trigger` is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/issues/253`
+    - Phase 36 exit issue is `closed`
   - `gh api repos/YSCJRH/mirror-sim/milestones/36`
-    - milestone `Phase 36 - Execution Outcome and Escalation Dispatch` is `open`
-  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=36"`
-    - Phase 36 queue is initialized through issues `#253-#256`
+    - milestone `Phase 36 - Execution Outcome and Escalation Dispatch` is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/milestones/37`
+    - milestone `Phase 37 - Execution Correction and Escalation Delivery` is `open`
+  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=37"`
+    - Phase 37 queue is initialized through issues `#260-#263`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - successor queue currently reports `ready` because Phase 36 has one blocked protected-core exit gate and multiple ready work items
+    - successor queue currently reports `ready` because Phase 37 has one blocked protected-core exit gate and multiple ready work items
 
 ## Trusted Source Of Truth
 
@@ -171,13 +175,13 @@ This note is the current Phase 36 active-queue baseline.
 
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
-- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, decision-template snippets, role preset cards, response-packaging shortcuts, apply-and-copy preset actions, grouped response-pack export, active preset session summary strips, route-filtered response kit choosers, route-kit comparison cards, preset session handoff packets, send-readiness cue strips, compact-versus-full handoff packet variants, destination-specific sender notes, compact-versus-full handoff packet diff previews, final send summary cards, destination-aware packet recommendation banners, delivery-bundle exports, receiver follow-up packs, delivery checkpoint boards, receiver response packets, reply outcome trackers, resolution handoff packs, resolution status boards, next-step routing packs, action readiness boards, escalation handoff packets, execution kickoff boards, execution progress trackers, escalation decision guides, and escalation trigger packets without introducing backend API expansion.
-- The current repository state is in an active Phase 36 successor queue, not a closed Phase 35 baseline.
+- The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, decision-template snippets, role preset cards, response-packaging shortcuts, apply-and-copy preset actions, grouped response-pack export, active preset session summary strips, route-filtered response kit choosers, route-kit comparison cards, preset session handoff packets, send-readiness cue strips, compact-versus-full handoff packet variants, destination-specific sender notes, compact-versus-full handoff packet diff previews, final send summary cards, destination-aware packet recommendation banners, delivery-bundle exports, receiver follow-up packs, delivery checkpoint boards, receiver response packets, reply outcome trackers, resolution handoff packs, resolution status boards, next-step routing packs, action readiness boards, escalation handoff packets, execution kickoff boards, execution progress trackers, execution outcome boards, escalation decision guides, escalation trigger packets, and escalation dispatch packets without introducing backend API expansion.
+- The current repository state is in an active Phase 37 successor queue, not a closed Phase 36 baseline.
 
 ## Next Entry Point
 
-- Phase 36 is the active milestone and the current execution-outcome slice is tracked by issues `#253-#256`.
-- New implementation work should attach to the existing Phase 36 queue until its exit gate is closed, instead of opening a parallel successor milestone.
+- Phase 37 is the active milestone and the current execution-correction slice is tracked by issues `#260-#263`.
+- New implementation work should attach to the existing Phase 37 queue until its exit gate is closed, instead of opening a parallel successor milestone.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
 - The local queue heartbeat remains active as `mirror-queue-heartbeat` and should continue reporting the paused/ready state of the live queue.
