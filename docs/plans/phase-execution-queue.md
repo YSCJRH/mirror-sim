@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 24 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 25 queue resumption.
 
 ## Current Gate State
 
@@ -27,7 +27,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 21 exit gate: closed
 - Phase 22 exit gate: closed
 - Phase 23 exit gate: closed
-- Phase 24 exit gate: open
+- Phase 24 exit gate: closed
+- Phase 25 exit gate: open
 
 Local phase audits currently report:
 
@@ -122,16 +123,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 23 - Preset Sessions and Response Kits`
   - closed
+- Phase 24 queue sync
+  - merged via PR `#169`
+- Phase 24 response kit comparison cards
+  - merged via PR `#170`
+- Phase 24 preset session handoff packet
+  - merged via PR `#171`
+- Phase 24 exit issue `#165`
+  - closed
+- milestone `Phase 24 - Session Handoff and Route Comparison`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 24 queue bootstrap
+  - no open pull requests remain after the Phase 25 queue bootstrap
 
 ## Current Queue
 
-- milestone `Phase 24 - Session Handoff and Route Comparison` is open.
-- `#165` `Phase 24 exit gate`
+- milestone `Phase 25 - Handoff Delivery and Packet Variants` is open.
+- `#172` `Phase 25 exit gate`
   - open
-- blocked until the Phase 24 session handoff and route comparison slice is complete
-- The current Phase 24 execution slice is tracked through:
+- blocked until the Phase 25 handoff delivery and packet variants slice is complete
+- The current Phase 25 execution slice is tracked through:
+  - `#174` `Phase 25: sync bootstrap spec and docs to the active handoff-delivery queue`
+  - `#173` `Phase 25: add send-readiness checklist and destination cue strip for the session handoff packet`
+  - `#175` `Phase 25: add compact-versus-full preset session handoff packet variants with coverage preview`
+- The completed Phase 24 slice was tracked through:
   - `#168` `Phase 24: sync bootstrap spec and docs to the active session-handoff queue`
   - `#166` `Phase 24: add active-versus-alternate response kit comparison cards`
   - `#167` `Phase 24: add copyable preset session handoff packet from summary strip and selected route kit`
