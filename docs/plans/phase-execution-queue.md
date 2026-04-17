@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 30 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 31 queue resumption.
 
 ## Current Gate State
 
@@ -33,7 +33,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 27 exit gate: closed
 - Phase 28 exit gate: closed
 - Phase 29 exit gate: closed
-- Phase 30 exit gate: open
+- Phase 30 exit gate: closed
+- Phase 31 exit gate: open
 
 Local phase audits currently report:
 
@@ -192,16 +193,30 @@ Local phase audits currently report:
   - closed
 - milestone `Phase 29 - Delivery Bundle and Follow-up Pack`
   - closed
+- Phase 30 queue sync
+  - merged via PR `#215`
+- Phase 30 delivery checkpoint board
+  - merged via PR `#216`
+- Phase 30 receiver response packet
+  - merged via PR `#217`
+- Phase 30 exit issue `#211`
+  - closed
+- milestone `Phase 30 - Delivery Confirmation and Receiver Response`
+  - closed
 - GitHub remote state
-  - no open pull requests remain after the Phase 29 closeout
+  - no open pull requests remain after the Phase 30 closeout
 
 ## Current Queue
 
-- milestone `Phase 30 - Delivery Confirmation and Receiver Response` is open.
-- `#211` `Phase 30 exit gate`
+- milestone `Phase 31 - Reply Outcome and Resolution Handoff` is open.
+- `#218` `Phase 31 exit gate`
   - open
-- blocked until the Phase 30 delivery-confirmation and receiver-response slice is complete
-- The current Phase 30 execution slice is tracked through:
+- blocked until the Phase 31 reply-resolution and resolution-handoff slice is complete
+- The current Phase 31 execution slice is tracked through:
+  - `#221` `Phase 31: sync bootstrap spec and docs to the active reply-resolution queue`
+  - `#219` `Phase 31: add reply outcome tracker from response packet, route cue, and checkpoint board`
+  - `#220` `Phase 31: add resolution handoff pack from checkpoint board, response packet, and escalation cues`
+- The completed Phase 30 slice was tracked through:
   - `#212` `Phase 30: sync bootstrap spec and docs to the active delivery-confirmation queue`
   - `#213` `Phase 30: add delivery checkpoint board from send decision, bundle mode, and follow-up posture`
   - `#214` `Phase 30: add receiver response packet from follow-up pack, route template, and reply cues`

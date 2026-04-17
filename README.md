@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-29 gates, and resumed the successor queue as `Phase 30 - Delivery Confirmation and Receiver Response`.
+The repository has completed Day 0 bootstrap, closed the Phase 1-30 gates, and resumed the successor queue as `Phase 31 - Reply Outcome and Resolution Handoff`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -58,8 +58,10 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-29 gates, and r
   - Phase 28 queue was completed through issues `#193-#196` plus branch-hygiene governance issues `#199-#200`
   - milestone `Phase 29 - Delivery Bundle and Follow-up Pack` is closed
   - Phase 29 queue was completed through issues `#204-#207`
-  - milestone `Phase 30 - Delivery Confirmation and Receiver Response` is open
-  - Phase 30 queue is initialized through issues `#211-#214`
+  - milestone `Phase 30 - Delivery Confirmation and Receiver Response` is closed
+  - Phase 30 queue was completed through issues `#211-#214`
+  - milestone `Phase 31 - Reply Outcome and Resolution Handoff` is open
+  - Phase 31 queue is initialized through issues `#218-#221`
 
 Local phase audits currently show:
 
@@ -114,7 +116,7 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): review workbench with Phase 29 delivery-bundle and receiver-follow-up surfaces landed while the current Phase 30 delivery-confirmation queue continues to consume the same artifact surface
+- [frontend](/D:/mirror/frontend): review workbench with Phase 30 delivery-checkpoint and receiver-response surfaces landed while the current Phase 31 reply-resolution queue continues to consume the same artifact surface
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -159,10 +161,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 29 closeout are complete. Phase 30 is now the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 30 closeout are complete. Phase 31 is now the active successor queue and should remain the only open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may resume pickup guidance only against the Phase 30 queue and must stop again if `audit-github-queue` leaves `ready`.
+- The local heartbeat automation may resume pickup guidance only against the Phase 31 queue and must stop again if `audit-github-queue` leaves `ready`.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals

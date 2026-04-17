@@ -119,6 +119,10 @@
     {
       "title": "Phase 30 - Delivery Confirmation and Receiver Response",
       "description": "Turn the current delivery bundle and follow-up surfaces into a usable post-send checkpoint and receiver-response workflow without changing simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 31 - Reply Outcome and Resolution Handoff",
+      "description": "Turn the current delivery checkpoint and receiver-response surfaces into a clearer reply-outcome and resolution handoff workflow without changing simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -271,6 +275,11 @@
       "name": "phase:30",
       "color": "6C7B91",
       "description": "Phase 30 delivery confirmation and receiver response work."
+    },
+    {
+      "name": "phase:31",
+      "color": "7A8796",
+      "description": "Phase 31 reply outcome and resolution handoff work."
     },
     {
       "name": "area:backend",
@@ -1626,6 +1635,51 @@
         "lane:auto-safe"
       ],
       "body": "## goal\nAdd a receiver response packet that combines the current follow-up pack, active route template, and reply cues so the operator can hand over the next receiver-facing response without rebuilding it by hand.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current receiver follow-up pack, grouped response pack, route-filtered response kit, and receiver guidance surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only receiver response packet derived from the current route cue, receiver role, and follow-up posture\n- copyable acknowledge / request-more-context / escalate context that stays aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing receiver-response history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the response packet updates with route, receiver role, and follow-up posture\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 30"
+    },
+    {
+      "title": "Phase 31 exit gate",
+      "milestone": "Phase 31 - Reply Outcome and Resolution Handoff",
+      "labels": [
+        "phase:31",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nClose Phase 31 only after the queue-sync issue and both resolution-handoff workflow issues land on main.\n\n## completion standard\n- the Phase 31 queue is fully synced in repo truth\n- the reply outcome tracker and resolution handoff pack are merged\n- smoke/test/eval-demo and audit-phase phase1/phase2/phase3 pass\n- audit-github-queue returns ready with a successor queue already opened\n\n## phase\nPhase 31"
+    },
+    {
+      "title": "Phase 31: sync bootstrap spec and docs to the active reply-resolution queue",
+      "milestone": "Phase 31 - Reply Outcome and Resolution Handoff",
+      "labels": [
+        "phase:31",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync the repo source of truth to the active Phase 31 reply-resolution queue so docs, bootstrap metadata, and queue fixtures stop referring to Phase 30 as the active milestone.\n\n## input\n- current README.md\n- current docs/plans/automation-roadmap.md\n- current docs/plans/current-state-baseline.md\n- current docs/plans/phase-execution-queue.md\n- current .github/automation/bootstrap-spec.json\n- current queue-related tests under backend/tests/**\n\n## output\n- Phase 31 becomes the documented active queue across README, plans, bootstrap spec, and queue fixtures\n- Phase 30 is recorded as closed once its exit gate is completed\n- bootstrap metadata includes the Phase 31 milestone, label, and issues created on GitHub\n\n## out-of-scope\n- simulation/report/artifact/schema changes\n- new frontend workflow features beyond queue sync\n- deleting or reopening historical milestones\n\n## minimal test\n- python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim\n- python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md\n- ./make.ps1 test\n- python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim\n\n## touches contract\nNo. Repo governance only.\n\n## phase\nPhase 31"
+    },
+    {
+      "title": "Phase 31: add reply outcome tracker from response packet, route cue, and checkpoint board",
+      "milestone": "Phase 31 - Reply Outcome and Resolution Handoff",
+      "labels": [
+        "phase:31",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a reply outcome tracker that turns the current receiver response packet, route cue, and delivery checkpoint board into one operator-readable outcome surface.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current delivery checkpoint board, receiver response packet, and route-filtered response kit surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only outcome tracker derived from the current route cue, receiver role, reply posture, and checkpoint state\n- copyable outcome text that can be used to confirm what reply path fired and what state remains open next\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing reply history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the outcome tracker updates with route, receiver role, reply posture, and checkpoint state\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 31"
+    },
+    {
+      "title": "Phase 31: add resolution handoff pack from checkpoint board, response packet, and escalation cues",
+      "milestone": "Phase 31 - Reply Outcome and Resolution Handoff",
+      "labels": [
+        "phase:31",
+        "area:frontend",
+        "status:ready",
+        "lane:auto-safe"
+      ],
+      "body": "## goal\nAdd a resolution handoff pack that combines the current checkpoint board, receiver response packet, and escalation cues so the operator can hand over the remaining resolution context without rebuilding it by hand.\n\n## input\n- current frontend/src/app/review-scorecard.tsx\n- current delivery checkpoint board, receiver response packet, and escalation/follow-through cue surfaces\n- existing demo artifacts under artifacts/demo/**\n\n## output\n- a frontend-only resolution handoff pack derived from the current checkpoint posture, response packet, and escalation path\n- copyable resolution handoff cues that stay aligned with the current preset workflow\n- no backend API calls and no new artifact files\n\n## out-of-scope\n- posting directly to GitHub\n- changing packet schemas or response-governance contracts\n- storing resolution history\n\n## minimal test\n- npm run build --prefix frontend\n- ./make.ps1 smoke\n- ./make.ps1 eval-demo\n- manual review that the resolution handoff pack updates with checkpoint state, response posture, and escalation cues\n\n## touches contract\nNo. This issue must remain frontend-only and artifact-read-only.\n\n## phase\nPhase 31"
     }
   ]
 }
