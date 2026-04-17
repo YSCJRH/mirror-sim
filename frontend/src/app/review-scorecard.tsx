@@ -1915,6 +1915,7 @@ export function ReviewScorecard({
   const [nextStepRoutingPackCopyState, setNextStepRoutingPackCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [actionReadinessBoardCopyState, setActionReadinessBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [escalationHandoffPacketCopyState, setEscalationHandoffPacketCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [executionKickoffBoardCopyState, setExecutionKickoffBoardCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -3663,6 +3664,98 @@ export function ReviewScorecard({
     `- Resolution status board: ${resolutionStatusBoardLead}`,
     `- Next-step routing pack: ${nextStepRoutingPackLead}`,
     `- Outcome tracker: ${replyOutcomeTrackerLead}`,
+    "",
+    "## Escalate When",
+    `- ${resolutionEscalationRoute.prompt}`
+  ].join("\n");
+  const executionKickoffBoardLead =
+    selectedDestination === "pr-comment"
+      ? "Use this board when you want one GitHub-facing kickoff readout that says whether execution should start now and what the first move should be."
+      : selectedDestination === "closeout"
+        ? "Use this board when the closeout flow needs a compact kickoff summary before the next execution step starts."
+        : "Use this board when the next operator needs a clean yes-or-not-yet answer on whether to kick off execution now.";
+  const executionKickoffSummaryLine =
+    finalSendChecklistDecisionTone === "ready"
+      ? `Execution can start on the current ${receiverResponseActiveTemplate.label.toLowerCase()} path, with the fallback escalation route still visible if the state changes.`
+      : finalSendChecklistDecisionTone === "hold"
+        ? "Execution should not start yet because the current blocker posture still requires a hold-state resolution step."
+        : `Execution is not fully ready yet, so the first step should stay attached to the current follow-up and checkpoint cues.`;
+  const executionKickoffBoardCards = [
+    {
+      label: "Kickoff state",
+      value:
+        finalSendChecklistDecisionTone === "ready"
+          ? "Start now"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "Do not start"
+            : "Prepare before start",
+      detail: executionKickoffSummaryLine
+    },
+    {
+      label: "First execution step",
+      value: finalSendChecklistDecisionTone === "hold" ? "Resolve blocker" : "Advance current route",
+      detail: nextStepRoutingPrimaryStep
+    },
+    {
+      label: "Blocker posture",
+      value: finalSendChecklistDecisionTone === "hold" ? "Blocked" : blockers.length > 0 ? "Visible blocker" : "No top blocker",
+      detail: receiverFollowUpBlockerCue
+    },
+    {
+      label: "Fallback path",
+      value: resolutionEscalationRoute.label,
+      detail: resolutionEscalationRoute.prompt
+    }
+  ];
+  const executionKickoffBoardItems = [
+    {
+      label: "Kickoff route is explicit",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "hold"
+            : "followup",
+      detail: nextStepRoutingSummaryLine
+    },
+    {
+      label: "Readiness posture is explicit",
+      tone:
+        finalSendChecklistDecisionTone === "ready"
+          ? "ready"
+          : finalSendChecklistDecisionTone === "hold"
+            ? "hold"
+            : "followup",
+      detail: actionReadinessSummaryLine
+    },
+    {
+      label: "Fallback path stays visible",
+      tone: resolutionEscalationRoute.tone,
+      detail: resolutionEscalationRoute.detail
+    }
+  ];
+  const executionKickoffBoardMarkdown = [
+    "# Execution Kickoff Board",
+    "",
+    `- Destination: ${deliveryDestinations[selectedDestination].label}`,
+    `- Receiver cue: ${receiverGuidance.roleLabel}`,
+    `- Current route: ${receiverResponseActiveTemplate.label}`,
+    `- Kickoff state: ${finalSendChecklistDecisionTone === "ready" ? "Start now" : finalSendChecklistDecisionTone === "hold" ? "Do not start" : "Prepare before start"}`,
+    `- Fallback path: ${resolutionEscalationRoute.label}`,
+    "",
+    "## Kickoff Summary",
+    `- ${executionKickoffSummaryLine}`,
+    `- First execution step: ${nextStepRoutingPrimaryStep}`,
+    `- Current readiness: ${actionReadinessSummaryLine}`,
+    "",
+    "## Blocker Posture",
+    `- ${receiverFollowUpBlockerCue}`,
+    `- Current routing state: ${nextStepRoutingSummaryLine}`,
+    "",
+    "## Keep Nearby",
+    `- Action readiness board: ${actionReadinessBoardLead}`,
+    `- Next-step routing pack: ${nextStepRoutingPackLead}`,
+    `- Resolution status board: ${resolutionStatusBoardLead}`,
     "",
     "## Escalate When",
     `- ${resolutionEscalationRoute.prompt}`
@@ -5973,10 +6066,71 @@ export function ReviewScorecard({
                   <pre className="bundlePreviewPre">{actionReadinessBoardMarkdown}</pre>
                   <p className="scoreHint">
                     {actionReadinessBoardCopyState === "copied"
-                      ? "Action readiness board copied to clipboard."
+                        ? "Action readiness board copied to clipboard."
                       : actionReadinessBoardCopyState === "failed"
                         ? "Clipboard copy failed. You can still copy from the readiness-board preview."
                         : "Use this board when you want one readiness check that confirms whether the next action is clear to execute."}
+                  </p>
+                </div>
+                <div className="shortcutStrip">
+                  <div className="shortcutHeader">
+                    <div>
+                      <strong>Execution kickoff board</strong>
+                      <p className="scoreHint">{executionKickoffBoardLead}</p>
+                    </div>
+                    <div className="shortcutActions">
+                      <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                      <button
+                        type="button"
+                        className="actionButton"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(executionKickoffBoardMarkdown);
+                            setExecutionKickoffBoardCopyState("copied");
+                          } catch {
+                            setExecutionKickoffBoardCopyState("failed");
+                          }
+                        }}
+                      >
+                        Copy kickoff board
+                      </button>
+                    </div>
+                  </div>
+                  <div className="statusRow">
+                    <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                    <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                    <span className="pill">{receiverGuidance.roleLabel}</span>
+                    <span className={`statusPill statusPill${finalSendChecklistDecisionTone}`}>{finalSendChecklistDecisionLabel}</span>
+                  </div>
+                  <div className="manifestGrid">
+                    {executionKickoffBoardCards.map((item) => (
+                      <article key={item.label} className="manifestCard">
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className="pill">{item.value}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="preflightGrid">
+                    {executionKickoffBoardItems.map((item) => (
+                      <article key={item.label} className={`preflightCard preflightCard${item.tone}`}>
+                        <div className="claimHeader">
+                          <strong>{item.label}</strong>
+                          <span className={`statusPill statusPill${item.tone}`}>{item.tone}</span>
+                        </div>
+                        <p className="scoreHint">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <pre className="bundlePreviewPre">{executionKickoffBoardMarkdown}</pre>
+                  <p className="scoreHint">
+                    {executionKickoffBoardCopyState === "copied"
+                      ? "Execution kickoff board copied to clipboard."
+                      : executionKickoffBoardCopyState === "failed"
+                        ? "Clipboard copy failed. You can still copy from the kickoff-board preview."
+                        : "Use this board when you want one kickoff summary that confirms whether execution should start now."}
                   </p>
                 </div>
                 <div className="shortcutStrip">
