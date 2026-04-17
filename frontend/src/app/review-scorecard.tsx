@@ -63,6 +63,7 @@ type DeliveryReadiness = {
 type DeliveryDestination = "pr-comment" | "closeout" | "pickup-handoff";
 type BundleVariant = "compact" | "full";
 type ReceiverRole = "reviewer" | "approver" | "operator";
+type ResponseKitRouteFilter = "active" | "all" | "acknowledge" | "request-more-context" | "escalate";
 
 type ExportCoverage = {
   includes: string[];
@@ -1557,6 +1558,57 @@ function buildGroupedResponsePack(
   };
 }
 
+function buildRouteFilteredResponseKit(
+  destination: DeliveryDestination,
+  variant: BundleVariant,
+  role: ReceiverRole,
+  routeFilter: ResponseKitRouteFilter,
+  activeRouteKey: string,
+  decisionTemplates: ReturnType<typeof buildDecisionTemplates>,
+  groupedResponsePack: ReturnType<typeof buildGroupedResponsePack>,
+  sharedReplyPrompt: string
+) {
+  const activeTemplate =
+    decisionTemplates.templates.find((template) => template.key === activeRouteKey) ?? decisionTemplates.templates[0];
+
+  if (routeFilter === "all") {
+    return {
+      filterLabel: "All routes",
+      summary: groupedResponsePack.summary,
+      templates: decisionTemplates.templates,
+      markdown: groupedResponsePack.markdown
+    };
+  }
+
+  const resolvedRouteKey = routeFilter === "active" ? activeTemplate.key : routeFilter;
+  const selectedTemplate =
+    decisionTemplates.templates.find((template) => template.key === resolvedRouteKey) ?? activeTemplate;
+  const filterLabel = routeFilter === "active" ? `Active route: ${selectedTemplate.label}` : selectedTemplate.label;
+  const summary =
+    routeFilter === "active"
+      ? `Use the active-route response kit when the current preset workflow already points to ${selectedTemplate.label.toLowerCase()} and you want a narrower copy surface than the full grouped pack.`
+      : `Use the ${selectedTemplate.label.toLowerCase()} kit when the receiver only needs that path instead of the full grouped response pack.`;
+
+  return {
+    filterLabel,
+    summary,
+    templates: [selectedTemplate],
+    markdown: [
+      "# Route-Filtered Response Kit",
+      "",
+      `- Receiver role: ${receiverRoleProfiles[role].label}`,
+      `- Destination: ${deliveryDestinations[destination].label}`,
+      `- Bundle mode: ${bundleVariantProfiles[variant].label}`,
+      `- Route filter: ${filterLabel}`,
+      "",
+      selectedTemplate.markdown,
+      "",
+      "## Shared Reply Prompt",
+      `- ${sharedReplyPrompt}`
+    ].join("\n")
+  };
+}
+
 function buildRoleSpecificBundlePlan(
   role: ReceiverRole,
   includeRationale: boolean,
@@ -1843,6 +1895,7 @@ export function ReviewScorecard({
   const [presetActionCopyState, setPresetActionCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [lastPresetLabel, setLastPresetLabel] = useState<string>("");
   const [responsePackCopyState, setResponsePackCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [selectedResponseKitRoute, setSelectedResponseKitRoute] = useState<ResponseKitRouteFilter>("active");
   const [sessionSummaryCopyState, setSessionSummaryCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const filledCount = Object.values(scores).filter((value) => value !== null).length;
@@ -2130,6 +2183,24 @@ export function ReviewScorecard({
   );
   const primaryResponseShortcut =
     decisionTemplates.templates.find((template) => template.tone === "ready") ?? decisionTemplates.templates[0];
+  const routeFilteredResponseKit = buildRouteFilteredResponseKit(
+    selectedDestination,
+    bundleVariant,
+    receiverRole,
+    selectedResponseKitRoute,
+    primaryResponseShortcut.key,
+    decisionTemplates,
+    groupedResponsePack,
+    receiverGuidance.replyPrompt
+  );
+  const responseKitFilterOptions: Array<{ key: ResponseKitRouteFilter; label: string }> = [
+    { key: "active", label: "Active route" },
+    { key: "all", label: "All routes" },
+    ...decisionTemplates.templates.map((template) => ({
+      key: template.key as ResponseKitRouteFilter,
+      label: template.label
+    }))
+  ];
   const finalBundlePackage = buildFinalBundlePackage(
     bundleVariant,
     selectedDestination,
@@ -3463,30 +3534,61 @@ export function ReviewScorecard({
 
               <div className="handoffSection">
                 <div className="claimHeader">
-                  <h3>Grouped response pack</h3>
+                  <h3>Route-filtered response kit</h3>
                   <button
                     type="button"
                     className="actionButton"
                     onClick={async () => {
                       try {
-                        await navigator.clipboard.writeText(groupedResponsePack.markdown);
+                        await navigator.clipboard.writeText(routeFilteredResponseKit.markdown);
                         setResponsePackCopyState("copied");
                       } catch {
                         setResponsePackCopyState("failed");
                       }
                     }}
                   >
-                    Copy response pack
+                    Copy response kit
                   </button>
                 </div>
-                <p className="scoreHint">{groupedResponsePack.summary}</p>
-                <pre className="bundlePreviewPre">{groupedResponsePack.markdown}</pre>
+                <p className="scoreHint">{routeFilteredResponseKit.summary}</p>
+                <div className="laneToggleGroup" role="tablist" aria-label="Response kit route chooser">
+                  {responseKitFilterOptions.map((option) => (
+                    <button
+                      key={option.key}
+                      type="button"
+                      className={`laneToggleButton${selectedResponseKitRoute === option.key ? " laneToggleButtonActive" : ""}`}
+                      onClick={() => setSelectedResponseKitRoute(option.key)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="statusRow">
+                  <span className="pill">{routeFilteredResponseKit.filterLabel}</span>
+                  <span className="pill">{deliveryDestinations[selectedDestination].label}</span>
+                  <span className="pill">{bundleVariantProfiles[bundleVariant].label}</span>
+                  <span className="pill">{receiverRoleProfiles[receiverRole].label}</span>
+                </div>
+                <div className="manifestGrid">
+                  {routeFilteredResponseKit.templates.map((template) => (
+                    <article key={template.key} className="manifestCard">
+                      <div className="claimHeader">
+                        <strong>{template.label}</strong>
+                        <span className={`statusPill statusPill${template.tone}`}>{template.tone}</span>
+                      </div>
+                      <p className="scoreHint">{template.detail}</p>
+                    </article>
+                  ))}
+                </div>
+                <pre className="bundlePreviewPre">{routeFilteredResponseKit.markdown}</pre>
                 <p className="scoreHint">
                   {responsePackCopyState === "copied"
-                    ? "Grouped response pack copied to clipboard."
+                    ? "Route-filtered response kit copied to clipboard."
                     : responsePackCopyState === "failed"
-                      ? "Clipboard copy failed. You can still copy from the response-pack preview."
-                      : "Use the grouped response pack when you want the full acknowledge / request-more-context / escalate set in one packaged export."}
+                      ? "Clipboard copy failed. You can still copy from the response-kit preview."
+                      : selectedResponseKitRoute === "all"
+                        ? "Use All routes when you want the full acknowledge / request-more-context / escalate set in one packaged export."
+                        : "Use the route chooser when the receiver only needs the active or selected response path without carrying the full grouped pack."}
                 </p>
               </div>
 
