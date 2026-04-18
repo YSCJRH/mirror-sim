@@ -120,8 +120,9 @@ mirror-sim
 ## Current Status | 当前状态
 
 - **Formal release `v0.1.0` | 正式版本 `v0.1.0`**: The first formal GitHub Release remains published and anchors the current repository baseline.
-- **Active successor queue | 当前后继队列**: Phase 44, `Counterfactual Depth and Eval Hardening`, is now the sole open execution milestone and the GitHub queue reports `ready`.
-- **Planned next route | 已定后续主线**: Phase 45 and Phase 46 are now documented as the next contract and workbench-focus directions, but they are not open milestones yet.
+- **Active successor queue | 当前后继队列**: Phase 45, `Branch Generalization and Compare Contracts`, is now the sole open execution milestone and the GitHub queue reports `ready`.
+- **Recent closeout | 最近收口**: Phase 44 is formally closed after landing queue sync, canonical scenario-matrix eval hardening, and the comparison-first workbench overview.
+- **Planned next route | 已定后续主线**: Phase 46 remains the documented next workbench-focus direction, but it is not an open milestone yet.
 - **Repo truth lives in docs | 仓库真相以文档为准**: See [mirror.md](mirror.md) for the project blueprint, [docs/plans/current-state-baseline.md](docs/plans/current-state-baseline.md) for the active queue baseline, and [docs/releases/v0.1.0.md](docs/releases/v0.1.0.md) for the canonical release notes.
 
 ---
