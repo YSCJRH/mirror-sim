@@ -144,8 +144,8 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - `#322` `Phase 45 exit gate` is open and remains `status:blocked`.
 - `#323` `Phase 45: sync repo truth to Phase 45 queue` is merged and closed via PR `#327`.
 - `#324` `Phase 45: ratify multi-branch compare ADR and contracts` is merged and closed via PR `#329`.
-- `#325` `Phase 45: implement branch_count runner and compare artifacts` is open and is now the current `status:ready` work item.
-- `#326` remains open and `status:blocked` behind the runner/artifact issue.
+- `#325` `Phase 45: implement branch_count runner and compare artifacts` is merged and closed via PR `#331`.
+- `#326` `Phase 45: consume compare artifacts in focused diff surfaces` is open and is now the current `status:ready` work item.
 - `audit-github-queue` now reports `ready` against the active Phase 45 milestone.
 - Phase 46 remains a documented successor direction only and is not an open milestone.
 - The first formal repository release is published as `v0.1.0`.

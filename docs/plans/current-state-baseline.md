@@ -198,9 +198,9 @@ This note is the active Phase 45 queue baseline after the formal `v0.1.0` releas
   - `gh api repos/YSCJRH/mirror-sim/issues/324`
     - Phase 45 ADR/contracts issue is `closed` after merging PR `#329`
   - `gh api repos/YSCJRH/mirror-sim/issues/325`
-    - Phase 45 runner/artifact issue is `open` and is now the current `status:ready` work item
+    - Phase 45 runner/artifact issue is `closed` after merging PR `#331`
   - `gh api repos/YSCJRH/mirror-sim/issues/326`
-    - Phase 45 focused diff-surface issue is `open` and remains `status:blocked`
+    - Phase 45 focused diff-surface issue is `open` and is now the current `status:ready` work item
   - `gh api "repos/YSCJRH/mirror-sim/milestones?state=open"`
     - exactly one open milestone exists: `Phase 45 - Branch Generalization and Compare Contracts`
   - `gh api repos/YSCJRH/mirror-sim/releases`
@@ -224,14 +224,15 @@ This note is the active Phase 45 queue baseline after the formal `v0.1.0` releas
 ## Current Main Capabilities
 
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
+- The simulation runner now also supports deterministic multi-branch execution under the ratified `branch_count` contract and emits durable compare artifacts for the canonical scenario matrix.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
 - The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, decision-template snippets, role preset cards, response-packaging shortcuts, apply-and-copy preset actions, grouped response-pack export, active preset session summary strips, route-filtered response kit choosers, route-kit comparison cards, preset session handoff packets, send-readiness cue strips, compact-versus-full handoff packet variants, destination-specific sender notes, compact-versus-full handoff packet diff previews, final send summary cards, destination-aware packet recommendation banners, delivery-bundle exports, receiver follow-up packs, delivery checkpoint boards, receiver response packets, reply outcome trackers, resolution handoff packs, resolution status boards, next-step routing packs, action readiness boards, escalation handoff packets, execution kickoff boards, execution progress trackers, execution outcome boards, execution correction boards, execution recovery boards, execution recovery checkpoint boards, execution recovery clearance boards, execution recovery release boards, escalation decision guides, escalation trigger packets, escalation dispatch packets, escalation delivery packets, escalation confirmation packets, escalation receipt packets, escalation acknowledgment packets, and escalation closure packets without introducing backend API expansion.
 - The current repository state has advanced from the Phase 44 counterfactual-depth queue into the Phase 45 branch-generalization queue while preserving `v0.1.0` as the latest published release baseline.
 
 ## Next Entry Point
 
-- Phase 45 is now the sole active milestone, and `#325` `Phase 45: implement branch_count runner and compare artifacts` is the current ready work item.
-- The next unlock order is fixed: `#322` remains blocked as the Phase 45 exit gate, `#323` is closed after queue bootstrap, `#324` is closed after ADR ratification, `#325` is ready to implement the runner and compare artifacts, and `#326` remains blocked behind that implementation work.
+- Phase 45 is now the sole active milestone, and `#326` `Phase 45: consume compare artifacts in focused diff surfaces` is the current ready work item.
+- The next unlock order is fixed: `#322` remains blocked as the Phase 45 exit gate, `#323` is closed after queue bootstrap, `#324` is closed after ADR ratification, `#325` is closed after merging the runner and compare-artifact implementation, and `#326` is now ready for focused diff-surface consumption work.
 - Phase 46 remains the documented successor direction, but it must not be opened while Phase 45 remains active.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
