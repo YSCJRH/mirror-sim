@@ -63,6 +63,9 @@ def test_audit_github_queue_pauses_without_open_milestone(monkeypatch) -> None:
     audit = audit_github_queue("YSCJRH/mirror-sim")
     assert audit.status == "paused"
     assert audit.active_milestone is None
+    assert audit.notes == [
+        "Queue is paused in the formal release stop-state until an approved successor milestone and exit-gate issue are opened."
+    ]
 
 
 def test_audit_github_queue_ready_with_single_milestone_and_ready_issue(monkeypatch) -> None:

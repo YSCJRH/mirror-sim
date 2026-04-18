@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the current Phase 43 active-queue baseline.
+This note is the formal `v0.1.0` release baseline after the Phase 43 closeout.
 
 ## Snapshot
 
@@ -176,21 +176,25 @@ This note is the current Phase 43 active-queue baseline.
   - `gh api repos/YSCJRH/mirror-sim/issues/295`
     - Phase 42 exit issue is `closed`
   - `gh api repos/YSCJRH/mirror-sim/milestones/43`
-    - milestone `Phase 43 - Successor Bootstrap and Branch Exception Resolution` is `open`
-  - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=43"`
-    - Phase 43 now remains open through exit gate `#306` plus branch-exception closeout issue `#308`
+    - milestone `Phase 43 - Successor Bootstrap and Branch Exception Resolution` is `closed`
+  - `gh api repos/YSCJRH/mirror-sim/issues/306`
+    - Phase 43 exit issue is `closed`
+  - `gh api "repos/YSCJRH/mirror-sim/milestones?state=open"`
+    - no open milestone remains after the formal release closeout
+  - `gh api repos/YSCJRH/mirror-sim/releases`
+    - release `v0.1.0` exists and matches the committed release notes baseline
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - successor queue now reports `ready` because Phase 43 has exactly one blocked protected-core exit gate and ready work items available for pickup
+    - queue now reports `paused` with no active milestone because the repo is in the intentional formal release stop-state
 
 ## Trusted Source Of Truth
 
 - GitHub issue and milestone state remain the operational source of truth for current and future work.
 - Local phase audits remain the contract-aligned source of truth for whether the current repo state is runnable and reviewable.
-- `audit-github-queue` is the executable local rule for whether builder automation should remain `paused` or can resume against the successor queue.
+- `audit-github-queue` is the executable local rule for whether builder automation should remain `paused`, has entered the released stop-state, or can resume against a successor queue.
 - `backlog/sprint-01.md` is historical seed material only and should not be used as the live queue.
 - Historical remote `origin/codex/*` branches have now been reduced to zero live legacy exceptions and should not be treated as a standing backlog.
-- The current reviewed branch-hygiene baseline lives in `docs/plans/codex-branch-classification-baseline.md` and now records the evidence needed to close the final exception set through `#308`.
-- Any remaining local `origin/codex/*` tracking ref after `#308` should be treated as stale fetch residue and pruned against live GitHub truth.
+- The current reviewed branch-hygiene baseline lives in `docs/plans/codex-branch-classification-baseline.md` and records the closed `#308` evidence that reduced live historical `origin/codex/*` branches to zero.
+- Any future local `origin/codex/*` tracking ref that survives after a verified remote deletion should be treated as stale fetch residue and pruned against live GitHub truth.
 - Delete a historical remote branch once it is tied only to merged or closed work and no open issue, PR, or runbook step still references it.
 - Keep a historical remote branch only when an open issue or unresolved forensic comparison explicitly names it.
 - Revive a historical remote branch only by opening a new issue that states why `main` is insufficient.
@@ -200,12 +204,12 @@ This note is the current Phase 43 active-queue baseline.
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
 - The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, decision-template snippets, role preset cards, response-packaging shortcuts, apply-and-copy preset actions, grouped response-pack export, active preset session summary strips, route-filtered response kit choosers, route-kit comparison cards, preset session handoff packets, send-readiness cue strips, compact-versus-full handoff packet variants, destination-specific sender notes, compact-versus-full handoff packet diff previews, final send summary cards, destination-aware packet recommendation banners, delivery-bundle exports, receiver follow-up packs, delivery checkpoint boards, receiver response packets, reply outcome trackers, resolution handoff packs, resolution status boards, next-step routing packs, action readiness boards, escalation handoff packets, execution kickoff boards, execution progress trackers, execution outcome boards, execution correction boards, execution recovery boards, execution recovery checkpoint boards, execution recovery clearance boards, execution recovery release boards, escalation decision guides, escalation trigger packets, escalation dispatch packets, escalation delivery packets, escalation confirmation packets, escalation receipt packets, escalation acknowledgment packets, and escalation closure packets without introducing backend API expansion.
-- The current repository state is in an active Phase 43 successor queue, not a closed Phase 42 baseline.
+- The current repository state is in the formal `v0.1.0` release stop-state, not in an active successor queue.
 
 ## Next Entry Point
 
-- Phase 43 is the active milestone and the current implementation slice is tracked by exit-gate issue `#306` plus protected-core follow-through issue `#308`.
-- New implementation work should consume the current Phase 43 queue and should not open another successor milestone while `#306` and `#308` remain unresolved.
+- Phase 43 is formally closed; no active milestone is open and the release baseline is tagged and published as `v0.1.0`.
+- New implementation work should not resume until a real approved successor milestone is defined and opened.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
-- The local queue heartbeat remains active as `mirror-queue-heartbeat` and should continue reporting the ready/paused state of the live Phase 43 queue.
+- The local queue heartbeat remains active as `mirror-queue-heartbeat` and should report the released stop-state as `paused` until a successor queue is explicitly approved.

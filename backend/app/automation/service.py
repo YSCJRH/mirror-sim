@@ -173,7 +173,9 @@ def audit_github_queue(repo: str, *, repo_root: Path | None = None) -> GitHubQue
             repo=repo,
             status="paused",
             checks=checks,
-            notes=["Queue is paused until a fresh milestone and exit-gate issue are opened."],
+            notes=[
+                "Queue is paused in the formal release stop-state until an approved successor milestone and exit-gate issue are opened."
+            ],
         )
 
     milestone_titles = [milestone["title"] for milestone in open_milestones]
