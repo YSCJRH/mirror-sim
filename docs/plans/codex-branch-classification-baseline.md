@@ -1,6 +1,6 @@
 # Codex Branch Classification Baseline
 
-This note records the Phase 42 protected-core classification baseline for current historical `codex/*` branches.
+This note records the Phase 42 protected-core classification baseline and the reviewed apply result for historical `codex/*` branches.
 
 ## Purpose
 
@@ -24,29 +24,40 @@ This note records the Phase 42 protected-core classification baseline for curren
 
 ## Evidence Notes
 
-- Current local inventory on `codex/phase42-branch-classification`:
-  - local `codex/*` branches: `33`
-  - remote `origin/codex/*` branches in the current remote-tracking snapshot: `21`
-  - local branches with gone upstreams: `10`
-  - local branches equal to upstream: `21`
+- Current local inventory on `codex/phase42-branch-cleanup-apply` after the reviewed delete set:
+  - local `codex/*` branches: `4`
+  - remote `origin/codex/*` branches in the current remote-tracking snapshot: `1`
+  - local branches with gone upstreams: `2`
+  - local branches equal to upstream: `0`
   - local branches diverged from upstream: `1`
   - local branches with no upstream: `1`
-  - local `codex/*` branches that track `origin/main`: `1`
+  - local `codex/*` branches that track `origin/main`: `0`
 - The current authenticated REST pull snapshot shows no open pull requests.
-- The current authenticated REST issue snapshot shows only three open issues:
+- The current authenticated REST issue snapshot shows only two open issues:
   - `#295` `Phase 42 exit gate`
-  - `#302` `Phase 42: classify local and remote codex branches against live GitHub state`
   - `#303` `Phase 42: apply reviewed codex branch cleanup and sync branch-hygiene docs`
 - Phases 30-41 are already recorded as closed in [current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md:1).
-- Phase 42 product issues `#296-#298` are no longer open, so the remaining open Phase 42 work is exit-gate closeout plus branch hygiene.
-- A current `git fetch origin --prune` already removed the stale remote queue-sync refs for Phases 30-42, so the remote exception set is now narrower than the earlier snapshot.
+- Phase 42 product issues `#296-#298` are no longer open, `#302` has merged through PR `#304`, and the remaining open Phase 42 work is exit-gate closeout plus reviewed branch-hygiene apply.
+- The reviewed remote delete set has already been applied; the only remaining historical remote exception is `origin/codex/phase23-session-summary`.
 - The repo uses squash merges heavily, so ancestry alone is not enough to prove whether an old execution branch has already been absorbed by `main`.
+
+## Apply Result
+
+- Remote historical `origin/codex/*` branches have been reduced to a single explicit `TODO[verify]` exception:
+  - `origin/codex/phase23-session-summary`
+- Local `codex/*` branches now retain only:
+  - `codex/phase42-branch-cleanup-apply`
+  - `codex/phase1-queue-sync`
+  - `codex/phase22-apply-copy`
+  - `codex/phase23-session-summary`
+- `#302` is complete and closed through PR `#304`.
+- `#303` is now the active apply/closeout issue for any remaining doc sync and exception handling.
 
 ## Remote Branch Classification
 
 ### `delete-remote-and-local`
 
-These remote branches are historical execution state and should be removed in `#303` together with any same-name local twin.
+These remote branches were reviewed in `#302` and have now been deleted in `#303`.
 
 - `origin/codex/phase30-checkpoint-board`
 - `origin/codex/phase30-queue-sync`
@@ -85,9 +96,9 @@ These remote branches are historical execution state and should be removed in `#
 
 Evidence:
 
-- No open PR head is currently holding these refs alive in the last successful REST pull snapshot.
-- The phases that created these branches are already closed or their feature issues are no longer open.
-- The current active Phase 42 work is branch hygiene itself, not continued implementation on these older execution branches.
+- No open PR head was holding these refs alive in the current authenticated REST pull snapshot.
+- The phases that created these branches were already closed or their feature issues were no longer open.
+- The delete set has now been applied.
 
 ### `TODO[verify]`
 
@@ -110,67 +121,28 @@ Evidence:
 
 ### `keep`
 
-- `codex/phase42-branch-classification`
+- `codex/phase42-branch-cleanup-apply`
 
 Evidence:
 
-- This is the current dedicated writer branch for `#302`.
-- It tracks `origin/main`, not a same-name historical execution branch, and should remain in place until classification work is complete.
+- This is the current dedicated writer branch for `#303`.
+- It is the only active local execution branch still needed for the apply/closeout slice.
 
 ### `delete-remote-and-local`
 
-- `codex/phase33-action-readiness`
-- `codex/phase33-escalation-packet`
-- `codex/phase34-escalation-decision`
-- `codex/phase34-execution-kickoff`
-- `codex/phase35-escalation-trigger`
-- `codex/phase35-execution-progress`
-- `codex/phase36-escalation-dispatch`
-- `codex/phase36-execution-outcome`
-- `codex/phase37-escalation-delivery`
-- `codex/phase37-execution-correction`
-- `codex/phase38-escalation-confirmation`
-- `codex/phase38-execution-recovery`
-- `codex/phase39-escalation-receipt`
-- `codex/phase39-queue-sync`
-- `codex/phase39-recovery-checkpoint`
-- `codex/phase40-escalation-acknowledgment`
-- `codex/phase40-queue-sync`
-- `codex/phase40-recovery-clearance`
-- `codex/phase41-escalation-closure`
-- `codex/phase41-queue-sync`
-- `codex/phase41-recovery-release`
-- `codex/phase42-escalation-finalization`
-- `codex/phase42-queue-sync`
-- `codex/phase42-recovery-completion`
+- applied
 
 Evidence:
 
-- These branches are equal to current same-name remote refs and correspond to historical execution slices, not active queue work.
-- They should be deleted together with the remote refs in `#303`, after the current branch-hygiene writer branch is no longer using one of them as a checkout.
+- The same-name historical execution branches in this set were deleted locally after the reviewed remote delete set was applied.
 
 ### `delete-local-now`
 
-- `codex/phase28-branch-cleanup`
-- `codex/phase28-delivery-script`
-- `codex/phase28-delivery-script-clean`
-- `codex/phase28-send-checklist`
-- `codex/phase29-queue-sync`
-- `codex/phase39-queue-sync`
-- `codex/phase40-queue-sync`
-- `codex/phase41-queue-sync`
-- `codex/phase42-queue-sync`
+- applied
 
 Evidence:
 
-- Their upstreams are already gone or absent.
-- Their feature subjects already appear in current repo truth:
-  - destination-specific delivery script
-  - final send checklist
-  - reviewed codex branch cleanup
-  - Phase 29 queue sync
-- The queue-sync local residues for Phases 39-42 now also have pruned upstreams and no remaining open issue that requires keeping the branch itself alive.
-- No open issue or open PR currently depends on these local residues.
+- The reviewed local-only and upstream-gone residues in this set have now been deleted.
 
 ### `TODO[verify]`
 
@@ -190,14 +162,15 @@ Evidence:
 
 ## Reviewed Apply Set For #303
 
-- Keep the current writer branch:
-  - `codex/phase42-branch-classification`
-- Delete remote plus same-name local historical execution branches:
-  - all `delete-remote-and-local` entries above
-- Delete local-only historical residues immediately once `#303` begins:
-  - all `delete-local-now` entries above
-- Preserve explicit exceptions until a dedicated follow-up resolves them:
-  - all `TODO[verify]` entries above
+- Applied remote plus same-name local historical execution delete set
+- Applied local-only historical residue delete set
+- Preserved explicit exceptions for dedicated follow-up:
+  - `origin/codex/phase23-session-summary`
+  - `codex/phase1-queue-sync`
+  - `codex/phase22-apply-copy`
+  - `codex/phase23-session-summary`
+- Preserved the current active writer branch:
+  - `codex/phase42-branch-cleanup-apply`
 
 ## Commands Used
 
@@ -222,8 +195,11 @@ rg -n "destination-specific delivery script|final send checklist|apply reviewed 
 gh auth status
 gh api "repos/YSCJRH/mirror-sim/pulls?state=open&per_page=100"
 gh api "repos/YSCJRH/mirror-sim/issues?state=open&per_page=100"
+git push origin --delete codex/phase33-action-readiness codex/phase33-escalation-packet codex/phase34-escalation-decision codex/phase34-execution-kickoff codex/phase35-escalation-trigger codex/phase35-execution-progress codex/phase36-escalation-dispatch codex/phase36-execution-outcome codex/phase37-escalation-delivery codex/phase37-execution-correction codex/phase38-escalation-confirmation codex/phase38-execution-recovery codex/phase39-escalation-receipt codex/phase39-recovery-checkpoint codex/phase40-escalation-acknowledgment codex/phase40-recovery-clearance codex/phase41-escalation-closure codex/phase41-recovery-release codex/phase42-escalation-finalization codex/phase42-recovery-completion
+git branch -D codex/phase28-branch-cleanup codex/phase28-delivery-script codex/phase28-delivery-script-clean codex/phase28-send-checklist codex/phase29-queue-sync codex/phase33-action-readiness codex/phase33-escalation-packet codex/phase34-escalation-decision codex/phase34-execution-kickoff codex/phase35-escalation-trigger codex/phase35-execution-progress codex/phase36-escalation-dispatch codex/phase36-execution-outcome codex/phase37-escalation-delivery codex/phase37-execution-correction codex/phase38-escalation-confirmation codex/phase38-execution-recovery codex/phase39-escalation-receipt codex/phase39-queue-sync codex/phase39-recovery-checkpoint codex/phase40-escalation-acknowledgment codex/phase40-queue-sync codex/phase40-recovery-clearance codex/phase41-escalation-closure codex/phase41-queue-sync codex/phase41-recovery-release codex/phase42-escalation-finalization codex/phase42-queue-sync codex/phase42-recovery-completion
+git branch -r -d origin/codex/phase42-branch-classification
 ```
 
 ## TODO[verify]
 
-- Re-run authenticated REST pull and issue audits immediately before `#303` deletion work, in case a new PR or issue dependency appears after this classification snapshot.
+- Re-run authenticated REST pull and issue audits immediately before closing `#303`, in case a new PR or issue dependency appears while the apply branch is still open.
