@@ -8,7 +8,7 @@ Mirror Engine is a constrained, evidence-backed conditional simulation sandbox f
 
 ## Current Status
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-42 gates, and resumed the successor queue as `Phase 43 - Successor Bootstrap and Branch Exception Resolution`.
+The repository has completed Day 0 bootstrap, closed the Phase 1-43 gates, and is now in the formal release stop-state as `v0.1.0`.
 
 - Governance documents and Codex execution rules are in place.
 - The canonical demo world is `Fog Harbor East Gate`.
@@ -84,8 +84,10 @@ The repository has completed Day 0 bootstrap, closed the Phase 1-42 gates, and r
   - Phase 41 queue was completed through issues `#288-#291`
   - milestone `Phase 42 - Recovery Completion and Escalation Finalization` is closed
   - Phase 42 queue was completed through issues `#295-#298` plus branch-hygiene governance issues `#302-#303`
-  - milestone `Phase 43 - Successor Bootstrap and Branch Exception Resolution` is open
-  - Phase 43 queue is initialized through issues `#306-#308`
+  - milestone `Phase 43 - Successor Bootstrap and Branch Exception Resolution` is closed
+  - Phase 43 queue was completed through issues `#306-#308`
+  - no open execution milestone remains after formal closeout
+  - GitHub tag and release `v0.1.0` mark the first formal repository release
 
 Local phase audits currently show:
 
@@ -140,7 +142,8 @@ python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 - [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
 - [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
 - [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): review workbench with the Phase 42 recovery-completion and escalation-finalization surfaces landed while the current Phase 43 successor-bootstrap queue continues to consume the same artifact surface
+- [frontend](/D:/mirror/frontend): review workbench with the Phase 42 recovery-completion and Phase 43 release-closeout surfaces landed in the formal `v0.1.0` baseline
+- [docs/releases/v0.1.0.md](/D:/mirror/docs/releases/v0.1.0.md): canonical notes for the first formal GitHub Release
 - [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
 - [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
 
@@ -185,10 +188,10 @@ Repository-side automation assets:
 
 Important constraint:
 
-- Day 0 bootstrap and Phase 42 closeout are complete. Phase 43 is now the active successor queue and should remain the only open execution milestone.
+- Day 0 bootstrap and Phase 43 closeout are complete. The repo now sits in the formal `v0.1.0` release stop-state with no open execution milestone.
 - The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
 - Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation may resume pickup guidance only against the Phase 43 queue and must stop again if `audit-github-queue` leaves `ready`.
+- The local heartbeat automation should remain paused in the `v0.1.0` release stop-state and must not resume pickup until an approved successor milestone is opened.
 - Protected-core changes still must not auto-merge just because checks are green.
 
 ## Non-goals

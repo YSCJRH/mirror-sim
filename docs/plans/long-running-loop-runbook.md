@@ -19,6 +19,11 @@ This runbook defines the manual, worktree-based pickup and handoff flow for cons
 
 If `audit-github-queue` reports `paused`, stop and do not invent new work outside the active milestone.
 
+Interpret `paused` in one of two ways:
+
+- If one active milestone still exists but has no `status:ready` issue, treat the queue as waiting for explicit preparation or closeout inside that same milestone.
+- If no open milestone exists, treat the repo as being in the intentional released stop-state; do not reopen work until an approved successor milestone is defined.
+
 ## Worktree Rules
 
 - Create one dedicated worktree per issue.
@@ -54,6 +59,8 @@ Immediately after each merge:
 8. Confirm the merged issue is closed or otherwise updated in GitHub.
 
 If the queue becomes `fail`, stop pickup and repair the milestone, exit gate, or label structure before continuing.
+
+If the queue becomes `paused` because no open milestone remains after a formal closeout, treat that as a successful stop-state rather than a queue defect.
 
 ## Branch Hygiene
 
