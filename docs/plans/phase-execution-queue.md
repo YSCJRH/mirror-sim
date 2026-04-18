@@ -506,7 +506,7 @@ Local phase audits currently report:
 
 - Remote `origin/codex/*` branches still span historical execution state beyond the old single-exception snapshot.
 - The current reviewed baseline is recorded in `docs/plans/codex-branch-classification-baseline.md` and should drive `#302 -> #303`.
-- Current remote-tracking inventory still includes historical phase branches from Phase 23 and Phase 30-42, with `origin/codex/phase23-session-summary` remaining the explicit `TODO[verify]` exception.
+- Current remote-tracking inventory still includes historical phase branches from Phase 23 and Phase 33-42, with `origin/codex/phase23-session-summary` remaining the explicit `TODO[verify]` exception.
 - Treat any future recreated or still-live `codex/*` remote branch as temporary execution state, not as a standing backlog.
 - Delete a historical branch when it is tied only to closed or merged work and no open issue, PR, or runbook step references it.
 - Keep a historical branch only when an open issue or unresolved forensic comparison explicitly depends on it.

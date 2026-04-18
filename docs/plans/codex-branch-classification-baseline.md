@@ -26,19 +26,20 @@ This note records the Phase 42 protected-core classification baseline for curren
 
 - Current local inventory on `codex/phase42-branch-classification`:
   - local `codex/*` branches: `33`
-  - remote `origin/codex/*` branches in the current remote-tracking snapshot: `40`
-  - local branches with gone upstreams: `6`
-  - local branches equal to upstream: `25`
+  - remote `origin/codex/*` branches in the current remote-tracking snapshot: `21`
+  - local branches with gone upstreams: `10`
+  - local branches equal to upstream: `21`
   - local branches diverged from upstream: `1`
   - local branches with no upstream: `1`
   - local `codex/*` branches that track `origin/main`: `1`
-- The last successful REST pull snapshot returned no open pull requests before the GitHub CLI credential path stopped yielding a usable token.
-- The last successful REST issue snapshot showed only three open issues:
+- The current authenticated REST pull snapshot shows no open pull requests.
+- The current authenticated REST issue snapshot shows only three open issues:
   - `#295` `Phase 42 exit gate`
   - `#302` `Phase 42: classify local and remote codex branches against live GitHub state`
   - `#303` `Phase 42: apply reviewed codex branch cleanup and sync branch-hygiene docs`
 - Phases 30-41 are already recorded as closed in [current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md:1).
 - Phase 42 product issues `#296-#298` are no longer open, so the remaining open Phase 42 work is exit-gate closeout plus branch hygiene.
+- A current `git fetch origin --prune` already removed the stale remote queue-sync refs for Phases 30-42, so the remote exception set is now narrower than the earlier snapshot.
 - The repo uses squash merges heavily, so ancestry alone is not enough to prove whether an old execution branch has already been absorbed by `main`.
 
 ## Remote Branch Classification
@@ -73,18 +74,13 @@ These remote branches are historical execution state and should be removed in `#
 - `origin/codex/phase37-queue-sync`
 - `origin/codex/phase38-escalation-confirmation`
 - `origin/codex/phase38-execution-recovery`
-- `origin/codex/phase38-queue-sync`
 - `origin/codex/phase39-escalation-receipt`
-- `origin/codex/phase39-queue-sync`
 - `origin/codex/phase39-recovery-checkpoint`
 - `origin/codex/phase40-escalation-acknowledgment`
-- `origin/codex/phase40-queue-sync`
 - `origin/codex/phase40-recovery-clearance`
 - `origin/codex/phase41-escalation-closure`
-- `origin/codex/phase41-queue-sync`
 - `origin/codex/phase41-recovery-release`
 - `origin/codex/phase42-escalation-finalization`
-- `origin/codex/phase42-queue-sync`
 - `origin/codex/phase42-recovery-completion`
 
 Evidence:
@@ -160,6 +156,10 @@ Evidence:
 - `codex/phase28-delivery-script-clean`
 - `codex/phase28-send-checklist`
 - `codex/phase29-queue-sync`
+- `codex/phase39-queue-sync`
+- `codex/phase40-queue-sync`
+- `codex/phase41-queue-sync`
+- `codex/phase42-queue-sync`
 
 Evidence:
 
@@ -169,6 +169,7 @@ Evidence:
   - final send checklist
   - reviewed codex branch cleanup
   - Phase 29 queue sync
+- The queue-sync local residues for Phases 39-42 now also have pruned upstreams and no remaining open issue that requires keeping the branch itself alive.
 - No open issue or open PR currently depends on these local residues.
 
 ### `TODO[verify]`

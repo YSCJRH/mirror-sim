@@ -186,7 +186,7 @@ This note is the current Phase 42 active-queue baseline.
 - `backlog/sprint-01.md` is historical seed material only and should not be used as the live queue.
 - Remote `origin/codex/*` branches still span historical execution state and should not be treated as a standing backlog.
 - The current reviewed branch-hygiene baseline lives in `docs/plans/codex-branch-classification-baseline.md` and now reflects the Phase 42 cleanup snapshot.
-- The current remote-tracking inventory still includes historical phase branches from Phase 23 and Phase 30-42; cleanup remains pending through `#302` and `#303`.
+- The current remote-tracking inventory still includes historical phase branches from Phase 23 and Phase 33-42; a live `git fetch origin --prune` has already removed the stale Phase 30-42 queue-sync refs, and remaining cleanup continues through `#302` and `#303`.
 - Delete a historical remote branch once it is tied only to merged or closed work and no open issue, PR, or runbook step still references it.
 - Keep a historical remote branch only when an open issue or unresolved forensic comparison explicitly names it.
 - Revive a historical remote branch only by opening a new issue that states why `main` is insufficient.
