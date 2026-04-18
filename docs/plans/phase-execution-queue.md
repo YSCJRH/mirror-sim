@@ -63,16 +63,17 @@ Local phase audits currently report:
   - open
   - `status:blocked`
 - `#314` `Phase 44: sync repo truth to Phase 44 queue`
-  - open
-  - `status:ready`
+  - closed
+  - merged via PR `#317`
 - `#315` `Phase 44: add canonical scenario matrix and eval coverage`
   - open
-  - `status:blocked`
+  - `status:ready`
 - `#316` `Phase 44: add workbench counterfactual comparison overview`
   - open
   - `status:blocked`
 - `audit-github-queue`
   - reports `ready` against the Phase 44 milestone because exactly one open milestone exists with a protected blocked exit gate and ready work items
+  - the current ready work item is now `#315` rather than the already-merged queue-sync issue
 - planned successor directions
   - Phase 45: branch generalization and compare contracts
   - Phase 46: workbench focus and modularity
