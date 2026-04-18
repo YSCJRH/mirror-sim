@@ -143,8 +143,9 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 45 milestone `Phase 45 - Branch Generalization and Compare Contracts` is open.
 - `#322` `Phase 45 exit gate` is open and remains `status:blocked`.
 - `#323` `Phase 45: sync repo truth to Phase 45 queue` is merged and closed via PR `#327`.
-- `#324` `Phase 45: ratify multi-branch compare ADR and contracts` is open and is now the current `status:ready` work item.
-- `#325-#326` remain open and `status:blocked` behind the ADR/contracts issue.
+- `#324` `Phase 45: ratify multi-branch compare ADR and contracts` is merged and closed via PR `#329`.
+- `#325` `Phase 45: implement branch_count runner and compare artifacts` is open and is now the current `status:ready` work item.
+- `#326` remains open and `status:blocked` behind the runner/artifact issue.
 - `audit-github-queue` now reports `ready` against the active Phase 45 milestone.
 - Phase 46 remains a documented successor direction only and is not an open milestone.
 - The first formal repository release is published as `v0.1.0`.

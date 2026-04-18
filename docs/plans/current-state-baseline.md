@@ -196,9 +196,9 @@ This note is the active Phase 45 queue baseline after the formal `v0.1.0` releas
   - `gh api repos/YSCJRH/mirror-sim/issues/323`
     - Phase 45 queue-sync issue is `closed` after merging PR `#327`
   - `gh api repos/YSCJRH/mirror-sim/issues/324`
-    - Phase 45 ADR/contracts issue is `open` and is now the current `status:ready` work item
+    - Phase 45 ADR/contracts issue is `closed` after merging PR `#329`
   - `gh api repos/YSCJRH/mirror-sim/issues/325`
-    - Phase 45 runner/artifact issue is `open` and remains `status:blocked`
+    - Phase 45 runner/artifact issue is `open` and is now the current `status:ready` work item
   - `gh api repos/YSCJRH/mirror-sim/issues/326`
     - Phase 45 focused diff-surface issue is `open` and remains `status:blocked`
   - `gh api "repos/YSCJRH/mirror-sim/milestones?state=open"`
@@ -230,8 +230,8 @@ This note is the active Phase 45 queue baseline after the formal `v0.1.0` releas
 
 ## Next Entry Point
 
-- Phase 45 is now the sole active milestone, and `#324` `Phase 45: ratify multi-branch compare ADR and contracts` is the current ready work item.
-- The next unlock order is fixed: `#322` remains blocked as the Phase 45 exit gate, `#323` is closed after queue bootstrap, `#324` is ready to ratify the ADR and contracts, and `#325-#326` remain blocked behind that contract work.
+- Phase 45 is now the sole active milestone, and `#325` `Phase 45: implement branch_count runner and compare artifacts` is the current ready work item.
+- The next unlock order is fixed: `#322` remains blocked as the Phase 45 exit gate, `#323` is closed after queue bootstrap, `#324` is closed after ADR ratification, `#325` is ready to implement the runner and compare artifacts, and `#326` remains blocked behind that implementation work.
 - Phase 46 remains the documented successor direction, but it must not be opened while Phase 45 remains active.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
