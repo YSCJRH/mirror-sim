@@ -137,8 +137,8 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 44 milestone `Phase 44 - Counterfactual Depth and Eval Hardening` is open.
 - `#313` `Phase 44 exit gate` is open and remains `status:blocked`.
 - `#314` `Phase 44: sync repo truth to Phase 44 queue` is merged and closed via PR `#317`.
-- `#315` `Phase 44: add canonical scenario matrix and eval coverage` is open and is now the current `status:ready` work item.
-- `#316` `Phase 44: add workbench counterfactual comparison overview` is open and remains `status:blocked`.
+- `#315` `Phase 44: add canonical scenario matrix and eval coverage` is merged and closed via PR `#319`.
+- `#316` `Phase 44: add workbench counterfactual comparison overview` is open and is now the current `status:ready` work item.
 - `audit-github-queue` now reports `ready` against the active Phase 44 milestone.
 - Phase 45 and Phase 46 are documented successor directions only; neither milestone is open yet.
 - The first formal repository release is published as `v0.1.0`.
