@@ -186,9 +186,9 @@ This note is the active Phase 44 queue baseline after the formal `v0.1.0` releas
   - `gh api repos/YSCJRH/mirror-sim/issues/314`
     - Phase 44 queue-sync issue is `closed` after merging PR `#317`
   - `gh api repos/YSCJRH/mirror-sim/issues/315`
-    - Phase 44 scenario-matrix issue is `open` and is now the current `status:ready` work item
+    - Phase 44 scenario-matrix issue is `closed` after merging PR `#319`
   - `gh api repos/YSCJRH/mirror-sim/issues/316`
-    - Phase 44 comparison-overview issue is `open` and remains `status:blocked`
+    - Phase 44 comparison-overview issue is `open` and is now the current `status:ready` work item
   - `gh api "repos/YSCJRH/mirror-sim/milestones?state=open"`
     - exactly one open milestone exists: `Phase 44 - Counterfactual Depth and Eval Hardening`
   - `gh api repos/YSCJRH/mirror-sim/releases`
@@ -218,8 +218,8 @@ This note is the active Phase 44 queue baseline after the formal `v0.1.0` releas
 
 ## Next Entry Point
 
-- Phase 44 is now the sole active milestone, and `#315` `Phase 44: add canonical scenario matrix and eval coverage` is the current ready work item.
-- The next unlock order is fixed: `#314` is now closed, `#315` is ready, and `#316` should remain blocked until the scenario matrix artifacts are stable.
+- Phase 44 is now the sole active milestone, and `#316` `Phase 44: add workbench counterfactual comparison overview` is the current ready work item.
+- The next unlock order is fixed: `#314` and `#315` are now closed, and `#316` is ready to carry the Phase 44 workbench slice.
 - Phase 45 and Phase 46 are documented successor directions only; they must not be opened while Phase 44 remains active.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
