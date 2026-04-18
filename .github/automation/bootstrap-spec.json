@@ -171,6 +171,10 @@
     {
       "title": "Phase 43 - Successor Bootstrap and Branch Exception Resolution",
       "description": "Turn the post-Phase-42 closeout into a clear successor-bootstrap and branch-exception-resolution queue without changing simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 44 - Counterfactual Depth and Eval Hardening",
+      "description": "Turn the formal v0.1.0 release stop-state into a counterfactual-depth queue that expands the canonical scenario matrix, hardens eval coverage, and adds a comparison-first workbench entrypoint without changing scenario DSL, claim labels, or artifact roots."
     }
   ],
   "labels": [
@@ -388,6 +392,11 @@
       "name": "phase:43",
       "color": "FBFCFD",
       "description": "Phase 43 successor bootstrap and branch exception resolution work."
+    },
+    {
+      "name": "phase:44",
+      "color": "FFF4D6",
+      "description": "Phase 44 counterfactual depth and eval hardening work."
     },
     {
       "name": "area:backend",
@@ -2317,6 +2326,51 @@
         "lane:protected-core"
       ],
       "body": "## Summary\nResolve the explicit remaining codex branch TODO exceptions against live GitHub state and current `main` so branch hygiene no longer depends on stale carry-forward assumptions.\n\n## Scope\n- inspect the remaining `TODO[verify]` local and remote branch exceptions documented in the branch baseline\n- decide keep, revive, or delete from live evidence instead of historical assumptions\n- update the branch-hygiene docs so the exception set matches live GitHub truth after review\n\n## Constraints\n- do not reopen historical work without a new issue that explains why `main` is insufficient\n- do not delete any branch that is still referenced by open work, unresolved forensic comparison, or active runbook guidance\n- no simulation, report, claim, evidence, scenario, or schema contract changes"
+    },
+    {
+      "title": "Phase 44 exit gate",
+      "milestone": "Phase 44 - Counterfactual Depth and Eval Hardening",
+      "labels": [
+        "phase:44",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "Close this issue only after the full Phase 44 counterfactual-depth queue is complete.\n\nExit criteria:\n- the Phase 44 queue-sync issue is merged\n- the canonical scenario matrix and eval coverage issue is merged\n- the workbench counterfactual comparison overview issue is merged\n- `./make.ps1 smoke` passes\n- `./make.ps1 test` passes\n- `./make.ps1 eval-demo` passes\n- `python -m backend.app.cli audit-phase phase1` passes\n- `python -m backend.app.cli audit-phase phase2` passes\n- `python -m backend.app.cli audit-phase phase3` passes\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` returns `ready`\n- the Phase 45 milestone is open and the Phase 45 queue-sync issue exists before closeout"
+    },
+    {
+      "title": "Phase 44: sync repo truth to Phase 44 queue",
+      "milestone": "Phase 44 - Counterfactual Depth and Eval Hardening",
+      "labels": [
+        "phase:44",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## Summary\nSync the repo truth from the formal `v0.1.0` release stop-state to the active Phase 44 queue.\n\n## Scope\n- add Phase 44 milestone, label, and issue definitions to the bootstrap spec\n- update README and active-state docs to show Phase 44 as the sole active queue\n- record Phase 45 and Phase 46 as planned successor directions without opening them yet\n- create the Phase 44 milestone and issues from the updated bootstrap spec\n\n## Constraints\n- no simulation, report, claim, evidence, scenario, or schema contract changes\n- do not open more than one active execution milestone\n- no backend/runtime behavior changes beyond queue-governance sync"
+    },
+    {
+      "title": "Phase 44: add canonical scenario matrix and eval coverage",
+      "milestone": "Phase 44 - Counterfactual Depth and Eval Hardening",
+      "labels": [
+        "phase:44",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## Summary\nExpand the canonical Fog Harbor East Gate demo from a single intervention comparison into a small scenario matrix with stronger eval coverage.\n\n## Scope\n- add at least three intervention scenarios on top of the existing baseline so the canonical matrix reaches four compared runs\n- keep the existing injection kinds: `delay_document`, `block_contact`, and `resource_failure`\n- update the expectation set so `eval-demo` covers the whole scenario matrix instead of only one intervention delta\n- keep the current scenario DSL, claim labels, and artifact root structure intact\n\n## Constraints\n- do not introduce new injection kinds, new scenario DSL fields, or new artifact root directories in this phase\n- no branch-count execution semantics yet\n- no workbench API expansion in this issue"
+    },
+    {
+      "title": "Phase 44: add workbench counterfactual comparison overview",
+      "milestone": "Phase 44 - Counterfactual Depth and Eval Hardening",
+      "labels": [
+        "phase:44",
+        "area:frontend",
+        "status:blocked",
+        "lane:auto-safe"
+      ],
+      "body": "## Summary\nAdd a comparison-first workbench overview that makes the scenario matrix, outcome deltas, and direct trace/evidence entrypoints visible at the top level.\n\n## Scope\n- add a scenario-matrix summary surface to the existing workbench using current artifact files only\n- highlight which intervention changes which key outcomes before the reviewer drops into detailed traces\n- link the overview directly into trace-diff and claim/evidence surfaces\n- avoid expanding the existing handoff/export packet family in this slice\n\n## Constraints\n- no backend API additions\n- no artifact schema changes\n- keep the default operator path focused on compare -> trace -> claim/evidence -> eval"
     }
   ]
 }
