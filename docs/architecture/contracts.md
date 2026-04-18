@@ -1,6 +1,6 @@
 # Core Contracts
 
-This file freezes the current post-Phase-0 contracts that Phase 1 hardening now depends on.
+This file freezes the current cross-phase contracts that later runner, eval, and workbench changes now depend on.
 
 ## Stable Object IDs
 
@@ -11,6 +11,8 @@ This file freezes the current post-Phase-0 contracts that Phase 1 hardening now 
 - `event_id`
 - `persona_id`
 - `scenario_id`
+- `branch_id`
+- `compare_id`
 - `run_id`
 - `turn_id`
 - `claim_id`
@@ -58,8 +60,12 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
 ## Scenario Contract
 
 - `scenario_id` names the full scenario package.
+- `branch_count` is part of the scenario execution contract.
+  - `branch_count: 1` preserves the current single-branch behavior.
+  - `branch_count > 1` requests deterministic multi-branch execution for one scenario package.
+  - Phase 45 does not add new scenario YAML fields beyond giving `branch_count` executable semantics.
 - Each injection has its own `injection_id` and `kind`.
-- Phase 0 and this Phase 1 hardening pass still support only:
+- Current supported injection kinds remain:
   - `delay_document`
   - `block_contact`
   - `resource_failure`
@@ -67,9 +73,56 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
 ## Run Contract
 
 - `TurnAction` is the line format stored in `run_trace.jsonl`.
-- `RunTrace` is the run-level summary model stored in `summary.json`.
+- `RunTrace` is the branch-run summary model stored in `summary.json`.
 - Simulation remains seeded, bounded, deterministic, and writes snapshots per turn.
-- `branch_count` remains reserved for future runner generalization and does not gain new execution semantics in this sprint.
+- `run_id` remains the execution artifact ID for one concrete branch run.
+- `branch_id` is the stable compare-level ID for one branch inside a multi-branch scenario.
+- `TurnAction` shape does not change as part of the Phase 45 compare-contract ratification.
+
+## Compare Contract
+
+- When `branch_count > 1`, the backend must emit a durable compare artifact at:
+  - `artifacts/<scope>/compare/<scenario_id>/compare.json`
+- `compare.json` is the canonical branch-relationship artifact for one scenario compare set.
+- Required top-level fields:
+  - `compare_id`
+  - `scenario_id`
+  - `seed`
+  - `branch_count`
+  - `reference_branch_id`
+  - `branches`
+  - `reference_deltas`
+- Each `branches[]` item must include:
+  - `branch_id`
+  - `label`
+  - `run_id`
+  - `is_reference`
+  - `summary_path`
+  - `trace_path`
+  - `snapshot_dir`
+- Each `reference_deltas[]` item must include:
+  - `branch_id`
+  - `divergent_turn_count`
+  - `divergent_turns`
+  - `outcome_deltas`
+- Each `divergent_turns[]` item must at minimum include:
+  - `turn_index`
+  - `reference_turn_id`
+  - `candidate_turn_id`
+- Each `outcome_deltas` entry must expose:
+  - `reference`
+  - `candidate`
+  - `delta`
+- Backend ownership:
+  - the backend chooses `reference_branch_id`
+  - the backend assigns `branch_id`
+  - the backend emits the canonical file references for branch runs
+- Frontend ownership:
+  - when `compare.json` exists, the frontend should use it as the top-level source of truth for compare overview and branch routing
+  - the frontend may still read run summaries, traces, and snapshots for drill-down
+- Report and eval ownership:
+  - reports and claims may remain pair-scoped in the initial Phase 45 implementation, but the chosen branch pair must come from compare truth
+  - evals should consume `compare.json` whenever a scenario uses `branch_count > 1`
 
 ## Artifact Contract
 
@@ -82,11 +135,15 @@ artifacts/demo/
 │   └── personas.json
 ├── scenario/
 ├── run/
-│   ├── baseline/
-│   └── reporter_detained/
+│   └── <scenario-run-artifacts>/
+├── compare/
+│   └── <scenario_id>/
+│       └── compare.json
 ├── report/
 └── eval/
 ```
+
+- Existing single-branch and Phase 44 matrix artifacts remain valid while Phase 45 implementation catches up to the new compare contract.
 
 ## Platform Assumption
 
