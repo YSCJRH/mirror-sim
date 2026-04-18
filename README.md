@@ -4,108 +4,89 @@
   <img src="mirror.png" alt="Mirror concept illustration" width="100%" />
 </p>
 
-Mirror Engine is a constrained, evidence-backed conditional simulation sandbox for fictional or explicitly authorized knowledge environments. It is designed to answer questions like "if this disturbance occurs, how do key actors, information flows, and outcomes change?" without presenting itself as a real-world future prediction machine.
+**A constrained multi-agent scenario simulation engine inspired by Liu Cixin's _The Mirror_.**
 
-## Current Status
+**基于刘慈欣《镜子》启发设计的受约束多智能体情景模拟引擎。**
 
-The repository has completed Day 0 bootstrap, closed the Phase 1-43 gates, and is now in the formal release stop-state as `v0.1.0`.
+---
 
-- Governance documents and Codex execution rules are in place.
-- The canonical demo world is `Fog Harbor East Gate`.
-- The backend can ingest, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
-- The repo now also includes the long-running automation and workbench pieces:
-  - GitHub issue and PR templates
-  - lane policy and bootstrap spec
-  - CI upgraded to a long-running quality gate
-  - local lane-classification, phase-audit, and GitHub queue-audit commands
-  - protected `main` with required status checks and auto-merge for safe-lane PRs
-  - a browser workbench that now supports claim -> evidence drill-down, trace review, reviewer scorecards, issue-comment packets, operator handoff briefs, execution kickoff boards, execution progress trackers, execution outcome boards, execution correction boards, execution recovery boards, execution recovery checkpoint boards, execution recovery clearance boards, execution recovery release boards, escalation decision guides, escalation trigger packets, escalation dispatch packets, escalation delivery packets, escalation confirmation packets, escalation receipt packets, escalation acknowledgment packets, and escalation closure packets
-  - a documented worktree-based pickup and handoff path for long-running queue execution
-- GitHub queue state is aligned with the local baseline:
-  - Phase 3 exit issue `#4` is closed
-  - milestone `Phase 3 - Eval/UI/Demo` is closed
-  - milestone `Phase 4 - Review Workflow and Ops Hardening` is closed
-  - milestone `Phase 5 - Review Sign-off and Evidence Packaging` is closed
-  - milestone `Phase 6 - Automation Activation and Queue Hygiene` is closed
-  - milestone `Phase 7 - Operator Handoff and Review Delivery` is closed
-  - milestone `Phase 8 - Closeout Delivery and Pickup Routing` is closed
-  - milestone `Phase 9 - Review Delivery Polish and Completeness` is closed
-  - milestone `Phase 10 - Guided Delivery and Quick Export` is closed
-  - milestone `Phase 11 - Export Presets and Delivery Shortcuts` is closed
-  - milestone `Phase 12 - Delivery Preset Refinement and Comparison Flow` is closed
-  - milestone `Phase 13 - Guided Export Payload Review` is closed
-  - milestone `Phase 14 - Export Delta and Copy Confidence` is closed
-  - milestone `Phase 15 - Override Rationale and Delivery Confidence` is closed
-  - milestone `Phase 16 - Export Bundle Composition and Handoff Packaging` is closed
-  - milestone `Phase 17 - Final Bundle Delivery and Handoff Manifest` is closed
-  - milestone `Phase 18 - Bundle Variants and Receiver Guidance` is closed
-  - milestone `Phase 19 - Receiver Roles and Follow-Through Routing` is closed
-  - milestone `Phase 20 - Role-Specific Bundle Layout and Decision Templates` is closed
-  - milestone `Phase 21 - Role Presets and Response Packaging` is closed
-  - milestone `Phase 22 - Preset Workflow and Packed Responses` is closed
-  - Phase 22 queue was completed through issues `#151-#154`
-  - milestone `Phase 23 - Preset Sessions and Response Kits` is closed
-  - Phase 23 queue was completed through issues `#158-#161`
-  - milestone `Phase 24 - Session Handoff and Route Comparison` is closed
-  - Phase 24 queue was completed through issues `#165-#168`
-  - milestone `Phase 25 - Handoff Delivery and Packet Variants` is closed
-  - Phase 25 queue was completed through issues `#172-#175`
-  - milestone `Phase 26 - Packet Delivery Prep and Sender Notes` is closed
-  - Phase 26 queue was completed through issues `#179-#182`
-  - milestone `Phase 27 - Sendoff Summary and Packet Recommendation` is closed
-  - Phase 27 queue was completed through issues `#186-#189`
-  - milestone `Phase 28 - Send Decision and Delivery Checklist` is closed
-  - Phase 28 queue was completed through issues `#193-#196` plus branch-hygiene governance issues `#199-#200`
-  - milestone `Phase 29 - Delivery Bundle and Follow-up Pack` is closed
-  - Phase 29 queue was completed through issues `#204-#207`
-  - milestone `Phase 30 - Delivery Confirmation and Receiver Response` is closed
-  - Phase 30 queue was completed through issues `#211-#214`
-  - milestone `Phase 31 - Reply Outcome and Resolution Handoff` is closed
-  - Phase 31 queue was completed through issues `#218-#221`
-  - milestone `Phase 32 - Resolution Status and Next-Step Routing` is closed
-  - Phase 32 queue was completed through issues `#225-#228`
-  - milestone `Phase 33 - Action Readiness and Escalation Packet` is closed
-  - Phase 33 queue was completed through issues `#232-#235`
-  - milestone `Phase 34 - Execution Kickoff and Escalation Decision` is closed
-  - Phase 34 queue was completed through issues `#239-#242`
-  - milestone `Phase 35 - Execution Tracking and Escalation Trigger` is closed
-  - Phase 35 queue was completed through issues `#246-#249`
-  - milestone `Phase 36 - Execution Outcome and Escalation Dispatch` is closed
-  - Phase 36 queue was completed through issues `#253-#256`
-  - milestone `Phase 37 - Execution Correction and Escalation Delivery` is closed
-  - Phase 37 queue was completed through issues `#260-#263`
-  - milestone `Phase 38 - Execution Recovery and Escalation Confirmation` is closed
-  - Phase 38 queue was completed through issues `#267-#270`
-  - milestone `Phase 39 - Recovery Checkpoint and Escalation Receipt` is closed
-  - Phase 39 queue was completed through issues `#274-#277`
-  - milestone `Phase 40 - Recovery Clearance and Escalation Acknowledgment` is closed
-  - Phase 40 queue was completed through issues `#281-#284`
-  - milestone `Phase 41 - Recovery Release and Escalation Closure` is closed
-  - Phase 41 queue was completed through issues `#288-#291`
-  - milestone `Phase 42 - Recovery Completion and Escalation Finalization` is closed
-  - Phase 42 queue was completed through issues `#295-#298` plus branch-hygiene governance issues `#302-#303`
-  - milestone `Phase 43 - Successor Bootstrap and Branch Exception Resolution` is closed
-  - Phase 43 queue was completed through issues `#306-#308`
-  - no open execution milestone remains after formal closeout
-  - GitHub tag and release `v0.1.0` mark the first formal repository release
+## Introduction | 简介
 
-Local phase audits currently show:
+Mirror Engine aims to build a controlled, evidence-backed virtual environment for multi-agent simulation and scenario exploration. It combines graph-based world modeling, scenario injection, deterministic runs, and a browser review workbench so researchers and developers can inspect how disturbances propagate through actors, information flows, and outcomes.
 
-- Phase 1: `pass`
-- Phase 2: `pass`
-- Phase 3: `pass`
+Mirror Engine 项目旨在构建一个可控、可追踪、可验证的多智能体情景推演环境。项目融合知识图谱、情景注入、确定性模拟、报告生成与浏览器审查工作台，用于帮助研究者和开发者观察扰动如何沿着角色、信息流和结果路径传播。
 
-## Quick Start
+The repository is designed for fictional or explicitly authorized knowledge environments. It is not presented as an open-world prediction machine, but as a constrained sandbox for interpretable scenario analysis.
+
+本仓库面向虚构或经明确授权的知识环境，不将自己包装成现实世界预测机器，而是一个用于可解释情景分析的受约束模拟沙盒。
+
+---
+
+## Features | 功能特性
+
+- **Deterministic simulation backbone | 确定性模拟主干**: Build a repeatable flow from corpus ingestion to graph, personas, validated scenarios, simulation runs, reports, and evals.
+- **Graph-based world modeling | 图谱化世界建模**: Organize entities, relationships, and constraints into a queryable world model for scenario execution.
+- **Scenario injection and control | 情景注入与控制**: Define disturbances explicitly and compare baseline versus injected runs in a traceable way.
+- **Review workbench | 审查工作台**: Inspect claims, evidence, traces, reviewer views, and release-closeout surfaces in the browser workbench.
+- **Explainability and verifiability | 可解释与可验证**: Keep reports grounded in labeled claims and `evidence_ids` so outputs remain auditable.
+- **GitHub-native governance | GitHub 原生治理**: Use phase audits, queue audits, lane classification, and protected `main` workflows to support long-running execution safely.
+
+---
+
+## Getting Started | 快速开始
+
+### Prerequisites | 环境要求
+
+- Python 3.11+
+- Node.js 18+
+- `make` for Unix-like shells, or PowerShell on Windows
+
+### Installation | 安装
+
+Clone the repository:
+
+```bash
+git clone https://github.com/YSCJRH/mirror-sim.git
+cd mirror-sim
+```
+
+Install the backend package:
+
+Unix-like shells:
+
+```bash
+make setup
+```
 
 PowerShell:
 
 ```powershell
-./make.ps1 smoke
-./make.ps1 test
-./make.ps1 eval-demo
+./make.ps1 setup
 ```
 
-Unix-like shells with `make` installed:
+### Running the Application | 启动应用
+
+Start the backend API:
+
+```bash
+make dev-api
+```
+
+```powershell
+./make.ps1 dev-api
+```
+
+Launch the frontend workbench:
+
+```bash
+make dev-web
+```
+
+```powershell
+./make.ps1 dev-web
+```
+
+Validate the local baseline:
 
 ```bash
 make smoke
@@ -113,96 +94,55 @@ make test
 make eval-demo
 ```
 
-Direct CLI examples:
-
-```bash
-python -m backend.app.cli ingest data/demo/corpus/manifest.yaml --out artifacts/demo/ingest
-python -m backend.app.cli build-graph artifacts/demo/ingest/chunks.jsonl --out artifacts/demo/graph
-python -m backend.app.cli personas artifacts/demo/graph/graph.json --out artifacts/demo/personas
-python -m backend.app.cli validate-scenario data/demo/scenarios/reporter_detained.yaml --out artifacts/demo/scenario/reporter_detained.json
-python -m backend.app.cli simulate data/demo/scenarios/reporter_detained.yaml --graph artifacts/demo/graph/graph.json --personas artifacts/demo/personas/personas.json --out artifacts/demo/run/reporter_detained
-python -m backend.app.cli report artifacts/demo/run/reporter_detained --baseline artifacts/demo/run/baseline --out artifacts/demo/report
-python -m backend.app.cli inspect-world --kind entity --id entity_east_gate --graph artifacts/demo/graph/graph.json --personas artifacts/demo/personas/personas.json
-python -m backend.app.cli classify-lane --files README.md backend/app/cli.py
-python -m backend.app.cli audit-phase phase1
-python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
+```powershell
+./make.ps1 smoke
+./make.ps1 test
+./make.ps1 eval-demo
 ```
 
-## Repo Map
+---
 
-- [mirror.md](/D:/mirror/mirror.md): top-level blueprint and harness
-- [AGENTS.md](/D:/mirror/AGENTS.md): Codex execution rules
-- [docs/plans/phase-0-foundation.md](/D:/mirror/docs/plans/phase-0-foundation.md): Phase 0 implementation note
-- [docs/plans/automation-roadmap.md](/D:/mirror/docs/plans/automation-roadmap.md): long-running automation bootstrap and operating plan
-- [docs/plans/phase-execution-queue.md](/D:/mirror/docs/plans/phase-execution-queue.md): current phase queue and execution order
-- [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md): current handoff baseline and trusted source-of-truth checks
-- [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md): worktree-based queue pickup, review, and handoff runbook
-- [docs/architecture/contracts.md](/D:/mirror/docs/architecture/contracts.md): durable contracts and assumptions
-- [data/demo/config/world_model.yaml](/D:/mirror/data/demo/config/world_model.yaml): demo world model and persona blueprint
-- [data/demo](/D:/mirror/data/demo): demo world, scenarios, expectations
-- [backend](/D:/mirror/backend): FastAPI app, CLI, automation helpers, domain models, pipeline
-- [evals/assertions](/D:/mirror/evals/assertions): automated assertions and redlines
-- [frontend](/D:/mirror/frontend): review workbench with the Phase 42 recovery-completion and Phase 43 release-closeout surfaces landed in the formal `v0.1.0` baseline
-- [docs/releases/v0.1.0.md](/D:/mirror/docs/releases/v0.1.0.md): canonical notes for the first formal GitHub Release
-- [.github/automation/bootstrap-spec.json](/D:/mirror/.github/automation/bootstrap-spec.json): GitHub bootstrap source of truth
-- [.github/automation/lane-policy.json](/D:/mirror/.github/automation/lane-policy.json): safe-lane vs protected-core policy
-
-## Architecture Shape
-
-The current deterministic backbone remains:
+## Project Structure | 项目结构
 
 ```text
-Corpus
-  -> Ingest / Chunk
-  -> Graph Build
-  -> Persona Cards
-  -> Scenario Validation
-  -> Baseline Run
-  -> Injected Run
-  -> Diff Report + Claims
-  -> Eval Summary
+mirror-sim
+├── .github/         # GitHub workflows, templates, and automation governance
+├── backend/         # FastAPI app, CLI, automation helpers, and pipeline code
+├── frontend/        # Next.js review workbench
+├── data/            # Demo corpus, scenarios, and world-model inputs
+├── docs/            # Plans, decisions, architecture notes, and release docs
+├── evals/           # Assertions and evaluation assets
+└── scripts/         # Bootstrap and utility scripts
 ```
 
-Key principles:
+---
 
-- Deterministic backbone first; LLMs stay at the edge.
-- Local files and transparent artifacts first; heavy infra later.
-- Reports must carry claim labels and `evidence_ids`.
-- World model outputs must remain queryable.
-- Safety and eval are part of the main loop, not an appendix.
+## Current Status | 当前状态
 
-## Automation Bootstrap
+- **Formal release `v0.1.0` | 正式版本 `v0.1.0`**: The repository has completed Phase 43 closeout and published its first formal GitHub Release.
+- **Release stop-state | 发布停机态**: No approved successor phase is open in this round, so the GitHub execution queue is intentionally `paused`.
+- **Repo truth lives in docs | 仓库真相以文档为准**: See [mirror.md](mirror.md) for the project blueprint and [docs/releases/v0.1.0.md](docs/releases/v0.1.0.md) for the canonical release notes.
 
-Mirror now treats GitHub as the operational source of truth for long-running automation.
+---
 
-Repository-side automation assets:
+## Contribution | 贡献方式
 
-- `.github/ISSUE_TEMPLATE/`
-- `.github/pull_request_template.md`
-- `.github/workflows/phase0.yml`
-- `.github/workflows/pull-request-lane.yml`
-- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`
-- `python -m backend.app.cli classify-lane ...`
-- `python -m backend.app.cli audit-phase ...`
-- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
+We welcome contributions and feedback. To participate:
 
-Important constraint:
+1. Fork this repository.
+2. Create a branch for your change.
+3. Commit with a focused message.
+4. Push the branch to your fork or remote.
+5. Open a Pull Request against `main`.
 
-- Day 0 bootstrap and Phase 43 closeout are complete. The repo now sits in the formal `v0.1.0` release stop-state with no open execution milestone.
-- The current handoff baseline is tracked in [docs/plans/current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md).
-- Long-running pickup, worktree usage, and branch hygiene are documented in [docs/plans/long-running-loop-runbook.md](/D:/mirror/docs/plans/long-running-loop-runbook.md).
-- The local heartbeat automation should remain paused in the `v0.1.0` release stop-state and must not resume pickup until an approved successor milestone is opened.
-- Protected-core changes still must not auto-merge just because checks are green.
+提交前请先阅读 [AGENTS.md](AGENTS.md)，了解当前仓库的执行规则、文档约束和协作方式。
 
-## Non-goals
+Pull requests will run the repository's existing checks and protection rules. This README refresh does not change the underlying governance flow.
 
-- Open-world ingest
-- Real-person or real-society modeling
-- Free-form agent swarm
-- Heavy graph databases as the default
-- Fancy UI before artifacts and evals are stable
-- Deep binding to external LLM APIs in the core loop
+---
 
-## License
+## License | 许可证
 
-This repository is licensed under `MIT`.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+本项目采用 MIT License，详情请见 [LICENSE](LICENSE)。
