@@ -1,0 +1,24 @@
+scenario_id: scenario_mayor_signal_blocked
+world_id: fog-harbor-east-gate
+title: Mayor Signal Blocked During Tide Warning
+description: >
+  Chen Yu cannot reach Zhao Ke during the first warning attempt, so the deputy
+  mayor misses the direct tide escalation even though the ledger still surfaces
+  on schedule.
+seed: 7
+turn_budget: 8
+branch_count: 1
+evaluation_questions:
+  - What changes when the deputy mayor misses Chen Yu's first alert but Lin Lan still publishes on time?
+  - Does evacuation still happen on the baseline turn once the ledger becomes public?
+  - Which branch facts remain stable even when the early warning path is blocked?
+injections:
+  - injection_id: inj_mayor_signal_blocked
+    kind: block_contact
+    actor_id: persona_chen_yu
+    target_id: persona_zhao_ke
+    params:
+      cause: courier_interception
+    rationale: >
+      The harbor warning never reaches Zhao Ke on turn two, forcing the branch
+      to rely on documentary exposure rather than the direct tide report.

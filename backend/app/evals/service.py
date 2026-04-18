@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -44,14 +45,9 @@ def _graph_collection_id_field(collection: str) -> str:
 def _redline_texts(artifacts_root: Path) -> dict[str, str]:
     graph_path = artifacts_root / "graph" / "graph.json"
     personas_path = artifacts_root / "personas" / "personas.json"
-    return {
+    texts = {
         "report": (artifacts_root / "report" / "report.md").read_text(encoding="utf-8"),
         "claims": json.dumps(read_json(artifacts_root / "report" / "claims.json"), ensure_ascii=False),
-        "baseline_scenario": json.dumps(read_json(artifacts_root / "scenario" / "baseline.json"), ensure_ascii=False),
-        "intervention_scenario": json.dumps(
-            read_json(artifacts_root / "scenario" / "reporter_detained.json"),
-            ensure_ascii=False,
-        ),
         "query_entity_east_gate": json.dumps(
             inspect_world("entity", "entity_east_gate", graph_path, personas_path),
             ensure_ascii=False,
@@ -65,6 +61,18 @@ def _redline_texts(artifacts_root: Path) -> dict[str, str]:
             ensure_ascii=False,
         ),
     }
+    for scenario_path in sorted((artifacts_root / "scenario").glob("*.json")):
+        texts[f"scenario_{scenario_path.stem}"] = json.dumps(read_json(scenario_path), ensure_ascii=False)
+    return texts
+
+
+def _load_run_payloads(artifacts_root: Path) -> dict[str, dict[str, Any]]:
+    run_payloads: dict[str, dict[str, Any]] = {}
+    for run_dir in sorted((artifacts_root / "run").iterdir()):
+        summary_path = run_dir / "summary.json"
+        if run_dir.is_dir() and summary_path.exists():
+            run_payloads[run_dir.name] = read_json(summary_path)
+    return run_payloads
 
 
 def _evaluate_redlines(redlines_path: Path, artifacts_root: Path) -> list[str]:
@@ -83,15 +91,12 @@ def _evaluate_redlines(redlines_path: Path, artifacts_root: Path) -> list[str]:
 
 def evaluate_runs(expectations_path: Path, artifacts_root: Path, out_dir: Path, redlines_path: Path) -> EvalResult:
     expectations = load_yaml(expectations_path)
-    baseline_summary = read_json(artifacts_root / "run" / "baseline" / "summary.json")
-    intervention_summary = read_json(artifacts_root / "run" / "reporter_detained" / "summary.json")
+    summary_payloads = _load_run_payloads(artifacts_root)
+    baseline_summary = summary_payloads["baseline"]
     graph_payload = read_json(artifacts_root / "graph" / "graph.json")
     persona_payload = read_json(artifacts_root / "personas" / "personas.json")
     claims = read_json(artifacts_root / "report" / "claims.json")
-    runs = {
-        "baseline": {**baseline_summary, **baseline_summary["final_state"]},
-        "reporter_detained": {**intervention_summary, **intervention_summary["final_state"]},
-    }
+    runs = {name: {**summary, **summary["final_state"]} for name, summary in summary_payloads.items()}
 
     failures: list[str] = []
     passed = 0
@@ -181,9 +186,16 @@ def evaluate_runs(expectations_path: Path, artifacts_root: Path, out_dir: Path, 
         metrics={
             "checks_total": len(expectations["checks"]) + 1,
             "checks_passed": passed,
-            "baseline_evacuation_turn": baseline_summary["evacuation_turn"],
-            "intervention_evacuation_turn": intervention_summary["evacuation_turn"],
+            "scenario_count": len(runs),
             "event_count": graph_payload["stats"]["event_count"],
+            **{
+                f"{name}_evacuation_turn": summary["evacuation_turn"]
+                for name, summary in summary_payloads.items()
+            },
+            **{
+                f"{name}_ledger_public_turn": summary["ledger_public_turn"]
+                for name, summary in summary_payloads.items()
+            },
         },
         failures=failures,
         notes=["Phase 1 eval covers deterministic demo behavior, world-model provenance, and redline checks."],
@@ -195,27 +207,35 @@ def evaluate_runs(expectations_path: Path, artifacts_root: Path, out_dir: Path, 
 def run_phase0_demo(settings: Settings | None = None, artifacts_root: Path | None = None) -> EvalResult:
     settings = settings or get_settings()
     artifacts_root = artifacts_root or settings.artifacts_root
+    scenario_paths = [settings.baseline_scenario_path] + sorted(
+        path for path in settings.scenario_dir.glob("*.yaml") if path != settings.baseline_scenario_path
+    )
 
     ingest_manifest(settings.manifest_path, artifacts_root / "ingest")
     build_graph(artifacts_root / "ingest" / "chunks.jsonl", artifacts_root / "graph", settings.world_model_path)
     build_personas(artifacts_root / "graph" / "graph.json", artifacts_root / "personas", settings.world_model_path)
-    validate_scenario(settings.baseline_scenario_path, artifacts_root / "scenario" / "baseline.json")
-    validate_scenario(settings.intervention_scenario_path, artifacts_root / "scenario" / "reporter_detained.json")
-    simulate_scenario(
-        settings.baseline_scenario_path,
-        artifacts_root / "graph" / "graph.json",
-        artifacts_root / "personas" / "personas.json",
-        artifacts_root / "run" / "baseline",
-    )
-    simulate_scenario(
-        settings.intervention_scenario_path,
-        artifacts_root / "graph" / "graph.json",
-        artifacts_root / "personas" / "personas.json",
-        artifacts_root / "run" / "reporter_detained",
-    )
+    scenario_out_dir = artifacts_root / "scenario"
+    run_root = artifacts_root / "run"
+    scenario_out_dir.mkdir(parents=True, exist_ok=True)
+    run_root.mkdir(parents=True, exist_ok=True)
+    for scenario_json in scenario_out_dir.glob("*.json"):
+        scenario_json.unlink()
+    for run_dir in run_root.iterdir():
+        if run_dir.is_dir():
+            shutil.rmtree(run_dir)
+
+    for scenario_path in scenario_paths:
+        stem = scenario_path.stem
+        validate_scenario(scenario_path, scenario_out_dir / f"{stem}.json")
+        simulate_scenario(
+            scenario_path,
+            artifacts_root / "graph" / "graph.json",
+            artifacts_root / "personas" / "personas.json",
+            run_root / stem,
+        )
     generate_report(
-        artifacts_root / "run" / "reporter_detained",
+        run_root / settings.intervention_scenario_path.stem,
         artifacts_root / "report",
-        baseline_dir=artifacts_root / "run" / "baseline",
+        baseline_dir=run_root / "baseline",
     )
     return evaluate_runs(settings.expectations_path, artifacts_root, artifacts_root / "eval", settings.redlines_path)
