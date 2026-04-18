@@ -131,7 +131,22 @@ def test_eval_demo_passes(tmp_path: Path) -> None:
     settings = get_settings()
     result = run_phase0_demo(settings=settings, artifacts_root=tmp_path / "demo")
     assert result.status == "pass"
+    assert result.metrics["scenario_count"] == 4
     assert result.metrics["event_count"] >= 4
+    assert result.metrics["reporter_detained_evacuation_turn"] > result.metrics["baseline_evacuation_turn"]
+    assert result.metrics["harbor_comms_failure_evacuation_turn"] > result.metrics["baseline_evacuation_turn"]
+    assert result.metrics["mayor_signal_blocked_evacuation_turn"] == result.metrics["baseline_evacuation_turn"]
+
+
+def test_eval_demo_writes_canonical_scenario_matrix(tmp_path: Path) -> None:
+    settings = get_settings()
+    artifacts_root = tmp_path / "demo"
+    run_phase0_demo(settings=settings, artifacts_root=artifacts_root)
+
+    for stem in ("baseline", "reporter_detained", "harbor_comms_failure", "mayor_signal_blocked"):
+        assert (artifacts_root / "scenario" / f"{stem}.json").exists()
+        assert (artifacts_root / "run" / stem / "summary.json").exists()
+        assert (artifacts_root / "run" / stem / "run_trace.jsonl").exists()
 
 
 def test_eval_redlines_cover_query_outputs(tmp_path: Path, monkeypatch) -> None:

@@ -1,4 +1,4 @@
-eval_name: fog_harbor_phase0_demo
+eval_name: fog_harbor_phase44_matrix
 checks:
   - name: graph_has_events
     kind: graph_events_nonempty
@@ -63,20 +63,63 @@ checks:
     run: baseline
     field: evacuation_triggered
     equals: true
-  - name: intervention_delays_ledger
+  - name: reporter_detained_delays_ledger
     kind: compare_runs
     left_run: reporter_detained
     left_field: ledger_public_turn
     op: gt
     right_run: baseline
     right_field: ledger_public_turn
-  - name: intervention_delays_evacuation
+  - name: reporter_detained_delays_evacuation
     kind: compare_runs
     left_run: reporter_detained
     left_field: evacuation_turn
     op: gt
     right_run: baseline
     right_field: evacuation_turn
+  - name: reporter_detained_preserves_direct_warning_path
+    kind: run_field
+    run: reporter_detained
+    field: risk_known_by
+    equals:
+      - entity_chen_yu
+      - entity_su_he
+  - name: harbor_comms_failure_delays_ledger
+    kind: compare_runs
+    left_run: harbor_comms_failure
+    left_field: ledger_public_turn
+    op: gt
+    right_run: baseline
+    right_field: ledger_public_turn
+  - name: harbor_comms_failure_delays_evacuation
+    kind: compare_runs
+    left_run: harbor_comms_failure
+    left_field: evacuation_turn
+    op: gt
+    right_run: baseline
+    right_field: evacuation_turn
+  - name: harbor_comms_failure_loses_direct_warning_path
+    kind: run_field
+    run: harbor_comms_failure
+    field: risk_known_by
+    equals:
+      - entity_su_he
+  - name: mayor_signal_blocked_keeps_publish_on_baseline_turn
+    kind: run_field
+    run: mayor_signal_blocked
+    field: ledger_public_turn
+    equals: 3
+  - name: mayor_signal_blocked_keeps_evacuation_on_baseline_turn
+    kind: run_field
+    run: mayor_signal_blocked
+    field: evacuation_turn
+    equals: 5
+  - name: mayor_signal_blocked_loses_direct_warning_path
+    kind: run_field
+    run: mayor_signal_blocked
+    field: risk_known_by
+    equals:
+      - entity_su_he
   - name: claims_are_labeled
     kind: claim_labels_complete
   - name: claims_have_evidence

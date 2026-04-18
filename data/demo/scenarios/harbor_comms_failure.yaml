@@ -1,0 +1,26 @@
+scenario_id: scenario_harbor_comms_failure
+world_id: fog-harbor-east-gate
+title: Harbor Communications Failure Delays Warning Relay
+description: >
+  Saltwater interference takes the harbor radios offline during the early warning
+  window, delaying both the tide alert and the first opportunity to surface the
+  copied maintenance ledger.
+seed: 7
+turn_budget: 8
+branch_count: 1
+evaluation_questions:
+  - How much later does the maintenance ledger surface when communications stay down through turn three?
+  - Does the outage postpone evacuation even if the engineering risk is already visible?
+  - Which actor loses situational awareness first when the warning relay breaks?
+injections:
+  - injection_id: inj_harbor_comms_failure
+    kind: resource_failure
+    actor_id: persona_chen_yu
+    target_id: entity_east_wharf
+    params:
+      duration_turns: 3
+      cause: saltwater_radio_interference
+    rationale: >
+      The eastern harbor radios fail during the first three turns, so Chen Yu's
+      warning relay and Lin Lan's first publication attempt both slip behind the
+      baseline branch.
