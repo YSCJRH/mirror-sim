@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal Phase 43 closeout and `v0.1.0` release cut.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut and the Phase 44 queue restart.
 
 ## Current Gate State
 
@@ -47,12 +47,36 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 41 exit gate: closed
 - Phase 42 exit gate: closed
 - Phase 43 exit gate: closed
+- Phase 44 exit gate: open
 
 Local phase audits currently report:
 
 - `phase1`: pass
 - `phase2`: pass
 - `phase3`: pass
+
+## Active Phase 44 Queue
+
+- milestone `Phase 44 - Counterfactual Depth and Eval Hardening`
+  - open
+- `#313` `Phase 44 exit gate`
+  - open
+  - `status:blocked`
+- `#314` `Phase 44: sync repo truth to Phase 44 queue`
+  - open
+  - `status:ready`
+- `#315` `Phase 44: add canonical scenario matrix and eval coverage`
+  - open
+  - `status:blocked`
+- `#316` `Phase 44: add workbench counterfactual comparison overview`
+  - open
+  - `status:blocked`
+- `audit-github-queue`
+  - reports `ready` against the Phase 44 milestone because exactly one open milestone exists with a protected blocked exit gate and ready work items
+- planned successor directions
+  - Phase 45: branch generalization and compare contracts
+  - Phase 46: workbench focus and modularity
+  - both remain documented successors only and are not open milestones yet
 
 ## Closeout Snapshot
 
@@ -328,14 +352,13 @@ Local phase audits currently report:
 - GitHub remote state
   - no open pull requests remain after the Phase 41 closeout
 
-## Formal Release Stop-State
+## Release-To-Queue Transition
 
-- milestone `Phase 43 - Successor Bootstrap and Branch Exception Resolution` is closed.
+- the first formal GitHub release remains published as `v0.1.0`
+- milestone `Phase 43 - Successor Bootstrap and Branch Exception Resolution` is closed
 - `#306` `Phase 43 exit gate`
   - closed
-- no open execution milestone remains after the formal release closeout
-- `audit-github-queue` should now report `paused` with no active milestone until a real successor phase is approved
-- the first formal GitHub release is published as `v0.1.0`
+- the repo has now moved out of the released stop-state by opening the Phase 44 milestone and queue issues
 - The completed Phase 43 slice was tracked through:
   - `#307` `Phase 43: sync repo truth to Phase 43 queue`
   - merged via PR `#309`
@@ -511,6 +534,7 @@ Local phase audits currently report:
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
+- While Phase 44 is active, do not open the planned Phase 45 or Phase 46 milestones.
 
 ## Historical Branch Status
 
