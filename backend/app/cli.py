@@ -12,7 +12,7 @@ from backend.app.ingest.service import ingest_manifest
 from backend.app.personas.service import build_personas
 from backend.app.reports.service import generate_report
 from backend.app.scenarios.service import validate_scenario
-from backend.app.simulation.service import simulate_scenario
+from backend.app.simulation.service import simulate_branching_scenario, simulate_scenario
 from backend.app.world_query import inspect_world
 
 
@@ -97,8 +97,20 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "simulate":
-        summary = simulate_scenario(Path(args.scenario), Path(args.graph), Path(args.personas), Path(args.out))
-        print(f"Simulated {summary.scenario_id}; evacuation_turn={summary.evacuation_turn}.")
+        scenario = validate_scenario(Path(args.scenario))
+        if scenario.branch_count > 1:
+            compare = simulate_branching_scenario(
+                Path(args.scenario),
+                Path(args.graph),
+                Path(args.personas),
+                Path(args.out),
+                Path(args.out),
+                compare_dir=Path(args.out) / "compare",
+            )
+            print(f"Simulated compare {compare.scenario_id}; branches={compare.branch_count}.")
+        else:
+            summary = simulate_scenario(Path(args.scenario), Path(args.graph), Path(args.personas), Path(args.out))
+            print(f"Simulated {summary.scenario_id}; evacuation_turn={summary.evacuation_turn}.")
         return 0
 
     if args.command == "report":

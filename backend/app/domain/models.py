@@ -118,6 +118,45 @@ class RunTrace(MirrorBaseModel):
     notes: list[str] = Field(default_factory=list)
 
 
+class CompareBranch(MirrorBaseModel):
+    branch_id: str
+    label: str
+    run_id: str
+    is_reference: bool
+    summary_path: str
+    trace_path: str
+    snapshot_dir: str
+
+
+class CompareTurnDelta(MirrorBaseModel):
+    turn_index: int
+    reference_turn_id: str | None = None
+    candidate_turn_id: str | None = None
+
+
+class CompareOutcomeDelta(MirrorBaseModel):
+    reference: Any = None
+    candidate: Any = None
+    delta: Any = None
+
+
+class CompareBranchDelta(MirrorBaseModel):
+    branch_id: str
+    divergent_turn_count: int
+    divergent_turns: list[CompareTurnDelta] = Field(default_factory=list)
+    outcome_deltas: dict[str, CompareOutcomeDelta] = Field(default_factory=dict)
+
+
+class CompareArtifact(MirrorBaseModel):
+    compare_id: str
+    scenario_id: str
+    seed: int
+    branch_count: int
+    reference_branch_id: str
+    branches: list[CompareBranch] = Field(default_factory=list)
+    reference_deltas: list[CompareBranchDelta] = Field(default_factory=list)
+
+
 class Claim(MirrorBaseModel):
     claim_id: str
     text: str
