@@ -12,9 +12,17 @@ from backend.app.ingest.service import ingest_manifest
 from backend.app.personas.service import build_personas
 from backend.app.reports.service import generate_report
 from backend.app.scenarios.service import validate_scenario
-from backend.app.simulation.service import simulate_scenario
+from backend.app.simulation.service import (
+    BranchRunArtifacts,
+    load_run_artifacts,
+    simulate_branching_scenario,
+    simulate_scenario,
+    write_compare_artifact,
+)
 from backend.app.utils import load_yaml, read_json, write_json
 from backend.app.world_query import inspect_world
+
+DEMO_MATRIX_COMPARE_SCENARIO_ID = "scenario_fog_harbor_phase44_matrix"
 
 
 def _compare(op: str, left: Any, right: Any) -> bool:
@@ -216,22 +224,65 @@ def run_phase0_demo(settings: Settings | None = None, artifacts_root: Path | Non
     build_personas(artifacts_root / "graph" / "graph.json", artifacts_root / "personas", settings.world_model_path)
     scenario_out_dir = artifacts_root / "scenario"
     run_root = artifacts_root / "run"
+    compare_root = artifacts_root / "compare"
     scenario_out_dir.mkdir(parents=True, exist_ok=True)
     run_root.mkdir(parents=True, exist_ok=True)
+    compare_root.mkdir(parents=True, exist_ok=True)
     for scenario_json in scenario_out_dir.glob("*.json"):
         scenario_json.unlink()
     for run_dir in run_root.iterdir():
         if run_dir.is_dir():
             shutil.rmtree(run_dir)
+    for compare_dir in compare_root.iterdir():
+        if compare_dir.is_dir():
+            shutil.rmtree(compare_dir)
 
+    scenario_payloads: dict[str, Any] = {}
     for scenario_path in scenario_paths:
         stem = scenario_path.stem
-        validate_scenario(scenario_path, scenario_out_dir / f"{stem}.json")
-        simulate_scenario(
-            scenario_path,
-            artifacts_root / "graph" / "graph.json",
-            artifacts_root / "personas" / "personas.json",
-            run_root / stem,
+        scenario = validate_scenario(scenario_path, scenario_out_dir / f"{stem}.json")
+        scenario_payloads[stem] = scenario
+        if scenario.branch_count > 1:
+            simulate_branching_scenario(
+                scenario_path,
+                artifacts_root / "graph" / "graph.json",
+                artifacts_root / "personas" / "personas.json",
+                run_root / stem,
+                artifacts_root,
+                compare_dir=compare_root / scenario.scenario_id,
+            )
+        else:
+            simulate_scenario(
+                scenario_path,
+                artifacts_root / "graph" / "graph.json",
+                artifacts_root / "personas" / "personas.json",
+                run_root / stem,
+            )
+
+    matrix_branch_runs: list[BranchRunArtifacts] = []
+    for scenario_path in scenario_paths:
+        stem = scenario_path.stem
+        run_dir = run_root / stem
+        if not (run_dir / "summary.json").exists():
+            continue
+        summary, actions = load_run_artifacts(run_dir)
+        matrix_branch_runs.append(
+            BranchRunArtifacts(
+                branch_id="branch_baseline" if stem == "baseline" else f"branch_{stem}",
+                label="Baseline" if stem == "baseline" else scenario_payloads[stem].title,
+                summary=summary,
+                actions=actions,
+                run_dir=run_dir,
+            )
+        )
+    if matrix_branch_runs:
+        write_compare_artifact(
+            artifacts_root,
+            compare_root / DEMO_MATRIX_COMPARE_SCENARIO_ID,
+            scenario_id=DEMO_MATRIX_COMPARE_SCENARIO_ID,
+            seed=matrix_branch_runs[0].summary.seed,
+            branch_runs=matrix_branch_runs,
+            reference_branch_id="branch_baseline",
         )
     generate_report(
         run_root / settings.intervention_scenario_path.stem,

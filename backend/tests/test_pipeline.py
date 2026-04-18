@@ -11,7 +11,8 @@ from backend.app.ingest.service import ingest_manifest
 from backend.app.personas.service import build_personas
 from backend.app.reports.service import generate_report
 from backend.app.scenarios.service import validate_scenario
-from backend.app.simulation.service import simulate_scenario
+from backend.app.simulation.service import simulate_branching_scenario, simulate_scenario
+from backend.app.utils import read_json
 
 
 def test_ingest_writes_documents_and_chunks(tmp_path: Path) -> None:
@@ -104,6 +105,76 @@ def test_scenario_validation_and_simulation_are_deterministic(tmp_path: Path) ->
     assert first.model_dump() == second.model_dump()
 
 
+def test_branching_scenario_writes_stable_compare_artifact(tmp_path: Path) -> None:
+    settings = get_settings()
+    ingest_manifest(settings.manifest_path, tmp_path / "ingest")
+    build_graph(tmp_path / "ingest" / "chunks.jsonl", tmp_path / "graph")
+    build_personas(tmp_path / "graph" / "graph.json", tmp_path / "personas")
+
+    scenario_path = tmp_path / "scenario_branch_matrix.yaml"
+    scenario_path.write_text(
+        "\n".join(
+            [
+                "scenario_id: scenario_branch_matrix",
+                "world_id: fog-harbor-east-gate",
+                "title: Branch Matrix Runner Test",
+                "description: Deterministic runner test for multi-branch compare artifacts.",
+                "seed: 7",
+                "turn_budget: 8",
+                "branch_count: 4",
+                "evaluation_questions:",
+                "  - Which branch delays the ledger most?",
+                "  - Which branch loses the direct warning path?",
+                "injections:",
+                "  - injection_id: inj_reporter_detained",
+                "    kind: delay_document",
+                "    target_id: doc_ledger_copy",
+                "    actor_id: entity_lin_lan",
+                "    params:",
+                "      delay_turns: 2",
+                "  - injection_id: inj_harbor_comms_failure",
+                "    kind: resource_failure",
+                "    actor_id: persona_chen_yu",
+                "    target_id: entity_east_wharf",
+                "    params:",
+                "      duration_turns: 3",
+                "  - injection_id: inj_mayor_signal_blocked",
+                "    kind: block_contact",
+                "    actor_id: persona_chen_yu",
+                "    target_id: persona_zhao_ke",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    first_compare = simulate_branching_scenario(
+        scenario_path,
+        tmp_path / "graph" / "graph.json",
+        tmp_path / "personas" / "personas.json",
+        tmp_path / "demo-one" / "run" / "branch_matrix",
+        tmp_path / "demo-one",
+    )
+    second_compare = simulate_branching_scenario(
+        scenario_path,
+        tmp_path / "graph" / "graph.json",
+        tmp_path / "personas" / "personas.json",
+        tmp_path / "demo-two" / "run" / "branch_matrix",
+        tmp_path / "demo-two",
+    )
+
+    assert first_compare.model_dump() == second_compare.model_dump()
+    assert first_compare.reference_branch_id == "branch_reference"
+    assert [branch.branch_id for branch in first_compare.branches] == [
+        "branch_reference",
+        "branch_inj_reporter_detained",
+        "branch_inj_harbor_comms_failure",
+        "branch_inj_mayor_signal_blocked",
+    ]
+    assert (tmp_path / "demo-one" / "compare" / "scenario_branch_matrix" / "compare.json").exists()
+    assert (tmp_path / "demo-one" / "run" / "branch_matrix" / "branches" / "branch_inj_reporter_detained" / "summary.json").exists()
+
+
 def test_report_contains_labeled_claims(tmp_path: Path) -> None:
     settings = get_settings()
     ingest_manifest(settings.manifest_path, tmp_path / "ingest")
@@ -147,6 +218,10 @@ def test_eval_demo_writes_canonical_scenario_matrix(tmp_path: Path) -> None:
         assert (artifacts_root / "scenario" / f"{stem}.json").exists()
         assert (artifacts_root / "run" / stem / "summary.json").exists()
         assert (artifacts_root / "run" / stem / "run_trace.jsonl").exists()
+
+    compare_payload = read_json(artifacts_root / "compare" / "scenario_fog_harbor_phase44_matrix" / "compare.json")
+    assert compare_payload["reference_branch_id"] == "branch_baseline"
+    assert len(compare_payload["branches"]) == 4
 
 
 def test_eval_redlines_cover_query_outputs(tmp_path: Path, monkeypatch) -> None:

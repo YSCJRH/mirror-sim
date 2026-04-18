@@ -349,6 +349,7 @@ def _phase2_checks(artifacts_root: Path) -> list[AuditCheck]:
     intervention_dir = artifacts_root / "run" / "reporter_detained"
     report_dir = artifacts_root / "report"
     eval_path = artifacts_root / "eval" / "summary.json"
+    compare_path = artifacts_root / "compare" / "scenario_fog_harbor_phase44_matrix" / "compare.json"
     required_paths = (
         baseline_dir / "summary.json",
         intervention_dir / "summary.json",
@@ -357,6 +358,7 @@ def _phase2_checks(artifacts_root: Path) -> list[AuditCheck]:
         report_dir / "report.md",
         report_dir / "claims.json",
         eval_path,
+        compare_path,
     )
     checks: list[AuditCheck] = [
         _make_check(
@@ -372,6 +374,7 @@ def _phase2_checks(artifacts_root: Path) -> list[AuditCheck]:
     intervention_summary = read_json(intervention_dir / "summary.json")
     claims = read_json(report_dir / "claims.json")
     eval_summary = read_json(eval_path)
+    compare_payload = read_json(compare_path)
     checks.extend(
         [
             _make_check(
@@ -393,6 +396,12 @@ def _phase2_checks(artifacts_root: Path) -> list[AuditCheck]:
                 "snapshots_present",
                 all((run_dir / "snapshots").exists() for run_dir in (baseline_dir, intervention_dir)),
                 "Each run directory must contain snapshots/ for replayability.",
+            ),
+            _make_check(
+                "compare_artifact_present",
+                compare_payload.get("reference_branch_id") == "branch_baseline"
+                and len(compare_payload.get("branches", [])) >= 4,
+                "Phase 45 requires a durable compare artifact for the canonical demo matrix.",
             ),
         ]
     )

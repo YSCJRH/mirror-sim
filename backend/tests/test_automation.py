@@ -45,6 +45,7 @@ def test_phase1_and_phase2_audit_pass_with_demo_artifacts(tmp_path: Path) -> Non
     phase2 = run_phase_audit("phase2", settings=settings, artifacts_root=tmp_path / "demo")
     assert phase1.status == "pass"
     assert phase2.status == "pass"
+    assert any(check.name == "compare_artifact_present" and check.passed for check in phase2.checks)
 
 
 def test_phase3_audit_passes_with_current_workbench_contract(tmp_path: Path) -> None:
