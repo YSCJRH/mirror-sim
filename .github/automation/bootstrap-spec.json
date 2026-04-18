@@ -175,6 +175,10 @@
     {
       "title": "Phase 44 - Counterfactual Depth and Eval Hardening",
       "description": "Turn the formal v0.1.0 release stop-state into a counterfactual-depth queue that expands the canonical scenario matrix, hardens eval coverage, and adds a comparison-first workbench entrypoint without changing scenario DSL, claim labels, or artifact roots."
+    },
+    {
+      "title": "Phase 45 - Branch Generalization and Compare Contracts",
+      "description": "Turn the Phase 44 counterfactual matrix into a formal multi-branch compare contract by ratifying branch-count semantics, durable compare artifacts, and focused diff consumption without widening the product surface."
     }
   ],
   "labels": [
@@ -397,6 +401,11 @@
       "name": "phase:44",
       "color": "FFF4D6",
       "description": "Phase 44 counterfactual depth and eval hardening work."
+    },
+    {
+      "name": "phase:45",
+      "color": "FFE2B8",
+      "description": "Phase 45 branch generalization and compare contract work."
     },
     {
       "name": "area:backend",
@@ -2371,6 +2380,64 @@
         "lane:auto-safe"
       ],
       "body": "## Summary\nAdd a comparison-first workbench overview that makes the scenario matrix, outcome deltas, and direct trace/evidence entrypoints visible at the top level.\n\n## Scope\n- add a scenario-matrix summary surface to the existing workbench using current artifact files only\n- highlight which intervention changes which key outcomes before the reviewer drops into detailed traces\n- link the overview directly into trace-diff and claim/evidence surfaces\n- avoid expanding the existing handoff/export packet family in this slice\n\n## Constraints\n- no backend API additions\n- no artifact schema changes\n- keep the default operator path focused on compare -> trace -> claim/evidence -> eval"
+    },
+    {
+      "title": "Phase 45 exit gate",
+      "milestone": "Phase 45 - Branch Generalization and Compare Contracts",
+      "labels": [
+        "phase:45",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "Close this issue only after the full Phase 45 branch-generalization queue is complete.\n\nExit criteria:\n- the Phase 45 queue-sync issue is merged\n- the multi-branch compare ADR and contracts issue is merged\n- the branch-count runner and compare-artifact issue is merged\n- the focused diff-surface issue is merged\n- `./make.ps1 smoke` passes\n- `./make.ps1 test` passes\n- `./make.ps1 eval-demo` passes\n- `python -m backend.app.cli audit-phase phase1` passes\n- `python -m backend.app.cli audit-phase phase2` passes\n- `python -m backend.app.cli audit-phase phase3` passes\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` returns `ready`\n- the Phase 46 milestone is open and the Phase 46 queue-sync issue exists before closeout"
+    },
+    {
+      "title": "Phase 45: sync repo truth to Phase 45 queue",
+      "milestone": "Phase 45 - Branch Generalization and Compare Contracts",
+      "labels": [
+        "phase:45",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## Summary\nSync the repo truth from the closing Phase 44 queue to the active Phase 45 queue.\n\n## Scope\n- add the Phase 45 milestone, label, and issue definitions to the bootstrap spec\n- update README and active-state docs to show Phase 45 as the sole active queue after Phase 44 closeout\n- keep Phase 46 documented as the next successor direction without opening it yet\n- create the Phase 45 milestone and issues from the updated bootstrap spec\n- complete the GitHub closeout handoff from Phase 44 to Phase 45\n\n## Constraints\n- no simulation, report, claim, evidence, scenario, or schema contract changes\n- do not leave more than one active execution milestone open after closeout\n- no backend/runtime behavior changes beyond queue-governance sync"
+    },
+    {
+      "title": "Phase 45: ratify multi-branch compare ADR and contracts",
+      "milestone": "Phase 45 - Branch Generalization and Compare Contracts",
+      "labels": [
+        "phase:45",
+        "area:docs-evals",
+        "risk:core-contract",
+        "status:needs-adr",
+        "lane:protected-core"
+      ],
+      "body": "## Summary\nRatify the ADR and contract changes needed to turn the current scenario matrix habit into a formal multi-branch compare contract.\n\n## Scope\n- define how `branch_count` moves from a reserved field to an executable multi-branch contract\n- define the durable compare-artifact shape and the backend/frontend responsibilities around it\n- define how report, claim, and eval surfaces consume multi-branch compare results\n- record any backward-compatibility rules needed for the current demo artifacts\n\n## Constraints\n- do not implement the runner or artifact contract in this issue\n- do not widen the scenario DSL beyond what the ADR explicitly ratifies\n- keep the decision grounded in the existing Fog Harbor artifact flow"
+    },
+    {
+      "title": "Phase 45: implement branch_count runner and compare artifacts",
+      "milestone": "Phase 45 - Branch Generalization and Compare Contracts",
+      "labels": [
+        "phase:45",
+        "area:backend",
+        "risk:core-contract",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## Summary\nImplement the runner and artifact work needed to make `branch_count` a real execution capability.\n\n## Scope\n- extend the simulation runner so one scenario can execute into multiple deterministic branches under the ratified contract\n- emit durable compare artifacts that can be consumed without frontend-only reconstruction\n- keep reruns stable for the canonical multi-branch demo path\n- preserve compatibility for existing single-branch or baseline-first artifact consumers where explicitly required by contract\n\n## Constraints\n- do not start until the Phase 45 ADR/contracts issue is merged\n- do not expand the scenario DSL beyond the ratified contract\n- do not add unrelated product surfaces in this issue"
+    },
+    {
+      "title": "Phase 45: consume compare artifacts in focused diff surfaces",
+      "milestone": "Phase 45 - Branch Generalization and Compare Contracts",
+      "labels": [
+        "phase:45",
+        "area:frontend",
+        "status:blocked",
+        "lane:auto-safe"
+      ],
+      "body": "## Summary\nConsume the new compare artifacts in focused workbench diff surfaces that stay centered on branch understanding.\n\n## Scope\n- update the workbench to consume the durable compare artifacts instead of reconstructing every contrast client-side\n- focus the UI on scenario compare, trace diff, claim and evidence context, and eval-facing deltas\n- keep the workbench compatible with the ratified multi-branch compare contract\n\n## Constraints\n- do not introduce new operator packet families in this phase\n- do not change backend APIs beyond the ratified compare-artifact contract\n- keep the default path focused on compare -> trace -> claim/evidence -> eval"
     }
   ]
 }

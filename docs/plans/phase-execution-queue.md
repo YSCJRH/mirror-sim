@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut and the Phase 44 queue restart.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 44 counterfactual-depth queue, and the Phase 45 successor bootstrap.
 
 ## Current Gate State
 
@@ -47,7 +47,8 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 41 exit gate: closed
 - Phase 42 exit gate: closed
 - Phase 43 exit gate: closed
-- Phase 44 exit gate: open
+- Phase 44 exit gate: closed
+- Phase 45 exit gate: open
 
 Local phase audits currently report:
 
@@ -55,29 +56,45 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Active Phase 44 Queue
+## Active Phase 45 Queue
 
-- milestone `Phase 44 - Counterfactual Depth and Eval Hardening`
+- milestone `Phase 45 - Branch Generalization and Compare Contracts`
   - open
-- `#313` `Phase 44 exit gate`
+- `#322` `Phase 45 exit gate`
   - open
   - `status:blocked`
-- `#314` `Phase 44: sync repo truth to Phase 44 queue`
-  - closed
-  - merged via PR `#317`
-- `#315` `Phase 44: add canonical scenario matrix and eval coverage`
-  - closed
-  - merged via PR `#319`
-- `#316` `Phase 44: add workbench counterfactual comparison overview`
+- `#323` `Phase 45: sync repo truth to Phase 45 queue`
   - open
   - `status:ready`
+- `#324` `Phase 45: ratify multi-branch compare ADR and contracts`
+  - open
+  - `status:needs-adr`
+- `#325` `Phase 45: implement branch_count runner and compare artifacts`
+  - open
+  - `status:blocked`
+- `#326` `Phase 45: consume compare artifacts in focused diff surfaces`
+  - open
+  - `status:blocked`
 - `audit-github-queue`
-  - reports `ready` against the Phase 44 milestone because exactly one open milestone exists with a protected blocked exit gate and ready work items
-  - the current ready work item is now `#316` rather than the already-merged scenario-matrix issue
-- planned successor directions
-  - Phase 45: branch generalization and compare contracts
+  - reports `ready` against the Phase 45 milestone because exactly one open milestone exists with a protected blocked exit gate and ready work items
+  - the current ready work item is `#323`
+- recent closeout
+  - milestone `Phase 44 - Counterfactual Depth and Eval Hardening`
+    - closed
+  - `#313` `Phase 44 exit gate`
+    - closed
+  - `#314` `Phase 44: sync repo truth to Phase 44 queue`
+    - closed
+    - merged via PR `#317`
+  - `#315` `Phase 44: add canonical scenario matrix and eval coverage`
+    - closed
+    - merged via PR `#319`
+  - `#316` `Phase 44: add workbench counterfactual comparison overview`
+    - closed
+    - merged via PR `#321`
+- planned successor direction
   - Phase 46: workbench focus and modularity
-  - both remain documented successors only and are not open milestones yet
+  - it remains documented as the next route, but it is not an open milestone yet
 
 ## Closeout Snapshot
 
@@ -535,7 +552,7 @@ Local phase audits currently report:
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- While Phase 44 is active, do not open the planned Phase 45 or Phase 46 milestones.
+- While Phase 45 is active, do not open the planned Phase 46 milestone.
 
 ## Historical Branch Status
 

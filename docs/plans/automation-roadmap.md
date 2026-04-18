@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, Phase 36 closeout is complete, Phase 37 closeout is complete, Phase 38 closeout is complete, Phase 39 closeout is complete, Phase 40 closeout is complete, Phase 41 closeout is complete, Phase 42 closeout is complete, Phase 43 closeout is complete, the first formal release remains published as `v0.1.0`, and the repo has now reopened the queue through the active Phase 44 milestone.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, Phase 36 closeout is complete, Phase 37 closeout is complete, Phase 38 closeout is complete, Phase 39 closeout is complete, Phase 40 closeout is complete, Phase 41 closeout is complete, Phase 42 closeout is complete, Phase 43 closeout is complete, Phase 44 closeout is complete, the first formal release remains published as `v0.1.0`, and the repo has now advanced the active queue to Phase 45.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -133,18 +133,23 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 43 is closed locally and in GitHub.
 - Phase 43 exit issue `#306` is closed and milestone `Phase 43 - Successor Bootstrap and Branch Exception Resolution` is closed.
 - The Phase 43 queue was completed through issues `#306-#308`.
-- Phase 44 is now open in GitHub.
-- Phase 44 milestone `Phase 44 - Counterfactual Depth and Eval Hardening` is open.
-- `#313` `Phase 44 exit gate` is open and remains `status:blocked`.
+- Phase 44 is now closed in GitHub.
+- Phase 44 milestone `Phase 44 - Counterfactual Depth and Eval Hardening` is closed.
+- `#313` `Phase 44 exit gate` is closed.
 - `#314` `Phase 44: sync repo truth to Phase 44 queue` is merged and closed via PR `#317`.
 - `#315` `Phase 44: add canonical scenario matrix and eval coverage` is merged and closed via PR `#319`.
-- `#316` `Phase 44: add workbench counterfactual comparison overview` is open and is now the current `status:ready` work item.
-- `audit-github-queue` now reports `ready` against the active Phase 44 milestone.
-- Phase 45 and Phase 46 are documented successor directions only; neither milestone is open yet.
+- `#316` `Phase 44: add workbench counterfactual comparison overview` is merged and closed via PR `#321`.
+- Phase 45 is now open in GitHub.
+- Phase 45 milestone `Phase 45 - Branch Generalization and Compare Contracts` is open.
+- `#322` `Phase 45 exit gate` is open and remains `status:blocked`.
+- `#323` `Phase 45: sync repo truth to Phase 45 queue` is open and is the current `status:ready` work item.
+- `#324-#326` are open behind the queue-sync and ADR path.
+- `audit-github-queue` now reports `ready` against the active Phase 45 milestone.
+- Phase 46 remains a documented successor direction only and is not an open milestone.
 - The first formal repository release is published as `v0.1.0`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
-- The local Codex queue heartbeat should now follow the active Phase 44 queue instead of reporting the released stop-state as `paused`.
+- The local Codex queue heartbeat should now follow the active Phase 45 queue instead of reporting the released stop-state as `paused`.
 
 ## Day 0 Bootstrap
 
@@ -197,5 +202,5 @@ Before builder automation is allowed to write code or auto-merge:
 - Long-running execution must run from isolated worktrees rather than the current `main` checkout.
 - Queue pickup order, one-writer ownership, and branch hygiene should follow `docs/plans/long-running-loop-runbook.md`.
 - When the active milestone exists and the queue reports `ready`, the builder may resume against that milestone only.
-- While Phase 44 is active, do not open the planned Phase 45 or Phase 46 milestones.
+- While Phase 45 is active, do not open the planned Phase 46 milestone.
 - When no open milestone exists and `audit-github-queue` reports `paused`, treat that state as an intentional released stop-state rather than a broken queue.
