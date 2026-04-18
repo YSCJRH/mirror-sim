@@ -174,9 +174,9 @@ This note is the current Phase 42 active-queue baseline.
   - `gh api repos/YSCJRH/mirror-sim/milestones/42`
     - milestone `Phase 42 - Recovery Completion and Escalation Finalization` is `open`
   - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=42"`
-    - Phase 42 queue is initialized through issues `#295-#298`
+    - Phase 42 now remains open through exit-gate closeout `#295` and branch-hygiene issues `#302-#303`; product issues `#296-#298` are no longer open
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - successor queue currently reports `ready` because Phase 42 has one blocked protected-core exit gate and multiple ready work items
+    - successor queue currently reports `ready` because Phase 42 still has one blocked protected-core exit gate and at least one ready work item, with branch hygiene now occupying the open implementation slot
 
 ## Trusted Source Of Truth
 
@@ -184,9 +184,9 @@ This note is the current Phase 42 active-queue baseline.
 - Local phase audits remain the contract-aligned source of truth for whether the current repo state is runnable and reviewable.
 - `audit-github-queue` is the executable local rule for whether builder automation should remain `paused` or can resume against the successor queue.
 - `backlog/sprint-01.md` is historical seed material only and should not be used as the live queue.
-- Remote `origin/codex/*` branches should now be limited to active open-PR work and reviewed exceptions, not used as a standing backlog.
-- The current reviewed branch-hygiene baseline lives in `docs/plans/codex-branch-classification-baseline.md`.
-- Current live remote exception is `origin/codex/phase23-session-summary` (`TODO[verify]`).
+- Remote `origin/codex/*` branches still span historical execution state and should not be treated as a standing backlog.
+- The current reviewed branch-hygiene baseline lives in `docs/plans/codex-branch-classification-baseline.md` and now reflects the Phase 42 cleanup snapshot.
+- The current remote-tracking inventory still includes historical phase branches from Phase 23 and Phase 30-42; cleanup remains pending through `#302` and `#303`.
 - Delete a historical remote branch once it is tied only to merged or closed work and no open issue, PR, or runbook step still references it.
 - Keep a historical remote branch only when an open issue or unresolved forensic comparison explicitly names it.
 - Revive a historical remote branch only by opening a new issue that states why `main` is insufficient.
@@ -200,8 +200,8 @@ This note is the current Phase 42 active-queue baseline.
 
 ## Next Entry Point
 
-- Phase 42 is the active milestone and the current recovery-completion slice is tracked by issues `#295-#298`.
-- New implementation work should attach to the existing Phase 42 queue until its exit gate is closed, instead of opening a parallel successor milestone.
+- Phase 42 is the active milestone and the current closeout slice is tracked by exit-gate issue `#295` plus branch-hygiene issues `#302-#303`.
+- New implementation work should not open a parallel successor milestone before the Phase 42 branch-hygiene closeout is resolved.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
 - The local queue heartbeat remains active as `mirror-queue-heartbeat` and should continue reporting the paused/ready state of the live queue.
