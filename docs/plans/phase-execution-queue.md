@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the Phase 42 queue resumption.
+This note records the current post-Day-0 execution status for Mirror after the Phase 43 successor bootstrap.
 
 ## Current Gate State
 
@@ -45,7 +45,8 @@ This note records the current post-Day-0 execution status for Mirror after the P
 - Phase 39 exit gate: closed
 - Phase 40 exit gate: closed
 - Phase 41 exit gate: closed
-- Phase 42 exit gate: open
+- Phase 42 exit gate: closed
+- Phase 43 exit gate: open
 
 Local phase audits currently report:
 
@@ -329,14 +330,19 @@ Local phase audits currently report:
 
 ## Current Queue
 
-- milestone `Phase 42 - Recovery Completion and Escalation Finalization` is open.
-- `#295` `Phase 42 exit gate`
+- milestone `Phase 43 - Successor Bootstrap and Branch Exception Resolution` is open.
+- `#306` `Phase 43 exit gate`
   - open
-- blocked until the Phase 42 recovery-completion and escalation-finalization slice is complete
-- The current Phase 42 execution slice is tracked through:
+- blocked until the Phase 43 successor-bootstrap and branch-exception-resolution slice is complete
+- The current Phase 43 execution slice is tracked through:
+  - `#307` `Phase 43: sync repo truth to Phase 43 queue`
+  - `#308` `Phase 43: resolve remaining codex branch TODO exceptions`
+- The completed Phase 42 slice was tracked through:
+  - `#295` `Phase 42 exit gate`
   - `#296` `Phase 42: sync repo truth to Phase 42 queue`
   - `#297` `Phase 42: add execution recovery completion board`
   - `#298` `Phase 42: add escalation finalization packet`
+  - branch-hygiene governance issues `#302-#303`
 - The completed Phase 41 slice was tracked through:
   - `#289` `Phase 41: sync repo truth to Phase 41 queue`
   - `#290` `Phase 41: add execution recovery release board`
@@ -505,7 +511,7 @@ Local phase audits currently report:
 ## Historical Branch Status
 
 - Historical remote `origin/codex/*` branches have now been reduced to the explicit `TODO[verify]` exception set.
-- The current reviewed baseline is recorded in `docs/plans/codex-branch-classification-baseline.md`; `#302` is merged and `#303` now carries the remaining apply/closeout work.
+- The current reviewed baseline is recorded in `docs/plans/codex-branch-classification-baseline.md`; `#302` and `#303` are merged, and remaining exception handling now continues through `#308`.
 - Current remote-tracking inventory retains only `origin/codex/phase23-session-summary` as the explicit `TODO[verify]` exception.
 - Treat any future recreated or still-live `codex/*` remote branch as temporary execution state, not as a standing backlog.
 - Delete a historical branch when it is tied only to closed or merged work and no open issue, PR, or runbook step references it.

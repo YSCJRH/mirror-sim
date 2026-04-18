@@ -167,6 +167,10 @@
     {
       "title": "Phase 42 - Recovery Completion and Escalation Finalization",
       "description": "Turn the current recovery-release and escalation-closure surfaces into a clearer recovery-completion and escalation-finalization workflow without changing simulation or artifact contracts."
+    },
+    {
+      "title": "Phase 43 - Successor Bootstrap and Branch Exception Resolution",
+      "description": "Turn the post-Phase-42 closeout into a clear successor-bootstrap and branch-exception-resolution queue without changing simulation or artifact contracts."
     }
   ],
   "labels": [
@@ -379,6 +383,11 @@
       "name": "phase:42",
       "color": "F7FAFC",
       "description": "Phase 42 recovery completion and escalation finalization work."
+    },
+    {
+      "name": "phase:43",
+      "color": "FBFCFD",
+      "description": "Phase 43 successor bootstrap and branch exception resolution work."
     },
     {
       "name": "area:backend",
@@ -2274,6 +2283,40 @@
         "lane:auto-safe"
       ],
       "body": "## Summary\nAdd an escalation finalization packet that turns the current closure surface into a clearer finalization-ready handoff.\n\n## Scope\n- combine the existing escalation closure context into a finalization-oriented packet for downstream completion and archive-ready follow-through\n- keep the packet frontend-only and derived from current artifacts\n- preserve the current in-workbench copy/export flow\n\n## Constraints\n- no backend API additions\n- no artifact schema changes\n- no simulation or report contract expansion"
+    },
+    {
+      "title": "Phase 43 exit gate",
+      "milestone": "Phase 43 - Successor Bootstrap and Branch Exception Resolution",
+      "labels": [
+        "phase:43",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "Close this issue only after the full Phase 43 queue is complete.\n\nExit criteria:\n- the Phase 43 queue-sync issue is merged\n- the remaining codex branch TODO exception issue is merged\n- `./make.ps1 smoke` passes\n- `./make.ps1 test` passes\n- `./make.ps1 eval-demo` passes\n- `python -m backend.app.cli audit-phase phase1` passes\n- `python -m backend.app.cli audit-phase phase2` passes\n- `python -m backend.app.cli audit-phase phase3` passes\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` returns `ready`\n- only one execution milestone remains open after closeout"
+    },
+    {
+      "title": "Phase 43: sync repo truth to Phase 43 queue",
+      "milestone": "Phase 43 - Successor Bootstrap and Branch Exception Resolution",
+      "labels": [
+        "phase:43",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## Summary\nSync the repo truth to the Phase 43 queue and record the Phase 42 closeout baseline.\n\n## Scope\n- update the bootstrap spec and current-state docs to reflect Phase 43 as the active queue\n- record the Phase 42 closeout and successor bootstrap in the repo-facing documentation\n- keep Phase 43 as the sole active execution queue after closeout\n\n## Constraints\n- no simulation, report, claim, evidence, or schema contract changes\n- no new backend/runtime behavior beyond queue/governance sync"
+    },
+    {
+      "title": "Phase 43: resolve remaining codex branch TODO exceptions",
+      "milestone": "Phase 43 - Successor Bootstrap and Branch Exception Resolution",
+      "labels": [
+        "phase:43",
+        "area:docs-evals",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## Summary\nResolve the explicit remaining codex branch TODO exceptions against live GitHub state and current `main` so branch hygiene no longer depends on stale carry-forward assumptions.\n\n## Scope\n- inspect the remaining `TODO[verify]` local and remote branch exceptions documented in the branch baseline\n- decide keep, revive, or delete from live evidence instead of historical assumptions\n- update the branch-hygiene docs so the exception set matches live GitHub truth after review\n\n## Constraints\n- do not reopen historical work without a new issue that explains why `main` is insufficient\n- do not delete any branch that is still referenced by open work, unresolved forensic comparison, or active runbook guidance\n- no simulation, report, claim, evidence, scenario, or schema contract changes"
     }
   ]
 }
