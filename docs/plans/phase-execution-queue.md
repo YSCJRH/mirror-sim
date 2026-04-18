@@ -335,8 +335,10 @@ Local phase audits currently report:
   - open
 - blocked until the Phase 43 successor-bootstrap and branch-exception-resolution slice is complete
 - The current Phase 43 execution slice is tracked through:
-  - `#307` `Phase 43: sync repo truth to Phase 43 queue`
   - `#308` `Phase 43: resolve remaining codex branch TODO exceptions`
+- The completed Phase 43 queue-sync slice was tracked through:
+  - `#307` `Phase 43: sync repo truth to Phase 43 queue`
+  - merged via PR `#309`
 - The completed Phase 42 slice was tracked through:
   - `#295` `Phase 42 exit gate`
   - `#296` `Phase 42: sync repo truth to Phase 42 queue`
@@ -510,9 +512,9 @@ Local phase audits currently report:
 
 ## Historical Branch Status
 
-- Historical remote `origin/codex/*` branches have now been reduced to the explicit `TODO[verify]` exception set.
-- The current reviewed baseline is recorded in `docs/plans/codex-branch-classification-baseline.md`; `#302` and `#303` are merged, and remaining exception handling now continues through `#308`.
-- Current remote-tracking inventory retains only `origin/codex/phase23-session-summary` as the explicit `TODO[verify]` exception.
+- Historical remote `origin/codex/*` branches no longer retain any live legacy exception branch.
+- The current reviewed baseline is recorded in `docs/plans/codex-branch-classification-baseline.md`; `#302` and `#303` are merged, and `#308` now carries the final exception closeout.
+- Current local `origin/codex/*` tracking refs should be empty after pruning stale fetch residue and deleting the final historical remote exception.
 - Treat any future recreated or still-live `codex/*` remote branch as temporary execution state, not as a standing backlog.
 - Delete a historical branch when it is tied only to closed or merged work and no open issue, PR, or runbook step references it.
 - Keep a historical branch only when an open issue or unresolved forensic comparison explicitly depends on it.

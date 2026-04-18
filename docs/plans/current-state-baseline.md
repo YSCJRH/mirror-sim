@@ -178,7 +178,7 @@ This note is the current Phase 43 active-queue baseline.
   - `gh api repos/YSCJRH/mirror-sim/milestones/43`
     - milestone `Phase 43 - Successor Bootstrap and Branch Exception Resolution` is `open`
   - `gh api "repos/YSCJRH/mirror-sim/issues?state=open&milestone=43"`
-    - Phase 43 now remains open through exit gate `#306` plus successor-bootstrap follow-through issues `#307-#308`
+    - Phase 43 now remains open through exit gate `#306` plus branch-exception closeout issue `#308`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
     - successor queue now reports `ready` because Phase 43 has exactly one blocked protected-core exit gate and ready work items available for pickup
 
@@ -188,9 +188,9 @@ This note is the current Phase 43 active-queue baseline.
 - Local phase audits remain the contract-aligned source of truth for whether the current repo state is runnable and reviewable.
 - `audit-github-queue` is the executable local rule for whether builder automation should remain `paused` or can resume against the successor queue.
 - `backlog/sprint-01.md` is historical seed material only and should not be used as the live queue.
-- Historical remote `origin/codex/*` branches have now been reduced to a single explicit exception and should not be treated as a standing backlog.
-- The current reviewed branch-hygiene baseline lives in `docs/plans/codex-branch-classification-baseline.md` and reflects the merged Phase 42 classification/apply result; remaining exception handling now continues under `#308`.
-- The current remote-tracking inventory retains only `origin/codex/phase23-session-summary` as the explicit `TODO[verify]` remote exception.
+- Historical remote `origin/codex/*` branches have now been reduced to zero live legacy exceptions and should not be treated as a standing backlog.
+- The current reviewed branch-hygiene baseline lives in `docs/plans/codex-branch-classification-baseline.md` and now records the evidence needed to close the final exception set through `#308`.
+- Any remaining local `origin/codex/*` tracking ref after `#308` should be treated as stale fetch residue and pruned against live GitHub truth.
 - Delete a historical remote branch once it is tied only to merged or closed work and no open issue, PR, or runbook step still references it.
 - Keep a historical remote branch only when an open issue or unresolved forensic comparison explicitly names it.
 - Revive a historical remote branch only by opening a new issue that states why `main` is insufficient.
@@ -204,8 +204,8 @@ This note is the current Phase 43 active-queue baseline.
 
 ## Next Entry Point
 
-- Phase 43 is the active milestone and the current implementation slice is tracked by exit-gate issue `#306` plus protected-core follow-through issues `#307-#308`.
-- New implementation work should consume the current Phase 43 queue and should not open another successor milestone while `#306-#308` remain unresolved.
+- Phase 43 is the active milestone and the current implementation slice is tracked by exit-gate issue `#306` plus protected-core follow-through issue `#308`.
+- New implementation work should consume the current Phase 43 queue and should not open another successor milestone while `#306` and `#308` remain unresolved.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
 - The local queue heartbeat remains active as `mirror-queue-heartbeat` and should continue reporting the ready/paused state of the live Phase 43 queue.
