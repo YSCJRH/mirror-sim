@@ -161,6 +161,18 @@ code {
   gap: 16px;
 }
 
+.comparisonOverviewGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.scenarioGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
 .reportGrid {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
