@@ -1,110 +1,229 @@
 # Codex Branch Classification Baseline
 
-This note records the Phase 28 protected-core classification baseline for historical `codex/*` branches.
+This note records the Phase 42 protected-core classification baseline for current historical `codex/*` branches.
 
 ## Purpose
 
-- Use live GitHub and remote state as the source of truth for branch hygiene decisions.
-- Do not treat docs snapshots or `git branch --merged` results as sufficient deletion evidence on their own.
-- Separate classification from deletion so `#200` can apply only the reviewed `delete` set.
+- Use the current branch inventory and active milestone state to drive branch hygiene decisions.
+- Treat `main` / `origin/main` as the only long-lived coordination line.
+- Separate classification in `#302` from destructive cleanup in `#303`.
+- Do not treat old docs snapshots or `git branch --merged origin/main` as sufficient deletion evidence on their own.
 
 ## Decision Rules
 
-- `delete`
-  - Branch is tied only to merged or closed work, and no open PR, open issue, active milestone step, or unresolved forensic comparison still depends on it.
 - `keep`
-  - Branch is still tied to open PRs, open issues, current active execution work, or an unresolved forensic comparison.
+  - Branch is the current active writer branch or is still explicitly required by open issue or milestone work.
 - `revive`
-  - Branch should not remain as a standing historical branch, but future work may need to continue from it. A new issue must name the branch and explain why `main` is insufficient.
+  - Branch has unique history worth carrying forward, but future work should continue from a fresh branch off `main` after a new issue explains why `main` is insufficient.
+- `delete-remote-and-local`
+  - Historical execution branch with no active dependency; delete the remote ref and any same-name local twin.
+- `delete-local-now`
+  - Local-only or upstream-gone residue with no remaining dependency.
 - `TODO[verify]`
-  - Evidence is incomplete or contradictory, especially when squash merge history makes ancestry checks unreliable.
+  - Evidence is incomplete or contradictory, especially when squash-merge history makes ancestry checks unreliable.
 
 ## Evidence Notes
 
-- Live open PR heads on 2026-04-17:
-  - `#197` -> `codex/phase28-queue-sync`
-  - `#198` -> `codex/phase28-send-checklist`
-- Open issue title/body scan found no explicit `codex/*` branch references in current open issues.
-- Remote `origin/codex/*` inventory after `git fetch origin --prune` contains 8 branches.
-- The repo uses squash merges heavily, so merged PR `headRefName` is more reliable than `git branch --merged origin/main` for historical cleanup decisions.
+- Current local inventory on `codex/phase42-branch-classification`:
+  - local `codex/*` branches: `33`
+  - remote `origin/codex/*` branches in the current remote-tracking snapshot: `21`
+  - local branches with gone upstreams: `10`
+  - local branches equal to upstream: `21`
+  - local branches diverged from upstream: `1`
+  - local branches with no upstream: `1`
+  - local `codex/*` branches that track `origin/main`: `1`
+- The current authenticated REST pull snapshot shows no open pull requests.
+- The current authenticated REST issue snapshot shows only three open issues:
+  - `#295` `Phase 42 exit gate`
+  - `#302` `Phase 42: classify local and remote codex branches against live GitHub state`
+  - `#303` `Phase 42: apply reviewed codex branch cleanup and sync branch-hygiene docs`
+- Phases 30-41 are already recorded as closed in [current-state-baseline.md](/D:/mirror/docs/plans/current-state-baseline.md:1).
+- Phase 42 product issues `#296-#298` are no longer open, so the remaining open Phase 42 work is exit-gate closeout plus branch hygiene.
+- A current `git fetch origin --prune` already removed the stale remote queue-sync refs for Phases 30-42, so the remote exception set is now narrower than the earlier snapshot.
+- The repo uses squash merges heavily, so ancestry alone is not enough to prove whether an old execution branch has already been absorbed by `main`.
 
 ## Remote Branch Classification
 
-| Branch | Live PR State | Live Issue / Milestone Ref | Merged PR Head Match | Docs / Runbook Ref | Classification | Evidence |
-| --- | --- | --- | --- | --- | --- | --- |
-| `origin/codex/phase20-decision-snippets` | No open PR | No open issue ref | PR `#143` merged 2026-04-16 | No explicit live branch ref | `delete` | Remote branch is merged into `origin/main`; work already closed through merged PR history. |
-| `origin/codex/phase22-apply-copy` | No open PR | No open issue ref | PR `#156` merged 2026-04-16 | No explicit live branch ref | `delete` | Remote branch is merged into `origin/main`; remote branch is stale even though the local twin still needs separate review. |
-| `origin/codex/phase23-session-summary` | No open PR | No open issue ref | PR `#163` merged 2026-04-17 | No explicit live branch ref | `TODO[verify]` | Merged PR exists, but the remote branch is not an ancestor of `origin/main` and still has a distinct head commit (`7e00df6`). |
-| `origin/codex/phase28-queue-sync` | Open draft PR `#197` | Active Phase 28 work | Current active work | Active queue branch | `keep` | Must remain while PR `#197` is open. |
-| `origin/codex/phase28-send-checklist` | Open draft PR `#198` | Active Phase 28 work | Current active work | Active queue branch | `keep` | Must remain while PR `#198` is open. |
-| `origin/codex/phase6-closeout-pause-baseline` | No open PR | No open issue ref | PR `#45` merged 2026-04-16 | No explicit live branch ref | `delete` | Remote branch is merged into `origin/main` and tied only to completed Phase 6 closeout work. |
-| `origin/codex/phase7-issue-comment-packet` | No open PR | No open issue ref | PR `#51` merged 2026-04-16 | No explicit live branch ref | `delete` | Remote branch is merged into `origin/main` and tied only to completed Phase 7 work. |
-| `origin/codex/phase7-queue-sync` | No open PR | No open issue ref | PR `#50` merged 2026-04-16 | No explicit live branch ref | `delete` | Remote branch is merged into `origin/main` and tied only to completed Phase 7 queue-sync work. |
+### `delete-remote-and-local`
 
-## Local Exception Classification
+These remote branches are historical execution state and should be removed in `#303` together with any same-name local twin.
 
-These branches are the local exceptions that should not be swept up by a blind `gone` cleanup.
+- `origin/codex/phase30-checkpoint-board`
+- `origin/codex/phase30-queue-sync`
+- `origin/codex/phase30-response-packet`
+- `origin/codex/phase31-outcome-tracker`
+- `origin/codex/phase31-queue-sync`
+- `origin/codex/phase31-resolution-handoff`
+- `origin/codex/phase32-next-step-routing`
+- `origin/codex/phase32-queue-sync`
+- `origin/codex/phase32-status-board`
+- `origin/codex/phase33-action-readiness`
+- `origin/codex/phase33-escalation-packet`
+- `origin/codex/phase33-queue-sync`
+- `origin/codex/phase34-escalation-decision`
+- `origin/codex/phase34-execution-kickoff`
+- `origin/codex/phase34-queue-sync`
+- `origin/codex/phase35-escalation-trigger`
+- `origin/codex/phase35-execution-progress`
+- `origin/codex/phase35-queue-sync`
+- `origin/codex/phase36-escalation-dispatch`
+- `origin/codex/phase36-execution-outcome`
+- `origin/codex/phase36-queue-sync`
+- `origin/codex/phase37-escalation-delivery`
+- `origin/codex/phase37-execution-correction`
+- `origin/codex/phase37-queue-sync`
+- `origin/codex/phase38-escalation-confirmation`
+- `origin/codex/phase38-execution-recovery`
+- `origin/codex/phase39-escalation-receipt`
+- `origin/codex/phase39-recovery-checkpoint`
+- `origin/codex/phase40-escalation-acknowledgment`
+- `origin/codex/phase40-recovery-clearance`
+- `origin/codex/phase41-escalation-closure`
+- `origin/codex/phase41-recovery-release`
+- `origin/codex/phase42-escalation-finalization`
+- `origin/codex/phase42-recovery-completion`
 
-| Branch | Upstream Shape | Live PR / PR History | Classification | Evidence |
-| --- | --- | --- | --- | --- |
-| `codex/phase28-queue-sync` | Tracks open remote branch | Open draft PR `#197` | `keep` | Current active Phase 28 protected-core work. |
-| `codex/phase28-send-checklist` | Tracks open remote branch | Open draft PR `#198` | `keep` | Current active Phase 28 frontend work. |
-| `codex/phase1-queue-sync` | Upstream gone | PR `#12` closed, not merged | `TODO[verify]` | Local branch still has a unique historical commit (`e33989a`) tied to a closed-but-unmerged branch of work. |
-| `codex/phase22-apply-copy` | Local and remote twins diverged | PR `#156` merged | `TODO[verify]` | Local branch still has a unique local head (`4d4c150`) even though the remote branch is a delete candidate. |
-| `codex/phase23-session-summary` | Local and remote twins diverged | PR `#163` merged | `TODO[verify]` | Local branch has a distinct head (`cef67d1`) and the remote twin is also not an ancestor of `origin/main`. |
-| `codex/phase20-decision-templates` | Tracks `origin/main` instead of a same-name remote work branch | No active PR | `delete` | No unique commits relative to `origin/main`; this is a naming residue rather than a live work branch. |
+Evidence:
 
-## Counts And Drift
+- No open PR head is currently holding these refs alive in the last successful REST pull snapshot.
+- The phases that created these branches are already closed or their feature issues are no longer open.
+- The current active Phase 42 work is branch hygiene itself, not continued implementation on these older execution branches.
 
-- Local `codex/*` branches observed: `69`
-- Local `codex/*` branches with upstream `: gone`: `60`
-- Local `codex/*` branches not ancestors of `origin/main`: `25`
-- Of those 25 local non-ancestor branches:
-  - `22` already correspond to merged PRs
-  - `2` are current open PR branches
-  - `1` is a closed-but-unmerged historical branch (`codex/phase1-queue-sync`)
-- Documentation drift still exists:
-  - `docs/plans/phase-execution-queue.md` currently says no remote `origin/codex/*` branches remain after Phase 6 cleanup, but live remote state still contains 8 such branches.
+### `TODO[verify]`
 
-## Reviewed Apply Set For #200
+- `origin/codex/phase23-session-summary`
 
-- Remote `delete` set
-  - `origin/codex/phase20-decision-snippets`
-  - `origin/codex/phase22-apply-copy`
-  - `origin/codex/phase6-closeout-pause-baseline`
-  - `origin/codex/phase7-issue-comment-packet`
-  - `origin/codex/phase7-queue-sync`
-- Remote `keep` set
-  - `origin/codex/phase28-queue-sync`
-  - `origin/codex/phase28-send-checklist`
-- Remote `TODO[verify]` set
-  - `origin/codex/phase23-session-summary`
-- Local `TODO[verify]` set
-  - `codex/phase1-queue-sync`
-  - `codex/phase22-apply-copy`
-  - `codex/phase23-session-summary`
-- Local `delete` candidate after remote cleanup
-  - `codex/phase20-decision-templates`
+Evidence:
+
+- The older baseline already flagged this branch as non-ancestor and risky to clean blindly.
+- The local twin still diverges from the remote-tracking ref, so it remains the one remote exception that still needs explicit forensic review before deletion.
+
+### `keep`
+
+- none
+
+### `revive`
+
+- none
+
+## Local Branch Classification
+
+### `keep`
+
+- `codex/phase42-branch-classification`
+
+Evidence:
+
+- This is the current dedicated writer branch for `#302`.
+- It tracks `origin/main`, not a same-name historical execution branch, and should remain in place until classification work is complete.
+
+### `delete-remote-and-local`
+
+- `codex/phase33-action-readiness`
+- `codex/phase33-escalation-packet`
+- `codex/phase34-escalation-decision`
+- `codex/phase34-execution-kickoff`
+- `codex/phase35-escalation-trigger`
+- `codex/phase35-execution-progress`
+- `codex/phase36-escalation-dispatch`
+- `codex/phase36-execution-outcome`
+- `codex/phase37-escalation-delivery`
+- `codex/phase37-execution-correction`
+- `codex/phase38-escalation-confirmation`
+- `codex/phase38-execution-recovery`
+- `codex/phase39-escalation-receipt`
+- `codex/phase39-queue-sync`
+- `codex/phase39-recovery-checkpoint`
+- `codex/phase40-escalation-acknowledgment`
+- `codex/phase40-queue-sync`
+- `codex/phase40-recovery-clearance`
+- `codex/phase41-escalation-closure`
+- `codex/phase41-queue-sync`
+- `codex/phase41-recovery-release`
+- `codex/phase42-escalation-finalization`
+- `codex/phase42-queue-sync`
+- `codex/phase42-recovery-completion`
+
+Evidence:
+
+- These branches are equal to current same-name remote refs and correspond to historical execution slices, not active queue work.
+- They should be deleted together with the remote refs in `#303`, after the current branch-hygiene writer branch is no longer using one of them as a checkout.
+
+### `delete-local-now`
+
+- `codex/phase28-branch-cleanup`
+- `codex/phase28-delivery-script`
+- `codex/phase28-delivery-script-clean`
+- `codex/phase28-send-checklist`
+- `codex/phase29-queue-sync`
+- `codex/phase39-queue-sync`
+- `codex/phase40-queue-sync`
+- `codex/phase41-queue-sync`
+- `codex/phase42-queue-sync`
+
+Evidence:
+
+- Their upstreams are already gone or absent.
+- Their feature subjects already appear in current repo truth:
+  - destination-specific delivery script
+  - final send checklist
+  - reviewed codex branch cleanup
+  - Phase 29 queue sync
+- The queue-sync local residues for Phases 39-42 now also have pruned upstreams and no remaining open issue that requires keeping the branch itself alive.
+- No open issue or open PR currently depends on these local residues.
+
+### `TODO[verify]`
+
+- `codex/phase1-queue-sync`
+- `codex/phase22-apply-copy`
+- `codex/phase23-session-summary`
+
+Evidence:
+
+- `codex/phase1-queue-sync` still carries a unique closed-but-unmerged historical commit.
+- `codex/phase22-apply-copy` still carries a unique local head even though the current repo already contains apply-and-copy behavior.
+- `codex/phase23-session-summary` remains the one explicit local/remote divergence pair and should not be deleted without a dedicated replay check.
+
+### `revive`
+
+- none
+
+## Reviewed Apply Set For #303
+
+- Keep the current writer branch:
+  - `codex/phase42-branch-classification`
+- Delete remote plus same-name local historical execution branches:
+  - all `delete-remote-and-local` entries above
+- Delete local-only historical residues immediately once `#303` begins:
+  - all `delete-local-now` entries above
+- Preserve explicit exceptions until a dedicated follow-up resolves them:
+  - all `TODO[verify]` entries above
 
 ## Commands Used
 
 ```powershell
-git fetch origin --prune
+git status -sb
 git branch -vv
 git branch -r --list origin/codex/*
 git branch -r --merged origin/main --list origin/codex/*
 git branch -r --no-merged origin/main --list origin/codex/*
-gh pr list --repo YSCJRH/mirror-sim --state open --limit 50 --json number,title,headRefName,isDraft,url
-gh pr list --repo YSCJRH/mirror-sim --state all --head codex/phase20-decision-snippets --json number,title,state,mergedAt,closedAt,url
-gh pr list --repo YSCJRH/mirror-sim --state all --head codex/phase22-apply-copy --json number,title,state,mergedAt,closedAt,url
-gh pr list --repo YSCJRH/mirror-sim --state all --head codex/phase23-session-summary --json number,title,state,mergedAt,closedAt,url
-gh pr list --repo YSCJRH/mirror-sim --state all --head codex/phase6-closeout-pause-baseline --json number,title,state,mergedAt,closedAt,url
-gh pr list --repo YSCJRH/mirror-sim --state all --head codex/phase7-queue-sync --json number,title,state,mergedAt,closedAt,url
-gh pr list --repo YSCJRH/mirror-sim --state all --head codex/phase7-issue-comment-packet --json number,title,state,mergedAt,closedAt,url
-git log --oneline origin/main..origin/codex/phase23-session-summary
-git log --oneline origin/main..codex/phase23-session-summary
-git log --oneline origin/main..codex/phase22-apply-copy
+git for-each-ref --format="%(refname:short)|%(upstream:short)|%(upstream:trackshort)|%(objectname:short)|%(subject)" refs/heads
 git log --oneline origin/main..codex/phase1-queue-sync
-git log --oneline origin/main..codex/phase20-decision-templates
-git rev-list --left-right --count codex/phase23-session-summary...origin/codex/phase23-session-summary
+git log --oneline origin/main..codex/phase22-apply-copy
+git log --oneline origin/main..codex/phase23-session-summary
+git log --oneline origin/main..codex/phase28-branch-cleanup
+git log --oneline origin/main..codex/phase28-delivery-script
+git log --oneline origin/main..codex/phase28-delivery-script-clean
+git log --oneline origin/main..codex/phase28-send-checklist
+git log --oneline origin/main..codex/phase29-queue-sync
+git show --stat --oneline --summary c62f86d
+git show --stat --oneline --summary 66ed805
+rg -n "destination-specific delivery script|final send checklist|apply reviewed codex branch cleanup|preset apply-and-copy actions|session summary strip" README.md docs frontend backend .github
+gh auth status
+gh api "repos/YSCJRH/mirror-sim/pulls?state=open&per_page=100"
+gh api "repos/YSCJRH/mirror-sim/issues?state=open&per_page=100"
 ```
+
+## TODO[verify]
+
+- Re-run authenticated REST pull and issue audits immediately before `#303` deletion work, in case a new PR or issue dependency appears after this classification snapshot.
