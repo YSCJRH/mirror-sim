@@ -64,11 +64,11 @@ Local phase audits currently report:
   - open
   - `status:blocked`
 - `#323` `Phase 45: sync repo truth to Phase 45 queue`
-  - open
-  - `status:ready`
+  - closed
+  - merged via PR `#327`
 - `#324` `Phase 45: ratify multi-branch compare ADR and contracts`
   - open
-  - `status:needs-adr`
+  - `status:ready`
 - `#325` `Phase 45: implement branch_count runner and compare artifacts`
   - open
   - `status:blocked`
@@ -77,7 +77,7 @@ Local phase audits currently report:
   - `status:blocked`
 - `audit-github-queue`
   - reports `ready` against the Phase 45 milestone because exactly one open milestone exists with a protected blocked exit gate and ready work items
-  - the current ready work item is `#323`
+  - the current ready work item is `#324`
 - recent closeout
   - milestone `Phase 44 - Counterfactual Depth and Eval Hardening`
     - closed
