@@ -1,8 +1,9 @@
-import { readdir, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ReviewScorecard } from "./review-scorecard";
 
 const repoRoot = path.resolve(process.cwd(), "..");
+const compareArtifactPath = "artifacts/demo/compare/scenario_fog_harbor_phase44_matrix/compare.json";
 
 const sections = [
   {
@@ -141,6 +142,45 @@ type RunSummary = {
   notes: string[];
 };
 
+type CompareBranch = {
+  branch_id: string;
+  label: string;
+  run_id: string;
+  is_reference: boolean;
+  summary_path: string;
+  trace_path: string;
+  snapshot_dir: string;
+};
+
+type CompareOutcomeDelta = {
+  reference: unknown;
+  candidate: unknown;
+  delta: unknown;
+};
+
+type CompareTurnDelta = {
+  turn_index: number;
+  reference_turn_id: string | null;
+  candidate_turn_id: string | null;
+};
+
+type CompareBranchDelta = {
+  branch_id: string;
+  divergent_turn_count: number;
+  divergent_turns: CompareTurnDelta[];
+  outcome_deltas: Record<string, CompareOutcomeDelta>;
+};
+
+type CompareArtifact = {
+  compare_id: string;
+  scenario_id: string;
+  seed: number;
+  branch_count: number;
+  reference_branch_id: string;
+  branches: CompareBranch[];
+  reference_deltas: CompareBranchDelta[];
+};
+
 type ScenarioKey = string;
 
 type RubricRow = {
@@ -153,6 +193,7 @@ type RubricRow = {
 type RunPayload = {
   key: ScenarioKey;
   label: string;
+  branch: CompareBranch;
   scenario: ScenarioPayload;
   summary: RunSummary;
   actions: TurnAction[];
@@ -182,43 +223,33 @@ async function readJsonl<T>(relativePath: string) {
     .map((line) => JSON.parse(line) as T);
 }
 
-async function listJsonBaseNames(relativeDir: string) {
-  const entries = await readdir(path.join(repoRoot, relativeDir), { withFileTypes: true });
-
-  return entries
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
-    .map((entry) => entry.name.replace(/\.json$/u, ""))
-    .sort((left, right) => {
-      if (left === "baseline") {
-        return -1;
-      }
-      if (right === "baseline") {
-        return 1;
-      }
-      return left.localeCompare(right);
-    });
+function runKeyFromSummaryPath(summaryPath: string) {
+  return path.basename(path.dirname(summaryPath));
 }
 
-async function loadSnapshots(runDir: string, turnBudget: number) {
+async function loadSnapshots(snapshotDir: string, turnBudget: number) {
   return Promise.all(
     Array.from({ length: turnBudget }, (_, index) =>
       readJson<SnapshotPayload>(
-        `artifacts/demo/run/${runDir}/snapshots/turn-${String(index + 1).padStart(2, "0")}.json`
+        `artifacts/demo/${snapshotDir}/turn-${String(index + 1).padStart(2, "0")}.json`
       )
     )
   );
 }
 
-async function loadRunPayload(key: ScenarioKey, scenario: ScenarioPayload): Promise<RunPayload> {
+async function loadRunPayload(branch: CompareBranch): Promise<RunPayload> {
+  const key = runKeyFromSummaryPath(branch.summary_path);
+  const scenario = await readJson<ScenarioPayload>(`artifacts/demo/scenario/${key}.json`);
   const [summary, actions, snapshots] = await Promise.all([
-    readJson<RunSummary>(`artifacts/demo/run/${key}/summary.json`),
-    readJsonl<TurnAction>(`artifacts/demo/run/${key}/run_trace.jsonl`),
-    loadSnapshots(key, scenario.turn_budget)
+    readJson<RunSummary>(`artifacts/demo/${branch.summary_path}`),
+    readJsonl<TurnAction>(`artifacts/demo/${branch.trace_path}`),
+    loadSnapshots(branch.snapshot_dir, scenario.turn_budget)
   ]);
 
   return {
     key,
-    label: key === "baseline" ? "Baseline" : "Intervention",
+    label: branch.label,
+    branch,
     scenario,
     summary,
     actions,
@@ -235,7 +266,7 @@ async function loadWorkbenchData() {
     documents,
     chunks,
     graph,
-    scenarioKeys
+    compareArtifact
   ] = await Promise.all([
     readText("artifacts/demo/report/report.md"),
     readJson<Claim[]>("artifacts/demo/report/claims.json"),
@@ -244,18 +275,14 @@ async function loadWorkbenchData() {
     readJsonl<DocumentRow>("artifacts/demo/ingest/documents.jsonl"),
     readJsonl<ChunkRow>("artifacts/demo/ingest/chunks.jsonl"),
     readJson<GraphPayload>("artifacts/demo/graph/graph.json"),
-    listJsonBaseNames("artifacts/demo/scenario")
+    readJson<CompareArtifact>(compareArtifactPath)
   ]);
 
-  const runs = await Promise.all(
-    scenarioKeys.map(async (key) => {
-      const scenario = await readJson<ScenarioPayload>(`artifacts/demo/scenario/${key}.json`);
-      return loadRunPayload(key, scenario);
-    })
-  );
+  const runs = await Promise.all(compareArtifact.branches.map((branch) => loadRunPayload(branch)));
 
   const runsByKey = new Map(runs.map((run) => [run.key, run]));
-  const baselineRun = runsByKey.get("baseline") ?? runs[0];
+  const runsByBranchId = new Map(runs.map((run) => [run.branch.branch_id, run]));
+  const baselineRun = runsByBranchId.get(compareArtifact.reference_branch_id) ?? runs[0];
 
   if (!baselineRun) {
     throw new Error("Expected at least one canonical demo run.");
@@ -272,6 +299,7 @@ async function loadWorkbenchData() {
     documents,
     chunks,
     graph,
+    compareArtifact,
     runs,
     runsByKey,
     baselineRun,
@@ -384,85 +412,72 @@ function parseRubricRows(rubric: string): RubricRow[] {
 
 type ComparisonRow = {
   turnIndex: number;
-  baseline: TurnEntry | null;
+  reference: TurnEntry | null;
   candidate: TurnEntry | null;
-  divergent: boolean;
 };
 
 type ComparisonOverview = {
   run: RunPayload;
+  delta: CompareBranchDelta;
   rows: ComparisonRow[];
   divergentTurnCount: number;
+  budgetExposureDelta: number | null;
   ledgerDelta: number | null;
   evacuationDelta: number | null;
-  directWarningPath: boolean;
+  routeOnly: boolean;
+  knowledgeShift: boolean;
   summaryLines: string[];
 };
 
-function turnsDiffer(baseline: TurnEntry | null, candidate: TurnEntry | null) {
-  if (!baseline || !candidate) {
-    return baseline !== candidate;
-  }
-
-  return (
-    baseline.turn.action_type !== candidate.turn.action_type ||
-    baseline.turn.target_id !== candidate.turn.target_id ||
-    baseline.turn.actor_id !== candidate.turn.actor_id
-  );
+function valuesMatch(left: unknown, right: unknown) {
+  return JSON.stringify(left) === JSON.stringify(right);
 }
 
-function buildComparisonRows(baselineRun: RunPayload, candidateRun: RunPayload): ComparisonRow[] {
-  const baselineTurns = buildTurnEntries(baselineRun);
-  const candidateTurns = buildTurnEntries(candidateRun);
-
-  return Array.from(
-    { length: Math.max(baselineTurns.length, candidateTurns.length) },
-    (_, index) => {
-      const baseline = baselineTurns[index] ?? null;
-      const candidate = candidateTurns[index] ?? null;
-
-      return {
-        turnIndex: index + 1,
-        baseline,
-        candidate,
-        divergent: turnsDiffer(baseline, candidate)
-      };
-    }
-  );
+function numericOutcomeDelta(outcomes: Record<string, CompareOutcomeDelta>, key: string) {
+  const delta = outcomes[key]?.delta;
+  return typeof delta === "number" ? delta : null;
 }
 
-function firstDirectWarningTurn(run: RunPayload) {
-  const directWarningTurn = run.actions.find(
-    (action) => action.action_type === "inform" && action.target_id === "persona_zhao_ke"
-  );
-
-  return directWarningTurn?.turn_index ?? null;
+function stringArray(value: unknown) {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
 }
 
-function hasDirectWarningPath(run: RunPayload) {
-  return firstDirectWarningTurn(run) !== null;
+function outcomeChanged(outcome: CompareOutcomeDelta | undefined) {
+  if (!outcome) {
+    return false;
+  }
+
+  if (typeof outcome.delta === "number") {
+    return outcome.delta !== 0;
+  }
+
+  return !valuesMatch(outcome.reference, outcome.candidate);
 }
 
-function describeMetricDelta(
-  label: string,
-  baselineTurn: number | undefined,
-  candidateTurn: number | undefined
-) {
-  if (typeof baselineTurn !== "number" && typeof candidateTurn !== "number") {
-    return `${label} never lands in either branch.`;
+function describeTurnOutcome(label: string, outcome: CompareOutcomeDelta | undefined) {
+  if (!outcome) {
+    return `${label} is not recorded in the compare artifact.`;
   }
 
-  if (typeof baselineTurn === "number" && typeof candidateTurn !== "number") {
-    return `${label} never lands in this intervention branch.`;
+  const referenceTurn = typeof outcome.reference === "number" ? outcome.reference : undefined;
+  const candidateTurn = typeof outcome.candidate === "number" ? outcome.candidate : undefined;
+
+  if (referenceTurn === undefined && candidateTurn === undefined) {
+    return `${label} is not reached in either branch.`;
   }
 
-  if (typeof baselineTurn !== "number" && typeof candidateTurn === "number") {
-    return `${label} appears only in this intervention branch at ${formatTurnLabel(candidateTurn)}.`;
+  if (referenceTurn !== undefined && candidateTurn === undefined) {
+    return `${label} never lands in this branch.`;
   }
 
-  const resolvedBaselineTurn = baselineTurn as number;
+  if (referenceTurn === undefined && candidateTurn !== undefined) {
+    return `${label} appears only in this branch at ${formatTurnLabel(candidateTurn)}.`;
+  }
+
+  const resolvedReferenceTurn = referenceTurn as number;
   const resolvedCandidateTurn = candidateTurn as number;
-  const delta = resolvedCandidateTurn - resolvedBaselineTurn;
+  const delta =
+    typeof outcome.delta === "number" ? outcome.delta : resolvedCandidateTurn - resolvedReferenceTurn;
 
   if (delta > 0) {
     return `${label} slips by ${delta} turn${delta === 1 ? "" : "s"} to ${formatTurnLabel(resolvedCandidateTurn)}.`;
@@ -475,65 +490,64 @@ function describeMetricDelta(
   return `${label} stays on the baseline timing at ${formatTurnLabel(resolvedCandidateTurn)}.`;
 }
 
-function describeWarningPath(baselineRun: RunPayload, candidateRun: RunPayload) {
-  const baselineWarningTurn = firstDirectWarningTurn(baselineRun);
-  const candidateWarningTurn = firstDirectWarningTurn(candidateRun);
-
-  if (baselineWarningTurn === null && candidateWarningTurn === null) {
-    return "No direct warning path to Zhao Ke appears in either branch.";
+function describeRiskKnownBy(outcome: CompareOutcomeDelta | undefined) {
+  if (!outcome) {
+    return "The compare artifact does not record any risk-awareness delta for this branch.";
   }
 
-  if (baselineWarningTurn !== null && candidateWarningTurn === null) {
-    return "The direct warning path to Zhao Ke drops out of this branch.";
+  const referenceActors = stringArray(outcome.reference);
+  const candidateActors = stringArray(outcome.candidate);
+  const removedActors = referenceActors.filter((actorId) => !candidateActors.includes(actorId));
+  const addedActors = candidateActors.filter((actorId) => !referenceActors.includes(actorId));
+
+  if (removedActors.length === 0 && addedActors.length === 0) {
+    return "Risk awareness reaches the same actor set as baseline.";
   }
 
-  if (baselineWarningTurn === null && candidateWarningTurn !== null) {
-    return `A direct warning path to Zhao Ke appears only in this branch at ${formatTurnLabel(candidateWarningTurn)}.`;
+  if (removedActors.length > 0 && addedActors.length === 0) {
+    return `Risk awareness no longer reaches ${removedActors.join(", ")} in this branch.`;
   }
 
-  if (baselineWarningTurn === candidateWarningTurn) {
-    return `The direct warning path to Zhao Ke still lands at ${formatTurnLabel(candidateWarningTurn)}.`;
+  if (addedActors.length > 0 && removedActors.length === 0) {
+    return `Risk awareness expands to ${addedActors.join(", ")} in this branch.`;
   }
 
-  return `The direct warning path to Zhao Ke shifts from ${formatTurnLabel(baselineWarningTurn)} to ${formatTurnLabel(candidateWarningTurn)}.`;
+  return `Risk awareness reroutes: removed ${removedActors.join(", ")}; added ${addedActors.join(", ")}.`;
 }
 
 function buildComparisonOverview(
-  baselineRun: RunPayload,
-  candidateRun: RunPayload
+  run: RunPayload,
+  delta: CompareBranchDelta,
+  turnsById: Map<string, TurnEntry>
 ): ComparisonOverview {
-  const rows = buildComparisonRows(baselineRun, candidateRun);
-  const divergentTurnCount = rows.filter((row) => row.divergent).length;
-  const ledgerDelta =
-    typeof candidateRun.summary.ledger_public_turn === "number" &&
-    typeof baselineRun.summary.ledger_public_turn === "number"
-      ? candidateRun.summary.ledger_public_turn - baselineRun.summary.ledger_public_turn
-      : null;
-  const evacuationDelta =
-    typeof candidateRun.summary.evacuation_turn === "number" &&
-    typeof baselineRun.summary.evacuation_turn === "number"
-      ? candidateRun.summary.evacuation_turn - baselineRun.summary.evacuation_turn
-      : null;
+  const rows = delta.divergent_turns.map((turnDelta) => ({
+    turnIndex: turnDelta.turn_index,
+    reference: turnDelta.reference_turn_id ? turnsById.get(turnDelta.reference_turn_id) ?? null : null,
+    candidate: turnDelta.candidate_turn_id ? turnsById.get(turnDelta.candidate_turn_id) ?? null : null
+  }));
+  const budgetExposureDelta = numericOutcomeDelta(delta.outcome_deltas, "budget_exposed_turn");
+  const ledgerDelta = numericOutcomeDelta(delta.outcome_deltas, "ledger_public_turn");
+  const evacuationDelta = numericOutcomeDelta(delta.outcome_deltas, "evacuation_turn");
+  const routeOnly = [budgetExposureDelta, ledgerDelta, evacuationDelta].every(
+    (value) => value === 0 || value === null
+  );
+  const knowledgeShift = outcomeChanged(delta.outcome_deltas.risk_known_by);
 
   return {
-    run: candidateRun,
+    run,
+    delta,
     rows,
-    divergentTurnCount,
+    divergentTurnCount: delta.divergent_turn_count,
+    budgetExposureDelta,
     ledgerDelta,
     evacuationDelta,
-    directWarningPath: hasDirectWarningPath(candidateRun),
+    routeOnly,
+    knowledgeShift,
     summaryLines: [
-      describeMetricDelta(
-        "Ledger publication",
-        baselineRun.summary.ledger_public_turn,
-        candidateRun.summary.ledger_public_turn
-      ),
-      describeMetricDelta(
-        "Evacuation",
-        baselineRun.summary.evacuation_turn,
-        candidateRun.summary.evacuation_turn
-      ),
-      describeWarningPath(baselineRun, candidateRun)
+      describeTurnOutcome("Budget exposure", delta.outcome_deltas.budget_exposed_turn),
+      describeTurnOutcome("Ledger publication", delta.outcome_deltas.ledger_public_turn),
+      describeTurnOutcome("Evacuation", delta.outcome_deltas.evacuation_turn),
+      describeRiskKnownBy(delta.outcome_deltas.risk_known_by)
     ]
   };
 }
@@ -547,6 +561,7 @@ export default async function Page() {
     documents,
     chunks,
     graph,
+    compareArtifact,
     runs,
     runsByKey,
     baselineRun,
@@ -603,33 +618,47 @@ export default async function Page() {
     };
   });
 
-  const comparisonOverviews = comparisonRuns.map((run) => buildComparisonOverview(baselineRun, run));
+  const comparisonOverviews = comparisonRuns
+    .map((run) => {
+      const delta = compareArtifact.reference_deltas.find(
+        (branchDelta) => branchDelta.branch_id === run.branch.branch_id
+      );
+
+      if (!delta) {
+        return null;
+      }
+
+      return buildComparisonOverview(run, delta, turnsById);
+    })
+    .filter((overview): overview is ComparisonOverview => Boolean(overview));
   const reportComparison =
     comparisonOverviews.find((overview) => overview.run.key === reportComparisonRun.key) ?? null;
+  const routeOnlyCount = comparisonOverviews.filter((overview) => overview.routeOnly).length;
   const delayedEvacuationCount = comparisonOverviews.filter(
     (overview) => (overview.evacuationDelta ?? 0) > 0
   ).length;
   const delayedLedgerCount = comparisonOverviews.filter(
     (overview) => (overview.ledgerDelta ?? 0) > 0
   ).length;
-  const lostDirectWarningCount = comparisonOverviews.filter(
-    (overview) => !overview.directWarningPath
+  const knowledgeShiftCount = comparisonOverviews.filter(
+    (overview) => overview.knowledgeShift
   ).length;
 
   return (
     <main className="shell">
       <section className="hero">
-        <p className="eyebrow">Mirror Engine / Phase 44 Counterfactual Workbench</p>
+        <p className="eyebrow">Mirror Engine / Phase 45 Compare Workbench</p>
         <h1>Start with the scenario matrix, then drop into trace, evidence, and eval.</h1>
         <p className="lede">
-          The workbench now leads with artifact-backed counterfactual deltas across the canonical
-          Fog Harbor matrix, so reviewers can answer which intervention changed what before they
-          drill into turn-by-turn trace, claims, evidence, or the eval summary.
+          The workbench now reads the canonical compare artifact first, so reviewers can answer
+          which intervention changed what before they drill into the exact divergent turns, linked
+          claims and evidence, or the eval summary.
         </p>
         <div className="heroMeta">
           <span>Current demo: Fog Harbor East Gate</span>
-          <span>{runs.length} canonical scenario branches loaded</span>
+          <span>{compareArtifact.branch_count} canonical scenario branches loaded</span>
           <span>{comparisonRuns.length} intervention comparisons against baseline</span>
+          <span>compare artifact: {compareArtifact.compare_id}</span>
           <span>
             Current report pair: baseline vs {reportComparisonRun.scenario.title}
           </span>
@@ -657,12 +686,12 @@ export default async function Page() {
 
       <section className="panel panelAccent">
         <div className="panelHeader">
-          <p className="eyebrow">Phase 44 Slice</p>
+          <p className="eyebrow">Phase 45 Slice</p>
           <h2>The default operator path is now compare, then trace, then claim and evidence, then eval.</h2>
         </div>
         <ul className="checklist">
-          <li>The workbench opens with a four-branch scenario matrix instead of a single intervention lane.</li>
-          <li>Each intervention card now links straight into pairwise trace diff, claim and evidence review, and the eval summary.</li>
+          <li>The workbench opens from `compare.json` instead of reconstructing every branch contrast client-side.</li>
+          <li>Each intervention card now links straight into focused divergent trace, claim and evidence review, and the eval summary.</li>
           <li>
             The current report artifacts still come from the canonical baseline vs reporter-detained
             pair, so that narrower report contract stays explicit rather than being implied across
@@ -679,7 +708,7 @@ export default async function Page() {
         <div className="metricGrid">
           <div className="metricCard">
             <span>scenario branches</span>
-            <strong>{runs.length}</strong>
+            <strong>{compareArtifact.branch_count}</strong>
           </div>
           <div className="metricCard">
             <span>intervention branches</span>
@@ -694,15 +723,20 @@ export default async function Page() {
             <strong>{delayedEvacuationCount}</strong>
           </div>
           <div className="metricCard">
-            <span>lost direct warning path</span>
-            <strong>{lostDirectWarningCount}</strong>
+            <span>route-only branches</span>
+            <strong>{routeOnlyCount}</strong>
+          </div>
+          <div className="metricCard">
+            <span>knowledge-shift branches</span>
+            <strong>{knowledgeShiftCount}</strong>
           </div>
         </div>
         <div className="comparisonOverviewGrid">
           <article className="artifactCard">
             <div className="artifactMeta">
-              <span>baseline</span>
-              <code>artifacts/demo/run/{baselineRun.key}/summary.json</code>
+              <span>reference</span>
+              <code>{compareArtifactPath}</code>
+              <code>artifacts/demo/{baselineRun.branch.summary_path}</code>
             </div>
             <div className="claimHeader">
               <strong>{baselineRun.scenario.title}</strong>
@@ -710,11 +744,16 @@ export default async function Page() {
             </div>
             <p>{baselineRun.scenario.description}</p>
             <div className="claimEvidence">
+              <code>{baselineRun.branch.branch_id}</code>
               <code>{baselineRun.scenario.scenario_id}</code>
               <code>turn_budget={baselineRun.scenario.turn_budget}</code>
-              <code>injections={baselineRun.scenario.injections.length}</code>
+              <code>seed={compareArtifact.seed}</code>
             </div>
             <div className="metricGrid">
+              <div className="metricCard">
+                <span>budget exposed</span>
+                <strong>{formatTurnLabel(baselineRun.summary.budget_exposed_turn)}</strong>
+              </div>
               <div className="metricCard">
                 <span>ledger public</span>
                 <strong>{formatTurnLabel(baselineRun.summary.ledger_public_turn)}</strong>
@@ -723,13 +762,10 @@ export default async function Page() {
                 <span>evacuation</span>
                 <strong>{formatTurnLabel(baselineRun.summary.evacuation_turn)}</strong>
               </div>
-              <div className="metricCard">
-                <span>direct warning</span>
-                <strong>{formatTurnLabel(firstDirectWarningTurn(baselineRun) ?? undefined)}</strong>
-              </div>
             </div>
             <ul className="checklist compact">
-              <li>Baseline keeps the direct warning path to Zhao Ke intact.</li>
+              <li>The compare contract anchors every delta against this reference branch.</li>
+              <li>Budget exposure lands at {formatTurnLabel(baselineRun.summary.budget_exposed_turn)}.</li>
               <li>Ledger publication becomes public at {formatTurnLabel(baselineRun.summary.ledger_public_turn)}.</li>
               <li>Evacuation triggers at {formatTurnLabel(baselineRun.summary.evacuation_turn)}.</li>
             </ul>
@@ -750,7 +786,8 @@ export default async function Page() {
             <article key={overview.run.key} className="artifactCard">
               <div className="artifactMeta">
                 <span>{overview.run.label}</span>
-                <code>artifacts/demo/run/{overview.run.key}/summary.json</code>
+                <code>{compareArtifactPath}</code>
+                <code>artifacts/demo/{overview.run.branch.summary_path}</code>
               </div>
               <div className="claimHeader">
                 <strong>{overview.run.scenario.title}</strong>
@@ -758,7 +795,9 @@ export default async function Page() {
               </div>
               <p>{overview.run.scenario.description}</p>
               <div className="claimEvidence">
+                <code>{overview.run.branch.branch_id}</code>
                 <code>{overview.run.scenario.scenario_id}</code>
+                <code>budget delta {formatDeltaLabel(overview.budgetExposureDelta)}</code>
                 <code>ledger delta {formatDeltaLabel(overview.ledgerDelta)}</code>
                 <code>evacuation delta {formatDeltaLabel(overview.evacuationDelta)}</code>
               </div>
@@ -766,11 +805,14 @@ export default async function Page() {
                 {overview.run.scenario.injections.map((injection) => (
                   <code key={injection.injection_id}>{injection.kind}</code>
                 ))}
-                <span className="pill">
-                  {overview.directWarningPath ? "direct warning preserved" : "direct warning lost"}
-                </span>
+                <span className="pill">{overview.routeOnly ? "route-only delta" : "timing drift"}</span>
+                {overview.knowledgeShift ? <span className="pill">knowledge shift</span> : null}
               </div>
               <div className="metricGrid">
+                <div className="metricCard">
+                  <span>budget exposed</span>
+                  <strong>{formatTurnLabel(overview.run.summary.budget_exposed_turn)}</strong>
+                </div>
                 <div className="metricCard">
                   <span>ledger public</span>
                   <strong>{formatTurnLabel(overview.run.summary.ledger_public_turn)}</strong>
@@ -778,10 +820,6 @@ export default async function Page() {
                 <div className="metricCard">
                   <span>evacuation</span>
                   <strong>{formatTurnLabel(overview.run.summary.evacuation_turn)}</strong>
-                </div>
-                <div className="metricCard">
-                  <span>direct warning</span>
-                  <strong>{formatTurnLabel(firstDirectWarningTurn(overview.run) ?? undefined)}</strong>
                 </div>
               </div>
               <ul className="checklist compact">
@@ -1145,15 +1183,16 @@ export default async function Page() {
 
       <section className="panel" id="trace-diff">
         <div className="panelHeader">
-          <p className="eyebrow">Pairwise Trace Diff</p>
-          <h2>Compare the baseline against each intervention with trace, state patch, and highlighted snapshot state.</h2>
+          <p className="eyebrow">Focused Trace Diff</p>
+          <h2>Expand only the divergent turns named by the compare artifact, then jump into claims, evidence, or eval.</h2>
         </div>
         <div className="detailList">
           {comparisonOverviews.map((overview) => (
             <article key={overview.run.key} id={`compare-${overview.run.key}`} className="artifactCard">
               <div className="artifactMeta">
                 <span>compare</span>
-                <code>baseline -&gt; {overview.run.key}</code>
+                <code>{compareArtifactPath}</code>
+                <code>artifacts/demo/{overview.run.branch.trace_path}</code>
               </div>
               <div className="claimHeader">
                 <strong>{baselineRun.scenario.title} vs {overview.run.scenario.title}</strong>
@@ -1171,18 +1210,19 @@ export default async function Page() {
                   Jump to eval
                 </a>
               </div>
-              <div className="timelineRows">
-                {overview.rows.map(({ turnIndex, baseline, candidate, divergent }) => (
+              {overview.rows.length > 0 ? (
+                <div className="timelineRows">
+                  {overview.rows.map(({ turnIndex, reference, candidate }) => (
                   <article
                     key={`${overview.run.key}-turn-${turnIndex}`}
-                    className={`timelineRow${divergent ? " timelineRowDivergent" : ""}`}
+                    className="timelineRow timelineRowDivergent"
                   >
                     <div className="claimHeader">
                       <strong>Turn {turnIndex}</strong>
-                      <span className="pill">{divergent ? "branch divergence" : "same step"}</span>
+                      <span className="pill">branch divergence</span>
                     </div>
                     <div className="timelineCards">
-                      {[baseline, candidate].map((entry, index) => (
+                      {[reference, candidate].map((entry, index) => (
                         <section
                           key={index === 0 ? `${overview.run.key}-baseline` : `${overview.run.key}-candidate`}
                           id={entry ? `turn-${entry.turn.turn_id}` : undefined}
@@ -1243,8 +1283,11 @@ export default async function Page() {
                       ))}
                     </div>
                   </article>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="subtle">This branch has no divergent turns recorded in the compare artifact.</p>
+              )}
             </article>
           ))}
         </div>
@@ -1304,11 +1347,10 @@ export default async function Page() {
           relatedTurnIds: claim.related_turn_ids.filter(Boolean)
         }))}
         divergentTurns={(reportComparison?.rows ?? [])
-          .filter((row) => row.divergent)
-          .map(({ turnIndex, baseline, candidate }) => ({
+          .map(({ turnIndex, reference, candidate }) => ({
             turnIndex,
-            baselineTurnId: baseline?.turn.turn_id ?? null,
-            baselineAction: baseline?.turn.action_type ?? null,
+            baselineTurnId: reference?.turn.turn_id ?? null,
+            baselineAction: reference?.turn.action_type ?? null,
             interventionTurnId: candidate?.turn.turn_id ?? null,
             interventionAction: candidate?.turn.action_type ?? null
           }))}
