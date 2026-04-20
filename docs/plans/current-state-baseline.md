@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the active Phase 45 queue baseline after the formal `v0.1.0` release closeout and the completed Phase 44 successor handoff.
+This note is the active Phase 46 queue baseline after the formal `v0.1.0` release closeout, the completed Phase 45 closeout, and the completed successor handoff into the workbench-focus queue.
 
 ## Snapshot
 
@@ -190,9 +190,9 @@ This note is the active Phase 45 queue baseline after the formal `v0.1.0` releas
   - `gh api repos/YSCJRH/mirror-sim/issues/316`
     - Phase 44 comparison-overview issue is `closed` after merging PR `#321`
   - `gh api repos/YSCJRH/mirror-sim/milestones/45`
-    - milestone `Phase 45 - Branch Generalization and Compare Contracts` is `open`
+    - milestone `Phase 45 - Branch Generalization and Compare Contracts` is `closed`
   - `gh api repos/YSCJRH/mirror-sim/issues/322`
-    - Phase 45 exit issue is `open` and remains `status:blocked`
+    - Phase 45 exit issue is `closed` after the Phase 46 successor handoff
   - `gh api repos/YSCJRH/mirror-sim/issues/323`
     - Phase 45 queue-sync issue is `closed` after merging PR `#327`
   - `gh api repos/YSCJRH/mirror-sim/issues/324`
@@ -200,13 +200,19 @@ This note is the active Phase 45 queue baseline after the formal `v0.1.0` releas
   - `gh api repos/YSCJRH/mirror-sim/issues/325`
     - Phase 45 runner/artifact issue is `closed` after merging PR `#331`
   - `gh api repos/YSCJRH/mirror-sim/issues/326`
-    - Phase 45 focused diff-surface issue is `open` and is now the current `status:ready` work item
+    - Phase 45 focused diff-surface issue is `closed` after merging PR `#333`
   - `gh api "repos/YSCJRH/mirror-sim/milestones?state=open"`
-    - exactly one open milestone exists: `Phase 45 - Branch Generalization and Compare Contracts`
+    - exactly one open milestone exists: `Phase 46 - Workbench Focus and Modularity`
+  - `gh issue list --milestone "Phase 46 - Workbench Focus and Modularity" --state all`
+    - `Phase 46 exit gate` is `open` and remains `status:blocked`
+    - `Phase 46: sync repo truth to Phase 46 queue` is `closed` after the successor bootstrap PR merges
+    - `Phase 46: extract review-scorecard into modular feature slices` is `open` and is the current `status:ready` work item
+    - `Phase 46: define the default operator path around compare-evidence-eval` is `open` and remains `status:blocked`
+    - `Phase 46: move secondary packet surfaces behind advanced navigation` is `open` and remains `status:blocked`
   - `gh api repos/YSCJRH/mirror-sim/releases`
     - release `v0.1.0` exists and matches the committed release notes baseline
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - queue now reports `ready` against the active `Phase 45 - Branch Generalization and Compare Contracts` milestone
+    - queue now reports `ready` against the active `Phase 46 - Workbench Focus and Modularity` milestone
 
 ## Trusted Source Of Truth
 
@@ -226,14 +232,15 @@ This note is the active Phase 45 queue baseline after the formal `v0.1.0` releas
 - The backend can ingest corpus documents, build a graph, build personas, validate scenarios, simulate deterministic runs, generate reports, inspect world objects, and run evals.
 - The simulation runner now also supports deterministic multi-branch execution under the ratified `branch_count` contract and emits durable compare artifacts for the canonical scenario matrix.
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
+- The default workbench path now consumes the canonical compare artifact directly and keeps focused divergent trace surfaces ahead of heavier packet-driven review flows.
 - The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, decision-template snippets, role preset cards, response-packaging shortcuts, apply-and-copy preset actions, grouped response-pack export, active preset session summary strips, route-filtered response kit choosers, route-kit comparison cards, preset session handoff packets, send-readiness cue strips, compact-versus-full handoff packet variants, destination-specific sender notes, compact-versus-full handoff packet diff previews, final send summary cards, destination-aware packet recommendation banners, delivery-bundle exports, receiver follow-up packs, delivery checkpoint boards, receiver response packets, reply outcome trackers, resolution handoff packs, resolution status boards, next-step routing packs, action readiness boards, escalation handoff packets, execution kickoff boards, execution progress trackers, execution outcome boards, execution correction boards, execution recovery boards, execution recovery checkpoint boards, execution recovery clearance boards, execution recovery release boards, escalation decision guides, escalation trigger packets, escalation dispatch packets, escalation delivery packets, escalation confirmation packets, escalation receipt packets, escalation acknowledgment packets, and escalation closure packets without introducing backend API expansion.
-- The current repository state has advanced from the Phase 44 counterfactual-depth queue into the Phase 45 branch-generalization queue while preserving `v0.1.0` as the latest published release baseline.
+- The current repository state has advanced from the Phase 45 branch-generalization queue into the Phase 46 workbench-focus queue while preserving `v0.1.0` as the latest published release baseline.
 
 ## Next Entry Point
 
-- Phase 45 is now the sole active milestone, and `#326` `Phase 45: consume compare artifacts in focused diff surfaces` is the current ready work item.
-- The next unlock order is fixed: `#322` remains blocked as the Phase 45 exit gate, `#323` is closed after queue bootstrap, `#324` is closed after ADR ratification, `#325` is closed after merging the runner and compare-artifact implementation, and `#326` is now ready for focused diff-surface consumption work.
-- Phase 46 remains the documented successor direction, but it must not be opened while Phase 45 remains active.
+- Phase 46 is now the sole active milestone, and `Phase 46: extract review-scorecard into modular feature slices` is the current ready work item.
+- The next unlock order is fixed: `Phase 46 exit gate` remains blocked, the queue-sync issue is already closed after successor bootstrap, the review-scorecard modularization issue is ready, and the remaining two frontend work items stay blocked until the queue advances.
+- No Phase 47 milestone is pre-opened in this round; any successor beyond Phase 46 requires a fresh decision against the blueprint triggers in `mirror.md`.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
-- The local queue heartbeat remains active as `mirror-queue-heartbeat` and should now report the Phase 45 queue as `ready`; it must not open another milestone while Phase 45 is active.
+- The local queue heartbeat remains active as `mirror-queue-heartbeat` and should now report the Phase 46 queue as `ready`; it must not open another milestone while Phase 46 is active.
