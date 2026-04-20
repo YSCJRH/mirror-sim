@@ -150,8 +150,8 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - milestone `Phase 46 - Workbench Focus and Modularity` is open.
 - `Phase 46 exit gate` is open and remains `status:blocked`.
 - `Phase 46: sync repo truth to Phase 46 queue` is closed after the successor bootstrap PR merges.
-- `Phase 46: extract review-scorecard into modular feature slices` is now the current `status:ready` work item.
-- `Phase 46: define the default operator path around compare-evidence-eval` remains open and `status:blocked`.
+- `Phase 46: extract review-scorecard into modular feature slices` is merged and closed via PR `#340`.
+- `Phase 46: define the default operator path around compare-evidence-eval` is now the current `status:ready` work item.
 - `Phase 46: move secondary packet surfaces behind advanced navigation` remains open and `status:blocked`.
 - `audit-github-queue` now reports `ready` against the active Phase 46 milestone.
 - No Phase 47 milestone is pre-opened in this round.
