@@ -643,16 +643,50 @@ export default async function Page() {
   const knowledgeShiftCount = comparisonOverviews.filter(
     (overview) => overview.knowledgeShift
   ).length;
+  const totalDivergentTurnCount = comparisonOverviews.reduce(
+    (sum, overview) => sum + overview.divergentTurnCount,
+    0
+  );
+  const operatorPathSteps = [
+    {
+      step: "01",
+      title: "Compare branches",
+      target: "#compare-overview",
+      summary: "Start from durable compare deltas so you can see which intervention changes the overall outcome shape.",
+      meta: `${comparisonRuns.length} intervention branches`
+    },
+    {
+      step: "02",
+      title: "Replay divergent trace",
+      target: "#trace-diff",
+      summary: "Open only the divergent turns named by the compare artifact instead of scanning full branch timelines first.",
+      meta: `${totalDivergentTurnCount} divergent turns mapped`
+    },
+    {
+      step: "03",
+      title: "Check claim and evidence",
+      target: "#report-claims",
+      summary: "Verify the canonical report pair, then drop into evidence excerpts, graph context, and linked turns when needed.",
+      meta: `${claims.length} evidence-linked claims`
+    },
+    {
+      step: "04",
+      title: "Confirm eval posture",
+      target: "#eval-summary",
+      summary: "Finish the default pass with machine eval posture before opening packet-heavy review and handoff tooling.",
+      meta: `${evalSummary.eval_name}: ${evalSummary.status}`
+    }
+  ];
 
   return (
     <main className="shell">
       <section className="hero">
-        <p className="eyebrow">Mirror Engine / Phase 45 Compare Workbench</p>
-        <h1>Start with the scenario matrix, then drop into trace, evidence, and eval.</h1>
+        <p className="eyebrow">Mirror Engine / Phase 46 Focused Compare Workbench</p>
+        <h1>Start with compare, then trace, claim and evidence, and eval.</h1>
         <p className="lede">
-          The workbench now reads the canonical compare artifact first, so reviewers can answer
-          which intervention changed what before they drill into the exact divergent turns, linked
-          claims and evidence, or the eval summary.
+          The default operator path now stays intentionally narrow: compare the branches, replay
+          only the divergent trace, inspect the linked claim and evidence chain, and confirm the
+          eval posture before opening heavier review or packet surfaces.
         </p>
         <div className="heroMeta">
           <span>Current demo: Fog Harbor East Gate</span>
@@ -670,33 +704,28 @@ export default async function Page() {
 
       <section className="panel">
         <div className="panelHeader">
-          <p className="eyebrow">Workbench Spine</p>
-          <h2>Each step in the matrix-to-review path still maps directly to durable artifacts.</h2>
+          <p className="eyebrow">Default Operator Path</p>
+          <h2>Use the focused compare path first, then open advanced review and reference surfaces only when needed.</h2>
         </div>
-        <div className="grid">
-          {sections.map((section) => (
-            <article key={section.title} className="card">
-              <h3>{section.title}</h3>
-              <p>{section.copy}</p>
-              <code>{section.path}</code>
+        <div className="pathGrid">
+          {operatorPathSteps.map((step) => (
+            <article key={step.step} className="pathCard">
+              <span className="pathStep">{step.step}</span>
+              <h3>{step.title}</h3>
+              <p>{step.summary}</p>
+              <div className="claimEvidence">
+                <code>{step.meta}</code>
+                <a className="linkPill" href={step.target}>
+                  Open step
+                </a>
+              </div>
             </article>
           ))}
         </div>
-      </section>
-
-      <section className="panel panelAccent">
-        <div className="panelHeader">
-          <p className="eyebrow">Phase 45 Slice</p>
-          <h2>The default operator path is now compare, then trace, then claim and evidence, then eval.</h2>
-        </div>
         <ul className="checklist">
-          <li>The workbench opens from `compare.json` instead of reconstructing every branch contrast client-side.</li>
-          <li>Each intervention card now links straight into focused divergent trace, claim and evidence review, and the eval summary.</li>
-          <li>
-            The current report artifacts still come from the canonical baseline vs reporter-detained
-            pair, so that narrower report contract stays explicit rather than being implied across
-            all branches.
-          </li>
+          <li>The compare artifact remains the first read, and focused divergent trace is now treated as the next default step rather than a later deep-dive.</li>
+          <li>Claim/evidence review and eval stay in the primary path; review-scorecard and packet-heavy surfaces remain available afterward as advanced tooling.</li>
+          <li>Scenario, world-model, and corpus artifacts remain in-repo as reference surfaces, but they no longer compete with the core compare path for first attention.</li>
         </ul>
       </section>
 
@@ -841,6 +870,118 @@ export default async function Page() {
                   Eval summary
                 </a>
               </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel" id="trace-diff">
+        <div className="panelHeader">
+          <p className="eyebrow">Focused Trace Diff</p>
+          <h2>Replay only the divergent turns named by the compare artifact, then jump straight into claims, evidence, or eval.</h2>
+        </div>
+        <div className="detailList">
+          {comparisonOverviews.map((overview) => (
+            <article key={overview.run.key} id={`compare-${overview.run.key}`} className="artifactCard">
+              <div className="artifactMeta">
+                <span>compare</span>
+                <code>{compareArtifactPath}</code>
+                <code>artifacts/demo/{overview.run.branch.trace_path}</code>
+              </div>
+              <div className="claimHeader">
+                <strong>{baselineRun.scenario.title} vs {overview.run.scenario.title}</strong>
+                <span className="pill">{overview.divergentTurnCount} divergent turns</span>
+              </div>
+              <p>{overview.summaryLines.join(" ")}</p>
+              <div className="claimEvidence">
+                <a className="linkPill" href="#report-claims">
+                  Jump to claims
+                </a>
+                <a className="linkPill" href="#claim-drilldowns">
+                  Jump to drill-down
+                </a>
+                <a className="linkPill" href="#eval-summary">
+                  Jump to eval
+                </a>
+              </div>
+              {overview.rows.length > 0 ? (
+                <div className="timelineRows">
+                  {overview.rows.map(({ turnIndex, reference, candidate }) => (
+                    <article
+                      key={`${overview.run.key}-turn-${turnIndex}`}
+                      className="timelineRow timelineRowDivergent"
+                    >
+                      <div className="claimHeader">
+                        <strong>Turn {turnIndex}</strong>
+                        <span className="pill">branch divergence</span>
+                      </div>
+                      <div className="timelineCards">
+                        {[reference, candidate].map((entry, index) => (
+                          <section
+                            key={index === 0 ? `${overview.run.key}-baseline` : `${overview.run.key}-candidate`}
+                            id={entry ? `turn-${entry.turn.turn_id}` : undefined}
+                            className={`timelineCard${entry ? "" : " timelineCardEmpty"}`}
+                          >
+                            {entry ? (
+                              <>
+                                <div className="artifactMeta">
+                                  <span>{index === 0 ? "baseline" : "candidate"}</span>
+                                  <code>{entry.turn.turn_id}</code>
+                                </div>
+                                <div className="claimHeader">
+                                  <strong>{entry.turn.action_type}</strong>
+                                  <span className="pill">{entry.turn.actor_id}</span>
+                                </div>
+                                <p>{entry.turn.rationale}</p>
+                                <div className="claimEvidence">
+                                  <code>{entry.scenarioTitle}</code>
+                                  {entry.turn.target_id ? <code>{entry.turn.target_id}</code> : null}
+                                  {claimIdsByTurnId.get(entry.turn.turn_id)?.map((claimId) => (
+                                    <a key={claimId} className="linkPill" href={`#drill-${claimId}`}>
+                                      {claimId}
+                                    </a>
+                                  ))}
+                                </div>
+                                <div className="claimEvidence">
+                                  {entry.turn.evidence_ids.map((evidenceId) => (
+                                    <a key={evidenceId} className="linkPill" href={`#chunk-${evidenceId}`}>
+                                      {evidenceId}
+                                    </a>
+                                  ))}
+                                </div>
+                                <div className="timelineState">
+                                  {Object.keys(entry.turn.state_patch).length > 0 ? (
+                                    Object.entries(entry.turn.state_patch).map(([key, value]) => (
+                                      <code key={key}>
+                                        {key}={formatValue(value)}
+                                      </code>
+                                    ))
+                                  ) : (
+                                    <span className="subtle">no state patch</span>
+                                  )}
+                                </div>
+                                <div className="timelineState">
+                                  {stateHighlights(entry.snapshot?.state).length > 0 ? (
+                                    stateHighlights(entry.snapshot?.state).map((highlight) => (
+                                      <code key={highlight}>{highlight}</code>
+                                    ))
+                                  ) : (
+                                    <span className="subtle">no highlighted snapshot state</span>
+                                  )}
+                                </div>
+                              </>
+                            ) : (
+                              <span className="subtle">No turn recorded for this branch.</span>
+                            )}
+                          </section>
+                        ))}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="subtle">This branch has no divergent turns recorded in the compare artifact.</p>
+              )}
             </article>
           ))}
         </div>
@@ -1041,7 +1182,126 @@ export default async function Page() {
         </div>
       </section>
 
-      <section className="panel">
+      <section className="panel" id="eval-summary">
+        <div className="panelHeader">
+          <p className="eyebrow">Eval And Review</p>
+          <h2>Finish the default path with the matrix-level eval posture before opening advanced review tooling.</h2>
+        </div>
+        <div className="reportGrid">
+          <article className="artifactCard">
+            <div className="artifactMeta">
+              <span>artifact</span>
+              <code>artifacts/demo/eval/summary.json</code>
+            </div>
+            <div className="metricGrid">
+              {Object.entries(evalSummary.metrics).map(([key, value]) => (
+                <div key={key} className="metricCard">
+                  <span>{key}</span>
+                  <strong>{value}</strong>
+                </div>
+              ))}
+            </div>
+            <div className="statusRow">
+              <span className="pill">{evalSummary.status}</span>
+              <span>{evalSummary.eval_name}</span>
+            </div>
+            {evalSummary.notes.length > 0 ? (
+              <ul className="checklist compact">
+                {evalSummary.notes.map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
+            ) : null}
+          </article>
+
+          <article className="artifactCard">
+            <div className="artifactMeta">
+              <span>artifact</span>
+              <code>docs/rubrics/human-review.md</code>
+            </div>
+            <pre className="artifactPre artifactPreCompact">{rubric}</pre>
+          </article>
+        </div>
+      </section>
+
+      <section className="panel panelAccent" id="advanced-review">
+        <div className="panelHeader">
+          <p className="eyebrow">Advanced Review</p>
+          <h2>Scorecards, handoff packets, and packet-heavy review tools stay available after the core compare pass.</h2>
+        </div>
+        <div className="reportGrid">
+          <article className="artifactCard">
+            <div className="artifactMeta">
+              <span>after default path</span>
+              <code>review-scorecard and delivery surfaces</code>
+            </div>
+            <p>
+              Once compare, divergent trace, claim/evidence, and eval are clear, the advanced
+              review surfaces below remain available for scoring, handoff packaging, and delivery
+              planning without dominating the first-read experience.
+            </p>
+            <div className="claimEvidence">
+              <a className="linkPill" href="#review-scorecard">
+                Open scorecard
+              </a>
+              <a className="linkPill" href="#reference-map">
+                Open reference map
+              </a>
+            </div>
+          </article>
+
+          <article className="artifactCard">
+            <div className="artifactMeta">
+              <span>reference surfaces</span>
+              <code>scenario, world, and corpus remain available below</code>
+            </div>
+            <ul className="checklist compact">
+              <li>Keep the default path narrow when you only need to understand branch differences and evidence posture.</li>
+              <li>Open the advanced review surfaces when you are ready to score the branch or assemble a handoff packet.</li>
+              <li>Drop into scenario, world-model, or corpus references only when the core compare path still leaves a question unresolved.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <ReviewScorecard
+        rubricRows={rubricRows}
+        claimCount={claims.length}
+        divergentTurnCount={reportComparison?.divergentTurnCount ?? 0}
+        evalName={evalSummary.eval_name}
+        evalStatus={evalSummary.status}
+        claimPackets={claims.map((claim) => ({
+          claimId: claim.claim_id,
+          text: claim.text,
+          relatedTurnIds: claim.related_turn_ids.filter(Boolean)
+        }))}
+        divergentTurns={(reportComparison?.rows ?? [])
+          .map(({ turnIndex, reference, candidate }) => ({
+            turnIndex,
+            baselineTurnId: reference?.turn.turn_id ?? null,
+            baselineAction: reference?.turn.action_type ?? null,
+            interventionTurnId: candidate?.turn.turn_id ?? null,
+            interventionAction: candidate?.turn.action_type ?? null
+          }))}
+      />
+
+      <section className="panel" id="reference-map">
+        <div className="panelHeader">
+          <p className="eyebrow">Reference Map</p>
+          <h2>These supporting artifact surfaces stay available behind the default operator path.</h2>
+        </div>
+        <div className="grid">
+          {sections.map((section) => (
+            <article key={section.title} className="card">
+              <h3>{section.title}</h3>
+              <p>{section.copy}</p>
+              <code>{section.path}</code>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel" id="corpus-reference">
         <div className="panelHeader">
           <p className="eyebrow">Corpus</p>
           <h2>Canonical source documents remain directly inspectable.</h2>
@@ -1082,7 +1342,7 @@ export default async function Page() {
         </div>
       </section>
 
-      <section className="panel">
+      <section className="panel" id="world-model">
         <div className="panelHeader">
           <p className="eyebrow">World Model</p>
           <h2>Graph objects stay visible as structured, evidence-bearing records.</h2>
@@ -1181,180 +1441,6 @@ export default async function Page() {
         </div>
       </section>
 
-      <section className="panel" id="trace-diff">
-        <div className="panelHeader">
-          <p className="eyebrow">Focused Trace Diff</p>
-          <h2>Expand only the divergent turns named by the compare artifact, then jump into claims, evidence, or eval.</h2>
-        </div>
-        <div className="detailList">
-          {comparisonOverviews.map((overview) => (
-            <article key={overview.run.key} id={`compare-${overview.run.key}`} className="artifactCard">
-              <div className="artifactMeta">
-                <span>compare</span>
-                <code>{compareArtifactPath}</code>
-                <code>artifacts/demo/{overview.run.branch.trace_path}</code>
-              </div>
-              <div className="claimHeader">
-                <strong>{baselineRun.scenario.title} vs {overview.run.scenario.title}</strong>
-                <span className="pill">{overview.divergentTurnCount} divergent turns</span>
-              </div>
-              <p>{overview.summaryLines.join(" ")}</p>
-              <div className="claimEvidence">
-                <a className="linkPill" href="#report-claims">
-                  Jump to claims
-                </a>
-                <a className="linkPill" href="#claim-drilldowns">
-                  Jump to drill-down
-                </a>
-                <a className="linkPill" href="#eval-summary">
-                  Jump to eval
-                </a>
-              </div>
-              {overview.rows.length > 0 ? (
-                <div className="timelineRows">
-                  {overview.rows.map(({ turnIndex, reference, candidate }) => (
-                  <article
-                    key={`${overview.run.key}-turn-${turnIndex}`}
-                    className="timelineRow timelineRowDivergent"
-                  >
-                    <div className="claimHeader">
-                      <strong>Turn {turnIndex}</strong>
-                      <span className="pill">branch divergence</span>
-                    </div>
-                    <div className="timelineCards">
-                      {[reference, candidate].map((entry, index) => (
-                        <section
-                          key={index === 0 ? `${overview.run.key}-baseline` : `${overview.run.key}-candidate`}
-                          id={entry ? `turn-${entry.turn.turn_id}` : undefined}
-                          className={`timelineCard${entry ? "" : " timelineCardEmpty"}`}
-                        >
-                          {entry ? (
-                            <>
-                              <div className="artifactMeta">
-                                <span>{index === 0 ? "baseline" : "candidate"}</span>
-                                <code>{entry.turn.turn_id}</code>
-                              </div>
-                              <div className="claimHeader">
-                                <strong>{entry.turn.action_type}</strong>
-                                <span className="pill">{entry.turn.actor_id}</span>
-                              </div>
-                              <p>{entry.turn.rationale}</p>
-                              <div className="claimEvidence">
-                                <code>{entry.scenarioTitle}</code>
-                                {entry.turn.target_id ? <code>{entry.turn.target_id}</code> : null}
-                                {claimIdsByTurnId.get(entry.turn.turn_id)?.map((claimId) => (
-                                  <a key={claimId} className="linkPill" href={`#drill-${claimId}`}>
-                                    {claimId}
-                                  </a>
-                                ))}
-                              </div>
-                              <div className="claimEvidence">
-                                {entry.turn.evidence_ids.map((evidenceId) => (
-                                  <a key={evidenceId} className="linkPill" href={`#chunk-${evidenceId}`}>
-                                    {evidenceId}
-                                  </a>
-                                ))}
-                              </div>
-                              <div className="timelineState">
-                                {Object.keys(entry.turn.state_patch).length > 0 ? (
-                                  Object.entries(entry.turn.state_patch).map(([key, value]) => (
-                                    <code key={key}>
-                                      {key}={formatValue(value)}
-                                    </code>
-                                  ))
-                                ) : (
-                                  <span className="subtle">no state patch</span>
-                                )}
-                              </div>
-                              <div className="timelineState">
-                                {stateHighlights(entry.snapshot?.state).length > 0 ? (
-                                  stateHighlights(entry.snapshot?.state).map((highlight) => (
-                                    <code key={highlight}>{highlight}</code>
-                                  ))
-                                ) : (
-                                  <span className="subtle">no highlighted snapshot state</span>
-                                )}
-                              </div>
-                            </>
-                          ) : (
-                            <span className="subtle">No turn recorded for this branch.</span>
-                          )}
-                        </section>
-                      ))}
-                    </div>
-                  </article>
-                  ))}
-                </div>
-              ) : (
-                <p className="subtle">This branch has no divergent turns recorded in the compare artifact.</p>
-              )}
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="panel" id="eval-summary">
-        <div className="panelHeader">
-          <p className="eyebrow">Eval And Review</p>
-          <h2>The matrix-level machine summary stays visible beside the human review rubric.</h2>
-        </div>
-        <div className="reportGrid">
-          <article className="artifactCard">
-            <div className="artifactMeta">
-              <span>artifact</span>
-              <code>artifacts/demo/eval/summary.json</code>
-            </div>
-            <div className="metricGrid">
-              {Object.entries(evalSummary.metrics).map(([key, value]) => (
-                <div key={key} className="metricCard">
-                  <span>{key}</span>
-                  <strong>{value}</strong>
-                </div>
-              ))}
-            </div>
-            <div className="statusRow">
-              <span className="pill">{evalSummary.status}</span>
-              <span>{evalSummary.eval_name}</span>
-            </div>
-            {evalSummary.notes.length > 0 ? (
-              <ul className="checklist compact">
-                {evalSummary.notes.map((note) => (
-                  <li key={note}>{note}</li>
-                ))}
-              </ul>
-            ) : null}
-          </article>
-
-          <article className="artifactCard">
-            <div className="artifactMeta">
-              <span>artifact</span>
-              <code>docs/rubrics/human-review.md</code>
-            </div>
-            <pre className="artifactPre artifactPreCompact">{rubric}</pre>
-          </article>
-        </div>
-      </section>
-
-      <ReviewScorecard
-        rubricRows={rubricRows}
-        claimCount={claims.length}
-        divergentTurnCount={reportComparison?.divergentTurnCount ?? 0}
-        evalName={evalSummary.eval_name}
-        evalStatus={evalSummary.status}
-        claimPackets={claims.map((claim) => ({
-          claimId: claim.claim_id,
-          text: claim.text,
-          relatedTurnIds: claim.related_turn_ids.filter(Boolean)
-        }))}
-        divergentTurns={(reportComparison?.rows ?? [])
-          .map(({ turnIndex, reference, candidate }) => ({
-            turnIndex,
-            baselineTurnId: reference?.turn.turn_id ?? null,
-            baselineAction: reference?.turn.action_type ?? null,
-            interventionTurnId: candidate?.turn.turn_id ?? null,
-            interventionAction: candidate?.turn.action_type ?? null
-          }))}
-      />
     </main>
   );
 }
