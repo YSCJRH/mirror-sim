@@ -4,147 +4,152 @@
   <img src="mirror.png" alt="Mirror concept illustration" width="100%" />
 </p>
 
-**A constrained multi-agent scenario simulation engine inspired by Liu Cixin's _The Mirror_.**
+**A constrained, evidence-backed scenario simulation engine for fictional or explicitly authorized worlds.**
 
-**基于刘慈欣《镜子》启发设计的受约束多智能体情景模拟引擎。**
-
----
-
-## Introduction | 简介
-
-Mirror Engine aims to build a controlled, evidence-backed virtual environment for multi-agent simulation and scenario exploration. It combines graph-based world modeling, scenario injection, deterministic runs, and a browser review workbench so researchers and developers can inspect how disturbances propagate through actors, information flows, and outcomes.
-
-Mirror Engine 项目旨在构建一个可控、可追踪、可验证的多智能体情景推演环境。项目融合知识图谱、情景注入、确定性模拟、报告生成与浏览器审查工作台，用于帮助研究者和开发者观察扰动如何沿着角色、信息流和结果路径传播。
-
-The repository is designed for fictional or explicitly authorized knowledge environments. It is not presented as an open-world prediction machine, but as a constrained sandbox for interpretable scenario analysis.
-
-本仓库面向虚构或经明确授权的知识环境，不将自己包装成现实世界预测机器，而是一个用于可解释情景分析的受约束模拟沙盒。
+**一个面向虚构或明确授权知识环境的、受约束且证据可追溯的情景推演引擎。**
 
 ---
 
-## Features | 功能特性
+## What Mirror Is | Mirror 是什么
 
-- **Deterministic simulation backbone | 确定性模拟主干**: Build a repeatable flow from corpus ingestion to graph, personas, validated scenarios, simulation runs, reports, and evals.
-- **Graph-based world modeling | 图谱化世界建模**: Organize entities, relationships, and constraints into a queryable world model for scenario execution.
-- **Scenario injection and control | 情景注入与控制**: Define disturbances explicitly and compare baseline versus injected runs in a traceable way.
-- **Review workbench | 审查工作台**: Inspect claims, evidence, traces, reviewer views, and release-closeout surfaces in the browser workbench.
-- **Explainability and verifiability | 可解释与可验证**: Keep reports grounded in labeled claims and `evidence_ids` so outputs remain auditable.
-- **GitHub-native governance | GitHub 原生治理**: Use phase audits, queue audits, lane classification, and protected `main` workflows to support long-running execution safely.
+Mirror turns a small bounded corpus into a replayable pipeline:
+
+`corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`
+
+It is built for what-if analysis in constrained worlds, not for open-world prediction.
+
+Mirror 用于在受限世界中做条件化 what-if 推演，而不是做开放世界预测。
+
+## What Mirror Is Not | Mirror 不是什么
+
+- Not a real-world prediction machine
+- Not a real-person profiling system
+- Not a political influence, law-enforcement, hiring, credit, medical, or judicial decision system
+- Not an open-world digital twin platform
 
 ---
 
-## Getting Started | 快速开始
+## Why Claims, Evidence, And Eval Matter | 为什么强调 claims、evidence 和 eval
 
-### Prerequisites | 环境要求
+- `evidence_ids` keep world objects, actions, and report claims tied to source chunks.
+- claim labels distinguish direct branch facts from bounded inference.
+- evals prove the pipeline is still deterministic, replayable, and safe enough to trust as a sandbox.
 
-- Python 3.11+
-- Node.js 18+
-- `make` for Unix-like shells, or PowerShell on Windows
+如果没有 `evidence_ids`、claim labels 和 eval，Mirror 就只是“会跑的故事”；有了它们，输出才是可审查、可回放、可评估的推演结果。
 
-### Installation | 安装
+---
 
-Clone the repository:
+## 3-Minute Demo Path | 3 分钟上手路径
+
+Clone the repo:
 
 ```bash
 git clone https://github.com/YSCJRH/mirror-sim.git
 cd mirror-sim
 ```
 
-Install the backend package:
-
-Unix-like shells:
+Install the backend:
 
 ```bash
 make setup
 ```
 
-PowerShell:
-
 ```powershell
 ./make.ps1 setup
 ```
 
-### Running the Application | 启动应用
-
-Start the backend API:
-
-```bash
-make dev-api
-```
-
-```powershell
-./make.ps1 dev-api
-```
-
-Launch the frontend workbench:
-
-```bash
-make dev-web
-```
-
-```powershell
-./make.ps1 dev-web
-```
-
-Validate the local baseline:
+Run the canonical checks:
 
 ```bash
 make smoke
 make test
 make eval-demo
+make eval-transfer
 ```
 
 ```powershell
 ./make.ps1 smoke
 ./make.ps1 test
 ./make.ps1 eval-demo
+./make.ps1 eval-transfer
+```
+
+Start the local workbench:
+
+```bash
+make dev-api
+make dev-web
+```
+
+```powershell
+./make.ps1 dev-api
+./make.ps1 dev-web
+```
+
+Extra transfer proof:
+
+```bash
+python -m backend.app.cli eval-world --world museum-night
 ```
 
 ---
 
-## Project Structure | 项目结构
+## What You Can Inspect Locally | 本地能看到什么
 
-```text
-mirror-sim
-├── .github/         # GitHub workflows, templates, and automation governance
-├── backend/         # FastAPI app, CLI, automation helpers, and pipeline code
-├── frontend/        # Next.js review workbench
-├── data/            # Demo corpus, scenarios, and world-model inputs
-├── docs/            # Plans, decisions, architecture notes, and release docs
-├── evals/           # Assertions and evaluation assets
-└── scripts/         # Bootstrap and utility scripts
-```
+- Canonical Fog Harbor artifacts under `artifacts/demo/`
+- Second-world transfer artifacts under `artifacts/worlds/museum-night/`
+- Transfer summary under `artifacts/transfer/summary.json`
+- Review workbench reading from the canonical compare/evidence/eval path
+
+Useful artifact checkpoints:
+
+- `artifacts/demo/graph/graph.json`
+- `artifacts/demo/personas/personas.json`
+- `artifacts/demo/report/claims.json`
+- `artifacts/demo/eval/summary.json`
+- `artifacts/worlds/museum-night/eval/summary.json`
+
+For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-walkthrough.md](docs/demo/fog-harbor-walkthrough.md).
 
 ---
 
 ## Current Status | 当前状态
 
-- **Formal release `v0.1.0` | 正式版本 `v0.1.0`**: The first formal GitHub Release remains published and anchors the current repository baseline.
-- **Queue state | 当前队列状态**: Phase 46, `Workbench Focus and Modularity`, is formally closed. No approved Phase 47 milestone exists, so the GitHub queue is intentionally `paused` with no open milestone.
-- **Recent closeout | 最近收口**: Phase 46 is formally closed after modularizing the review scorecard, centering the default path on compare/evidence/eval, and moving packet-heavy surfaces behind advanced navigation.
-- **Planned next route | 已定后续主线**: No Phase 47 milestone is approved or open in this round; any successor beyond Phase 46 requires a fresh decision against the `mirror.md` trigger conditions.
-- **Repo truth lives in docs | 仓库真相以文档为准**: See [mirror.md](mirror.md) for the project blueprint, [docs/plans/current-state-baseline.md](docs/plans/current-state-baseline.md) for the current stop-state baseline, and [docs/releases/v0.1.0.md](docs/releases/v0.1.0.md) for the canonical release notes.
+- `v0.1.0` is the formal release baseline.
+- The current stop-state / queue state lives in [docs/plans/current-state-baseline.md](docs/plans/current-state-baseline.md).
+- No Phase 47 is pre-opened or implied here.
+- Fog Harbor remains the canonical demo world; `museum-night` is the minimal transfer world used to prove the pipeline is not single-world-only.
 
 ---
 
-## Contribution | 贡献方式
+## Repo Layout | 仓库结构
 
-We welcome contributions and feedback. To participate:
+```text
+mirror-sim
+├── backend/          # CLI, pipeline, eval, and automation services
+├── frontend/         # review workbench
+├── data/demo/        # canonical Fog Harbor demo
+├── data/worlds/      # additional bounded worlds such as museum-night
+├── docs/             # plans, ADRs, contracts, walkthroughs, release notes
+├── evals/            # assertions and eval assets
+└── scripts/          # bootstrap and utility scripts
+```
 
-1. Fork this repository.
-2. Create a branch for your change.
-3. Commit with a focused message.
-4. Push the branch to your fork or remote.
-5. Open a Pull Request against `main`.
+---
 
-提交前请先阅读 [AGENTS.md](AGENTS.md)，了解当前仓库的执行规则、文档约束和协作方式。
+## Contributing | 贡献方式
 
-Pull requests will run the repository's existing checks and protection rules. This README refresh does not change the underlying governance flow.
+Read [AGENTS.md](AGENTS.md) before changing contracts, pipeline behavior, or docs. Mirror favors small, reviewable changes with explicit validation.
+
+Typical flow:
+
+1. Create a focused branch
+2. Make a bounded change
+3. Run the relevant checks
+4. Open a PR against `main`
 
 ---
 
 ## License | 许可证
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
-
-本项目采用 MIT License，详情请见 [LICENSE](LICENSE)。
+Mirror is released under the MIT License. See [LICENSE](LICENSE) for details.

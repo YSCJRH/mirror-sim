@@ -1,0 +1,43 @@
+world_id: museum-night
+title: Museum Night Opening Review
+docs:
+  - document_id: doc_curatorial_memo
+    title: Curatorial Memo For The Twilight Preview
+    kind: memo
+    path: docs/curatorial_memo.md
+    created_at: "1912-10-04T16:10:00Z"
+    metadata:
+      author: noa_bell
+      channel: curatorial_office
+  - document_id: doc_facilities_log
+    title: West Hall Facilities Log
+    kind: facilities_log
+    path: docs/facilities_log.md
+    created_at: "1912-10-04T17:05:00Z"
+    metadata:
+      author: tomas_reed
+      channel: facilities_desk
+  - document_id: doc_volunteer_packet
+    title: Volunteer Packet Routing Note
+    kind: routing_note
+    path: docs/volunteer_packet.md
+    created_at: "1912-10-04T17:20:00Z"
+    metadata:
+      author: mina_park
+      channel: volunteer_room
+  - document_id: doc_security_round
+    title: Security Round At The Museum Entry
+    kind: round_report
+    path: docs/security_round.md
+    created_at: "1912-10-04T17:40:00Z"
+    metadata:
+      author: iris_vale
+      channel: security_office
+  - document_id: doc_operations_board
+    title: Operations Board Summary
+    kind: operations_note
+    path: docs/operations_board.md
+    created_at: "1912-10-04T17:55:00Z"
+    metadata:
+      author: night_manager
+      channel: operations_board

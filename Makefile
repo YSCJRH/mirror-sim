@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: setup smoke test eval-demo dev-api dev-web
+.PHONY: setup smoke test eval-demo eval-transfer dev-api dev-web
 
 setup:
 	$(PYTHON) -m pip install -e backend
@@ -13,6 +13,9 @@ test:
 
 eval-demo:
 	$(PYTHON) -m backend.app.cli eval-demo
+
+eval-transfer:
+	$(PYTHON) -m backend.app.cli eval-transfer
 
 dev-api:
 	$(PYTHON) -m uvicorn backend.app.main:app --reload

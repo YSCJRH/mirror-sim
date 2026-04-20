@@ -22,10 +22,12 @@ def test_demo_report_endpoint_reflects_artifact_state(tmp_path: Path, monkeypatc
     run_phase0_demo(settings=settings, artifacts_root=tmp_path / "demo")
     patched_settings = Settings(
         repo_root=settings.repo_root,
+        world_id=settings.world_id,
         data_root=settings.data_root,
         artifacts_root=tmp_path / "demo",
         manifest_path=settings.manifest_path,
         world_model_path=settings.world_model_path,
+        simulation_rules_path=settings.simulation_rules_path,
         scenario_dir=settings.scenario_dir,
         baseline_scenario_path=settings.baseline_scenario_path,
         intervention_scenario_path=settings.intervention_scenario_path,

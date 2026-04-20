@@ -1,0 +1,266 @@
+world_id: fog-harbor-east-gate
+compare_id: scenario_fog_harbor_phase44_matrix
+default_report_scenario: reporter_detained
+communications_down_field: communications_down_until
+blocked_contacts_field: blocked_contacts
+turn_sequence:
+  - persona_su_he
+  - persona_chen_yu
+  - persona_lin_lan
+  - persona_su_he
+  - persona_zhao_ke
+  - persona_lin_lan
+  - persona_su_he
+  - persona_zhao_ke
+initial_state:
+  east_gate_status: fractured
+  festival_status: scheduled
+  risk_known_by: []
+  budget_exposed: false
+  budget_exposed_turn: null
+  ledger_public: false
+  ledger_public_turn: null
+  ledger_available_turn: 3
+  evacuation_requested: false
+  evacuation_triggered: false
+  evacuation_turn: null
+  communications_status: stable
+  communications_down_until: 0
+  blocked_contacts: []
+  mayor_alerted: false
+  storm_arrival_turn: 8
+tracked_outcomes:
+  - field: ledger_public_turn
+    label: Ledger publish turn
+    action_types:
+      - publish
+  - field: budget_exposed_turn
+    label: Budget exposure turn
+    action_types:
+      - publish
+  - field: evacuation_turn
+    label: Evacuation turn
+    action_types:
+      - evacuate
+  - field: festival_status
+    label: Festival status
+    action_types:
+      - hide
+      - evacuate
+  - field: budget_exposed
+    label: Budget exposure state
+    action_types:
+      - publish
+  - field: ledger_public
+    label: Ledger publication state
+    action_types:
+      - publish
+  - field: evacuation_triggered
+    label: Evacuation trigger state
+    action_types:
+      - evacuate
+  - field: risk_known_by
+    label: Risk knowledge spread
+    action_types:
+      - inspect
+      - inform
+injection_rules:
+  - kind: delay_document
+    operation: add_int
+    field: ledger_available_turn
+    param: delay_turns
+    note_template: "{injection_id}: ledger availability delayed by {delay_turns} turn(s)."
+  - kind: resource_failure
+    operation: max_int
+    field: communications_down_until
+    param: duration_turns
+    note_template: "{injection_id}: communications degraded for {duration_turns} turn(s)."
+  - kind: block_contact
+    operation: append_contact
+    field: blocked_contacts
+    note_template: "{injection_id}: contact blocked between {actor_id} and {target_id}."
+steps:
+  - turn_index: 1
+    choices:
+      - action:
+          action_type: inspect
+          target_id: entity_east_gate
+          rationale: Su He inspects the gate because the fracture is already widening under storm pressure.
+          updates:
+            - kind: union_actor_entity
+              field: risk_known_by
+  - turn_index: 2
+    choices:
+      - when:
+          - kind: communication_available
+            target_id: persona_zhao_ke
+        action:
+          action_type: inform
+          target_id: persona_zhao_ke
+          rationale: Chen Yu escalates the tide anomaly toward the deputy mayor.
+          updates:
+            - kind: union_actor_entity
+              field: risk_known_by
+            - kind: set
+              field: mayor_alerted
+              value: true
+      - action:
+          action_type: delay
+          target_id: persona_zhao_ke
+          rationale: The harbor warning is delayed by a communication problem.
+          updates:
+            - kind: set
+              field: communications_status
+              value: degraded
+  - turn_index: 3
+    choices:
+      - when:
+          - kind: turn_gte_state
+            field: ledger_available_turn
+          - kind: communication_available
+            target_id: entity_maintenance_ledger
+        action:
+          action_type: publish
+          target_id: entity_maintenance_ledger
+          rationale: Lin Lan publishes the copied ledger into the decision loop.
+          updates:
+            - kind: set
+              field: ledger_public
+              value: true
+            - kind: set_current_turn
+              field: ledger_public_turn
+            - kind: set
+              field: budget_exposed
+              value: true
+            - kind: set_current_turn
+              field: budget_exposed_turn
+      - action:
+          action_type: delay
+          target_id: entity_maintenance_ledger
+          rationale: Lin Lan cannot surface the ledger yet and holds position.
+  - turn_index: 4
+    choices:
+      - when:
+          - kind: state_truthy
+            field: ledger_public
+        action:
+          action_type: request
+          target_id: entity_east_wharf
+          rationale: Su He requests evacuation once the engineering risk and budget diversion align.
+          updates:
+            - kind: set
+              field: evacuation_requested
+              value: true
+      - action:
+          action_type: request
+          target_id: entity_maintenance_ledger
+          rationale: Su He renews the repair request while waiting for documentary proof.
+          updates:
+            - kind: set
+              field: repair_request_reissued
+              value: true
+  - turn_index: 5
+    choices:
+      - when:
+          - kind: state_truthy
+            field: evacuation_requested
+        action:
+          action_type: evacuate
+          target_id: entity_sea_lantern_festival
+          rationale: Zhao Ke authorizes evacuation once the combined pressure is too visible to ignore.
+          updates:
+            - kind: set
+              field: evacuation_triggered
+              value: true
+            - kind: set_current_turn
+              field: evacuation_turn
+            - kind: set
+              field: festival_status
+              value: suspended
+      - action:
+          action_type: hide
+          target_id: entity_sea_lantern_festival
+          rationale: Zhao Ke suppresses disruption and keeps the festival plan intact.
+          updates:
+            - kind: set
+              field: festival_status
+              value: scheduled
+  - turn_index: 6
+    choices:
+      - when:
+          - kind: state_falsy
+            field: ledger_public
+          - kind: turn_gte_state
+            field: ledger_available_turn
+          - kind: communication_available
+            target_id: entity_maintenance_ledger
+        action:
+          action_type: publish
+          target_id: entity_maintenance_ledger
+          rationale: Lin Lan finally surfaces the copied ledger after the disruption clears.
+          updates:
+            - kind: set
+              field: ledger_public
+              value: true
+            - kind: set_current_turn
+              field: ledger_public_turn
+            - kind: set
+              field: budget_exposed
+              value: true
+            - kind: set_current_turn
+              field: budget_exposed_turn
+      - action:
+          action_type: inform
+          target_id: persona_su_he
+          rationale: Lin Lan keeps the archive evidence circulating among trusted allies.
+          updates:
+            - kind: set
+              field: public_pressure
+              value: mounting
+  - turn_index: 7
+    choices:
+      - when:
+          - kind: state_truthy
+            field: budget_exposed
+          - kind: state_falsy
+            field: evacuation_requested
+        action:
+          action_type: request
+          target_id: entity_east_wharf
+          rationale: Su He renews the evacuation request once the ledger becomes public.
+          updates:
+            - kind: set
+              field: evacuation_requested
+              value: true
+      - action:
+          action_type: inspect
+          target_id: entity_east_gate
+          rationale: Su He monitors the gate while waiting for the mayor's order to take effect.
+  - turn_index: 8
+    choices:
+      - when:
+          - kind: state_truthy
+            field: evacuation_requested
+          - kind: state_falsy
+            field: evacuation_triggered
+        action:
+          action_type: evacuate
+          target_id: entity_east_wharf
+          rationale: Zhao Ke orders evacuation at the last viable moment in this branch.
+          updates:
+            - kind: set
+              field: evacuation_triggered
+              value: true
+            - kind: set_current_turn
+              field: evacuation_turn
+            - kind: set
+              field: festival_status
+              value: suspended
+      - action:
+          action_type: move
+          target_id: entity_east_wharf
+          rationale: Zhao Ke repositions to manage the festival command post.
+          updates:
+            - kind: set
+              field: command_post
+              value: harbor_square

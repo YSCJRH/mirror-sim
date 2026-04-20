@@ -1,0 +1,225 @@
+world_id: museum-night
+compare_id: scenario_museum_night_matrix
+default_report_scenario: checklist_delayed
+communications_down_field: communications_down_until
+blocked_contacts_field: blocked_contacts
+turn_sequence:
+  - persona_tomas_reed
+  - persona_iris_vale
+  - persona_mina_park
+  - persona_noa_bell
+  - persona_iris_vale
+  - persona_mina_park
+  - persona_noa_bell
+  - persona_iris_vale
+initial_state:
+  opening_status: scheduled
+  checklist_available_turn: 3
+  checklist_public: false
+  checklist_public_turn: null
+  safety_hold_requested: false
+  safety_hold_triggered: false
+  safety_hold_turn: null
+  lighting_status: unstable
+  risk_known_by: []
+  communications_status: stable
+  communications_down_until: 0
+  blocked_contacts: []
+tracked_outcomes:
+  - field: checklist_public_turn
+    label: Checklist publication turn
+    action_types:
+      - publish
+  - field: safety_hold_turn
+    label: Safety-hold turn
+    action_types:
+      - move
+  - field: opening_status
+    label: Opening status
+    action_types:
+      - hide
+      - move
+  - field: safety_hold_triggered
+    label: Safety-hold trigger state
+    action_types:
+      - move
+  - field: risk_known_by
+    label: Risk knowledge spread
+    action_types:
+      - inspect
+      - inform
+injection_rules:
+  - kind: delay_document
+    operation: add_int
+    field: checklist_available_turn
+    param: delay_turns
+    note_template: "{injection_id}: checklist availability delayed by {delay_turns} turn(s)."
+  - kind: resource_failure
+    operation: max_int
+    field: communications_down_until
+    param: duration_turns
+    note_template: "{injection_id}: communication relay degraded for {duration_turns} turn(s)."
+  - kind: block_contact
+    operation: append_contact
+    field: blocked_contacts
+    note_template: "{injection_id}: contact blocked between {actor_id} and {target_id}."
+steps:
+  - turn_index: 1
+    choices:
+      - action:
+          action_type: inspect
+          target_id: entity_west_hall_lights
+          rationale: Tomas Reed inspects the lighting rig before guests reach the hall.
+          updates:
+            - kind: union_actor_entity
+              field: risk_known_by
+  - turn_index: 2
+    choices:
+      - when:
+          - kind: communication_available
+            target_id: persona_noa_bell
+        action:
+          action_type: inform
+          target_id: persona_noa_bell
+          rationale: Iris Vale escalates the queue and hold posture toward the curator.
+          updates:
+            - kind: union_actor_entity
+              field: risk_known_by
+      - action:
+          action_type: delay
+          target_id: persona_noa_bell
+          rationale: The queue warning is delayed by a communication problem.
+          updates:
+            - kind: set
+              field: communications_status
+              value: degraded
+  - turn_index: 3
+    choices:
+      - when:
+          - kind: turn_gte_state
+            field: checklist_available_turn
+        action:
+          action_type: publish
+          target_id: entity_opening_checklist
+          rationale: Mina Park publishes the printed opening checklist into the lobby handoff.
+          updates:
+            - kind: set
+              field: checklist_public
+              value: true
+            - kind: set_current_turn
+              field: checklist_public_turn
+      - action:
+          action_type: delay
+          target_id: entity_opening_checklist
+          rationale: Mina Park cannot surface the checklist copy yet and holds the volunteer handoff.
+  - turn_index: 4
+    choices:
+      - when:
+          - kind: state_truthy
+            field: checklist_public
+        action:
+          action_type: request
+          target_id: entity_museum_entry
+          rationale: Noa Bell requests a safety hold once the checklist and setup issues are visible.
+          updates:
+            - kind: set
+              field: safety_hold_requested
+              value: true
+      - action:
+          action_type: request
+          target_id: entity_opening_checklist
+          rationale: Noa Bell asks for the missing checklist evidence before delaying guests.
+  - turn_index: 5
+    choices:
+      - when:
+          - kind: state_truthy
+            field: safety_hold_requested
+        action:
+          action_type: move
+          target_id: entity_museum_entry
+          rationale: Iris Vale reroutes the entry queue into a safety hold.
+          updates:
+            - kind: set
+              field: safety_hold_triggered
+              value: true
+            - kind: set_current_turn
+              field: safety_hold_turn
+            - kind: set
+              field: opening_status
+              value: paused
+      - action:
+          action_type: hide
+          target_id: entity_twilight_preview
+          rationale: Iris Vale keeps the preview flow moving while waiting for firmer evidence.
+          updates:
+            - kind: set
+              field: opening_status
+              value: scheduled
+  - turn_index: 6
+    choices:
+      - when:
+          - kind: state_falsy
+            field: checklist_public
+          - kind: turn_gte_state
+            field: checklist_available_turn
+        action:
+          action_type: publish
+          target_id: entity_opening_checklist
+          rationale: Mina Park surfaces the backup checklist after the delay clears.
+          updates:
+            - kind: set
+              field: checklist_public
+              value: true
+            - kind: set_current_turn
+              field: checklist_public_turn
+      - action:
+          action_type: inform
+          target_id: persona_noa_bell
+          rationale: Mina Park keeps the volunteer team aligned while the checklist stays late.
+  - turn_index: 7
+    choices:
+      - when:
+          - kind: state_truthy
+            field: checklist_public
+          - kind: state_falsy
+            field: safety_hold_requested
+        action:
+          action_type: request
+          target_id: entity_museum_entry
+          rationale: Noa Bell renews the hold request once the checklist finally becomes visible.
+          updates:
+            - kind: set
+              field: safety_hold_requested
+              value: true
+      - action:
+          action_type: inspect
+          target_id: entity_west_hall_lights
+          rationale: Noa Bell keeps checking the lighting risk while the preview remains in motion.
+  - turn_index: 8
+    choices:
+      - when:
+          - kind: state_truthy
+            field: safety_hold_requested
+          - kind: state_falsy
+            field: safety_hold_triggered
+        action:
+          action_type: move
+          target_id: entity_museum_entry
+          rationale: Iris Vale triggers the hold at the last safe moment before the preview crowd compresses.
+          updates:
+            - kind: set
+              field: safety_hold_triggered
+              value: true
+            - kind: set_current_turn
+              field: safety_hold_turn
+            - kind: set
+              field: opening_status
+              value: paused
+      - action:
+          action_type: hide
+          target_id: entity_twilight_preview
+          rationale: Iris Vale preserves the scheduled preview path after the risk window closes.
+          updates:
+            - kind: set
+              field: opening_status
+              value: scheduled

@@ -1,0 +1,24 @@
+scenario_id: scenario_museum_night_checklist_delayed
+world_id: museum-night
+title: Checklist Delay Pushes The Hold Decision Back
+description: >
+  The print room handoff slips, so Mina Park cannot publish the opening checklist on
+  the baseline turn and the hold decision arrives later.
+seed: 11
+turn_budget: 8
+branch_count: 1
+evaluation_questions:
+  - How much later does the printed checklist surface?
+  - Does the delayed checklist postpone the safety hold at the museum entry?
+  - Which action chain preserves the scheduled preview path longest?
+injections:
+  - injection_id: inj_checklist_delayed
+    kind: delay_document
+    target_id: doc_volunteer_packet
+    actor_id: persona_mina_park
+    params:
+      delay_turns: 2
+      cause: print_room_backlog
+    rationale: >
+      The print room releases the checklist copy two turns late, so the volunteer
+      coordinator cannot put the entry plan into circulation on the baseline turn.
