@@ -1,0 +1,14 @@
+scenario_id: scenario_museum_night_baseline
+world_id: museum-night
+title: Baseline Twilight Preview Setup
+description: >
+  The baseline branch assumes the printed opening checklist reaches Mina Park on time
+  and the review team can decide on a safety hold without extra injected disruption.
+seed: 11
+turn_budget: 8
+branch_count: 1
+evaluation_questions:
+  - Who accumulates enough operational evidence to justify a safety hold first?
+  - Does the opening checklist surface before Iris Vale has to commit to the queue posture?
+  - Is the Twilight Preview paused before the entry queue becomes fragile?
+injections: []

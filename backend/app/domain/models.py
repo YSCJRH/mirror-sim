@@ -168,7 +168,9 @@ class Claim(MirrorBaseModel):
 
 class EvalResult(MirrorBaseModel):
     eval_name: str
+    world_id: str | None = None
     status: str
     metrics: dict[str, Any] = Field(default_factory=dict)
     failures: list[str] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
+    artifact_paths: dict[str, str] = Field(default_factory=dict)

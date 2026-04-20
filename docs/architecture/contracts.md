@@ -35,9 +35,20 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
   - `inferred`
   - `speculative`
 
+## World Resolution Contract
+
+- The canonical demo world remains `fog-harbor-east-gate`.
+- Canonical demo inputs stay under `data/demo/`.
+- Canonical demo artifacts stay under `artifacts/demo/`.
+- Additional bounded worlds resolve through:
+  - `data/worlds/<world_id>/`
+  - `artifacts/worlds/<world_id>/`
+- World resolution is path-based and deterministic; it does not depend on world-specific Python constants baked into the runner.
+
 ## World Model Contract
 
-- Demo world modeling is driven by `data/demo/config/world_model.yaml`.
+- Canonical demo world modeling is driven by `data/demo/config/world_model.yaml`.
+- Additional worlds must provide `config/world_model.yaml` under their own world root.
 - `graph.json` is the durable world-model artifact and now contains:
   - `entities`
   - `relations`
@@ -60,6 +71,7 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
 ## Scenario Contract
 
 - `scenario_id` names the full scenario package.
+- `world_id` must resolve to one bounded world root.
 - `branch_count` is part of the scenario execution contract.
   - `branch_count: 1` preserves the current single-branch behavior.
   - `branch_count > 1` requests deterministic multi-branch execution for one scenario package.
@@ -69,6 +81,21 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
   - `delay_document`
   - `block_contact`
   - `resource_failure`
+
+## Simulation Rules Contract
+
+- Each world now provides `config/simulation_rules.yaml`.
+- `simulation_rules.yaml` is the deterministic runner contract for:
+  - `turn_sequence`
+  - `initial_state`
+  - `tracked_outcomes`
+  - supported injection effects
+  - explicit per-turn step rules
+- The runner remains bounded and deterministic:
+  - no free-form agent planning
+  - no LLM control loop
+  - no open-ended world simulation DSL
+- Fog Harbor keeps its existing behavior through world-local rules instead of runner hardcoding.
 
 ## Run Contract
 
@@ -141,11 +168,34 @@ artifacts/demo/
 │       └── compare.json
 ├── report/
 └── eval/
+
+artifacts/worlds/<world_id>/
+├── ingest/
+├── graph/
+├── personas/
+├── scenario/
+├── run/
+├── compare/
+├── report/
+└── eval/
 ```
 
 - Existing single-branch and Phase 44 matrix artifacts remain valid while Phase 45 implementation catches up to the new compare contract.
 
+## Eval Contract
+
+- `python -m backend.app.cli eval-demo` remains the canonical Fog Harbor regression command.
+- `python -m backend.app.cli eval-world --world <world_id>` runs the bounded world pipeline plus transfer eval for one world.
+- `python -m backend.app.cli eval-transfer` runs the dual-world transfer proof across the canonical demo and the current second world.
+- Transfer eval summaries must include:
+  - `world_id`
+  - `scenario_count`
+  - `checks_total`
+  - `checks_passed`
+  - `failed_checks`
+  - `artifact_paths`
+
 ## Platform Assumption
 
-The canonical command names remain `make setup|smoke|test|eval-demo|dev-api|dev-web`.  
+The canonical command names remain `make setup|smoke|test|eval-demo|eval-transfer|dev-api|dev-web`.
 Because GNU Make is absent in the current Windows environment, the repo also ships `make.ps1` and `make.cmd`.

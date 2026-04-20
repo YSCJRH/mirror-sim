@@ -103,6 +103,20 @@ def test_cli_audit_github_queue_outputs_json(monkeypatch, capsys) -> None:
     assert payload["active_milestone"] == milestone_title
 
 
+def test_cli_eval_world_outputs_json(capsys) -> None:
+    assert main(["eval-world", "--world", "museum-night"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["world_id"] == "museum-night"
+    assert payload["status"] == "pass"
+
+
+def test_cli_eval_transfer_outputs_json(capsys) -> None:
+    assert main(["eval-transfer"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["world_id"] == "transfer"
+    assert payload["status"] == "pass"
+
+
 def test_safety_blocks_redline_payload() -> None:
     unsafe_payload = {"description": "This scenario performs political persuasion and voter targeting."}
     try:

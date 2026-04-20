@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
+from backend.app.config import get_settings
 from backend.app.domain.models import Claim, RunTrace, TurnAction
 from backend.app.safety.service import ensure_safe_report, validate_claim_payloads
-from backend.app.utils import read_json, read_jsonl, write_json
+from backend.app.simulation.rules import OutcomeDefinition, SimulationPlan, load_simulation_plan
+from backend.app.utils import read_json, read_jsonl, slugify, write_json
 
 
 def _load_summary(path: Path) -> RunTrace:
@@ -15,121 +18,160 @@ def _load_actions(path: Path) -> list[TurnAction]:
     return [TurnAction.model_validate(row) for row in read_jsonl(path / "run_trace.jsonl")]
 
 
-def _first_action(actions: list[TurnAction], action_type: str) -> TurnAction | None:
-    for action in actions:
-        if action.action_type == action_type:
-            return action
-    return None
+def _guess_simulation_rules_path(
+    run_dir: Path,
+    baseline_dir: Path | None,
+    simulation_rules_path: Path | None,
+) -> Path:
+    if simulation_rules_path is not None:
+        return simulation_rules_path
+
+    for seed_path in [run_dir, *(run_dir.parents), *(baseline_dir.parents if baseline_dir else [])]:
+        candidate = seed_path / "config" / "simulation_rules.yaml"
+        if candidate.exists():
+            return candidate
+    return get_settings().simulation_rules_path
 
 
-def generate_report(run_dir: Path, out_dir: Path, baseline_dir: Path | None = None) -> list[Claim]:
+def _summary_outcome_value(summary: RunTrace, field: str):
+    if hasattr(summary, field):
+        return getattr(summary, field)
+    return summary.final_state.get(field)
+
+
+def _format_value(value: object) -> str:
+    if isinstance(value, str):
+        return value
+    return json.dumps(value, ensure_ascii=False)
+
+
+def _candidate_actions_for_outcome(
+    outcome: OutcomeDefinition,
+    actions: list[TurnAction],
+    summary: RunTrace,
+) -> list[TurnAction]:
+    scoped_actions = [action for action in actions if action.action_type in outcome.action_types] or actions
+    outcome_value = _summary_outcome_value(summary, outcome.field)
+    if isinstance(outcome_value, int) and not isinstance(outcome_value, bool):
+        exact_turns = [action for action in scoped_actions if action.turn_index == outcome_value]
+        if exact_turns:
+            return exact_turns
+    return scoped_actions[:2]
+
+
+def _claim_for_outcome(
+    outcome: OutcomeDefinition,
+    *,
+    baseline_summary: RunTrace,
+    candidate_summary: RunTrace,
+    baseline_actions: list[TurnAction],
+    candidate_actions: list[TurnAction],
+) -> Claim:
+    baseline_value = _summary_outcome_value(baseline_summary, outcome.field)
+    candidate_value = _summary_outcome_value(candidate_summary, outcome.field)
+    baseline_references = _candidate_actions_for_outcome(outcome, baseline_actions, baseline_summary)
+    candidate_references = _candidate_actions_for_outcome(outcome, candidate_actions, candidate_summary)
+    evidence_ids = sorted(
+        {
+            *(evidence_id for action in baseline_references for evidence_id in action.evidence_ids),
+            *(evidence_id for action in candidate_references for evidence_id in action.evidence_ids),
+        }
+    )
+    related_turn_ids = [action.turn_id for action in [*baseline_references, *candidate_references]]
+
+    return Claim(
+        claim_id=f"claim_{slugify(outcome.field)}",
+        text=(
+            f"Based on the current corpus and deterministic rules, {outcome.label} changed from "
+            f"{_format_value(baseline_value)} in `{baseline_summary.scenario_id}` to "
+            f"{_format_value(candidate_value)} in `{candidate_summary.scenario_id}`."
+        ),
+        label="evidence_backed",
+        evidence_ids=evidence_ids,
+        related_turn_ids=related_turn_ids,
+        confidence_note="Directly derived from deterministic branch summaries and linked action evidence.",
+    )
+
+
+def _fallback_claim(candidate_summary: RunTrace, candidate_actions: list[TurnAction]) -> Claim:
+    references = candidate_actions[:2]
+    return Claim(
+        claim_id="claim_single_branch_outcome",
+        text=(
+            f"Based on the current corpus and deterministic rules, `{candidate_summary.scenario_id}` stays bounded and "
+            "auditable as a single deterministic branch."
+        ),
+        label="inferred",
+        evidence_ids=sorted({evidence_id for action in references for evidence_id in action.evidence_ids}),
+        related_turn_ids=[action.turn_id for action in references],
+        confidence_note="Single-branch fallback summary.",
+    )
+
+
+def generate_report(
+    run_dir: Path,
+    out_dir: Path,
+    baseline_dir: Path | None = None,
+    *,
+    simulation_rules_path: Path | None = None,
+) -> list[Claim]:
     candidate_summary = _load_summary(run_dir)
     candidate_actions = _load_actions(run_dir)
+    plan = load_simulation_plan(_guess_simulation_rules_path(run_dir, baseline_dir, simulation_rules_path))
 
     claims: list[Claim]
+    key_differences: list[str]
+    scenario_line: str
+
     if baseline_dir is not None:
         baseline_summary = _load_summary(baseline_dir)
         baseline_actions = _load_actions(baseline_dir)
-        baseline_publish = _first_action(baseline_actions, "publish")
-        candidate_publish = _first_action(candidate_actions, "publish")
-        baseline_evacuate = _first_action(baseline_actions, "evacuate")
-        candidate_evacuate = _first_action(candidate_actions, "evacuate")
-        candidate_hide = _first_action(candidate_actions, "hide")
-
-        claims = [
-            Claim(
-                claim_id="claim_ledger_delay",
-                text=(
-                    f"Based on the current corpus and rules, the maintenance ledger reached the public decision loop on "
-                    f"turn {candidate_summary.ledger_public_turn} instead of turn {baseline_summary.ledger_public_turn}."
-                ),
-                label="evidence_backed",
-                evidence_ids=sorted(
-                    {
-                        *(baseline_publish.evidence_ids if baseline_publish else []),
-                        *(candidate_publish.evidence_ids if candidate_publish else []),
-                    }
-                ),
-                related_turn_ids=[
-                    baseline_publish.turn_id if baseline_publish else "",
-                    candidate_publish.turn_id if candidate_publish else "",
-                ],
-                confidence_note="Directly derived from the deterministic run summaries.",
-            ),
-            Claim(
-                claim_id="claim_festival_pressure",
-                text=(
-                    "In this scenario branch, Zhao Ke kept the festival on schedule longer because documentary pressure "
-                    "had not surfaced by the time he first chose between disruption and concealment."
-                ),
-                label="inferred",
-                evidence_ids=sorted(
-                    {
-                        *(candidate_hide.evidence_ids if candidate_hide else []),
-                        *(candidate_publish.evidence_ids if candidate_publish else []),
-                    }
-                ),
-                related_turn_ids=[
-                    candidate_hide.turn_id if candidate_hide else "",
-                    candidate_publish.turn_id if candidate_publish else "",
-                ],
-                confidence_note="Inferred from the candidate hide action and the later publish turn.",
-            ),
-            Claim(
-                claim_id="claim_evacuation_delay",
-                text=(
-                    f"In this scenario branch, evacuation moved from turn {baseline_summary.evacuation_turn} to "
-                    f"turn {candidate_summary.evacuation_turn}, shrinking the response window before storm arrival."
-                ),
-                label="inferred",
-                evidence_ids=sorted(
-                    {
-                        *(baseline_evacuate.evidence_ids if baseline_evacuate else []),
-                        *(candidate_evacuate.evidence_ids if candidate_evacuate else []),
-                    }
-                ),
-                related_turn_ids=[
-                    baseline_evacuate.turn_id if baseline_evacuate else "",
-                    candidate_evacuate.turn_id if candidate_evacuate else "",
-                ],
-                confidence_note="Derived from branch comparison of deterministic evacuation turns.",
-            ),
+        changed_outcomes = [
+            outcome
+            for outcome in plan.tracked_outcomes
+            if _summary_outcome_value(baseline_summary, outcome.field)
+            != _summary_outcome_value(candidate_summary, outcome.field)
         ]
-
-        key_differences = [
-            f"- Ledger publish turn: baseline {baseline_summary.ledger_public_turn}, candidate {candidate_summary.ledger_public_turn}",
-            f"- Evacuation turn: baseline {baseline_summary.evacuation_turn}, candidate {candidate_summary.evacuation_turn}",
-            f"- Festival status at end: baseline {baseline_summary.final_state['festival_status']}, candidate {candidate_summary.final_state['festival_status']}",
-        ]
-        scenario_line = f"Comparing `{baseline_summary.scenario_id}` with `{candidate_summary.scenario_id}` under seed {candidate_summary.seed}."
-    else:
-        publish_action = _first_action(candidate_actions, "publish")
-        evacuate_action = _first_action(candidate_actions, "evacuate")
+        selected_outcomes = changed_outcomes[:3] or plan.tracked_outcomes[:1]
         claims = [
-            Claim(
-                claim_id="claim_single_branch_outcome",
-                text="Based on the current corpus and rules, the branch exposes the maintenance issue before final storm arrival.",
-                label="inferred",
-                evidence_ids=sorted(
-                    {
-                        *(publish_action.evidence_ids if publish_action else []),
-                        *(evacuate_action.evidence_ids if evacuate_action else []),
-                    }
-                ),
-                related_turn_ids=[
-                    publish_action.turn_id if publish_action else "",
-                    evacuate_action.turn_id if evacuate_action else "",
-                ],
-                confidence_note="Single-branch summary.",
+            _claim_for_outcome(
+                outcome,
+                baseline_summary=baseline_summary,
+                candidate_summary=candidate_summary,
+                baseline_actions=baseline_actions,
+                candidate_actions=candidate_actions,
             )
+            for outcome in selected_outcomes
         ]
-        key_differences = [f"- Final festival status: {candidate_summary.final_state['festival_status']}"]
-        scenario_line = f"Scenario `{candidate_summary.scenario_id}` under seed {candidate_summary.seed}."
+        key_differences = [
+            f"- {outcome.label}: baseline {_format_value(_summary_outcome_value(baseline_summary, outcome.field))}, "
+            f"candidate {_format_value(_summary_outcome_value(candidate_summary, outcome.field))}"
+            for outcome in selected_outcomes
+        ]
+        scenario_line = (
+            f"Comparing `{baseline_summary.scenario_id}` with `{candidate_summary.scenario_id}` under seed "
+            f"{candidate_summary.seed} in world `{plan.world_id}`."
+        )
+    else:
+        claims = [_fallback_claim(candidate_summary, candidate_actions)]
+        key_differences = [
+            f"- {outcome.label}: {_format_value(_summary_outcome_value(candidate_summary, outcome.field))}"
+            for outcome in plan.tracked_outcomes[:3]
+        ]
+        scenario_line = (
+            f"Scenario `{candidate_summary.scenario_id}` under seed {candidate_summary.seed} in world `{plan.world_id}`."
+        )
 
     claim_payloads = [claim.model_dump() for claim in claims]
     validate_claim_payloads(claim_payloads)
     claim_rows = "\n".join(
-        f"| {claim.claim_id} | {claim.label} | {', '.join(claim.evidence_ids)} | {claim.text} |" for claim in claims
+        f"| {claim.claim_id} | {claim.label} | {', '.join(claim.evidence_ids)} | {claim.text} |"
+        for claim in claims
+    )
+    action_chain = "\n".join(
+        f"- T{action.turn_index}: `{action.actor_id}` performs `{action.action_type}`"
+        + (f" toward `{action.target_id}`." if action.target_id else ".")
+        for action in candidate_actions[:4]
     )
     report = "\n".join(
         [
@@ -142,16 +184,14 @@ def generate_report(run_dir: Path, out_dir: Path, baseline_dir: Path | None = No
             *key_differences,
             "",
             "## 3. Key Action Chain",
-            "- Su He inspects the gate and escalates pressure through a bounded turn sequence.",
-            "- Lin Lan either publishes the ledger on time or loses turns to the document delay.",
-            "- Zhao Ke reacts to visible evidence rather than free-form agent improvisation.",
+            action_chain,
             "",
             "## 4. Result Summary",
             f"- Final state: {candidate_summary.final_state}",
             "",
             "## 5. Uncertainties",
             "- This report describes a bounded simulation branch, not a claim about the real world.",
-            "- Communication side effects outside the scripted action set remain speculative.",
+            "- Outcome deltas remain constrained to the explicit corpus, rules, and injected disturbances in this world.",
             "",
             "## 6. Claim Table",
             "| Claim ID | Label | Evidence IDs | Text |",
@@ -160,7 +200,7 @@ def generate_report(run_dir: Path, out_dir: Path, baseline_dir: Path | None = No
             "",
             "## 7. Evidence And Reasoning Labels",
             "- `evidence_backed`: direct branch facts visible in run artifacts.",
-            "- `inferred`: comparison logic derived from the deterministic branch artifacts.",
+            "- `inferred`: bounded conclusions drawn from deterministic branch artifacts.",
             "- `speculative`: reserved for narrative extensions outside direct branch proof.",
         ]
     )

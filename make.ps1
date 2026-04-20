@@ -19,6 +19,9 @@ switch ($Target) {
     "eval-demo" {
         python -m backend.app.cli eval-demo
     }
+    "eval-transfer" {
+        python -m backend.app.cli eval-transfer
+    }
     "dev-api" {
         python -m uvicorn backend.app.main:app --reload
     }

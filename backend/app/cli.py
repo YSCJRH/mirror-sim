@@ -6,7 +6,7 @@ from pathlib import Path
 
 from backend.app.automation.service import audit_github_queue, classify_git_refs, classify_paths, run_phase_audit
 from backend.app.config import get_settings
-from backend.app.evals.service import run_phase0_demo
+from backend.app.evals.service import run_phase0_demo, run_transfer_eval, run_world_eval
 from backend.app.graph.service import build_graph
 from backend.app.ingest.service import ingest_manifest
 from backend.app.personas.service import build_personas
@@ -17,7 +17,7 @@ from backend.app.world_query import inspect_world
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Mirror Engine Phase 0 CLI")
+    parser = argparse.ArgumentParser(description="Mirror Engine CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     ingest = subparsers.add_parser("ingest", help="Ingest a manifest-backed corpus")
@@ -46,6 +46,7 @@ def build_parser() -> argparse.ArgumentParser:
     report.add_argument("run")
     report.add_argument("--baseline")
     report.add_argument("--out", required=True)
+    report.add_argument("--simulation-rules")
 
     inspect = subparsers.add_parser("inspect-world", help="Inspect a world object from graph/persona artifacts")
     inspect.add_argument("--kind", required=True, choices=["entity", "persona", "event"])
@@ -67,6 +68,9 @@ def build_parser() -> argparse.ArgumentParser:
     queue.add_argument("--repo", required=True)
 
     subparsers.add_parser("eval-demo", help="Run the full Phase 0 demo pipeline")
+    eval_world = subparsers.add_parser("eval-world", help="Run the full world pipeline and transfer eval for one world")
+    eval_world.add_argument("--world", required=True)
+    subparsers.add_parser("eval-transfer", help="Run the transfer eval across the canonical demo and the second world")
     subparsers.add_parser("smoke", help="Run the end-to-end smoke pipeline")
     return parser
 
@@ -114,7 +118,12 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "report":
-        claims = generate_report(Path(args.run), Path(args.out), baseline_dir=Path(args.baseline) if args.baseline else None)
+        claims = generate_report(
+            Path(args.run),
+            Path(args.out),
+            baseline_dir=Path(args.baseline) if args.baseline else None,
+            simulation_rules_path=Path(args.simulation_rules) if args.simulation_rules else None,
+        )
         print(f"Generated report with {len(claims)} claims.")
         return 0
 
@@ -146,6 +155,16 @@ def main(argv: list[str] | None = None) -> int:
         audit = audit_github_queue(args.repo, repo_root=settings.repo_root)
         print(json.dumps(audit.as_dict(), indent=2, ensure_ascii=False))
         return 0 if audit.status in {"ready", "paused"} else 1
+
+    if args.command == "eval-world":
+        result = run_world_eval(args.world, repo_root=settings.repo_root)
+        print(json.dumps(result.model_dump(), indent=2, ensure_ascii=False))
+        return 0 if result.status == "pass" else 1
+
+    if args.command == "eval-transfer":
+        result = run_transfer_eval(repo_root=settings.repo_root)
+        print(json.dumps(result.model_dump(), indent=2, ensure_ascii=False))
+        return 0 if result.status == "pass" else 1
 
     if args.command in {"eval-demo", "smoke"}:
         result = run_phase0_demo(settings=settings)

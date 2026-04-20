@@ -1,0 +1,422 @@
+world_id: museum-night
+entities:
+  - entity_id: entity_noa_bell
+    name: Noa Bell
+    type: person
+    aliases:
+      - noa bell
+      - curator noa bell
+      - curator
+  - entity_id: entity_iris_vale
+    name: Iris Vale
+    type: person
+    aliases:
+      - iris vale
+      - security lead iris vale
+      - security lead
+  - entity_id: entity_tomas_reed
+    name: Tomas Reed
+    type: person
+    aliases:
+      - tomas reed
+      - facilities technician tomas reed
+      - facilities technician
+  - entity_id: entity_mina_park
+    name: Mina Park
+    type: person
+    aliases:
+      - mina park
+      - volunteer coordinator mina park
+      - volunteer coordinator
+  - entity_id: entity_west_hall_lights
+    name: West Hall Lights
+    type: infrastructure
+    aliases:
+      - west hall lights
+      - lighting rig
+      - ballast rack
+  - entity_id: entity_opening_checklist
+    name: Opening Checklist
+    type: document
+    aliases:
+      - opening checklist
+      - printed checklist
+      - checklist copy
+  - entity_id: entity_twilight_preview
+    name: Twilight Preview
+    type: event
+    aliases:
+      - twilight preview
+      - preview guests
+      - preview opening
+  - entity_id: entity_museum_entry
+    name: Museum Entry
+    type: location
+    aliases:
+      - museum entry
+      - front steps
+      - lobby doors
+
+relations:
+  - relation_id: relation_tomas_inspects_lights
+    source_entity_id: entity_tomas_reed
+    relation_type: inspects
+    target_entity_id: entity_west_hall_lights
+    match:
+      all:
+        - tomas reed
+        - west hall lights
+      any:
+        - inspected
+        - unstable ballast
+        - ballast rack
+  - relation_id: relation_mina_controls_checklist
+    source_entity_id: entity_mina_park
+    relation_type: controls
+    target_entity_id: entity_opening_checklist
+    match:
+      all:
+        - mina park
+        - opening checklist
+      any:
+        - printed checklist
+        - checklist copy
+        - print room
+  - relation_id: relation_noa_protects_preview
+    source_entity_id: entity_noa_bell
+    relation_type: protects
+    target_entity_id: entity_twilight_preview
+    match:
+      all:
+        - noa bell
+      any:
+        - twilight preview
+        - keep the preview on schedule
+        - opening on time
+  - relation_id: relation_iris_secures_entry
+    source_entity_id: entity_iris_vale
+    relation_type: secures
+    target_entity_id: entity_museum_entry
+    match:
+      all:
+        - iris vale
+        - museum entry
+      any:
+        - queue
+        - front steps
+        - security hold
+
+events:
+  - event_id: event_lighting_fault
+    name: West Hall Lighting Fault Narrows Setup Time
+    kind: facilities_risk
+    participant_entity_ids:
+      - entity_tomas_reed
+      - entity_west_hall_lights
+      - entity_noa_bell
+    match:
+      any:
+        - unstable ballast
+        - west hall lights
+        - fail before doors open
+        - spare ballast
+  - event_id: event_checklist_delay
+    name: Opening Checklist Delay Slows Volunteer Coordination
+    kind: document_delay
+    participant_entity_ids:
+      - entity_mina_park
+      - entity_opening_checklist
+      - entity_museum_entry
+    match:
+      any:
+        - opening checklist
+        - printed checklist
+        - print room
+        - late copy
+  - event_id: event_preview_pressure
+    name: Curatorial Pressure Keeps The Preview On Schedule
+    kind: schedule_pressure
+    participant_entity_ids:
+      - entity_noa_bell
+      - entity_twilight_preview
+      - entity_museum_entry
+    match:
+      any:
+        - twilight preview
+        - keep the preview on schedule
+        - opening on time
+        - guest list
+  - event_id: event_entry_bottleneck
+    name: Entry Queue Bottleneck Raises A Safety-Hold Decision
+    kind: queue_pressure
+    participant_entity_ids:
+      - entity_iris_vale
+      - entity_museum_entry
+      - entity_opening_checklist
+      - entity_twilight_preview
+    match:
+      any:
+        - museum entry
+        - queue
+        - security hold
+        - front steps
+
+personas:
+  - persona_id: persona_noa_bell
+    entity_id: entity_noa_bell
+    public_role:
+      text: Curator responsible for the Twilight Preview opening.
+      evidence:
+        entity_ids:
+          - entity_noa_bell
+          - entity_twilight_preview
+        relation_ids:
+          - relation_noa_protects_preview
+    goals:
+      - text: Keep the Twilight Preview credible without opening under avoidable safety confusion.
+        evidence:
+          event_ids:
+            - event_preview_pressure
+            - event_entry_bottleneck
+      - text: Get a clear signal about whether the lighting fault and checklist delay justify a hold.
+        evidence:
+          event_ids:
+            - event_lighting_fault
+            - event_checklist_delay
+    constraints:
+      - text: Depends on Tomas Reed, Iris Vale, and Mina Park for operational truth.
+        evidence:
+          relation_ids:
+            - relation_tomas_inspects_lights
+            - relation_iris_secures_entry
+            - relation_mina_controls_checklist
+      - text: Faces pressure to keep the preview on schedule.
+        evidence:
+          event_ids:
+            - event_preview_pressure
+    known_facts:
+      - text: The preview guest list and curatorial memo assume the doors open on time.
+        evidence:
+          event_ids:
+            - event_preview_pressure
+      - text: A security hold at the museum entry would visibly delay the preview.
+        evidence:
+          event_ids:
+            - event_entry_bottleneck
+    private_info:
+      - text: Noa Bell will accept a delay if the checklist and lighting evidence line up clearly enough.
+        evidence:
+          event_ids:
+            - event_lighting_fault
+            - event_checklist_delay
+    relationships:
+      - target_id: persona_iris_vale
+        kind: relies_on
+        evidence:
+          relation_ids:
+            - relation_iris_secures_entry
+          event_ids:
+            - event_entry_bottleneck
+      - target_id: persona_tomas_reed
+        kind: trusts
+        evidence:
+          relation_ids:
+            - relation_tomas_inspects_lights
+          event_ids:
+            - event_lighting_fault
+
+  - persona_id: persona_iris_vale
+    entity_id: entity_iris_vale
+    public_role:
+      text: Security lead managing the museum entry and queue posture.
+      evidence:
+        entity_ids:
+          - entity_iris_vale
+          - entity_museum_entry
+        relation_ids:
+          - relation_iris_secures_entry
+    goals:
+      - text: Keep the museum entry orderly enough to trigger a hold before the queue becomes unsafe.
+        evidence:
+          event_ids:
+            - event_entry_bottleneck
+      - text: Surface the hold decision without losing sight of curatorial pressure.
+        evidence:
+          event_ids:
+            - event_entry_bottleneck
+            - event_preview_pressure
+    constraints:
+      - text: Needs a credible reason before delaying guests at the front steps.
+        evidence:
+          event_ids:
+            - event_entry_bottleneck
+            - event_preview_pressure
+      - text: Can redirect the queue, but cannot finalize the checklist or repair the lights.
+        evidence:
+          relation_ids:
+            - relation_mina_controls_checklist
+            - relation_tomas_inspects_lights
+    known_facts:
+      - text: A late checklist copy slows volunteer handoff at the museum entry.
+        evidence:
+          event_ids:
+            - event_checklist_delay
+            - event_entry_bottleneck
+      - text: The front steps become fragile once guests arrive before the queue map is ready.
+        evidence:
+          event_ids:
+            - event_entry_bottleneck
+    private_info:
+      - text: Iris Vale will support a safety hold if the checklist delay becomes visible enough to justify it.
+        evidence:
+          event_ids:
+            - event_checklist_delay
+            - event_entry_bottleneck
+    relationships:
+      - target_id: persona_noa_bell
+        kind: reports_to
+        evidence:
+          relation_ids:
+            - relation_noa_protects_preview
+          event_ids:
+            - event_preview_pressure
+      - target_id: persona_mina_park
+        kind: coordinates_with
+        evidence:
+          relation_ids:
+            - relation_mina_controls_checklist
+          event_ids:
+            - event_checklist_delay
+
+  - persona_id: persona_tomas_reed
+    entity_id: entity_tomas_reed
+    public_role:
+      text: Facilities technician inspecting the West Hall lights before the preview opens.
+      evidence:
+        entity_ids:
+          - entity_tomas_reed
+          - entity_west_hall_lights
+        relation_ids:
+          - relation_tomas_inspects_lights
+    goals:
+      - text: Stabilize the lighting rig before guest traffic reaches the hall.
+        evidence:
+          event_ids:
+            - event_lighting_fault
+      - text: Push the operational team to respect the fault before the preview starts.
+        evidence:
+          event_ids:
+            - event_lighting_fault
+            - event_preview_pressure
+    constraints:
+      - text: Can diagnose the ballast rack but cannot hold the doors alone.
+        evidence:
+          relation_ids:
+            - relation_tomas_inspects_lights
+          event_ids:
+            - event_lighting_fault
+      - text: Needs the checklist and security posture to line up before a hold becomes credible.
+        evidence:
+          event_ids:
+            - event_checklist_delay
+            - event_entry_bottleneck
+    known_facts:
+      - text: The west hall lights already flicker under the current ballast load.
+        evidence:
+          relation_ids:
+            - relation_tomas_inspects_lights
+          event_ids:
+            - event_lighting_fault
+      - text: A rushed opening would make the unstable ballast harder to isolate.
+        evidence:
+          event_ids:
+            - event_lighting_fault
+            - event_preview_pressure
+    private_info:
+      - text: Tomas Reed believes one more unstable cycle could force a full hall reset.
+        evidence:
+          event_ids:
+            - event_lighting_fault
+    relationships:
+      - target_id: persona_noa_bell
+        kind: warns
+        evidence:
+          relation_ids:
+            - relation_tomas_inspects_lights
+          event_ids:
+            - event_lighting_fault
+      - target_id: persona_iris_vale
+        kind: coordinates_with
+        evidence:
+          relation_ids:
+            - relation_iris_secures_entry
+          event_ids:
+            - event_entry_bottleneck
+
+  - persona_id: persona_mina_park
+    entity_id: entity_mina_park
+    public_role:
+      text: Volunteer coordinator carrying the printed opening checklist into the lobby flow.
+      evidence:
+        entity_ids:
+          - entity_mina_park
+          - entity_opening_checklist
+        relation_ids:
+          - relation_mina_controls_checklist
+    goals:
+      - text: Get the printed checklist to the front-of-house team before guests queue at the doors.
+        evidence:
+          event_ids:
+            - event_checklist_delay
+            - event_entry_bottleneck
+      - text: Keep volunteer instructions aligned with whatever hold posture security chooses.
+        evidence:
+          event_ids:
+            - event_checklist_delay
+            - event_entry_bottleneck
+    constraints:
+      - text: Depends on the print room and lobby routing to move the checklist copy.
+        evidence:
+          relation_ids:
+            - relation_mina_controls_checklist
+          event_ids:
+            - event_checklist_delay
+      - text: Has no authority to override curatorial pressure once the preview crowd is already assembling.
+        evidence:
+          event_ids:
+            - event_preview_pressure
+            - event_entry_bottleneck
+    known_facts:
+      - text: The current checklist copy is late enough to distort volunteer staging.
+        evidence:
+          event_ids:
+            - event_checklist_delay
+      - text: Security needs the checklist in hand before a hold can be explained cleanly at the museum entry.
+        evidence:
+          event_ids:
+            - event_checklist_delay
+            - event_entry_bottleneck
+    private_info:
+      - text: Mina Park prepared a backup checklist copy in case the print room misses the first handoff.
+        evidence:
+          relation_ids:
+            - relation_mina_controls_checklist
+          event_ids:
+            - event_checklist_delay
+    relationships:
+      - target_id: persona_iris_vale
+        kind: coordinates_with
+        evidence:
+          relation_ids:
+            - relation_iris_secures_entry
+            - relation_mina_controls_checklist
+          event_ids:
+            - event_checklist_delay
+      - target_id: persona_noa_bell
+        kind: briefs
+        evidence:
+          relation_ids:
+            - relation_noa_protects_preview
+            - relation_mina_controls_checklist
+          event_ids:
+            - event_preview_pressure
