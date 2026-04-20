@@ -176,6 +176,11 @@ p {
   line-height: 1.65;
 }
 
+.lede,
+.sectionHeading p {
+  font-size: 0.98rem;
+}
+
 .heroPanel,
 .dashboardSection,
 .reviewHero,
@@ -247,6 +252,25 @@ p {
   border-color: rgba(240, 223, 195, 0.45);
 }
 
+.surfaceAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f7f1e7;
+  font-weight: 600;
+}
+
+.surfaceActionPrimary {
+  background: #f0dfc3;
+  color: #1f1812;
+  border-color: rgba(240, 223, 195, 0.45);
+}
+
 .briefSummaryGrid,
 .rubricSummaryGrid,
 .metricGrid {
@@ -266,8 +290,14 @@ p {
 }
 
 .briefCardDark {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
-  border-color: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(145deg, rgba(22, 36, 34, 0.96), rgba(34, 28, 21, 0.94));
+  border-color: rgba(17, 77, 71, 0.3);
+  color: #fff7eb;
+}
+
+.briefCardDark span,
+.briefCardDark strong {
+  color: inherit;
 }
 
 .briefCardWide {
@@ -351,6 +381,16 @@ p {
   border-radius: 24px;
   background: var(--panel-strong);
   border: 1px solid var(--border);
+}
+
+.routeCard h3,
+.interventionCard h3,
+.storyboardCard h3,
+.claimSnapshotCard h3,
+.referenceCard h3,
+.rubricCard h3 {
+  font-size: 1.24rem;
+  line-height: 1.18;
 }
 
 .interventionCardReference {
@@ -458,6 +498,12 @@ p {
   border: 1px solid rgba(30, 114, 104, 0.08);
 }
 
+.storyboardTurn strong,
+.miniCard strong {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
 .storyboardTurn span,
 .rubricCardHeader .subtle {
   font-size: 0.8rem;
@@ -485,6 +531,16 @@ p {
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(30, 114, 104, 0.1);
+}
+
+.dashboardCallout {
+  background: linear-gradient(145deg, rgba(20, 30, 28, 0.96), rgba(34, 27, 21, 0.94));
+  border-color: rgba(17, 77, 71, 0.28);
+  color: #fff8ef;
+}
+
+.dashboardCallout .subtle {
+  color: rgba(245, 237, 225, 0.78);
 }
 
 .reviewPage {
@@ -597,6 +653,31 @@ p {
   border: 1px solid rgba(30, 114, 104, 0.12);
   color: var(--muted);
   line-height: 1.65;
+}
+
+.inlineDetails {
+  border-radius: 18px;
+  border: 1px solid rgba(30, 114, 104, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  overflow: hidden;
+}
+
+.inlineDetailsSummary {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.inlineDetailsSummary::-webkit-details-marker {
+  display: none;
+}
+
+.inlineDetailsBody {
+  display: grid;
+  gap: 14px;
+  padding: 0 16px 16px;
 }
 
 .drawerSection {

@@ -5,12 +5,39 @@ import { LanguageSwitch } from "./components/language-switch";
 import { getCopy } from "./lib/copy";
 import { getAppLocale } from "./lib/locale";
 import {
+  formatDocumentCount,
   buildOverviewLines,
+  formatDivergentTurnCount,
   formatDeltaLabel,
+  formatEvidenceCount,
+  formatEvalPosture,
+  formatRelatedTurnCount,
+  localizeActionType,
+  localizeClaimLabel,
+  localizeEvalMetricKey,
+  localizeScenarioDescription,
+  localizeScenarioTitle,
   formatTurn,
   friendlyWorldName
 } from "./lib/presenters";
-import { loadWorkbenchData } from "./lib/workbench-data";
+import { loadWorkbenchData, type ClaimDrilldown } from "./lib/workbench-data";
+
+function summarizeClaimSources(drilldown: ClaimDrilldown) {
+  const documents = Array.from(
+    drilldown.evidenceChunks.reduce((map, entry) => {
+      const key = entry.document?.document_id ?? entry.chunk.document_id;
+      const current = map.get(key);
+      map.set(key, {
+        key,
+        title: entry.document?.title ?? entry.chunk.document_id,
+        count: (current?.count ?? 0) + 1
+      });
+      return map;
+    }, new Map<string, { key: string; title: string; count: number }>())
+  ).map(([, value]) => value);
+
+  return documents;
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getAppLocale();
@@ -18,7 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: locale === "zh-CN" ? "Mirror 工作台总览" : "Mirror Briefing Dashboard",
     description:
       locale === "zh-CN"
-        ? "Mirror 的双语编辑部指挥台首页，优先展示 compare、evidence 与 eval。"
+        ? "Mirror 的双语编辑部指挥台首页，优先展示对比、证据与评测。"
         : "Bilingual editorial briefing dashboard for Mirror's compare, evidence, and eval flow."
   };
 }
@@ -28,8 +55,24 @@ export default async function Page() {
   const copy = getCopy(locale);
   const data = await loadWorkbenchData();
   const worldName = friendlyWorldName(locale, data.graph.world_id);
-  const keyClaims = data.claims.slice(0, 3);
-  const topMetrics = Object.entries(data.evalSummary.metrics).slice(0, 4);
+  const keyClaims = data.claimDrilldowns.slice(0, 3);
+  const topMetrics = Object.entries(data.evalSummary.metrics)
+    .slice(0, 4)
+    .map(([key, value]) => ({
+      key,
+      label: localizeEvalMetricKey(locale, key),
+      value
+    }));
+  const baselineTitle = localizeScenarioTitle(
+    locale,
+    data.baselineRun.scenario.scenario_id,
+    data.baselineRun.scenario.title
+  );
+  const reportComparisonTitle = localizeScenarioTitle(
+    locale,
+    data.reportComparisonRun.scenario.scenario_id,
+    data.reportComparisonRun.scenario.title
+  );
 
   return (
     <main className="workbenchPage">
@@ -73,15 +116,11 @@ export default async function Page() {
           </article>
           <article className="briefCard">
             <span>{copy.metrics.evalStatus}</span>
-            <strong>
-              {data.evalSummary.eval_name}: {data.evalSummary.status}
-            </strong>
+            <strong>{formatEvalPosture(locale, data.evalSummary.eval_name, data.evalSummary.status)}</strong>
           </article>
           <article className="briefCard briefCardWide">
             <span>{copy.dashboard.currentPair}</span>
-            <strong>
-              {data.baselineRun.scenario.title} ↔ {data.reportComparisonRun.scenario.title}
-            </strong>
+            <strong>{baselineTitle} ↔ {reportComparisonTitle}</strong>
           </article>
           <article className="briefCard briefCardWide">
             <span>{copy.brand.compareArtifactLabel}</span>
@@ -119,8 +158,14 @@ export default async function Page() {
               <span>{copy.common.referenceBranch}</span>
               <code>{data.baselineRun.scenario.scenario_id}</code>
             </div>
-            <h3>{data.baselineRun.scenario.title}</h3>
-            <p>{data.baselineRun.scenario.description}</p>
+            <h3>{baselineTitle}</h3>
+            <p>
+              {localizeScenarioDescription(
+                locale,
+                data.baselineRun.scenario.scenario_id,
+                data.baselineRun.scenario.description
+              )}
+            </p>
             <div className="deltaBadgeRow">
               <span className="deltaBadge">{copy.metrics.budgetExposed}: {formatTurn(locale, data.baselineRun.summary.budget_exposed_turn)}</span>
               <span className="deltaBadge">{copy.metrics.ledgerPublic}: {formatTurn(locale, data.baselineRun.summary.ledger_public_turn)}</span>
@@ -137,11 +182,11 @@ export default async function Page() {
             return (
               <article key={overview.run.key} className="interventionCard">
                 <div className="interventionCardMeta">
-                  <span>{overview.run.label}</span>
+                  <span>{localizeScenarioTitle(locale, overview.run.scenario.scenario_id, overview.run.label)}</span>
                   <code>{overview.run.scenario.scenario_id}</code>
                 </div>
-                <h3>{overview.run.scenario.title}</h3>
-                <p>{overview.run.scenario.description}</p>
+                <h3>{localizeScenarioTitle(locale, overview.run.scenario.scenario_id, overview.run.scenario.title)}</h3>
+                <p>{localizeScenarioDescription(locale, overview.run.scenario.scenario_id, overview.run.scenario.description)}</p>
                 <div className="deltaBadgeRow">
                   <span className="deltaBadge">
                     {copy.metrics.budgetExposed}: {formatDeltaLabel(locale, overview.budgetExposureDelta)}
@@ -193,8 +238,8 @@ export default async function Page() {
           {data.comparisonOverviews.map((overview) => (
             <article key={overview.run.key} className="storyboardCard">
               <div className="interventionCardMeta">
-                <span>{overview.run.scenario.title}</span>
-                <code>{overview.divergentTurnCount} {copy.metrics.divergentTurns.toLowerCase()}</code>
+                <span>{localizeScenarioTitle(locale, overview.run.scenario.scenario_id, overview.run.scenario.title)}</span>
+                <code>{formatDivergentTurnCount(locale, overview.divergentTurnCount)}</code>
               </div>
               <div className="storyboardRows">
                 {overview.rows.slice(0, 2).map((row) => (
@@ -208,7 +253,7 @@ export default async function Page() {
                         <span>{copy.common.baseline}</span>
                         {row.reference ? (
                           <>
-                            <strong>{row.reference.turn.action_type}</strong>
+                            <strong>{localizeActionType(locale, row.reference.turn.action_type)}</strong>
                             <p>{row.reference.turn.rationale}</p>
                           </>
                         ) : (
@@ -219,7 +264,7 @@ export default async function Page() {
                         <span>{copy.common.candidate}</span>
                         {row.candidate ? (
                           <>
-                            <strong>{row.candidate.turn.action_type}</strong>
+                            <strong>{localizeActionType(locale, row.candidate.turn.action_type)}</strong>
                             <p>{row.candidate.turn.rationale}</p>
                           </>
                         ) : (
@@ -240,22 +285,46 @@ export default async function Page() {
           <div className="sectionHeading">
             <p className="eyebrow">{copy.dashboard.claimEyebrow}</p>
             <h2>{copy.dashboard.claimTitle}</h2>
+            <p>
+              {locale === "zh-CN"
+                ? "首页只保留论点结构摘要，不直接摊开原始 claim 文本和证据摘录。"
+                : "The dashboard keeps only the claim structure in view and leaves raw claim text and evidence excerpts for deeper review."}
+            </p>
           </div>
           <div className="claimSnapshotGrid">
-            {keyClaims.map((claim) => (
+            {keyClaims.map((drilldown) => {
+              const { claim, evidenceChunks, relatedTurns } = drilldown;
+              const sourceDocuments = summarizeClaimSources(drilldown);
+              return (
               <article key={claim.claim_id} className="claimSnapshotCard">
                 <div className="interventionCardMeta">
                   <span>{claim.claim_id}</span>
-                  <span className="pill">{claim.label}</span>
+                  <span className="pill">{localizeClaimLabel(locale, claim.label)}</span>
                 </div>
-                <p>{claim.text}</p>
                 <div className="artifactChipRow">
-                  {claim.evidence_ids.slice(0, 3).map((evidenceId) => (
-                    <code key={evidenceId}>{evidenceId}</code>
+                  <span className="artifactChip">{formatEvidenceCount(locale, evidenceChunks.length)}</span>
+                  <span className="artifactChip">{formatRelatedTurnCount(locale, relatedTurns.length)}</span>
+                  <span className="artifactChip">{formatDocumentCount(locale, sourceDocuments.length)}</span>
+                </div>
+                <p className="subtle">
+                  {locale === "zh-CN"
+                    ? "这条论点已被证据链约束，详情可在深度审阅页按需展开。"
+                    : "This claim stays evidence-bound, with the raw text and excerpts deferred to deep review."}
+                </p>
+                <div className="miniList">
+                  {sourceDocuments.slice(0, 2).map((document) => (
+                    <article key={document.key} className="miniCard">
+                      <strong>{document.title}</strong>
+                      <p>
+                        {locale === "zh-CN"
+                          ? `关联 ${document.count} 条证据摘录`
+                          : `${document.count} linked evidence excerpt${document.count === 1 ? "" : "s"}`}
+                      </p>
+                    </article>
                   ))}
                 </div>
               </article>
-            ))}
+            )})}
           </div>
         </section>
 
@@ -266,22 +335,20 @@ export default async function Page() {
             <p>{copy.dashboard.scorecardNote}</p>
           </div>
           <div className="briefSummaryGrid">
-            {topMetrics.map(([key, value]) => (
+            {topMetrics.map(({ key, label, value }) => (
               <article key={key} className="briefCard">
-                <span>{key}</span>
+                <span>{label}</span>
                 <strong>{value}</strong>
               </article>
             ))}
           </div>
           <div className="dashboardCallout">
-            <p className="subtle">
-              {data.evalSummary.eval_name}: {data.evalSummary.status}
-            </p>
+            <p className="subtle">{formatEvalPosture(locale, data.evalSummary.eval_name, data.evalSummary.status)}</p>
             <div className="cardActions">
-              <Link className="heroAction heroActionPrimary" href="/review">
+              <Link className="surfaceAction surfaceActionPrimary" href="/review">
                 {copy.dashboard.openReview}
               </Link>
-              <Link className="heroAction" href="/review#advanced-operations">
+              <Link className="surfaceAction" href="/review#advanced-operations">
                 {copy.rubric.openLegacy}
               </Link>
             </div>
