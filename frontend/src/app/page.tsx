@@ -643,6 +643,7 @@ export default async function Page() {
   const knowledgeShiftCount = comparisonOverviews.filter(
     (overview) => overview.knowledgeShift
   ).length;
+  const reviewDrawerDivergentTurns = reportComparison?.divergentTurnCount ?? 0;
   const totalDivergentTurnCount = comparisonOverviews.reduce(
     (sum, overview) => sum + overview.divergentTurnCount,
     0
@@ -799,8 +800,8 @@ export default async function Page() {
               <li>Evacuation triggers at {formatTurnLabel(baselineRun.summary.evacuation_turn)}.</li>
             </ul>
             <div className="claimEvidence">
-              <a className="linkPill" href="#scenario-matrix">
-                Scenario JSON
+              <a className="linkPill" href="#reference-surfaces-drawer">
+                Reference surfaces
               </a>
               <a className="linkPill" href="#trace-diff">
                 Trace compare
@@ -1227,9 +1228,9 @@ export default async function Page() {
       <section className="panel panelAccent" id="advanced-review">
         <div className="panelHeader">
           <p className="eyebrow">Advanced Review</p>
-          <h2>Scorecards, handoff packets, and packet-heavy review tools stay available after the core compare pass.</h2>
+          <h2>Scorecards, packet tooling, and reference layers stay available behind explicit advanced-navigation drawers.</h2>
         </div>
-        <div className="reportGrid">
+        <div className="drawerLauncherGrid">
           <article className="artifactCard">
             <div className="artifactMeta">
               <span>after default path</span>
@@ -1241,11 +1242,10 @@ export default async function Page() {
               planning without dominating the first-read experience.
             </p>
             <div className="claimEvidence">
-              <a className="linkPill" href="#review-scorecard">
-                Open scorecard
-              </a>
-              <a className="linkPill" href="#reference-map">
-                Open reference map
+              <code>{claims.length} claims in scope</code>
+              <code>{reviewDrawerDivergentTurns} canonical divergent turns</code>
+              <a className="linkPill" href="#review-scorecard-drawer">
+                Open review drawer
               </a>
             </div>
           </article>
@@ -1260,186 +1260,226 @@ export default async function Page() {
               <li>Open the advanced review surfaces when you are ready to score the branch or assemble a handoff packet.</li>
               <li>Drop into scenario, world-model, or corpus references only when the core compare path still leaves a question unresolved.</li>
             </ul>
+            <div className="claimEvidence">
+              <code>{sections.length} reference surfaces</code>
+              <a className="linkPill" href="#reference-surfaces-drawer">
+                Open reference drawer
+              </a>
+            </div>
           </article>
         </div>
       </section>
 
-      <ReviewScorecard
-        rubricRows={rubricRows}
-        claimCount={claims.length}
-        divergentTurnCount={reportComparison?.divergentTurnCount ?? 0}
-        evalName={evalSummary.eval_name}
-        evalStatus={evalSummary.status}
-        claimPackets={claims.map((claim) => ({
-          claimId: claim.claim_id,
-          text: claim.text,
-          relatedTurnIds: claim.related_turn_ids.filter(Boolean)
-        }))}
-        divergentTurns={(reportComparison?.rows ?? [])
-          .map(({ turnIndex, reference, candidate }) => ({
-            turnIndex,
-            baselineTurnId: reference?.turn.turn_id ?? null,
-            baselineAction: reference?.turn.action_type ?? null,
-            interventionTurnId: candidate?.turn.turn_id ?? null,
-            interventionAction: candidate?.turn.action_type ?? null
-          }))}
-      />
+      <details className="drawerSection" id="review-scorecard-drawer">
+        <summary className="drawerSummary">
+          <div className="drawerSummaryContent">
+            <strong>Advanced review drawer</strong>
+            <span>Open the scorecard, packet tooling, and handoff surfaces only after the default compare path is clear.</span>
+          </div>
+          <div className="drawerSummaryMeta">
+            <span className="drawerChip">secondary surface</span>
+            <span className="drawerChip">{claims.length} claims</span>
+            <span className="drawerChip">{reviewDrawerDivergentTurns} divergent turns</span>
+          </div>
+        </summary>
+        <div className="drawerBody">
+          <p className="drawerLead">
+            Use this drawer when you are ready to score the branch, package a handoff, or work through the
+            packet-heavy export and delivery tooling that intentionally sits behind the default operator path.
+          </p>
+          <ReviewScorecard
+            rubricRows={rubricRows}
+            claimCount={claims.length}
+            divergentTurnCount={reviewDrawerDivergentTurns}
+            evalName={evalSummary.eval_name}
+            evalStatus={evalSummary.status}
+            claimPackets={claims.map((claim) => ({
+              claimId: claim.claim_id,
+              text: claim.text,
+              relatedTurnIds: claim.related_turn_ids.filter(Boolean)
+            }))}
+            divergentTurns={(reportComparison?.rows ?? [])
+              .map(({ turnIndex, reference, candidate }) => ({
+                turnIndex,
+                baselineTurnId: reference?.turn.turn_id ?? null,
+                baselineAction: reference?.turn.action_type ?? null,
+                interventionTurnId: candidate?.turn.turn_id ?? null,
+                interventionAction: candidate?.turn.action_type ?? null
+              }))}
+          />
+        </div>
+      </details>
 
-      <section className="panel" id="reference-map">
-        <div className="panelHeader">
-          <p className="eyebrow">Reference Map</p>
-          <h2>These supporting artifact surfaces stay available behind the default operator path.</h2>
-        </div>
-        <div className="grid">
-          {sections.map((section) => (
-            <article key={section.title} className="card">
-              <h3>{section.title}</h3>
-              <p>{section.copy}</p>
-              <code>{section.path}</code>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="panel" id="corpus-reference">
-        <div className="panelHeader">
-          <p className="eyebrow">Corpus</p>
-          <h2>Canonical source documents remain directly inspectable.</h2>
-        </div>
-        <div className="reportGrid">
-          <article className="artifactCard">
-            <div className="artifactMeta">
-              <span>artifact</span>
-              <code>artifacts/demo/ingest/documents.jsonl</code>
+      <details className="drawerSection" id="reference-surfaces-drawer">
+        <summary className="drawerSummary">
+          <div className="drawerSummaryContent">
+            <strong>Reference surfaces drawer</strong>
+            <span>Open scenario, world-model, and corpus references when the focused compare path still leaves a question unresolved.</span>
+          </div>
+          <div className="drawerSummaryMeta">
+            <span className="drawerChip">supporting artifacts</span>
+            <span className="drawerChip">{sections.length} sections</span>
+            <span className="drawerChip">{documents.length} documents</span>
+          </div>
+        </summary>
+        <div className="drawerBody drawerBodyStack">
+          <section className="panel" id="reference-map">
+            <div className="panelHeader">
+              <p className="eyebrow">Reference Map</p>
+              <h2>These supporting artifact surfaces stay available behind the default operator path.</h2>
             </div>
-            <div className="docList">
-              {documents.map((document) => (
-                <article key={document.document_id} className="docCard">
-                  <div className="claimHeader">
-                    <strong>{document.title}</strong>
-                    <span className="pill">{document.kind}</span>
-                  </div>
-                  <div className="claimEvidence">
-                    <code>{document.document_id}</code>
-                    {document.metadata?.author ? <code>{document.metadata.author}</code> : null}
-                    {document.metadata?.channel ? <code>{document.metadata.channel}</code> : null}
-                  </div>
+            <div className="grid">
+              {sections.map((section) => (
+                <article key={section.title} className="card">
+                  <h3>{section.title}</h3>
+                  <p>{section.copy}</p>
+                  <code>{section.path}</code>
                 </article>
               ))}
             </div>
-          </article>
+          </section>
 
-          <article className="artifactCard">
-            <div className="artifactMeta">
-              <span>summary</span>
-              <code>{documents.length} documents</code>
+          <section className="panel" id="scenario-matrix">
+            <div className="panelHeader">
+              <p className="eyebrow">Scenario Matrix</p>
+              <h2>All canonical scenario artifacts stay visible, normalized, and branch-comparable.</h2>
             </div>
-            <p>
-              The source-document layer remains fully visible, so reviewers can verify evidence
-              chains without treating the simulation or report layer as a black box.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section className="panel" id="world-model">
-        <div className="panelHeader">
-          <p className="eyebrow">World Model</p>
-          <h2>Graph objects stay visible as structured, evidence-bearing records.</h2>
-        </div>
-        <div className="reportGrid">
-          <article className="artifactCard">
-            <div className="artifactMeta">
-              <span>artifact</span>
-              <code>artifacts/demo/graph/graph.json</code>
-            </div>
-            <div className="metricGrid">
-              {Object.entries(graph.stats).map(([key, value]) => (
-                <div key={key} className="metricCard">
-                  <span>{key}</span>
-                  <strong>{value}</strong>
-                </div>
+            <div className="scenarioGrid">
+              {runs.map((run) => (
+                <article key={run.key} className="artifactCard">
+                  <div className="artifactMeta">
+                    <span>{run.label}</span>
+                    <code>artifacts/demo/scenario/{run.key}.json</code>
+                  </div>
+                  <div className="claimHeader">
+                    <strong>{run.scenario.title}</strong>
+                    <span className="pill">{run.scenario.scenario_id}</span>
+                  </div>
+                  <p>{run.scenario.description}</p>
+                  <div className="claimEvidence">
+                    <code>turn_budget={run.scenario.turn_budget}</code>
+                    <code>branch_count={run.scenario.branch_count}</code>
+                    <code>injections={run.scenario.injections.length}</code>
+                  </div>
+                  <pre className="artifactPre artifactPreCompact">
+                    {JSON.stringify(run.scenario, null, 2)}
+                  </pre>
+                </article>
               ))}
             </div>
-            <div className="objectColumns">
-              <div>
-                <h3>Entities</h3>
-                <ul className="objectList">
-                  {graph.entities.slice(0, 4).map((entity) => (
-                    <li key={entity.entity_id}>
-                      <strong>{entity.name}</strong>
-                      <code>{entity.entity_id}</code>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h3>Relations</h3>
-                <ul className="objectList">
-                  {graph.relations.slice(0, 4).map((relation) => (
-                    <li key={relation.relation_id}>
-                      <strong>{relation.relation_type}</strong>
-                      <code>{relation.relation_id}</code>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h3>Events</h3>
-                <ul className="objectList">
-                  {graph.events.slice(0, 4).map((event) => (
-                    <li key={event.event_id}>
-                      <strong>{event.name}</strong>
-                      <code>{event.event_id}</code>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </article>
+          </section>
 
-          <article className="artifactCard">
-            <div className="artifactMeta">
-              <span>traceability</span>
-              <code>entities / relations / events</code>
+          <section className="panel" id="world-model">
+            <div className="panelHeader">
+              <p className="eyebrow">World Model</p>
+              <h2>Graph objects stay visible as structured, evidence-bearing records.</h2>
             </div>
-            <p>
-              This view still avoids a heavy graph dependency, but the new claim drill-down now
-              cross-links evidence-bearing graph records when a claim shares their `evidence_ids`.
-            </p>
-          </article>
-        </div>
-      </section>
+            <div className="reportGrid">
+              <article className="artifactCard">
+                <div className="artifactMeta">
+                  <span>artifact</span>
+                  <code>artifacts/demo/graph/graph.json</code>
+                </div>
+                <div className="metricGrid">
+                  {Object.entries(graph.stats).map(([key, value]) => (
+                    <div key={key} className="metricCard">
+                      <span>{key}</span>
+                      <strong>{value}</strong>
+                    </div>
+                  ))}
+                </div>
+                <div className="objectColumns">
+                  <div>
+                    <h3>Entities</h3>
+                    <ul className="objectList">
+                      {graph.entities.slice(0, 4).map((entity) => (
+                        <li key={entity.entity_id}>
+                          <strong>{entity.name}</strong>
+                          <code>{entity.entity_id}</code>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3>Relations</h3>
+                    <ul className="objectList">
+                      {graph.relations.slice(0, 4).map((relation) => (
+                        <li key={relation.relation_id}>
+                          <strong>{relation.relation_type}</strong>
+                          <code>{relation.relation_id}</code>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3>Events</h3>
+                    <ul className="objectList">
+                      {graph.events.slice(0, 4).map((event) => (
+                        <li key={event.event_id}>
+                          <strong>{event.name}</strong>
+                          <code>{event.event_id}</code>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </article>
 
-      <section className="panel">
-        <div className="panelHeader">
-          <p className="eyebrow">Scenario Matrix</p>
-          <h2>All canonical scenario artifacts stay visible, normalized, and branch-comparable.</h2>
+              <article className="artifactCard">
+                <div className="artifactMeta">
+                  <span>traceability</span>
+                  <code>entities / relations / events</code>
+                </div>
+                <p>
+                  This view still avoids a heavy graph dependency, but the new claim drill-down now
+                  cross-links evidence-bearing graph records when a claim shares their `evidence_ids`.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section className="panel" id="corpus-reference">
+            <div className="panelHeader">
+              <p className="eyebrow">Corpus</p>
+              <h2>Canonical source documents remain directly inspectable.</h2>
+            </div>
+            <div className="reportGrid">
+              <article className="artifactCard">
+                <div className="artifactMeta">
+                  <span>artifact</span>
+                  <code>artifacts/demo/ingest/documents.jsonl</code>
+                </div>
+                <div className="docList">
+                  {documents.map((document) => (
+                    <article key={document.document_id} className="docCard">
+                      <div className="claimHeader">
+                        <strong>{document.title}</strong>
+                        <span className="pill">{document.kind}</span>
+                      </div>
+                      <div className="claimEvidence">
+                        <code>{document.document_id}</code>
+                        {document.metadata?.author ? <code>{document.metadata.author}</code> : null}
+                        {document.metadata?.channel ? <code>{document.metadata.channel}</code> : null}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </article>
+
+              <article className="artifactCard">
+                <div className="artifactMeta">
+                  <span>summary</span>
+                  <code>{documents.length} documents</code>
+                </div>
+                <p>
+                  The source-document layer remains fully visible, so reviewers can verify evidence
+                  chains without treating the simulation or report layer as a black box.
+                </p>
+              </article>
+            </div>
+          </section>
         </div>
-        <div className="scenarioGrid" id="scenario-matrix">
-          {runs.map((run) => (
-            <article key={run.key} className="artifactCard">
-              <div className="artifactMeta">
-                <span>{run.label}</span>
-                <code>artifacts/demo/scenario/{run.key}.json</code>
-              </div>
-              <div className="claimHeader">
-                <strong>{run.scenario.title}</strong>
-                <span className="pill">{run.scenario.scenario_id}</span>
-              </div>
-              <p>{run.scenario.description}</p>
-              <div className="claimEvidence">
-                <code>turn_budget={run.scenario.turn_budget}</code>
-                <code>branch_count={run.scenario.branch_count}</code>
-                <code>injections={run.scenario.injections.length}</code>
-              </div>
-              <pre className="artifactPre artifactPreCompact">
-                {JSON.stringify(run.scenario, null, 2)}
-              </pre>
-            </article>
-          ))}
-        </div>
-      </section>
+      </details>
 
     </main>
   );
