@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 45 closeout, and the Phase 46 successor bootstrap.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 46 closeout, and the return to the intentional stop-state with no approved successor milestone.
 
 ## Current Gate State
 
@@ -49,7 +49,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 43 exit gate: closed
 - Phase 44 exit gate: closed
 - Phase 45 exit gate: closed
-- Phase 46 exit gate: open
+- Phase 46 exit gate: closed
 
 Local phase audits currently report:
 
@@ -57,13 +57,12 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Active Phase 46 Queue
+## Post-Phase 46 Stop-State
 
 - milestone `Phase 46 - Workbench Focus and Modularity`
-  - open
+  - closed
 - `Phase 46 exit gate`
-  - open
-  - `status:blocked`
+  - closed
 - `Phase 46: sync repo truth to Phase 46 queue`
   - closed
   - merged via the Phase 46 queue-sync PR
@@ -74,11 +73,10 @@ Local phase audits currently report:
   - closed
   - merged via PR `#342`
 - `Phase 46: move secondary packet surfaces behind advanced navigation`
-  - open
-  - `status:ready`
+  - closed
+  - merged via PR `#344`
 - `audit-github-queue`
-  - reports `ready` against the Phase 46 milestone because exactly one open milestone exists with a protected blocked exit gate and ready work items
-  - the current ready work item is `Phase 46: move secondary packet surfaces behind advanced navigation`
+  - reports `paused` with no active milestone because no approved successor phase is open
 - recent closeout
   - milestone `Phase 45 - Branch Generalization and Compare Contracts`
     - closed
@@ -111,7 +109,7 @@ Local phase audits currently report:
     - closed
     - merged via PR `#321`
 - successor posture
-  - no Phase 47 milestone is pre-opened in this round
+  - no Phase 47 milestone is approved or open in this round
   - any successor beyond Phase 46 must be decided separately against the trigger conditions in `mirror.md`
 
 ## Closeout Snapshot
@@ -570,7 +568,7 @@ Local phase audits currently report:
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- While Phase 46 is active, do not open a Phase 47 milestone without a fresh approval round.
+- No Phase 47 milestone is approved in this round; reopening the queue after Phase 46 requires a fresh approval round.
 
 ## Historical Branch Status
 

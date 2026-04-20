@@ -120,10 +120,10 @@ mirror-sim
 ## Current Status | 当前状态
 
 - **Formal release `v0.1.0` | 正式版本 `v0.1.0`**: The first formal GitHub Release remains published and anchors the current repository baseline.
-- **Active successor queue | 当前后继队列**: Phase 46, `Workbench Focus and Modularity`, is now the sole open execution milestone and the GitHub queue reports `ready`.
-- **Recent closeout | 最近收口**: Phase 45 is formally closed after landing the compare-contract ADR, the branch-count runner and compare artifacts, and the focused diff-surface handoff.
-- **Planned next route | 已定后续主线**: No Phase 47 milestone is pre-opened in this round; any successor beyond Phase 46 requires a fresh decision against the `mirror.md` trigger conditions.
-- **Repo truth lives in docs | 仓库真相以文档为准**: See [mirror.md](mirror.md) for the project blueprint, [docs/plans/current-state-baseline.md](docs/plans/current-state-baseline.md) for the active queue baseline, and [docs/releases/v0.1.0.md](docs/releases/v0.1.0.md) for the canonical release notes.
+- **Queue state | 当前队列状态**: Phase 46, `Workbench Focus and Modularity`, is formally closed. No approved Phase 47 milestone exists, so the GitHub queue is intentionally `paused` with no open milestone.
+- **Recent closeout | 最近收口**: Phase 46 is formally closed after modularizing the review scorecard, centering the default path on compare/evidence/eval, and moving packet-heavy surfaces behind advanced navigation.
+- **Planned next route | 已定后续主线**: No Phase 47 milestone is approved or open in this round; any successor beyond Phase 46 requires a fresh decision against the `mirror.md` trigger conditions.
+- **Repo truth lives in docs | 仓库真相以文档为准**: See [mirror.md](mirror.md) for the project blueprint, [docs/plans/current-state-baseline.md](docs/plans/current-state-baseline.md) for the current stop-state baseline, and [docs/releases/v0.1.0.md](docs/releases/v0.1.0.md) for the canonical release notes.
 
 ---
 
