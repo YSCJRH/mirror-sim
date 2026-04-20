@@ -132,6 +132,13 @@ function formatCountSuffix(locale: AppLocale, value: number, singular: string, p
   return `${value} ${value === 1 ? singular : plural}`;
 }
 
+function formatItemCount(locale: AppLocale, value: number, singular: string, plural: string, zhUnit: string) {
+  if (locale === "zh-CN") {
+    return `${value} ${zhUnit}`;
+  }
+  return `${value} ${value === 1 ? singular : plural}`;
+}
+
 function localizeForZh(
   locale: AppLocale,
   mappings: Record<string, string>,
@@ -367,4 +374,24 @@ export function formatDivergentTurnCount(locale: AppLocale, value: number) {
   return locale === "zh-CN"
     ? `${value} 个分歧回合`
     : formatCountSuffix(locale, value, "divergent turn", "divergent turns");
+}
+
+export function formatEvidenceCount(locale: AppLocale, value: number) {
+  return formatItemCount(locale, value, "evidence item", "evidence items", "份证据");
+}
+
+export function formatDocumentCount(locale: AppLocale, value: number) {
+  return formatItemCount(locale, value, "source document", "source documents", "份来源文档");
+}
+
+export function formatRelatedTurnCount(locale: AppLocale, value: number) {
+  return formatItemCount(locale, value, "related turn", "related turns", "个关联回合");
+}
+
+export function formatParagraphCount(locale: AppLocale, value: number) {
+  return formatItemCount(locale, value, "report section", "report sections", "段报告内容");
+}
+
+export function formatClaimCount(locale: AppLocale, value: number) {
+  return formatItemCount(locale, value, "claim", "claims", "条论点");
 }

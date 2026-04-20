@@ -8,7 +8,12 @@ import { getCopy } from "../lib/copy";
 import { getAppLocale } from "../lib/locale";
 import {
   buildOverviewLines,
+  formatClaimCount,
+  formatDocumentCount,
   formatEvalPosture,
+  formatEvidenceCount,
+  formatParagraphCount,
+  formatRelatedTurnCount,
   formatScenarioMeta,
   friendlyWorldName,
   localizeActionType,
@@ -19,7 +24,22 @@ import {
   localizeScenarioDescription,
   localizeScenarioTitle
 } from "../lib/presenters";
-import { loadWorkbenchData } from "../lib/workbench-data";
+import { loadWorkbenchData, type ClaimDrilldown } from "../lib/workbench-data";
+
+function summarizeClaimSources(drilldown: ClaimDrilldown) {
+  return Array.from(
+    drilldown.evidenceChunks.reduce((map, entry) => {
+      const key = entry.document?.document_id ?? entry.chunk.document_id;
+      const current = map.get(key);
+      map.set(key, {
+        key,
+        title: entry.document?.title ?? entry.chunk.document_id,
+        count: (current?.count ?? 0) + 1
+      });
+      return map;
+    }, new Map<string, { key: string; title: string; count: number }>())
+  ).map(([, value]) => value);
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getAppLocale();
@@ -37,6 +57,7 @@ export default async function ReviewPage() {
   const copy = getCopy(locale);
   const data = await loadWorkbenchData();
   const worldName = friendlyWorldName(locale, data.graph.world_id);
+  const reportParagraphCount = data.report.split(/\n\s*\n/).filter((block) => block.trim().length > 0).length;
   const divergentTurns =
     data.reportComparison?.rows.map(({ turnIndex, reference, candidate }) => ({
       turnIndex,
@@ -180,44 +201,83 @@ export default async function ReviewPage() {
         <div className="sectionHeading">
           <p className="eyebrow">{copy.review.claimsTitle}</p>
           <h2>{copy.review.claimsSummary}</h2>
+          <p>
+            {locale === "zh-CN"
+              ? "默认先看论点结构、来源文档和关联回合，只有在需要时再展开原始 claim 文本与证据摘录。"
+              : "Default to the claim structure, source documents, and related turns; open the raw claim text and evidence excerpts only when needed."}
+          </p>
         </div>
         <div className="claimSnapshotGrid">
-          {data.claimDrilldowns.map(({ claim, evidenceChunks, relatedTurns }) => (
+          {data.claimDrilldowns.map((drilldown) => {
+            const { claim, evidenceChunks, relatedTurns } = drilldown;
+            const sourceDocuments = summarizeClaimSources(drilldown);
+            return (
             <article key={claim.claim_id} className="claimSnapshotCard claimSnapshotCardExpanded">
               <div className="interventionCardMeta">
                 <span>{claim.claim_id}</span>
                 <span className="pill">{localizeClaimLabel(locale, claim.label)}</span>
               </div>
-              <p>{claim.text}</p>
-              <div className="claimEvidence">
-                {claim.evidence_ids.map((evidenceId) => (
-                  <code key={evidenceId}>{evidenceId}</code>
-                ))}
+              <div className="artifactChipRow">
+                <span className="artifactChip">{formatEvidenceCount(locale, evidenceChunks.length)}</span>
+                <span className="artifactChip">{formatRelatedTurnCount(locale, relatedTurns.length)}</span>
+                <span className="artifactChip">{formatDocumentCount(locale, sourceDocuments.length)}</span>
               </div>
+              <p className="subtle">
+                {locale === "zh-CN"
+                  ? "这条论点默认只展示结构摘要，原始文本和摘录被收在折叠层里。"
+                  : "This claim now defaults to a structural summary, with the raw text and excerpts tucked behind an explicit drawer."}
+              </p>
               <div className="subsectionBlock">
-                <h3>{copy.common.jumpToEvidence}</h3>
+                <h3>{locale === "zh-CN" ? "来源文档" : "Source documents"}</h3>
                 <div className="miniList">
-                  {evidenceChunks.map(({ chunk, document }) => (
-                    <article key={chunk.chunk_id} className="miniCard">
-                      <strong>{document?.title ?? chunk.document_id}</strong>
-                      <p>{chunk.text}</p>
+                  {sourceDocuments.map((document) => (
+                    <article key={document.key} className="miniCard">
+                      <strong>{document.title}</strong>
+                      <p>
+                        {locale === "zh-CN"
+                          ? `关联 ${document.count} 条证据摘录`
+                          : `${document.count} linked evidence excerpt${document.count === 1 ? "" : "s"}`}
+                      </p>
                     </article>
                   ))}
                 </div>
               </div>
               <div className="subsectionBlock">
-                <h3>{copy.common.jumpToTrace}</h3>
+                <h3>{locale === "zh-CN" ? "关联回合" : "Related turns"}</h3>
                 <div className="miniList">
                   {relatedTurns.map((entry) => (
                     <article key={entry.turn.turn_id} className="miniCard">
                       <strong>{entry.turn.turn_id}</strong>
-                      <p>{entry.turn.rationale}</p>
+                      <p>
+                        {localizeActionType(locale, entry.turn.action_type)}
+                        {" · "}
+                        {localizeScenarioTitle(locale, entry.scenarioKey, entry.scenarioTitle)}
+                      </p>
                     </article>
                   ))}
                 </div>
               </div>
+              <details className="inlineDetails">
+                <summary className="inlineDetailsSummary">
+                  {locale === "zh-CN" ? "查看原始论点与证据摘录" : "Open raw claim and evidence excerpts"}
+                </summary>
+                <div className="inlineDetailsBody">
+                  <div className="subsectionBlock">
+                    <h3>{locale === "zh-CN" ? "原始论点文本" : "Raw claim text"}</h3>
+                    <p>{claim.text}</p>
+                  </div>
+                  <div className="miniList">
+                    {evidenceChunks.map(({ chunk, document }) => (
+                      <article key={chunk.chunk_id} className="miniCard">
+                        <strong>{document?.title ?? chunk.document_id}</strong>
+                        <p>{chunk.text}</p>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              </details>
             </article>
-          ))}
+          )})}
         </div>
       </section>
 
@@ -234,7 +294,18 @@ export default async function ReviewPage() {
               <code>artifacts/demo/report/report.md</code>
             </div>
             <p>{copy.review.rawReportSummary}</p>
-            <pre className="artifactPre artifactPreCompact">{data.report}</pre>
+            <div className="artifactChipRow">
+              <span className="artifactChip">{formatParagraphCount(locale, reportParagraphCount)}</span>
+              <span className="artifactChip">{formatClaimCount(locale, data.claims.length)}</span>
+            </div>
+            <details className="inlineDetails">
+              <summary className="inlineDetailsSummary">
+                {locale === "zh-CN" ? "查看原始报告文本" : "Open raw report text"}
+              </summary>
+              <div className="inlineDetailsBody">
+                <pre className="artifactPre artifactPreCompact">{data.report}</pre>
+              </div>
+            </details>
           </article>
 
           <article className="referenceCard">

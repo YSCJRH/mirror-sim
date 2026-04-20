@@ -5,10 +5,13 @@ import { LanguageSwitch } from "./components/language-switch";
 import { getCopy } from "./lib/copy";
 import { getAppLocale } from "./lib/locale";
 import {
+  formatDocumentCount,
   buildOverviewLines,
   formatDivergentTurnCount,
   formatDeltaLabel,
+  formatEvidenceCount,
   formatEvalPosture,
+  formatRelatedTurnCount,
   localizeActionType,
   localizeClaimLabel,
   localizeEvalMetricKey,
@@ -17,7 +20,24 @@ import {
   formatTurn,
   friendlyWorldName
 } from "./lib/presenters";
-import { loadWorkbenchData } from "./lib/workbench-data";
+import { loadWorkbenchData, type ClaimDrilldown } from "./lib/workbench-data";
+
+function summarizeClaimSources(drilldown: ClaimDrilldown) {
+  const documents = Array.from(
+    drilldown.evidenceChunks.reduce((map, entry) => {
+      const key = entry.document?.document_id ?? entry.chunk.document_id;
+      const current = map.get(key);
+      map.set(key, {
+        key,
+        title: entry.document?.title ?? entry.chunk.document_id,
+        count: (current?.count ?? 0) + 1
+      });
+      return map;
+    }, new Map<string, { key: string; title: string; count: number }>())
+  ).map(([, value]) => value);
+
+  return documents;
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getAppLocale();
@@ -35,7 +55,7 @@ export default async function Page() {
   const copy = getCopy(locale);
   const data = await loadWorkbenchData();
   const worldName = friendlyWorldName(locale, data.graph.world_id);
-  const keyClaims = data.claims.slice(0, 3);
+  const keyClaims = data.claimDrilldowns.slice(0, 3);
   const topMetrics = Object.entries(data.evalSummary.metrics)
     .slice(0, 4)
     .map(([key, value]) => ({
@@ -265,22 +285,46 @@ export default async function Page() {
           <div className="sectionHeading">
             <p className="eyebrow">{copy.dashboard.claimEyebrow}</p>
             <h2>{copy.dashboard.claimTitle}</h2>
+            <p>
+              {locale === "zh-CN"
+                ? "首页只保留论点结构摘要，不直接摊开原始 claim 文本和证据摘录。"
+                : "The dashboard keeps only the claim structure in view and leaves raw claim text and evidence excerpts for deeper review."}
+            </p>
           </div>
           <div className="claimSnapshotGrid">
-            {keyClaims.map((claim) => (
+            {keyClaims.map((drilldown) => {
+              const { claim, evidenceChunks, relatedTurns } = drilldown;
+              const sourceDocuments = summarizeClaimSources(drilldown);
+              return (
               <article key={claim.claim_id} className="claimSnapshotCard">
                 <div className="interventionCardMeta">
                   <span>{claim.claim_id}</span>
                   <span className="pill">{localizeClaimLabel(locale, claim.label)}</span>
                 </div>
-                <p>{claim.text}</p>
                 <div className="artifactChipRow">
-                  {claim.evidence_ids.slice(0, 3).map((evidenceId) => (
-                    <code key={evidenceId}>{evidenceId}</code>
+                  <span className="artifactChip">{formatEvidenceCount(locale, evidenceChunks.length)}</span>
+                  <span className="artifactChip">{formatRelatedTurnCount(locale, relatedTurns.length)}</span>
+                  <span className="artifactChip">{formatDocumentCount(locale, sourceDocuments.length)}</span>
+                </div>
+                <p className="subtle">
+                  {locale === "zh-CN"
+                    ? "这条论点已被证据链约束，详情可在深度审阅页按需展开。"
+                    : "This claim stays evidence-bound, with the raw text and excerpts deferred to deep review."}
+                </p>
+                <div className="miniList">
+                  {sourceDocuments.slice(0, 2).map((document) => (
+                    <article key={document.key} className="miniCard">
+                      <strong>{document.title}</strong>
+                      <p>
+                        {locale === "zh-CN"
+                          ? `关联 ${document.count} 条证据摘录`
+                          : `${document.count} linked evidence excerpt${document.count === 1 ? "" : "s"}`}
+                      </p>
+                    </article>
                   ))}
                 </div>
               </article>
-            ))}
+            )})}
           </div>
         </section>
 
