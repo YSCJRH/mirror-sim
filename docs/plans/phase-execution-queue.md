@@ -71,14 +71,14 @@ Local phase audits currently report:
   - closed
   - merged via PR `#340`
 - `Phase 46: define the default operator path around compare-evidence-eval`
-  - open
-  - `status:ready`
+  - closed
+  - merged via PR `#342`
 - `Phase 46: move secondary packet surfaces behind advanced navigation`
   - open
-  - `status:blocked`
+  - `status:ready`
 - `audit-github-queue`
   - reports `ready` against the Phase 46 milestone because exactly one open milestone exists with a protected blocked exit gate and ready work items
-  - the current ready work item is `Phase 46: define the default operator path around compare-evidence-eval`
+  - the current ready work item is `Phase 46: move secondary packet surfaces behind advanced navigation`
 - recent closeout
   - milestone `Phase 45 - Branch Generalization and Compare Contracts`
     - closed
