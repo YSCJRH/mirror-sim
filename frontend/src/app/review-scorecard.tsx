@@ -3721,7 +3721,7 @@ export function ReviewScorecard({
   );
 
   return (
-    <section className="panel panelAccent">
+    <section id="review-scorecard" className="panel panelAccent">
       <div className="panelHeader">
         <p className="eyebrow">Reviewer Sign-Off</p>
         <h2>Turn the rubric into a live scorecard and a provisional sign-off worksheet.</h2>
