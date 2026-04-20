@@ -195,6 +195,12 @@ code {
   letter-spacing: 0.08em;
 }
 
+.drawerLauncherGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
 .comparisonOverviewGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -245,6 +251,86 @@ code {
 
 .artifactCardWide {
   min-width: 0;
+}
+
+.drawerSection {
+  backdrop-filter: blur(10px);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.drawerSummary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 28px;
+}
+
+.drawerSummary::-webkit-details-marker {
+  display: none;
+}
+
+.drawerSection[open] .drawerSummary {
+  border-bottom: 1px solid var(--border);
+  background: rgba(15, 107, 99, 0.06);
+}
+
+.drawerSummaryContent {
+  display: grid;
+  gap: 6px;
+  max-width: 64ch;
+}
+
+.drawerSummaryContent strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.2rem;
+}
+
+.drawerSummaryContent span {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.drawerSummaryMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.drawerChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(15, 107, 99, 0.16);
+  color: var(--accent-strong);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.drawerBody {
+  display: grid;
+  gap: 20px;
+  padding: 24px 28px 28px;
+}
+
+.drawerBodyStack {
+  gap: 24px;
+}
+
+.drawerLead {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
 }
 
 .artifactMeta {
