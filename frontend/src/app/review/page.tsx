@@ -8,8 +8,16 @@ import { getCopy } from "../lib/copy";
 import { getAppLocale } from "../lib/locale";
 import {
   buildOverviewLines,
-  formatTurn,
-  friendlyWorldName
+  formatEvalPosture,
+  formatScenarioMeta,
+  friendlyWorldName,
+  localizeActionType,
+  localizeBranchLabel,
+  localizeClaimLabel,
+  localizeDocumentKind,
+  localizeGraphStatKey,
+  localizeScenarioDescription,
+  localizeScenarioTitle
 } from "../lib/presenters";
 import { loadWorkbenchData } from "../lib/workbench-data";
 
@@ -19,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: locale === "zh-CN" ? "Mirror 深度审阅工作区" : "Mirror Deep Review Workspace",
     description:
       locale === "zh-CN"
-        ? "Mirror 的双语深度审阅页，围绕 scorecard、trace、claims 和参考面板组织。"
+        ? "Mirror 的双语深度审阅页，围绕评分卡、轨迹、论点和参考面板组织。"
         : "Bilingual deep review workspace for scorecard, trace, claims, and reference inspection in Mirror."
   };
 }
@@ -72,9 +80,7 @@ export default async function ReviewPage() {
           </article>
           <article className="briefCard">
             <span>{copy.metrics.evalStatus}</span>
-            <strong>
-              {data.evalSummary.eval_name}: {data.evalSummary.status}
-            </strong>
+            <strong>{formatEvalPosture(locale, data.evalSummary.eval_name, data.evalSummary.status)}</strong>
           </article>
         </div>
         <div className="sectionSwitch">
@@ -117,10 +123,10 @@ export default async function ReviewPage() {
             return (
               <article key={overview.run.key} id={`trace-${overview.run.key}`} className="interventionCard">
                 <div className="interventionCardMeta">
-                  <span>{overview.run.scenario.title}</span>
+                  <span>{localizeScenarioTitle(locale, overview.run.scenario.scenario_id, overview.run.scenario.title)}</span>
                   <code>{overview.run.scenario.scenario_id}</code>
                 </div>
-                <h3>{overview.run.label}</h3>
+                <h3>{localizeBranchLabel(locale, overview.run.scenario.scenario_id, overview.run.label)}</h3>
                 <ul className="summaryList">
                   {lines.map((line) => (
                     <li key={line}>{line}</li>
@@ -139,7 +145,7 @@ export default async function ReviewPage() {
                             <span>{copy.common.baseline}</span>
                             {row.reference ? (
                               <>
-                                <strong>{row.reference.turn.action_type}</strong>
+                                <strong>{localizeActionType(locale, row.reference.turn.action_type)}</strong>
                                 <p>{row.reference.turn.rationale}</p>
                               </>
                             ) : (
@@ -150,7 +156,7 @@ export default async function ReviewPage() {
                             <span>{copy.common.candidate}</span>
                             {row.candidate ? (
                               <>
-                                <strong>{row.candidate.turn.action_type}</strong>
+                                <strong>{localizeActionType(locale, row.candidate.turn.action_type)}</strong>
                                 <p>{row.candidate.turn.rationale}</p>
                               </>
                             ) : (
@@ -180,7 +186,7 @@ export default async function ReviewPage() {
             <article key={claim.claim_id} className="claimSnapshotCard claimSnapshotCardExpanded">
               <div className="interventionCardMeta">
                 <span>{claim.claim_id}</span>
-                <span className="pill">{claim.label}</span>
+                <span className="pill">{localizeClaimLabel(locale, claim.label)}</span>
               </div>
               <p>{claim.text}</p>
               <div className="claimEvidence">
@@ -239,7 +245,7 @@ export default async function ReviewPage() {
             <div className="briefSummaryGrid">
               {Object.entries(data.graph.stats).map(([key, value]) => (
                 <article key={key} className="briefCard">
-                  <span>{key}</span>
+                  <span>{localizeGraphStatKey(locale, key)}</span>
                   <strong>{value}</strong>
                 </article>
               ))}
@@ -256,12 +262,12 @@ export default async function ReviewPage() {
             <div className="miniList">
               {data.runs.map((run) => (
                 <article key={run.key} className="miniCard">
-                  <strong>{run.scenario.title}</strong>
-                  <p>{run.scenario.description}</p>
+                  <strong>{localizeScenarioTitle(locale, run.scenario.scenario_id, run.scenario.title)}</strong>
+                  <p>{localizeScenarioDescription(locale, run.scenario.scenario_id, run.scenario.description)}</p>
                   <div className="claimEvidence">
                     <code>{run.scenario.scenario_id}</code>
-                    <code>branch_count={run.scenario.branch_count}</code>
-                    <code>turn_budget={run.scenario.turn_budget}</code>
+                    <code>{formatScenarioMeta(locale, "branch_count", run.scenario.branch_count)}</code>
+                    <code>{formatScenarioMeta(locale, "turn_budget", run.scenario.turn_budget)}</code>
                   </div>
                 </article>
               ))}
@@ -279,7 +285,7 @@ export default async function ReviewPage() {
                   <strong>{document.title}</strong>
                   <div className="claimEvidence">
                     <code>{document.document_id}</code>
-                    <code>{document.kind}</code>
+                    <code>{localizeDocumentKind(locale, document.kind)}</code>
                   </div>
                 </article>
               ))}
@@ -305,7 +311,7 @@ export default async function ReviewPage() {
           <div className="editorialDrawerBody">
             <p className="editorialDrawerNote">
               {locale === "zh-CN"
-                ? "下方面板为了兼容旧工作流暂时保留英文文案。当前推荐的双语审阅路径仍以上面的 scorecard、trace、claims 和 reference 为主。"
+                ? "下方面板为了兼容旧工作流暂时保留英文文案。当前推荐的双语审阅路径仍以上面的评分卡、轨迹、论点和参考面板为主。"
                 : "The panel below remains English-first for compatibility with the older workflow. The primary bilingual review path stays in the scorecard, trace, claims, and reference sections above."}
             </p>
             <div lang="en">

@@ -281,7 +281,7 @@ const chineseCopy: Copy = {
   brand: {
     eyebrow: "Mirror Engine / 编辑部指挥台工作区",
     worldLabel: "当前世界",
-    compareArtifactLabel: "Compare 产物",
+    compareArtifactLabel: "对比产物",
     sourceArtifactLabel: "原始产物",
     dashboardLabel: "总览台",
     reviewLabel: "深度审阅",
@@ -290,31 +290,31 @@ const chineseCopy: Copy = {
   dashboard: {
     title: "先读结果，再判断哪里值得继续深挖。",
     lede:
-      "这个首页把 canonical compare artifact 组织成一块编辑部 briefing board：哪条干预改变了结果，哪条只是改变了路径，证据链该从哪里看起，以及什么时候才值得打开更重的审阅工作区。",
+      "这个首页把标准对比产物整理成一块编辑部简报板：哪条干预改变了结果，哪条只是改变了路径，证据链该从哪里看起，以及什么时候才值得打开更重的审阅工作区。",
     currentPair: "当前报告对比",
-    loadedBranches: "canonical 场景分支",
-    interventionCount: "相对 baseline 的干预对比",
+    loadedBranches: "标准场景分支",
+    interventionCount: "相对基线的干预对比",
     jumpToReview: "进入深度审阅",
     jumpToReference: "打开参考面板",
     routeEyebrow: "默认路径",
-    routeTitle: "先走 compare、trace、evidence、eval，再决定是否进入更重的审阅机制。",
+    routeTitle: "先看对比、轨迹、证据与评测，再决定是否进入更重的审阅流程。",
     routeSummary:
-      "首页现在应该像一块 briefing board，而不是一页 dump。它先告诉你发生了什么、为什么重要、下一步该看哪里。",
+      "首页现在应该像一块简报板，而不是一页信息倾倒。它先告诉你发生了什么、为什么重要、下一步该看哪里。",
     interventionEyebrow: "干预摘要板",
-    interventionTitle: "每条 intervention 都先给出强摘要卡，再给 drill-down。",
+    interventionTitle: "每条干预都先给出强摘要卡，再给出深入查看入口。",
     interventionSummary:
-      "下面的卡片优先强调结果变化、纯路径漂移，以及下一步查看入口，而不是重复整块 artifact 内容。",
-    storyboardEyebrow: "Trace 分镜",
-    storyboardTitle: "只预览真正发生分歧的 turn。",
-    claimEyebrow: "Claims 与 Eval",
-    claimTitle: "让 evidence-linked claims 和完整性状态可以一眼扫读。",
+      "下面的卡片优先强调结果变化、纯路径漂移，以及下一步查看入口，而不是重复整块原始产物内容。",
+    storyboardEyebrow: "轨迹分镜",
+    storyboardTitle: "只预览真正发生分歧的回合。",
+    claimEyebrow: "论点与评测",
+    claimTitle: "让证据关联的论点与完整性状态可以一眼扫读。",
     evalEyebrow: "审阅交接",
     evalTitle: "用首页先判断是否需要继续进入深度审阅，而不是默认把整套重型工具全部打开。",
     scorecardNote:
-      "完整的 review scorecard、routing 逻辑和历史重型 surface 依然保留，但它们现在统一收进深度审阅工作区。",
+      "完整的审阅评分卡、路由逻辑和历史重型操作面依然保留，但它们现在统一收进深度审阅工作区。",
     openReview: "进入审阅工作区",
-    openTrace: "查看 trace",
-    openClaims: "查看 claims",
+    openTrace: "查看轨迹",
+    openClaims: "查看论点",
     openReference: "查看参考"
   },
   routeSteps: [
@@ -325,18 +325,18 @@ const chineseCopy: Copy = {
     },
     {
       step: "02",
-      title: "回放分歧 turn",
+      title: "回放分歧回合",
       summary: "先看短分镜，再决定是否需要打开完整分支时间线。"
     },
     {
       step: "03",
-      title: "核对 claims 与证据",
-      summary: "确认哪些 claim 是被证据支撑的，以及它们依赖哪些 turn 或 chunk。"
+      title: "核对论点与证据",
+      summary: "确认哪些论点是被证据支撑的，以及它们依赖哪些回合或文本块。"
     },
     {
       step: "04",
-      title: "确认 eval 状态",
-      summary: "把 eval 当作完整性门槛，再决定是否继续更深的审阅。"
+      title: "确认评测状态",
+      summary: "把评测当作完整性门槛，再决定是否继续更深的审阅。"
     }
   ],
   metrics: {
@@ -349,63 +349,63 @@ const chineseCopy: Copy = {
     budgetExposed: "预算曝光",
     ledgerPublic: "账本公开",
     evacuation: "疏散触发",
-    divergentTurns: "分歧 turns",
-    evidenceLinkedClaims: "证据关联 claims",
-    evalStatus: "Eval 状态"
+    divergentTurns: "分歧回合",
+    evidenceLinkedClaims: "证据关联论点",
+    evalStatus: "评测状态"
   },
   review: {
-    title: "深度审阅把 scorecard 放在最前面，trace、claims、reference 和 advanced operations 都退到它之后。",
+    title: "深度审阅把评分卡放在最前面，轨迹、论点、参考面板和高级操作都退到它之后。",
     lede:
-      "这里是操作员工作区。先完成 scorecard，再看 trace 与 claims；只有在需要时才进入 reference，并把历史重型 tooling 放在明确的 advanced 边界之后。",
+      "这里是操作员工作区。先完成评分卡，再看轨迹与论点；只有在需要时才进入参考面板，并把历史重型工具收在明确的高级边界之后。",
     backToDashboard: "返回总览台",
     stripTitle: "审阅摘要条",
     sectionNav: {
       scorecard: "评分卡",
-      traceClaims: "Trace 与 Claims",
+      traceClaims: "轨迹与论点",
       reference: "参考面板",
       advanced: "高级操作"
     },
     scorecardTitle: "先给当前分支打分，再决定是否值得掉进重型工具。",
     scorecardSummary:
       "评分卡现在是深度审阅的主入口。它先总结可信度、薄弱维度，以及当前分支是否值得继续升级审阅，还是先补证据。",
-    traceTitle: "Trace 与 Claims",
+    traceTitle: "轨迹与论点",
     traceSummary:
-      "用这里把分歧 turns 与 evidence-linked claims 连起来，而不是一上来就重新打开整条原始 branch 历史。",
-    claimsTitle: "Claim drill-down",
+      "用这里把分歧回合与证据关联论点连起来，而不是一上来就重新打开整条原始分支历史。",
+    claimsTitle: "论点下钻",
     claimsSummary:
-      "Claims 继续保持 evidence-linked 和可追踪。每张卡片都展示支撑它的 chunks 和相关 turns。",
+      "论点继续保持证据关联和可追踪。每张卡片都展示支撑它的文本块和相关回合。",
     referenceTitle: "参考面板",
     referenceSummary:
-      "这些面板让 scenarios、graph、documents 和原始 report 都可达，但不会再主导首读体验。",
+      "这些面板让场景、图谱、文档和原始报告都可触达，但不再主导首读体验。",
     advancedTitle: "高级操作",
     advancedSummary:
-      "历史上的 packet、delivery 和重型操作 surface 继续保留，但它们明确退居为次级路径。",
+      "历史上的数据包、交付和重型操作面继续保留，但它们明确退居为次级路径。",
     legacyOperationsTitle: "历史操作工作区",
     legacyOperationsSummary:
-      "只有当你确实需要旧的 packet-heavy review tooling 时才打开这里。它仍然可用，但不再定义整个页面。",
+      "只有当你确实需要旧的重型审阅工具时才打开这里。它仍然可用，但不再定义整个页面。",
     legacyOperationsDisclosure: "打开历史操作面",
     rawReportTitle: "原始报告产物",
     rawReportSummary:
-      "这个面板展示原始 artifact 内容。外围 UI 是双语的，但 artifact 正文本体保持源内容原样。",
+      "这个面板展示原始产物内容。外围界面是双语的，但产物正文保持源内容原样。",
     documentTitle: "源文档",
     graphTitle: "图谱快照",
     scenariosTitle: "场景卡片",
     openSourceArtifact: "打开原始产物",
-    noDivergence: "这个分支没有记录到分歧 turn。",
-    noTarget: "没有显式 target"
+    noDivergence: "这个分支没有记录到分歧回合。",
+    noTarget: "没有明确目标"
   },
   rubric: {
     title: "审阅评分卡",
     helper:
-      "在展开更重的操作面之前，先从 usefulness、credibility、explainability 和 actionability 四个维度为当前分支打分。",
+      "在展开更重的操作面之前，先从有用性、可信度、可解释性和可行动性四个维度为当前分支打分。",
     notesLabel: "审阅备注",
     notesPlaceholder: "记录哪里还薄弱、哪里已经可信，以及下一步应该怎么推进。",
     dimensionsComplete: "已评分维度",
-    evidenceTracked: "证据关联 claims",
-    divergentTurns: "分歧 turns",
-    evalPosture: "Eval 状态",
+    evidenceTracked: "证据关联论点",
+    divergentTurns: "分歧回合",
+    evalPosture: "评测状态",
     recommendationLabel: "当前建议",
-    recommendationReady: "这个分支已经足够稳，可以继续进入更深审阅或受控 sign-off。",
+    recommendationReady: "这个分支已经足够稳，可以继续进入更深审阅或受控结论确认。",
     recommendationFollowup: "这个分支可以继续，但至少还有一个维度需要补强后再做强交接。",
     recommendationHold: "先停在这里，补齐最弱维度后再继续升级。",
     recommendationIncomplete: "先完成评分卡，再给出审阅建议。",
@@ -418,14 +418,14 @@ const chineseCopy: Copy = {
     routeOnlyDelta: "仅路径变化",
     timingDrift: "时间漂移",
     knowledgeShift: "知识扩散变化",
-    baseline: "Baseline",
-    candidate: "Candidate",
+    baseline: "基线",
+    candidate: "候选分支",
     rawArtifact: "原始产物",
     jumpToReview: "跳到审阅",
-    jumpToTrace: "Trace",
-    jumpToClaims: "Claims",
+    jumpToTrace: "轨迹",
+    jumpToClaims: "论点",
     jumpToEvidence: "证据",
-    jumpToEval: "Eval"
+    jumpToEval: "评测"
   }
 };
 

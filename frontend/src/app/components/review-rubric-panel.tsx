@@ -5,6 +5,10 @@ import { useMemo, useState } from "react";
 import type { AppLocale } from "../lib/locale-shared";
 import type { RubricRow } from "../lib/workbench-data";
 import { getCopy } from "../lib/copy";
+import {
+  formatEvalPosture,
+  localizeRubricRow
+} from "../lib/presenters";
 
 type ReviewRubricPanelProps = {
   locale: AppLocale;
@@ -86,18 +90,18 @@ export function ReviewRubricPanel({
         </article>
         <article className="briefCard">
           <span>{copy.rubric.evalPosture}</span>
-          <strong>
-            {evalName}: {evalStatus}
-          </strong>
+          <strong>{formatEvalPosture(locale, evalName, evalStatus)}</strong>
         </article>
       </div>
 
       <div className="rubricGrid">
-        {rubricRows.map((row) => (
+        {rubricRows.map((row) => {
+          const localizedRow = localizeRubricRow(locale, row);
+          return (
           <article key={row.dimension} className="rubricCard">
             <div className="rubricCardHeader">
               <div>
-                <h3>{row.dimension}</h3>
+                <h3>{localizedRow.dimension}</h3>
                 <p className="subtle">{scoreLabel(locale, scores[row.dimension])}</p>
               </div>
               <span className="pill">{copy.rubric.scoreLegend}</span>
@@ -116,17 +120,17 @@ export function ReviewRubricPanel({
             </div>
             <div className="rubricAnchors">
               <p>
-                <strong>1</strong> {row.one}
+                <strong>1</strong> {localizedRow.one}
               </p>
               <p>
-                <strong>3</strong> {row.three}
+                <strong>3</strong> {localizedRow.three}
               </p>
               <p>
-                <strong>5</strong> {row.five}
+                <strong>5</strong> {localizedRow.five}
               </p>
             </div>
           </article>
-        ))}
+        )})}
       </div>
 
       <div className="rubricNotes">
