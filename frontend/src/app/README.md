@@ -1,8 +1,9 @@
 # Frontend Workbench
 
-This app is the current Mirror review workbench.
+This app is the current Mirror bilingual review workbench.
 
-- It renders the canonical Fog Harbor artifact flow directly from `artifacts/demo/`.
-- The default reading path is compare -> evidence -> eval.
-- Packet-heavy review surfaces stay secondary to the core comparison path.
-- This round does not add a multi-world selector; additional worlds are validated through backend artifacts and transfer eval first.
+- `/` is the briefing dashboard for the canonical Fog Harbor compare flow.
+- `/review` is the deep review workspace where scorecard, trace, claims, reference, and advanced operations are layered more clearly.
+- UI chrome supports `中文 / EN` language switching through the lightweight `mirror-lang` cookie.
+- Raw artifact bodies remain source-authentic; only the frontend shell and explanatory UI are localized.
+- Packet-heavy and legacy operational surfaces remain available, but they no longer define the homepage.
