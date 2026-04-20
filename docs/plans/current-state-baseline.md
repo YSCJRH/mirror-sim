@@ -206,8 +206,8 @@ This note is the active Phase 46 queue baseline after the formal `v0.1.0` releas
   - `gh issue list --milestone "Phase 46 - Workbench Focus and Modularity" --state all`
     - `Phase 46 exit gate` is `open` and remains `status:blocked`
     - `Phase 46: sync repo truth to Phase 46 queue` is `closed` after the successor bootstrap PR merges
-    - `Phase 46: extract review-scorecard into modular feature slices` is `open` and is the current `status:ready` work item
-    - `Phase 46: define the default operator path around compare-evidence-eval` is `open` and remains `status:blocked`
+    - `Phase 46: extract review-scorecard into modular feature slices` is `closed` after merging PR `#340`
+    - `Phase 46: define the default operator path around compare-evidence-eval` is `open` and is the current `status:ready` work item
     - `Phase 46: move secondary packet surfaces behind advanced navigation` is `open` and remains `status:blocked`
   - `gh api repos/YSCJRH/mirror-sim/releases`
     - release `v0.1.0` exists and matches the committed release notes baseline
@@ -238,8 +238,8 @@ This note is the active Phase 46 queue baseline after the formal `v0.1.0` releas
 
 ## Next Entry Point
 
-- Phase 46 is now the sole active milestone, and `Phase 46: extract review-scorecard into modular feature slices` is the current ready work item.
-- The next unlock order is fixed: `Phase 46 exit gate` remains blocked, the queue-sync issue is already closed after successor bootstrap, the review-scorecard modularization issue is ready, and the remaining two frontend work items stay blocked until the queue advances.
+- Phase 46 is now the sole active milestone, and `Phase 46: define the default operator path around compare-evidence-eval` is the current ready work item.
+- The next unlock order is fixed: `Phase 46 exit gate` remains blocked, the queue-sync issue is already closed after successor bootstrap, the review-scorecard modularization issue is closed after merging PR `#340`, the default-operator-path issue is now ready, and the advanced-navigation issue stays blocked until the queue advances.
 - No Phase 47 milestone is pre-opened in this round; any successor beyond Phase 46 requires a fresh decision against the blueprint triggers in `mirror.md`.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
