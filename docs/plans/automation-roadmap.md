@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, Phase 36 closeout is complete, Phase 37 closeout is complete, Phase 38 closeout is complete, Phase 39 closeout is complete, Phase 40 closeout is complete, Phase 41 closeout is complete, Phase 42 closeout is complete, Phase 43 closeout is complete, Phase 44 closeout is complete, the first formal release remains published as `v0.1.0`, and the repo has now advanced the active queue to Phase 45.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, Phase 36 closeout is complete, Phase 37 closeout is complete, Phase 38 closeout is complete, Phase 39 closeout is complete, Phase 40 closeout is complete, Phase 41 closeout is complete, Phase 42 closeout is complete, Phase 43 closeout is complete, Phase 44 closeout is complete, Phase 45 execution work is complete, the first formal release remains published as `v0.1.0`, and the repo has now advanced the active queue to Phase 46.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -139,19 +139,26 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - `#314` `Phase 44: sync repo truth to Phase 44 queue` is merged and closed via PR `#317`.
 - `#315` `Phase 44: add canonical scenario matrix and eval coverage` is merged and closed via PR `#319`.
 - `#316` `Phase 44: add workbench counterfactual comparison overview` is merged and closed via PR `#321`.
-- Phase 45 is now open in GitHub.
-- Phase 45 milestone `Phase 45 - Branch Generalization and Compare Contracts` is open.
-- `#322` `Phase 45 exit gate` is open and remains `status:blocked`.
+- Phase 45 is now closed in GitHub after the successor handoff to Phase 46.
+- Phase 45 milestone `Phase 45 - Branch Generalization and Compare Contracts` is closed.
+- `#322` `Phase 45 exit gate` is closed after the Phase 46 successor queue is opened.
 - `#323` `Phase 45: sync repo truth to Phase 45 queue` is merged and closed via PR `#327`.
 - `#324` `Phase 45: ratify multi-branch compare ADR and contracts` is merged and closed via PR `#329`.
 - `#325` `Phase 45: implement branch_count runner and compare artifacts` is merged and closed via PR `#331`.
-- `#326` `Phase 45: consume compare artifacts in focused diff surfaces` is open and is now the current `status:ready` work item.
-- `audit-github-queue` now reports `ready` against the active Phase 45 milestone.
-- Phase 46 remains a documented successor direction only and is not an open milestone.
+- `#326` `Phase 45: consume compare artifacts in focused diff surfaces` is merged and closed via PR `#333`.
+- Phase 46 is now open in GitHub.
+- milestone `Phase 46 - Workbench Focus and Modularity` is open.
+- `Phase 46 exit gate` is open and remains `status:blocked`.
+- `Phase 46: sync repo truth to Phase 46 queue` is closed after the successor bootstrap PR merges.
+- `Phase 46: extract review-scorecard into modular feature slices` is now the current `status:ready` work item.
+- `Phase 46: define the default operator path around compare-evidence-eval` remains open and `status:blocked`.
+- `Phase 46: move secondary packet surfaces behind advanced navigation` remains open and `status:blocked`.
+- `audit-github-queue` now reports `ready` against the active Phase 46 milestone.
+- No Phase 47 milestone is pre-opened in this round.
 - The first formal repository release is published as `v0.1.0`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
-- The local Codex queue heartbeat should now follow the active Phase 45 queue instead of reporting the released stop-state as `paused`.
+- The local Codex queue heartbeat should now follow the active Phase 46 queue instead of reporting the interim no-ready-item state as `paused`.
 
 ## Day 0 Bootstrap
 
@@ -204,5 +211,5 @@ Before builder automation is allowed to write code or auto-merge:
 - Long-running execution must run from isolated worktrees rather than the current `main` checkout.
 - Queue pickup order, one-writer ownership, and branch hygiene should follow `docs/plans/long-running-loop-runbook.md`.
 - When the active milestone exists and the queue reports `ready`, the builder may resume against that milestone only.
-- While Phase 45 is active, do not open the planned Phase 46 milestone.
+- While Phase 46 is active, do not open a Phase 47 milestone without a fresh approval round.
 - When no open milestone exists and `audit-github-queue` reports `paused`, treat that state as an intentional released stop-state rather than a broken queue.

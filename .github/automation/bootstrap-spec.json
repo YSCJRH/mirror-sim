@@ -179,6 +179,10 @@
     {
       "title": "Phase 45 - Branch Generalization and Compare Contracts",
       "description": "Turn the Phase 44 counterfactual matrix into a formal multi-branch compare contract by ratifying branch-count semantics, durable compare artifacts, and focused diff consumption without widening the product surface."
+    },
+    {
+      "title": "Phase 46 - Workbench Focus and Modularity",
+      "description": "Turn the expanded compare-capable workbench into a more focused and maintainable operator surface by modularizing review-scorecard code, centering the default path on compare/evidence/eval, and moving secondary packet-heavy surfaces behind advanced navigation."
     }
   ],
   "labels": [
@@ -406,6 +410,11 @@
       "name": "phase:45",
       "color": "FFE2B8",
       "description": "Phase 45 branch generalization and compare contract work."
+    },
+    {
+      "name": "phase:46",
+      "color": "FFD1A6",
+      "description": "Phase 46 workbench focus and modularity work."
     },
     {
       "name": "area:backend",
@@ -2438,6 +2447,62 @@
         "lane:auto-safe"
       ],
       "body": "## Summary\nConsume the new compare artifacts in focused workbench diff surfaces that stay centered on branch understanding.\n\n## Scope\n- update the workbench to consume the durable compare artifacts instead of reconstructing every contrast client-side\n- focus the UI on scenario compare, trace diff, claim and evidence context, and eval-facing deltas\n- keep the workbench compatible with the ratified multi-branch compare contract\n\n## Constraints\n- do not introduce new operator packet families in this phase\n- do not change backend APIs beyond the ratified compare-artifact contract\n- keep the default path focused on compare -> trace -> claim/evidence -> eval"
+    },
+    {
+      "title": "Phase 46 exit gate",
+      "milestone": "Phase 46 - Workbench Focus and Modularity",
+      "labels": [
+        "phase:46",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "Close this issue only after the full Phase 46 workbench-focus queue is complete.\n\nExit criteria:\n- the Phase 46 queue-sync issue is merged\n- the review-scorecard modularization issue is merged\n- the default operator-path issue is merged\n- the advanced-navigation issue is merged\n- `npm run build --prefix frontend` passes\n- `./make.ps1 smoke` passes\n- `./make.ps1 test` passes\n- `./make.ps1 eval-demo` passes\n- `python -m backend.app.cli audit-phase phase1` passes\n- `python -m backend.app.cli audit-phase phase2` passes\n- `python -m backend.app.cli audit-phase phase3` passes\n- if no approved successor phase exists, the repo closes into an intentional `paused` stop-state with no open milestone"
+    },
+    {
+      "title": "Phase 46: sync repo truth to Phase 46 queue",
+      "milestone": "Phase 46 - Workbench Focus and Modularity",
+      "labels": [
+        "phase:46",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## Summary\nSync the repo truth from the closing Phase 45 queue to the active Phase 46 queue.\n\n## Scope\n- add the Phase 46 milestone, label, and issue definitions to the bootstrap spec\n- update README and active-state docs to show Phase 46 as the sole active queue after Phase 45 closeout\n- record that no Phase 47 milestone is pre-approved in this round\n- create the Phase 46 milestone and issues from the updated bootstrap spec\n- complete the GitHub closeout handoff from Phase 45 to Phase 46\n\n## Constraints\n- no simulation, report, claim, evidence, scenario, or schema contract changes\n- do not leave more than one active execution milestone open after closeout\n- no backend/runtime behavior changes beyond queue-governance sync"
+    },
+    {
+      "title": "Phase 46: extract review-scorecard into modular feature slices",
+      "milestone": "Phase 46 - Workbench Focus and Modularity",
+      "labels": [
+        "phase:46",
+        "area:frontend",
+        "status:blocked",
+        "lane:auto-safe"
+      ],
+      "body": "## Summary\nExtract the oversized review-scorecard implementation into maintainable frontend feature slices without changing the current compare contract.\n\n## Scope\n- split `frontend/src/app/review-scorecard.tsx` into smaller modules with clearer ownership boundaries\n- preserve current artifact-reading behavior, review logic, and packet/export semantics unless another Phase 46 issue explicitly narrows the default path\n- keep the resulting composition straightforward enough for future compare/evidence/eval workbench changes\n\n## Constraints\n- no backend API changes\n- no artifact schema changes\n- do not widen the packet surface while modularizing"
+    },
+    {
+      "title": "Phase 46: define the default operator path around compare-evidence-eval",
+      "milestone": "Phase 46 - Workbench Focus and Modularity",
+      "labels": [
+        "phase:46",
+        "area:frontend",
+        "status:blocked",
+        "lane:auto-safe"
+      ],
+      "body": "## Summary\nDefine the default workbench path around scenario compare, trace diff, claim/evidence review, and eval summary.\n\n## Scope\n- make compare -> trace -> claim/evidence -> eval the clearly favored default operator path\n- keep review-scorecard and related handoff surfaces accessible without letting them dominate the first-read experience\n- stay within the current artifact set and compare contract\n\n## Constraints\n- no backend API changes\n- no new compare contract changes\n- do not add new packet families in this issue"
+    },
+    {
+      "title": "Phase 46: move secondary packet surfaces behind advanced navigation",
+      "milestone": "Phase 46 - Workbench Focus and Modularity",
+      "labels": [
+        "phase:46",
+        "area:frontend",
+        "status:blocked",
+        "lane:auto-safe"
+      ],
+      "body": "## Summary\nMove the secondary packet-heavy surfaces behind an explicitly advanced navigation path so the default workbench entry stays focused.\n\n## Scope\n- group or gate secondary packet/export surfaces behind clearly secondary navigation\n- keep the existing packet-heavy surfaces reachable for established workflows\n- preserve artifact compatibility and current copy/export behavior while reducing default-path clutter\n\n## Constraints\n- no backend API changes\n- no packet schema changes\n- do not delete legacy packet surfaces in this phase"
     }
   ]
 }
