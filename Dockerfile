@@ -43,4 +43,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD node -e "const port = process.env.PORT || '3000'; fetch(`http://127.0.0.1:${port}/api/ready`).then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
 ENTRYPOINT ["/app/mirror/scripts/bootstrap-production.sh"]
-CMD ["sh", "-c", "exec node node_modules/next/dist/bin/next start --hostname 0.0.0.0 --port ${PORT:-3000}"]
+CMD ["sh", "-c", "exec node /app/mirror/frontend/node_modules/next/dist/bin/next start --hostname 0.0.0.0 --port ${PORT:-3000}"]
