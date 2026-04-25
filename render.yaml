@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: mirror-public-demo
+    runtime: docker
+    plan: free
+    branch: main
+    autoDeployTrigger: checksPass
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/ready
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MIRROR_ENV
+        value: production
+      - key: MIRROR_BOOTSTRAP_DEMO
+        value: "1"
+      - key: MIRROR_PUBLIC_DEMO_MODE
+        value: "1"
+      - key: MIRROR_ALLOW_ANONYMOUS_RUNS
+        value: "0"
+      - key: MIRROR_HOSTED_MODEL_ENABLED
+        value: "0"
