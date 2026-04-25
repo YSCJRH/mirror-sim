@@ -14,6 +14,7 @@ from backend.app.reports.service import generate_report
 from backend.app.scenarios.service import validate_scenario
 from backend.app.sessions.service import generate_branch, inspect_session, rollback_session, start_session
 from backend.app.simulation.service import simulate_branching_scenario, simulate_scenario
+from backend.app.utils import read_json_arg
 from backend.app.world_templates import CreateWorldTemplateInput, create_bounded_incident_world
 from backend.app.world_query import inspect_world
 
@@ -182,11 +183,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "create-world":
-        spec_path = Path(args.spec)
-        if spec_path.exists():
-            spec_payload = json.loads(spec_path.read_text(encoding="utf-8"))
-        else:
-            spec_payload = json.loads(args.spec)
+        spec_payload = read_json_arg(args.spec)
         payload = create_bounded_incident_world(
             CreateWorldTemplateInput.model_validate(spec_payload),
             repo_root=settings.repo_root,

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-import json
 import os
 from pathlib import Path
 from uuid import uuid4
@@ -31,7 +30,7 @@ from backend.app.simulation.service import (
     write_compare_artifact,
 )
 from backend.app.simulation.rules import load_simulation_plan
-from backend.app.utils import ensure_dir, read_json, slugify, write_json
+from backend.app.utils import ensure_dir, read_json, read_json_arg, slugify, write_json
 from backend.app.worlds import list_world_ids, resolve_world_paths
 
 
@@ -172,11 +171,7 @@ def _write_root_node(
 
 
 def _parse_perturbation_payload(raw: str) -> PerturbationPayload:
-    path = Path(raw)
-    if path.exists():
-        payload = read_json(path)
-    else:
-        payload = json.loads(raw)
+    payload = read_json_arg(raw)
     return PerturbationPayload.model_validate(payload)
 
 

@@ -22,6 +22,20 @@ def read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def read_json_arg(raw: str) -> Any:
+    stripped = raw.lstrip()
+    if stripped.startswith("{") or stripped.startswith("["):
+        return json.loads(raw)
+
+    path = Path(raw)
+    try:
+        if path.exists():
+            return read_json(path)
+    except OSError:
+        pass
+    return json.loads(raw)
+
+
 def write_jsonl(path: Path, items: Iterable[Any]) -> None:
     ensure_dir(path.parent)
     with path.open("w", encoding="utf-8") as handle:
