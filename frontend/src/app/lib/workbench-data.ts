@@ -1,8 +1,8 @@
-import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-const repoRoot = path.resolve(process.cwd(), "..");
-export const compareArtifactPath = "artifacts/demo/compare/scenario_fog_harbor_phase44_matrix/compare.json";
+import { getPublicDemoArtifactSource, type ArtifactSource } from "./artifact-source";
+
+export const compareArtifactPath = "demo.compare";
 
 export type Claim = {
   claim_id: string;
@@ -232,21 +232,6 @@ export type WorkbenchData = {
   claimDrilldowns: ClaimDrilldown[];
 };
 
-async function readText(relativePath: string) {
-  return readFile(path.join(repoRoot, relativePath), "utf-8");
-}
-
-async function readJson<T>(relativePath: string) {
-  return JSON.parse(await readText(relativePath)) as T;
-}
-
-async function readJsonl<T>(relativePath: string) {
-  return (await readText(relativePath))
-    .split("\n")
-    .filter(Boolean)
-    .map((line) => JSON.parse(line) as T);
-}
-
 function parseRubricRows(rubric: string): RubricRow[] {
   const rows = rubric
     .split("\n")
@@ -292,23 +277,23 @@ function runKeyFromSummaryPath(summaryPath: string) {
   return path.basename(path.dirname(summaryPath));
 }
 
-async function loadSnapshots(snapshotDir: string, turnBudget: number) {
+async function loadSnapshots(source: ArtifactSource, snapshotDir: string, turnBudget: number) {
   return Promise.all(
     Array.from({ length: turnBudget }, (_, index) =>
-      readJson<SnapshotPayload>(
+      source.readTrustedDemoJson<SnapshotPayload>(
         `artifacts/demo/${snapshotDir}/turn-${String(index + 1).padStart(2, "0")}.json`
       )
     )
   );
 }
 
-async function loadRunPayload(branch: CompareBranch): Promise<RunPayload> {
+async function loadRunPayload(source: ArtifactSource, branch: CompareBranch): Promise<RunPayload> {
   const key = runKeyFromSummaryPath(branch.summary_path);
-  const scenario = await readJson<ScenarioPayload>(`artifacts/demo/scenario/${key}.json`);
+  const scenario = await source.readTrustedDemoJson<ScenarioPayload>(`artifacts/demo/scenario/${key}.json`);
   const [summary, actions, snapshots] = await Promise.all([
-    readJson<RunSummary>(`artifacts/demo/${branch.summary_path}`),
-    readJsonl<TurnAction>(`artifacts/demo/${branch.trace_path}`),
-    loadSnapshots(branch.snapshot_dir, scenario.turn_budget)
+    source.readTrustedDemoJson<RunSummary>(`artifacts/demo/${branch.summary_path}`),
+    source.readTrustedDemoJsonl<TurnAction>(`artifacts/demo/${branch.trace_path}`),
+    loadSnapshots(source, branch.snapshot_dir, scenario.turn_budget)
   ]);
 
   return {
@@ -456,18 +441,19 @@ function buildComparisonOverview(
 }
 
 export async function loadWorkbenchData(): Promise<WorkbenchData> {
+  const source = getPublicDemoArtifactSource();
   const [report, claims, evalSummary, rubric, documents, chunks, graph, compareArtifact] = await Promise.all([
-    readText("artifacts/demo/report/report.md"),
-    readJson<Claim[]>("artifacts/demo/report/claims.json"),
-    readJson<EvalSummary>("artifacts/demo/eval/summary.json"),
-    readText("docs/rubrics/human-review.md"),
-    readJsonl<DocumentRow>("artifacts/demo/ingest/documents.jsonl"),
-    readJsonl<ChunkRow>("artifacts/demo/ingest/chunks.jsonl"),
-    readJson<GraphPayload>("artifacts/demo/graph/graph.json"),
-    readJson<CompareArtifact>(compareArtifactPath)
+    source.readText("demo.report"),
+    source.readJson<Claim[]>("demo.claims"),
+    source.readJson<EvalSummary>("demo.eval_summary"),
+    source.readText("demo.rubric"),
+    source.readJsonl<DocumentRow>("demo.documents"),
+    source.readJsonl<ChunkRow>("demo.chunks"),
+    source.readJson<GraphPayload>("demo.graph"),
+    source.readJson<CompareArtifact>(compareArtifactPath)
   ]);
 
-  const runs = await Promise.all(compareArtifact.branches.map((branch) => loadRunPayload(branch)));
+  const runs = await Promise.all(compareArtifact.branches.map((branch) => loadRunPayload(source, branch)));
   const runsByKey = new Map(runs.map((run) => [run.key, run]));
   const runsByBranchId = new Map(runs.map((run) => [run.branch.branch_id, run]));
   const baselineRun = runsByBranchId.get(compareArtifact.reference_branch_id) ?? runs[0];

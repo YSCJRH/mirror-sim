@@ -1,360 +1,174 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 
-import { LanguageSwitch } from "./components/language-switch";
-import { getCopy } from "./lib/copy";
+import { ButtonLink } from "./components/button-link";
+import { ContextCard } from "./components/context-card";
+import { PageHero } from "./components/page-hero";
+import { SectionHeading } from "./components/section-heading";
+import { SurfaceCard } from "./components/surface-card";
+import { WorkbenchTopBar } from "./components/workbench-top-bar";
 import { getAppLocale } from "./lib/locale";
-import {
-  formatDocumentCount,
-  buildOverviewLines,
-  formatDivergentTurnCount,
-  formatDeltaLabel,
-  formatEvidenceCount,
-  formatEvalPosture,
-  formatRelatedTurnCount,
-  localizeActionType,
-  localizeClaimLabel,
-  localizeEvalMetricKey,
-  localizeScenarioDescription,
-  localizeScenarioTitle,
-  formatTurn,
-  friendlyWorldName
-} from "./lib/presenters";
-import { loadWorkbenchData, type ClaimDrilldown } from "./lib/workbench-data";
-
-function summarizeClaimSources(drilldown: ClaimDrilldown) {
-  const documents = Array.from(
-    drilldown.evidenceChunks.reduce((map, entry) => {
-      const key = entry.document?.document_id ?? entry.chunk.document_id;
-      const current = map.get(key);
-      map.set(key, {
-        key,
-        title: entry.document?.title ?? entry.chunk.document_id,
-        count: (current?.count ?? 0) + 1
-      });
-      return map;
-    }, new Map<string, { key: string; title: string; count: number }>())
-  ).map(([, value]) => value);
-
-  return documents;
-}
+import { loadWorkbenchData } from "./lib/workbench-data";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getAppLocale();
   return {
-    title: locale === "zh-CN" ? "Mirror 工作台总览" : "Mirror Briefing Dashboard",
+    title: "Mirror Public Demo",
     description:
-      locale === "zh-CN"
-        ? "Mirror 的双语编辑部指挥台首页，优先展示对比、证据与评测。"
-        : "Bilingual editorial briefing dashboard for Mirror's compare, evidence, and eval flow."
+      "A read-only deterministic demo for inspecting Mirror's bounded replay, branch comparison, claims, evidence, and eval summary."
   };
 }
 
 export default async function Page() {
   const locale = await getAppLocale();
-  const copy = getCopy(locale);
   const data = await loadWorkbenchData();
-  const worldName = friendlyWorldName(locale, data.graph.world_id);
-  const keyClaims = data.claimDrilldowns.slice(0, 3);
-  const topMetrics = Object.entries(data.evalSummary.metrics)
-    .slice(0, 4)
-    .map(([key, value]) => ({
-      key,
-      label: localizeEvalMetricKey(locale, key),
-      value
-    }));
-  const baselineTitle = localizeScenarioTitle(
-    locale,
-    data.baselineRun.scenario.scenario_id,
-    data.baselineRun.scenario.title
-  );
-  const reportComparisonTitle = localizeScenarioTitle(
-    locale,
-    data.reportComparisonRun.scenario.scenario_id,
-    data.reportComparisonRun.scenario.title
-  );
+  const featuredBranch = data.reportComparisonRun.branch.branch_id;
+  const checksPassed =
+    data.evalSummary.metrics.checks_passed ?? data.evalSummary.metrics.passed_assertions ?? 0;
+  const checksTotal = data.evalSummary.metrics.checks_total ?? data.evalSummary.metrics.assertions_total ?? null;
 
   return (
     <main className="workbenchPage">
-      <header className="topBar">
-        <div className="topBarBrand">
-          <p className="eyebrow">{copy.brand.eyebrow}</p>
-          <div className="topBarLinks">
-            <span className="topBarActive">{copy.brand.dashboardLabel}</span>
-            <Link href="/review">{copy.brand.reviewLabel}</Link>
-          </div>
-        </div>
-        <LanguageSwitch locale={locale} />
-      </header>
+      <WorkbenchTopBar
+        locale={locale}
+        eyebrow="Mirror Public Demo"
+        items={[
+          { href: "/", label: "Public Demo", active: true },
+          { href: `/changes/${featuredBranch}`, label: "Branch Comparison", active: false },
+          { href: `/explain/${featuredBranch}`, label: "Claims & Evidence", active: false },
+          { href: "/review", label: "Advanced Review", active: false }
+        ]}
+      />
 
-      <section className="heroPanel">
-        <div className="heroPanelCopy">
-          <p className="eyebrow">{copy.dashboard.interventionEyebrow}</p>
-          <h1>{copy.dashboard.title}</h1>
-          <p className="lede">{copy.dashboard.lede}</p>
-          <div className="heroActions">
-            <Link className="heroAction heroActionPrimary" href="/review">
-              {copy.dashboard.jumpToReview}
-            </Link>
-            <Link className="heroAction" href="/review#reference">
-              {copy.dashboard.jumpToReference}
-            </Link>
+      <PageHero
+        eyebrow="Deterministic-only Phase 1"
+        title="Replay a bounded what-if world without accounts, uploads, or model calls."
+        lede="Mirror is a constrained, evidence-backed, replayable sandbox for fictional or explicitly authorized worlds. This public demo serves one precomputed Fog Harbor scenario so visitors can inspect the replay, branch comparison, claims, evidence, and eval summary."
+        support="This is not a real-world prediction tool, not a real-person replica system, and not a political persuasion or high-risk decision product."
+        actions={
+          <>
+            <ButtonLink href={`/changes/${featuredBranch}`} variant="primary">
+              Explore branch comparison
+            </ButtonLink>
+            <ButtonLink href={`/explain/${featuredBranch}`} variant="secondary">
+              Inspect claims and evidence
+            </ButtonLink>
+            <ButtonLink href="/review" variant="ghost">
+              Advanced review
+            </ButtonLink>
+          </>
+        }
+        aside={
+          <div className="contextCardGrid contextCardGridCompact">
+            <ContextCard
+              label="Demo world"
+              value={data.graph.world_id ?? "fog-harbor"}
+              summary="Original fictional canonical demo artifacts."
+              tone="accent"
+            />
+            <ContextCard
+              label="Eval status"
+              value={data.evalSummary.status}
+              summary={`${checksPassed}${checksTotal ? `/${checksTotal}` : ""} checks passed; generated before the request. No hosted model is called here.`}
+            />
           </div>
-        </div>
-        <div className="briefSummaryGrid">
-          <article className="briefCard briefCardDark">
-            <span>{copy.brand.worldLabel}</span>
-            <strong>{worldName}</strong>
-          </article>
-          <article className="briefCard">
-            <span>{copy.metrics.scenarioBranches}</span>
-            <strong>{data.compareArtifact.branch_count}</strong>
-          </article>
-          <article className="briefCard">
-            <span>{copy.metrics.interventionBranches}</span>
-            <strong>{data.comparisonRuns.length}</strong>
-          </article>
-          <article className="briefCard">
-            <span>{copy.metrics.evalStatus}</span>
-            <strong>{formatEvalPosture(locale, data.evalSummary.eval_name, data.evalSummary.status)}</strong>
-          </article>
-          <article className="briefCard briefCardWide">
-            <span>{copy.dashboard.currentPair}</span>
-            <strong>{baselineTitle} ↔ {reportComparisonTitle}</strong>
-          </article>
-          <article className="briefCard briefCardWide">
-            <span>{copy.brand.compareArtifactLabel}</span>
-            <code>{data.compareArtifact.compare_id}</code>
-          </article>
-        </div>
-      </section>
+        }
+      />
 
       <section className="dashboardSection">
-        <div className="sectionHeading">
-          <p className="eyebrow">{copy.dashboard.routeEyebrow}</p>
-          <h2>{copy.dashboard.routeTitle}</h2>
-          <p>{copy.dashboard.routeSummary}</p>
-        </div>
-        <div className="routeBoard">
-          {copy.routeSteps.map((step) => (
-            <article key={step.step} className="routeCard">
-              <span className="routeIndex">{step.step}</span>
-              <h3>{step.title}</h3>
-              <p>{step.summary}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="dashboardSection">
-        <div className="sectionHeading">
-          <p className="eyebrow">{copy.dashboard.interventionEyebrow}</p>
-          <h2>{copy.dashboard.interventionTitle}</h2>
-          <p>{copy.dashboard.interventionSummary}</p>
-        </div>
-        <div className="interventionBoard">
-          <article className="interventionCard interventionCardReference">
+        <SectionHeading
+          eyebrow="Guided demo"
+          title="Start with the replay, then follow the evidence."
+          description="The public path focuses on understanding the canonical demo. Runtime mutation, create-world, corpus upload, Hosted GPT, BYOK, auth, payment, database storage, and quota systems are reserved for later phases."
+        />
+        <div className="branchComparisonGrid">
+          <SurfaceCard className="branchComparisonCard" tone="strong" as="article">
             <div className="interventionCardMeta">
-              <span>{copy.common.referenceBranch}</span>
-              <code>{data.baselineRun.scenario.scenario_id}</code>
+              <span>What Mirror is</span>
+              <span>Allowed Phase 1 path</span>
             </div>
-            <h3>{baselineTitle}</h3>
-            <p>
-              {localizeScenarioDescription(
-                locale,
-                data.baselineRun.scenario.scenario_id,
-                data.baselineRun.scenario.description
-              )}
+            <h3>Bounded, replayable simulation review</h3>
+            <p className="subtle">
+              Inspect a fictional world, compare deterministic branches, and trace claims back to evidence chunks
+              and turn actions.
             </p>
-            <div className="deltaBadgeRow">
-              <span className="deltaBadge">{copy.metrics.budgetExposed}: {formatTurn(locale, data.baselineRun.summary.budget_exposed_turn)}</span>
-              <span className="deltaBadge">{copy.metrics.ledgerPublic}: {formatTurn(locale, data.baselineRun.summary.ledger_public_turn)}</span>
-              <span className="deltaBadge">{copy.metrics.evacuation}: {formatTurn(locale, data.baselineRun.summary.evacuation_turn)}</span>
+          </SurfaceCard>
+          <SurfaceCard className="branchComparisonCard" tone="strong" as="article">
+            <div className="interventionCardMeta">
+              <span>What Mirror is not</span>
+              <span>Blocked in public demo</span>
             </div>
-            <div className="artifactChipRow">
-              <span className="artifactChip">{copy.brand.sourceArtifactLabel}</span>
-              <code>artifacts/demo/{data.baselineRun.branch.summary_path}</code>
+            <h3>No prediction, persuasion, or real-person profiling</h3>
+            <p className="subtle">
+              Phase 1 does not forecast real events, model real people, make high-risk decisions, or run political
+              persuasion workflows.
+            </p>
+          </SurfaceCard>
+          <SurfaceCard className="branchComparisonCard" tone="strong" as="article">
+            <div className="interventionCardMeta">
+              <span>Demo artifacts</span>
+              <span>Allowlisted API</span>
             </div>
-          </article>
-
-          {data.comparisonOverviews.map((overview) => {
-            const summaryLines = buildOverviewLines(locale, overview).slice(0, 3);
-            return (
-              <article key={overview.run.key} className="interventionCard">
-                <div className="interventionCardMeta">
-                  <span>{localizeScenarioTitle(locale, overview.run.scenario.scenario_id, overview.run.label)}</span>
-                  <code>{overview.run.scenario.scenario_id}</code>
-                </div>
-                <h3>{localizeScenarioTitle(locale, overview.run.scenario.scenario_id, overview.run.scenario.title)}</h3>
-                <p>{localizeScenarioDescription(locale, overview.run.scenario.scenario_id, overview.run.scenario.description)}</p>
-                <div className="deltaBadgeRow">
-                  <span className="deltaBadge">
-                    {copy.metrics.budgetExposed}: {formatDeltaLabel(locale, overview.budgetExposureDelta)}
-                  </span>
-                  <span className="deltaBadge">
-                    {copy.metrics.ledgerPublic}: {formatDeltaLabel(locale, overview.ledgerDelta)}
-                  </span>
-                  <span className="deltaBadge">
-                    {copy.metrics.evacuation}: {formatDeltaLabel(locale, overview.evacuationDelta)}
-                  </span>
-                  <span className="deltaBadge">
-                    {copy.metrics.divergentTurns}: {overview.divergentTurnCount}
-                  </span>
-                  <span className="deltaBadge">
-                    {overview.routeOnly ? copy.common.routeOnlyDelta : copy.common.timingDrift}
-                  </span>
-                  {overview.knowledgeShift ? (
-                    <span className="deltaBadge">{copy.common.knowledgeShift}</span>
-                  ) : null}
-                </div>
-                <ul className="summaryList">
-                  {summaryLines.map((line) => (
-                    <li key={line}>{line}</li>
-                  ))}
-                </ul>
-                <div className="cardActions">
-                  <Link className="linkPill" href={`/review#trace-${overview.run.key}`}>
-                    {copy.dashboard.openTrace}
-                  </Link>
-                  <Link className="linkPill" href="/review#claims">
-                    {copy.dashboard.openClaims}
-                  </Link>
-                  <Link className="linkPill" href="/review#reference">
-                    {copy.dashboard.openReference}
-                  </Link>
-                </div>
-              </article>
-            );
-          })}
+            <h3>Canonical Fog Harbor only</h3>
+            <p className="subtle">
+              The public API exposes logical artifact ids for the manifest, report, claims, evidence, graph,
+              comparison, and eval summary. It does not expose local filesystem paths.
+            </p>
+          </SurfaceCard>
         </div>
       </section>
 
       <section className="dashboardSection">
-        <div className="sectionHeading">
-          <p className="eyebrow">{copy.dashboard.storyboardEyebrow}</p>
-          <h2>{copy.dashboard.storyboardTitle}</h2>
-        </div>
-        <div className="storyboardGrid">
-          {data.comparisonOverviews.map((overview) => (
-            <article key={overview.run.key} className="storyboardCard">
+        <SectionHeading
+          eyebrow="Branch comparison"
+          title="Review deterministic deltas without starting a new run."
+          description={`${data.comparisonOverviews.length} precomputed branches are available. The baseline branch is ${data.baselineRun.label}.`}
+        />
+        <div className="branchComparisonGrid">
+          {data.comparisonOverviews.slice(0, 4).map((overview) => (
+            <SurfaceCard key={overview.run.branch.branch_id} className="branchComparisonCard" as="article">
               <div className="interventionCardMeta">
-                <span>{localizeScenarioTitle(locale, overview.run.scenario.scenario_id, overview.run.scenario.title)}</span>
-                <code>{formatDivergentTurnCount(locale, overview.divergentTurnCount)}</code>
+                <span>{overview.run.scenario.scenario_id}</span>
+                <span>{overview.divergentTurnCount} divergent turns</span>
               </div>
-              <div className="storyboardRows">
-                {overview.rows.slice(0, 2).map((row) => (
-                  <article key={`${overview.run.key}-${row.turnIndex}`} className="storyboardRow">
-                    <div className="storyboardRowTop">
-                      <strong>T{row.turnIndex}</strong>
-                      <span className="pill">{copy.common.rawArtifact}</span>
-                    </div>
-                    <div className="storyboardColumns">
-                      <div className="storyboardTurn">
-                        <span>{copy.common.baseline}</span>
-                        {row.reference ? (
-                          <>
-                            <strong>{localizeActionType(locale, row.reference.turn.action_type)}</strong>
-                            <p>{row.reference.turn.rationale}</p>
-                          </>
-                        ) : (
-                          <p>{copy.review.noDivergence}</p>
-                        )}
-                      </div>
-                      <div className="storyboardTurn">
-                        <span>{copy.common.candidate}</span>
-                        {row.candidate ? (
-                          <>
-                            <strong>{localizeActionType(locale, row.candidate.turn.action_type)}</strong>
-                            <p>{row.candidate.turn.rationale}</p>
-                          </>
-                        ) : (
-                          <p>{copy.review.noDivergence}</p>
-                        )}
-                      </div>
-                    </div>
-                  </article>
-                ))}
+              <h3>{overview.run.scenario.title}</h3>
+              <p className="subtle">{overview.summaryLines[0]}</p>
+              <div className="cardActions">
+                <ButtonLink href={`/changes/${overview.run.branch.branch_id}`} variant="primary">
+                  Compare branch
+                </ButtonLink>
+                <ButtonLink href={`/explain/${overview.run.branch.branch_id}`} variant="secondary">
+                  Evidence view
+                </ButtonLink>
               </div>
-            </article>
+            </SurfaceCard>
           ))}
         </div>
       </section>
 
-      <div className="dashboardSplit">
-        <section className="dashboardSection">
-          <div className="sectionHeading">
-            <p className="eyebrow">{copy.dashboard.claimEyebrow}</p>
-            <h2>{copy.dashboard.claimTitle}</h2>
-            <p>
-              {locale === "zh-CN"
-                ? "首页只保留论点结构摘要，不直接摊开原始 claim 文本和证据摘录。"
-                : "The dashboard keeps only the claim structure in view and leaves raw claim text and evidence excerpts for deeper review."}
-            </p>
-          </div>
-          <div className="claimSnapshotGrid">
-            {keyClaims.map((drilldown) => {
-              const { claim, evidenceChunks, relatedTurns } = drilldown;
-              const sourceDocuments = summarizeClaimSources(drilldown);
-              return (
-              <article key={claim.claim_id} className="claimSnapshotCard">
-                <div className="interventionCardMeta">
-                  <span>{claim.claim_id}</span>
-                  <span className="pill">{localizeClaimLabel(locale, claim.label)}</span>
-                </div>
-                <div className="artifactChipRow">
-                  <span className="artifactChip">{formatEvidenceCount(locale, evidenceChunks.length)}</span>
-                  <span className="artifactChip">{formatRelatedTurnCount(locale, relatedTurns.length)}</span>
-                  <span className="artifactChip">{formatDocumentCount(locale, sourceDocuments.length)}</span>
-                </div>
-                <p className="subtle">
-                  {locale === "zh-CN"
-                    ? "这条论点已被证据链约束，详情可在深度审阅页按需展开。"
-                    : "This claim stays evidence-bound, with the raw text and excerpts deferred to deep review."}
-                </p>
-                <div className="miniList">
-                  {sourceDocuments.slice(0, 2).map((document) => (
-                    <article key={document.key} className="miniCard">
-                      <strong>{document.title}</strong>
-                      <p>
-                        {locale === "zh-CN"
-                          ? `关联 ${document.count} 条证据摘录`
-                          : `${document.count} linked evidence excerpt${document.count === 1 ? "" : "s"}`}
-                      </p>
-                    </article>
-                  ))}
-                </div>
-              </article>
-            )})}
-          </div>
-        </section>
-
-        <section className="dashboardSection">
-          <div className="sectionHeading">
-            <p className="eyebrow">{copy.dashboard.evalEyebrow}</p>
-            <h2>{copy.dashboard.evalTitle}</h2>
-            <p>{copy.dashboard.scorecardNote}</p>
-          </div>
-          <div className="briefSummaryGrid">
-            {topMetrics.map(({ key, label, value }) => (
-              <article key={key} className="briefCard">
-                <span>{label}</span>
-                <strong>{value}</strong>
-              </article>
-            ))}
-          </div>
-          <div className="dashboardCallout">
-            <p className="subtle">{formatEvalPosture(locale, data.evalSummary.eval_name, data.evalSummary.status)}</p>
-            <div className="cardActions">
-              <Link className="surfaceAction surfaceActionPrimary" href="/review">
-                {copy.dashboard.openReview}
-              </Link>
-              <Link className="surfaceAction" href="/review#advanced-operations">
-                {copy.rubric.openLegacy}
-              </Link>
-            </div>
-          </div>
-        </section>
-      </div>
+      <section className="dashboardSection">
+        <SectionHeading
+          eyebrow="Claims, evidence, eval"
+          title="Every report claim keeps its label and evidence ids."
+          description={`${data.claims.length} claims, ${data.documents.length} documents, and ${data.chunks.length} evidence chunks are available for inspection through the public demo path.`}
+        />
+        <div className="contextCardGrid">
+          <ContextCard
+            label="Claims"
+            value={String(data.claims.length)}
+            summary="Structured claims keep label and evidence_ids for verification."
+            tone="accent"
+          />
+          <ContextCard
+            label="Evidence chunks"
+            value={String(data.chunks.length)}
+            summary="Chunks are fictional or explicitly authorized demo material."
+          />
+          <ContextCard
+            label="Eval failures"
+            value={String(data.evalSummary.failures.length)}
+            summary="The eval summary is served as a precomputed artifact."
+          />
+        </div>
+      </section>
     </main>
   );
 }
