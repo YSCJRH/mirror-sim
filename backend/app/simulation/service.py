@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from backend.app.config import get_settings
+from backend.app.decision_kernel import DecisionKernel
 from backend.app.domain.models import (
     CompareArtifact,
     CompareBranch,
@@ -19,6 +20,7 @@ from backend.app.domain.models import (
     Scenario,
     TurnAction,
 )
+from backend.app.perturbations import load_decision_schema
 from backend.app.scenarios.service import load_scenario
 from backend.app.simulation.rules import OutcomeDefinition, SimulationPlan, StepChoice, load_simulation_plan
 from backend.app.utils import ensure_dir, read_json, read_jsonl, slugify, write_json, write_jsonl
@@ -54,6 +56,13 @@ def load_run_artifacts(run_dir: Path) -> tuple[RunTrace, list[TurnAction]]:
 
 def _simulation_plan_path_for_scenario(scenario_path: Path) -> Path:
     return scenario_path.parent.parent / "config" / "simulation_rules.yaml"
+
+
+def _decision_schema_path_for_scenario(scenario_path: Path) -> Path:
+    schema_path = scenario_path.parent.parent / "config" / "decision_schema.yaml"
+    if not schema_path.exists():
+        schema_path = get_settings().decision_schema_path
+    return schema_path
 
 
 def _load_plan_for_scenario(scenario_path: Path, scenario: Scenario) -> SimulationPlan:
@@ -199,21 +208,27 @@ def _action_for_turn(
     state: dict[str, Any],
     plan: SimulationPlan,
     step_choices: list[StepChoice],
+    decision_kernel: DecisionKernel,
+    scenario_id: str,
 ) -> TurnAction:
     evidence_ids = _persona_evidence(personas, persona_id)
     actor_entity = personas[persona_id].entity_id
     before = deepcopy(state)
 
-    selected = next(
-        (
-            choice
-            for choice in step_choices
-            if _choice_matches(choice, state=state, turn_index=turn_index, actor_id=persona_id, plan=plan)
-        ),
-        None,
-    )
-    if selected is None:
+    matching_choices = [
+        choice
+        for choice in step_choices
+        if _choice_matches(choice, state=state, turn_index=turn_index, actor_id=persona_id, plan=plan)
+    ]
+    if not matching_choices:
         raise ValueError(f"No matching simulation step choice for turn {turn_index} in world {plan.world_id}.")
+    selected = decision_kernel.choose(
+        scenario_id=scenario_id,
+        turn_index=turn_index,
+        actor_id=persona_id,
+        state=before,
+        choices=matching_choices,
+    )
 
     _apply_updates(
         state=state,
@@ -244,6 +259,7 @@ def _summary_outcome_value(summary: RunTrace, field: str) -> Any:
 
 def _simulate_loaded_scenario(
     scenario: Scenario,
+    scenario_path: Path,
     plan: SimulationPlan,
     graph_path: Path,
     personas_path: Path,
@@ -251,6 +267,9 @@ def _simulate_loaded_scenario(
     *,
     run_id: str | None = None,
     notes_prefix: list[str] | None = None,
+    decision_trace_path: Path | None = None,
+    decision_provider: str | None = None,
+    decision_model_id: str | None = None,
 ) -> tuple[RunTrace, list[TurnAction]]:
     _ = read_json(graph_path)
     personas = _load_personas(personas_path)
@@ -265,6 +284,15 @@ def _simulate_loaded_scenario(
     notes = [f"Deterministic run for {scenario.scenario_id}.", *(notes_prefix or [])]
     state = deepcopy(plan.initial_state)
     _apply_injections(scenario, plan, state, notes)
+    decision_schema = load_decision_schema(_decision_schema_path_for_scenario(scenario_path))
+    kernel = DecisionKernel(
+        world_id=scenario.world_id,
+        schema=decision_schema,
+        run_id=resolved_run_id,
+        decision_trace_path=decision_trace_path,
+        provider_override=decision_provider,
+        model_id_override=decision_model_id,
+    )
 
     snapshots_dir = ensure_dir(out_dir / "snapshots")
     for existing in snapshots_dir.glob("*.json"):
@@ -284,6 +312,8 @@ def _simulate_loaded_scenario(
             state,
             plan,
             step.choices,
+            kernel,
+            scenario.scenario_id,
         )
         actions.append(action)
         write_json(snapshots_dir / f"turn-{turn_index:02d}.json", {"turn_index": turn_index, "state": state})
@@ -311,8 +341,53 @@ def _simulate_loaded_scenario(
 def simulate_scenario(scenario_path: Path, graph_path: Path, personas_path: Path, out_dir: Path) -> RunTrace:
     scenario = load_scenario(scenario_path)
     plan = _load_plan_for_scenario(scenario_path, scenario)
-    summary, _ = _simulate_loaded_scenario(scenario, plan, graph_path, personas_path, out_dir)
+    summary, _ = _simulate_loaded_scenario(
+        scenario,
+        scenario_path,
+        plan,
+        graph_path,
+        personas_path,
+        out_dir,
+        decision_trace_path=out_dir / "decision_trace.jsonl",
+    )
     return summary
+
+
+def simulate_runtime_scenario(
+    scenario: Scenario,
+    *,
+    scenario_path: Path,
+    graph_path: Path,
+    personas_path: Path,
+    out_dir: Path,
+    run_id: str,
+    branch_id: str,
+    label: str,
+    notes_prefix: list[str] | None = None,
+    decision_provider: str | None = None,
+    decision_model_id: str | None = None,
+) -> BranchRunArtifacts:
+    plan = _load_plan_for_scenario(scenario_path, scenario)
+    summary, actions = _simulate_loaded_scenario(
+        scenario,
+        scenario_path,
+        plan,
+        graph_path,
+        personas_path,
+        out_dir,
+        run_id=run_id,
+        notes_prefix=notes_prefix,
+        decision_trace_path=out_dir.parent / "decision_trace.jsonl",
+        decision_provider=decision_provider,
+        decision_model_id=decision_model_id,
+    )
+    return BranchRunArtifacts(
+        branch_id=branch_id,
+        label=label,
+        summary=summary,
+        actions=actions,
+        run_dir=out_dir,
+    )
 
 
 def _branch_label(injection_ids: tuple[str, ...]) -> str:
@@ -486,12 +561,14 @@ def simulate_branching_scenario(
         branch_notes = ["Branch injections: " + (", ".join(branch_plan.injection_ids) if branch_plan.injection_ids else "none")]
         summary, actions = _simulate_loaded_scenario(
             branch_plan.scenario,
+            scenario_path,
             plan,
             graph_path,
             personas_path,
             branch_run_dir,
             run_id=f"run_{scenario.scenario_id}_{scenario.seed}_{branch_plan.branch_id}",
             notes_prefix=branch_notes,
+            decision_trace_path=branch_run_dir / "decision_trace.jsonl",
         )
         branch_runs.append(
             BranchRunArtifacts(

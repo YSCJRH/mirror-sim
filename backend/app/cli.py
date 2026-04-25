@@ -12,7 +12,9 @@ from backend.app.ingest.service import ingest_manifest
 from backend.app.personas.service import build_personas
 from backend.app.reports.service import generate_report
 from backend.app.scenarios.service import validate_scenario
+from backend.app.sessions.service import generate_branch, inspect_session, rollback_session, start_session
 from backend.app.simulation.service import simulate_branching_scenario, simulate_scenario
+from backend.app.world_templates import CreateWorldTemplateInput, create_bounded_incident_world
 from backend.app.world_query import inspect_world
 
 
@@ -53,6 +55,32 @@ def build_parser() -> argparse.ArgumentParser:
     inspect.add_argument("--id", required=True)
     inspect.add_argument("--graph", required=True)
     inspect.add_argument("--personas", required=True)
+
+    start_runtime = subparsers.add_parser("start-session", help="Create a new interactive simulation session rooted in a baseline scenario")
+    start_runtime.add_argument("--world", required=True)
+    start_runtime.add_argument("--scenario", required=True)
+    start_runtime.add_argument("--artifacts-root")
+    start_runtime.add_argument("--decision-provider")
+    start_runtime.add_argument("--decision-model")
+
+    inspect_runtime = subparsers.add_parser("inspect-session", help="Inspect an existing interactive simulation session manifest")
+    inspect_runtime.add_argument("--session", required=True)
+    inspect_runtime.add_argument("--artifacts-root")
+
+    create_world = subparsers.add_parser("create-world", help="Create a bounded incident world under the runtime state root")
+    create_world.add_argument("--spec", required=True)
+
+    generate_runtime = subparsers.add_parser("generate-branch", help="Generate one child branch from a session node")
+    generate_runtime.add_argument("--session", required=True)
+    generate_runtime.add_argument("--from", dest="from_node", required=True)
+    generate_runtime.add_argument("--perturbation", required=True)
+    generate_runtime.add_argument("--artifacts-root", required=True)
+    generate_runtime.add_argument("--beta-user-id")
+
+    rollback_runtime = subparsers.add_parser("rollback-session", help="Move a session's active pointer back to an existing node")
+    rollback_runtime.add_argument("--session", required=True)
+    rollback_runtime.add_argument("--to", dest="to_node", required=True)
+    rollback_runtime.add_argument("--artifacts-root", required=True)
 
     classify = subparsers.add_parser("classify-lane", help="Classify a file set into the autonomous-safe or protected-core lane")
     classify_group = classify.add_mutually_exclusive_group(required=True)
@@ -130,6 +158,62 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "inspect-world":
         payload = inspect_world(args.kind, args.id, Path(args.graph), Path(args.personas))
         print(json.dumps(payload, indent=2, ensure_ascii=False))
+        return 0
+
+    if args.command == "start-session":
+        payload = start_session(
+            args.world,
+            args.scenario,
+            repo_root=settings.repo_root,
+            artifacts_root=Path(args.artifacts_root) if args.artifacts_root else None,
+            decision_provider=args.decision_provider,
+            decision_model=args.decision_model,
+        )
+        print(json.dumps(payload.model_dump(), indent=2, ensure_ascii=False))
+        return 0
+
+    if args.command == "inspect-session":
+        payload = inspect_session(
+            args.session,
+            repo_root=settings.repo_root,
+            artifacts_root=Path(args.artifacts_root) if args.artifacts_root else None,
+        )
+        print(json.dumps(payload.model_dump(), indent=2, ensure_ascii=False))
+        return 0
+
+    if args.command == "create-world":
+        spec_path = Path(args.spec)
+        if spec_path.exists():
+            spec_payload = json.loads(spec_path.read_text(encoding="utf-8"))
+        else:
+            spec_payload = json.loads(args.spec)
+        payload = create_bounded_incident_world(
+            CreateWorldTemplateInput.model_validate(spec_payload),
+            repo_root=settings.repo_root,
+        )
+        print(json.dumps(payload.model_dump(), indent=2, ensure_ascii=False))
+        return 0
+
+    if args.command == "generate-branch":
+        payload = generate_branch(
+            args.session,
+            args.from_node,
+            args.perturbation,
+            repo_root=settings.repo_root,
+            artifacts_root=Path(args.artifacts_root),
+            beta_user_id=args.beta_user_id,
+        )
+        print(json.dumps(payload.model_dump(), indent=2, ensure_ascii=False))
+        return 0
+
+    if args.command == "rollback-session":
+        payload = rollback_session(
+            args.session,
+            args.to_node,
+            repo_root=settings.repo_root,
+            artifacts_root=Path(args.artifacts_root),
+        )
+        print(json.dumps(payload.model_dump(), indent=2, ensure_ascii=False))
         return 0
 
     if args.command == "classify-lane":

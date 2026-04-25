@@ -123,8 +123,8 @@ Mirror **不是**：
 2. **先做可回放，再做更像人**  
    可重跑、可对比、可 trace，比“角色很会说话”更重要。
 
-3. **先做确定性骨架，再把 LLM 放到边缘**  
-   结构化流程优先；LLM 先用于抽取、总结、persona 文本化，不先承担“系统核心控制器”。
+3. **先做受规则约束、强可回放的分析内核**  
+   结构化流程优先；LLM 可以进入分析内核参与候选动作选择，但只能在世界规则、动作 schema、状态验证和 replay 缓存之内工作，不能成为自由发挥的系统核心控制器。
 
 4. **先做证据，再做叙事**  
    报告如果没有 evidence_ids，就不算报告。
@@ -368,7 +368,7 @@ Corpus
 ### 9.2 架构理念
 
 - **主干确定性**：数据契约、scenario patch、trace、report schema 都尽量确定
-- **LLM 在边缘**：抽取、摘要、润色可用 LLM；核心状态机与 trace 不依赖自由发挥
+- **LLM 进入分析内核，但必须受规则约束**：LLM 可参与合法动作选择与理由生成；核心状态更新、validator 和 replay artifact 仍必须可审计、可回放
 - **先单机后扩展**：SQLite / JSONL / 本地 artifacts 优先
 - **先可调试后可炫技**：run trace 比实时酷 UI 更重要
 
@@ -1279,7 +1279,7 @@ TODO[verify]: <一句话说明为什么待验证>
 - 创建 monorepo 目录：backend, frontend, data/demo, docs, evals, .agents/skills, scripts
 - 创建 Makefile、README.md、.env.example、.gitignore
 - 提供 make smoke / make test 的占位实现，命令必须可执行并返回 0
-- 先不要接任何外部 LLM API，不实现完整功能，只做清晰骨架
+- 外部 LLM API 只允许接入受规则约束、强可回放的分析内核；默认必须保留 deterministic fallback，不允许无边界自由执行
 
 约束：
 - 不引入复杂基础设施

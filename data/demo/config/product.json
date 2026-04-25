@@ -1,0 +1,150 @@
+{
+  "world_id": "fog-harbor-east-gate",
+  "world_name": "Fog Harbor East Gate",
+  "world_name_i18n": {
+    "zh-CN": "雾港东门"
+  },
+  "world_summary": "A bounded harbor-risk world where documentary evidence, delayed warnings, and evacuation timing compete under storm pressure.",
+  "world_summary_i18n": {
+    "zh-CN": "一个受约束的港口风险世界：文书证据、延迟预警和疏散时机在风暴压力下相互竞争。"
+  },
+  "baseline_scenario_id": "scenario_baseline",
+  "baseline_title": "Baseline East Gate Response",
+  "baseline_title_i18n": {
+    "zh-CN": "东门响应基线"
+  },
+  "baseline_description": "The baseline assumes the copied ledger can reach the decision loop on time and the warning chain remains open long enough for an evacuation call.",
+  "baseline_description_i18n": {
+    "zh-CN": "基线假设账本副本能及时进入决策链，预警链也保持畅通，从而足以触发疏散决定。"
+  },
+  "decision_defaults": {
+    "provider": "openai_compatible",
+    "model": ""
+  },
+  "outcome_labels": {
+    "budget_exposed_turn": "Budget exposure",
+    "ledger_public_turn": "Ledger publication",
+    "evacuation_turn": "Evacuation",
+    "risk_known_by": "Risk knowledge spread"
+  },
+  "outcome_labels_i18n": {
+    "zh-CN": {
+      "budget_exposed_turn": "预算曝光",
+      "ledger_public_turn": "账本公开",
+      "evacuation_turn": "疏散触发",
+      "risk_known_by": "风险认知传播"
+    }
+  },
+  "perturbation_options": [
+    {
+      "key": "reporter_detained",
+      "title": "Delay the ledger courier",
+      "title_i18n": {
+        "zh-CN": "延迟账本传递"
+      },
+      "description": "Delay the copied ledger before it reaches the public decision loop.",
+      "description_i18n": {
+        "zh-CN": "在账本副本进入公开决策链之前，将它的传递时机往后拖。"
+      },
+      "kind": "Courier delay",
+      "kind_i18n": {
+        "zh-CN": "传递延迟"
+      },
+      "target": "Ledger courier",
+      "target_i18n": {
+        "zh-CN": "账本传递链"
+      },
+      "timing": "Before publication",
+      "timing_i18n": {
+        "zh-CN": "公开之前"
+      },
+      "summary": "Delay the copied ledger before it reaches the public decision loop.",
+      "summary_i18n": {
+        "zh-CN": "让账本副本晚一点进入公开决策链。"
+      },
+      "runtime": {
+        "kind": "delay_document",
+        "targetId": "doc_ledger_copy",
+        "actorId": "entity_lin_lan",
+        "timing": "before_publication",
+        "parameters": {
+          "delay_turns": 2,
+          "cause": "courier_interruption"
+        }
+      }
+    },
+    {
+      "key": "mayor_signal_blocked",
+      "title": "Block the deputy-mayor escalation path",
+      "title_i18n": {
+        "zh-CN": "阻断副市长升级路径"
+      },
+      "description": "Block the first direct escalation path while keeping the ledger on schedule.",
+      "description_i18n": {
+        "zh-CN": "阻断第一条直接升级路径，同时不改变账本公开节奏。"
+      },
+      "kind": "Contact block",
+      "kind_i18n": {
+        "zh-CN": "联系阻断"
+      },
+      "target": "Deputy mayor signal path",
+      "target_i18n": {
+        "zh-CN": "副市长信号路径"
+      },
+      "timing": "First warning attempt",
+      "timing_i18n": {
+        "zh-CN": "第一次预警尝试"
+      },
+      "summary": "Block the direct escalation path while keeping the ledger on schedule.",
+      "summary_i18n": {
+        "zh-CN": "阻断直接升级路径，但账本依然按原节奏公开。"
+      },
+      "runtime": {
+        "kind": "block_contact",
+        "targetId": "persona_zhao_ke",
+        "actorId": "persona_chen_yu",
+        "timing": "first_warning_attempt",
+        "parameters": {
+          "cause": "courier_interception"
+        }
+      }
+    },
+    {
+      "key": "harbor_comms_failure",
+      "title": "Degrade the harbor warning relay",
+      "title_i18n": {
+        "zh-CN": "削弱港口预警中继"
+      },
+      "description": "Delay the harbor warning and the first chance to surface the ledger.",
+      "description_i18n": {
+        "zh-CN": "让港口预警延后，同时推迟账本第一次被公开的机会。"
+      },
+      "kind": "Communication disruption",
+      "kind_i18n": {
+        "zh-CN": "通信受阻"
+      },
+      "target": "Harbor radio relay",
+      "target_i18n": {
+        "zh-CN": "港口无线中继"
+      },
+      "timing": "Early warning window",
+      "timing_i18n": {
+        "zh-CN": "早期预警窗口"
+      },
+      "summary": "Delay the harbor warning and the first chance to surface the ledger.",
+      "summary_i18n": {
+        "zh-CN": "让港口预警和账本公开的第一机会一起延后。"
+      },
+      "runtime": {
+        "kind": "resource_failure",
+        "targetId": "entity_east_wharf",
+        "actorId": "persona_chen_yu",
+        "timing": "early_warning_window",
+        "parameters": {
+          "duration_turns": 3,
+          "cause": "saltwater_radio_interference"
+        }
+      }
+    }
+  ]
+}

@@ -29,7 +29,9 @@ import {
   formatDecisionLabel,
   currentAnchor,
   decisionFromScores,
-  recommendationFromState,
+  recommendationFromState
+} from "./review-scorecard/decision";
+import {
   buildNextActions,
   buildBlockers,
   buildCarryForwardAnchors,

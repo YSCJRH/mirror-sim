@@ -14,6 +14,7 @@ class Settings:
     artifacts_root: Path
     manifest_path: Path
     world_model_path: Path
+    decision_schema_path: Path
     simulation_rules_path: Path
     scenario_dir: Path
     baseline_scenario_path: Path
@@ -32,6 +33,7 @@ def get_settings() -> Settings:
         artifacts_root=world_paths.artifacts_root,
         manifest_path=world_paths.manifest_path,
         world_model_path=world_paths.world_model_path,
+        decision_schema_path=world_paths.decision_schema_path,
         simulation_rules_path=world_paths.simulation_rules_path,
         scenario_dir=world_paths.scenario_dir,
         baseline_scenario_path=world_paths.baseline_scenario_path,
