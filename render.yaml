@@ -4,7 +4,7 @@ services:
     runtime: docker
     plan: free
     branch: main
-    autoDeployTrigger: checksPass
+    autoDeployTrigger: commit
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /api/ready
