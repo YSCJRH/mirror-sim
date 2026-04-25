@@ -5,6 +5,7 @@ ENV NODE_ENV=production \
     MIRROR_PUBLIC_DEMO_MODE=1 \
     MIRROR_ALLOW_ANONYMOUS_RUNS=0 \
     MIRROR_HOSTED_MODEL_ENABLED=0 \
+    PORT=3000 \
     PYTHON=/opt/mirror-venv/bin/python \
     PATH=/opt/mirror-venv/bin:$PATH
 
@@ -39,7 +40,7 @@ WORKDIR /app/mirror/frontend
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-    CMD node -e "fetch('http://127.0.0.1:3000/api/ready').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+    CMD node -e "const port = process.env.PORT || '3000'; fetch(`http://127.0.0.1:${port}/api/ready`).then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
 ENTRYPOINT ["/app/mirror/scripts/bootstrap-production.sh"]
-CMD ["node", "node_modules/next/dist/bin/next", "start", "--hostname", "0.0.0.0", "--port", "3000"]
+CMD ["sh", "-c", "exec node node_modules/next/dist/bin/next start --hostname 0.0.0.0 --port ${PORT:-3000}"]
