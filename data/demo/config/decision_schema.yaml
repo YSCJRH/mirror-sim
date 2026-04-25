@@ -1,0 +1,56 @@
+world_id: fog-harbor-east-gate
+schema_version: "2026-04-22"
+allowed_action_types:
+  - inspect
+  - inform
+  - delay
+  - publish
+  - request
+  - evacuate
+  - hide
+  - move
+timing_tokens:
+  - early_warning_window
+  - first_warning_attempt
+  - before_publication
+  - post_publication_window
+perturbations:
+  - kind: delay_document
+    target_sources:
+      - document
+    actor_sources:
+      - entity
+      - persona
+    timing_tokens:
+      - before_publication
+    required_parameters:
+      delay_turns: int
+    optional_parameters:
+      cause: str
+  - kind: block_contact
+    target_sources:
+      - persona
+    actor_sources:
+      - persona
+    timing_tokens:
+      - first_warning_attempt
+    required_parameters: {}
+    optional_parameters:
+      cause: str
+  - kind: resource_failure
+    target_sources:
+      - entity
+    actor_sources:
+      - entity
+      - persona
+    timing_tokens:
+      - early_warning_window
+    required_parameters:
+      duration_turns: int
+    optional_parameters:
+      cause: str
+decision_kernel:
+  prompt_version: "rule-bounded-v1"
+  max_attempts: 2
+  fallback_strategy: first_legal_choice
+  model_env_var: MIRROR_DECISION_MODEL

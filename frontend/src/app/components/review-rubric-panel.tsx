@@ -2,9 +2,14 @@
 
 import { useMemo, useState } from "react";
 
+import { ButtonLink } from "./button-link";
+import { ContextCard } from "./context-card";
+import { StatusPill } from "./status-pill";
+import { SurfaceCard } from "./surface-card";
 import type { AppLocale } from "../lib/locale-shared";
 import type { RubricRow } from "../lib/workbench-data";
 import { getCopy } from "../lib/copy";
+import { decisionFromScores } from "../review-scorecard/decision";
 import {
   formatEvalPosture,
   localizeRubricRow
@@ -17,6 +22,8 @@ type ReviewRubricPanelProps = {
   divergentTurnCount: number;
   evalName: string;
   evalStatus: string;
+  followupHref?: string;
+  followupLabel?: string;
 };
 
 function scoreLabel(locale: AppLocale, value: number | null) {
@@ -32,7 +39,9 @@ export function ReviewRubricPanel({
   claimCount,
   divergentTurnCount,
   evalName,
-  evalStatus
+  evalStatus,
+  followupHref,
+  followupLabel,
 }: ReviewRubricPanelProps) {
   const copy = getCopy(locale);
   const [scores, setScores] = useState<Record<string, number | null>>(() =>
@@ -45,25 +54,24 @@ export function ReviewRubricPanel({
     [scores]
   );
   const filledCount = selectedScores.length;
+  const decision = useMemo(
+    () => decisionFromScores(scores, rubricRows.length),
+    [scores, rubricRows.length]
+  );
+  const recommendation =
+    decision.tone === "ready"
+      ? copy.rubric.recommendationReady
+      : decision.tone === "followup"
+        ? copy.rubric.recommendationFollowup
+        : decision.tone === "hold"
+          ? copy.rubric.recommendationHold
+          : copy.rubric.recommendationIncomplete;
   const average =
-    selectedScores.length > 0
-      ? (selectedScores.reduce((sum, value) => sum + value, 0) / selectedScores.length).toFixed(1)
-      : "0.0";
-
-  const recommendation = useMemo(() => {
-    if (filledCount < rubricRows.length) {
-      return copy.rubric.recommendationIncomplete;
-    }
-    const minimum = Math.min(...selectedScores);
-    const numericAverage = Number(average);
-    if (numericAverage >= 4 && minimum >= 3) {
-      return copy.rubric.recommendationReady;
-    }
-    if (numericAverage >= 3 && minimum >= 2) {
-      return copy.rubric.recommendationFollowup;
-    }
-    return copy.rubric.recommendationHold;
-  }, [average, copy.rubric, filledCount, rubricRows.length, selectedScores]);
+    decision.average === "pending"
+      ? locale === "zh-CN"
+        ? "待定"
+        : "Pending"
+      : decision.average;
 
   return (
     <section className="rubricPanel panel panelAccent" id="scorecard">
@@ -74,37 +82,26 @@ export function ReviewRubricPanel({
       </div>
 
       <div className="rubricSummaryGrid">
-        <article className="briefCard briefCardDark">
-          <span>{copy.rubric.dimensionsComplete}</span>
-          <strong>
-            {filledCount}/{rubricRows.length}
-          </strong>
-        </article>
-        <article className="briefCard">
-          <span>{copy.rubric.evidenceTracked}</span>
-          <strong>{claimCount}</strong>
-        </article>
-        <article className="briefCard">
-          <span>{copy.rubric.divergentTurns}</span>
-          <strong>{divergentTurnCount}</strong>
-        </article>
-        <article className="briefCard">
-          <span>{copy.rubric.evalPosture}</span>
-          <strong>{formatEvalPosture(locale, evalName, evalStatus)}</strong>
-        </article>
+        <ContextCard label={copy.rubric.dimensionsComplete} value={`${filledCount}/${rubricRows.length}`} tone="accent" />
+        <ContextCard label={copy.rubric.evidenceTracked} value={String(claimCount)} />
+        <ContextCard label={copy.rubric.divergentTurns} value={String(divergentTurnCount)} />
+        <ContextCard
+          label={copy.rubric.evalPosture}
+          value={formatEvalPosture(locale, evalName, evalStatus)}
+        />
       </div>
 
       <div className="rubricGrid">
         {rubricRows.map((row) => {
           const localizedRow = localizeRubricRow(locale, row);
           return (
-          <article key={row.dimension} className="rubricCard">
+          <SurfaceCard key={row.dimension} className="rubricCard">
             <div className="rubricCardHeader">
               <div>
                 <h3>{localizedRow.dimension}</h3>
                 <p className="subtle">{scoreLabel(locale, scores[row.dimension])}</p>
               </div>
-              <span className="pill">{copy.rubric.scoreLegend}</span>
+              <StatusPill tone="subtle">{copy.rubric.scoreLegend}</StatusPill>
             </div>
             <div className="scoreButtons">
               {[1, 2, 3, 4, 5].map((value) => (
@@ -129,7 +126,7 @@ export function ReviewRubricPanel({
                 <strong>5</strong> {localizedRow.five}
               </p>
             </div>
-          </article>
+          </SurfaceCard>
         )})}
       </div>
 
@@ -144,7 +141,7 @@ export function ReviewRubricPanel({
         />
       </div>
 
-      <div className="rubricDecisionCard">
+      <SurfaceCard className="rubricDecisionCard" tone="accent">
         <div>
           <p className="eyebrow">{copy.rubric.recommendationLabel}</p>
           <h3>{recommendation}</h3>
@@ -153,11 +150,13 @@ export function ReviewRubricPanel({
           <code>
             {copy.rubric.averageLabel}: {average}
           </code>
-          <a className="linkPill" href="#advanced-operations">
-            {copy.rubric.openLegacy}
-          </a>
+          {followupHref ? (
+            <ButtonLink className="linkPill" href={followupHref} variant="ghost">
+              {followupLabel ?? copy.rubric.openLegacy}
+            </ButtonLink>
+          ) : null}
         </div>
-      </div>
+      </SurfaceCard>
     </section>
   );
 }

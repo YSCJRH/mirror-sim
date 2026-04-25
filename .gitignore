@@ -1,4 +1,9 @@
-artifacts/
+/artifacts/
+/state/
+.env
+.env.production
+.env.local
+.env.*.local
 __pycache__/
 .pytest_cache/
 .mypy_cache/

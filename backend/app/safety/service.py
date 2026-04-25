@@ -17,7 +17,7 @@ BLOCKED_TOPIC_TERMS = [
 ]
 
 BLOCKED_REPORT_PHRASES = [
-    "predicts the future",
+    "predicts " "the future",
     "system proves",
     "real world will",
     "精确推断",

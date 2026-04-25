@@ -20,8 +20,19 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Install backend package
         run: python -m pip install -e backend[dev]
+
+      - name: Install frontend package
+        run: npm ci --prefix frontend
+
+      - name: Check tracked files for secrets
+        run: python scripts/check_no_secrets.py
 
       - name: Run tests
         run: make test
@@ -31,6 +42,24 @@ jobs:
 
       - name: Run eval-demo
         run: make eval-demo
+
+      - name: Run eval-transfer
+        run: make eval-transfer
+
+      - name: Refresh canonical public demo artifacts
+        run: make eval-demo
+
+      - name: Scan generated demo artifacts
+        run: python scripts/scan_frontend_bundle.py --path artifacts/demo
+
+      - name: Build frontend
+        run: npm run build --prefix frontend
+
+      - name: Scan frontend browser bundle for provider secrets
+        run: python scripts/scan_frontend_bundle.py
+
+      - name: Smoke public demo web
+        run: python scripts/smoke_public_demo_web.py
 
       - name: Audit Phase 1
         run: python -m backend.app.cli audit-phase phase1
@@ -59,8 +88,21 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Install backend package
         run: python -m pip install -e backend[dev]
+
+      - name: Install frontend package
+        shell: pwsh
+        run: npm ci --prefix frontend
+
+      - name: Check tracked files for secrets
+        shell: pwsh
+        run: python .\scripts\check_no_secrets.py
 
       - name: Run tests
         shell: pwsh
@@ -73,6 +115,30 @@ jobs:
       - name: Run eval-demo
         shell: pwsh
         run: .\make.ps1 eval-demo
+
+      - name: Run eval-transfer
+        shell: pwsh
+        run: .\make.ps1 eval-transfer
+
+      - name: Refresh canonical public demo artifacts
+        shell: pwsh
+        run: .\make.ps1 eval-demo
+
+      - name: Scan generated demo artifacts
+        shell: pwsh
+        run: python .\scripts\scan_frontend_bundle.py --path artifacts\demo
+
+      - name: Build frontend
+        shell: pwsh
+        run: npm run build --prefix frontend
+
+      - name: Scan frontend browser bundle for provider secrets
+        shell: pwsh
+        run: python .\scripts\scan_frontend_bundle.py
+
+      - name: Smoke public demo web
+        shell: pwsh
+        run: python .\scripts\smoke_public_demo_web.py
 
       - name: Audit Phase 1
         shell: pwsh

@@ -5,6 +5,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$NpmCommand = Get-Command npm.cmd -ErrorAction SilentlyContinue
+$Npm = if ($NpmCommand) { $NpmCommand.Source } else { "npm" }
 
 switch ($Target) {
     "setup" {
@@ -22,11 +24,18 @@ switch ($Target) {
     "eval-transfer" {
         python -m backend.app.cli eval-transfer
     }
+    "public-demo-check" {
+        python -m backend.app.cli eval-demo
+        python .\scripts\scan_frontend_bundle.py --path artifacts\demo
+        & $Npm run build --prefix frontend
+        python .\scripts\scan_frontend_bundle.py
+        python .\scripts\smoke_public_demo_web.py
+    }
     "dev-api" {
         python -m uvicorn backend.app.main:app --reload
     }
     "dev-web" {
-        npm run dev --prefix frontend
+        & $Npm run dev --prefix frontend
     }
     default {
         throw "Unknown target: $Target"

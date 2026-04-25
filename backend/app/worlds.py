@@ -15,6 +15,7 @@ class WorldPaths:
     artifacts_root: Path
     manifest_path: Path
     world_model_path: Path
+    decision_schema_path: Path
     simulation_rules_path: Path
     scenario_dir: Path
     baseline_scenario_path: Path
@@ -26,12 +27,26 @@ class WorldPaths:
         )
 
 
+def state_worlds_root(repo_root: Path | None = None) -> Path:
+    root = repo_root or Path(__file__).resolve().parents[2]
+    return root / "state" / "worlds"
+
+
+def state_artifacts_root(repo_root: Path | None = None) -> Path:
+    root = repo_root or Path(__file__).resolve().parents[2]
+    return root / "state" / "artifacts" / "worlds"
+
+
 def resolve_world_paths(world_id: str, repo_root: Path | None = None) -> WorldPaths:
     root = repo_root or Path(__file__).resolve().parents[2]
     if world_id == CANONICAL_DEMO_WORLD_ID:
         data_root = root / "data" / "demo"
         artifacts_root = root / "artifacts" / "demo"
         expectations_path = data_root / "expectations" / "demo_eval.yaml"
+    elif (state_worlds_root(root) / world_id).exists():
+        data_root = state_worlds_root(root) / world_id
+        artifacts_root = state_artifacts_root(root) / world_id
+        expectations_path = None
     else:
         data_root = root / "data" / "worlds" / world_id
         artifacts_root = root / "artifacts" / "worlds" / world_id
@@ -44,6 +59,7 @@ def resolve_world_paths(world_id: str, repo_root: Path | None = None) -> WorldPa
         artifacts_root=artifacts_root,
         manifest_path=data_root / "corpus" / "manifest.yaml",
         world_model_path=data_root / "config" / "world_model.yaml",
+        decision_schema_path=data_root / "config" / "decision_schema.yaml",
         simulation_rules_path=data_root / "config" / "simulation_rules.yaml",
         scenario_dir=data_root / "scenarios",
         baseline_scenario_path=data_root / "scenarios" / "baseline.yaml",
@@ -54,9 +70,14 @@ def resolve_world_paths(world_id: str, repo_root: Path | None = None) -> WorldPa
 def list_world_ids(repo_root: Path | None = None) -> list[str]:
     root = repo_root or Path(__file__).resolve().parents[2]
     worlds_root = root / "data" / "worlds"
+    runtime_worlds_root = state_worlds_root(root)
     world_ids = [CANONICAL_DEMO_WORLD_ID]
+    if runtime_worlds_root.exists():
+        world_ids.extend(
+            sorted(path.name for path in runtime_worlds_root.iterdir() if path.is_dir())
+        )
     if worlds_root.exists():
         world_ids.extend(
             sorted(path.name for path in worlds_root.iterdir() if path.is_dir())
         )
-    return world_ids
+    return list(dict.fromkeys(world_ids))

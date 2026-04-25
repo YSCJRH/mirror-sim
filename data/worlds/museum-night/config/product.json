@@ -1,0 +1,150 @@
+{
+  "world_id": "museum-night",
+  "world_name": "Museum Night",
+  "world_name_i18n": {
+    "zh-CN": "博物馆夜班"
+  },
+  "world_summary": "A bounded opening-night world where checklist visibility, lighting faults, and queue pressure compete under a fixed preview schedule.",
+  "world_summary_i18n": {
+    "zh-CN": "一个受约束的开馆夜世界：清单可见性、照明故障和排队压力在固定预演节奏下相互竞争。"
+  },
+  "baseline_scenario_id": "scenario_museum_night_baseline",
+  "baseline_title": "Baseline Twilight Preview Setup",
+  "baseline_title_i18n": {
+    "zh-CN": "黄昏预演基线"
+  },
+  "baseline_description": "The baseline assumes the printed opening checklist reaches the lobby on time and the team can decide on a safety hold without extra disruption.",
+  "baseline_description_i18n": {
+    "zh-CN": "基线假设纸质开馆清单能按时送达大厅，团队也能在不额外扰动的情况下决定是否进入安全暂停。"
+  },
+  "decision_defaults": {
+    "provider": "openai_compatible",
+    "model": ""
+  },
+  "outcome_labels": {
+    "checklist_public_turn": "Checklist publication",
+    "hold_turn": "Safety hold",
+    "opening_status": "Opening status",
+    "queue_warning_known_by": "Queue warning spread"
+  },
+  "outcome_labels_i18n": {
+    "zh-CN": {
+      "checklist_public_turn": "清单公开",
+      "hold_turn": "安全暂停",
+      "opening_status": "开馆状态",
+      "queue_warning_known_by": "排队预警传播"
+    }
+  },
+  "perturbation_options": [
+    {
+      "key": "checklist_delayed",
+      "title": "Delay the opening checklist",
+      "title_i18n": {
+        "zh-CN": "延迟开馆清单"
+      },
+      "description": "Delay the printed checklist before it reaches the public handoff.",
+      "description_i18n": {
+        "zh-CN": "让纸质开馆清单在进入公开交接点之前晚一点到达。"
+      },
+      "kind": "Document delay",
+      "kind_i18n": {
+        "zh-CN": "文档延迟"
+      },
+      "target": "Opening checklist",
+      "target_i18n": {
+        "zh-CN": "开馆清单"
+      },
+      "timing": "Before publication",
+      "timing_i18n": {
+        "zh-CN": "公开之前"
+      },
+      "summary": "Delay the printed checklist before it reaches the lobby handoff.",
+      "summary_i18n": {
+        "zh-CN": "让纸质开馆清单晚一点进入大厅交接。"
+      },
+      "runtime": {
+        "kind": "delay_document",
+        "targetId": "doc_volunteer_packet",
+        "actorId": "persona_mina_park",
+        "timing": "before_checklist_publication",
+        "parameters": {
+          "delay_turns": 2,
+          "cause": "print_room_backlog"
+        }
+      }
+    },
+    {
+      "key": "hold_signal_blocked",
+      "title": "Block the first hold signal",
+      "title_i18n": {
+        "zh-CN": "阻断第一次暂停信号"
+      },
+      "description": "Block the first direct warning to the curator.",
+      "description_i18n": {
+        "zh-CN": "阻断送往策展负责人的第一条直接预警。"
+      },
+      "kind": "Contact block",
+      "kind_i18n": {
+        "zh-CN": "联系阻断"
+      },
+      "target": "Curator hold path",
+      "target_i18n": {
+        "zh-CN": "策展暂停路径"
+      },
+      "timing": "First warning attempt",
+      "timing_i18n": {
+        "zh-CN": "第一次预警尝试"
+      },
+      "summary": "Block the first warning path toward the curator.",
+      "summary_i18n": {
+        "zh-CN": "阻断通往策展负责人的第一条预警路径。"
+      },
+      "runtime": {
+        "kind": "block_contact",
+        "targetId": "persona_noa_bell",
+        "actorId": "persona_iris_vale",
+        "timing": "first_queue_warning",
+        "parameters": {
+          "cause": "entryway_signal_scramble"
+        }
+      }
+    },
+    {
+      "key": "lighting_window_failure",
+      "title": "Degrade the early lighting window",
+      "title_i18n": {
+        "zh-CN": "削弱早期照明窗口"
+      },
+      "description": "Create a short communication/resource failure while the lighting risk is still being assessed.",
+      "description_i18n": {
+        "zh-CN": "在照明风险仍在评估时制造一次短暂的通信/资源故障。"
+      },
+      "kind": "Resource failure",
+      "kind_i18n": {
+        "zh-CN": "资源故障"
+      },
+      "target": "West Hall lights",
+      "target_i18n": {
+        "zh-CN": "西厅灯光"
+      },
+      "timing": "Early failure window",
+      "timing_i18n": {
+        "zh-CN": "早期故障窗口"
+      },
+      "summary": "Degrade the early lighting warning window.",
+      "summary_i18n": {
+        "zh-CN": "让早期照明预警窗口变得更脆弱。"
+      },
+      "runtime": {
+        "kind": "resource_failure",
+        "targetId": "entity_west_hall_lights",
+        "actorId": "persona_tomas_reed",
+        "timing": "lighting_window",
+        "parameters": {
+          "duration_turns": 2,
+          "cause": "ballast_relay_fault"
+        }
+      }
+    }
+  ]
+}

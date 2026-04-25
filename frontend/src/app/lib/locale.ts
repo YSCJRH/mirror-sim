@@ -11,7 +11,7 @@ export async function getAppLocale(): Promise<AppLocale> {
 
   const headerStore = await headers();
   const accepted = headerStore.get("accept-language");
-  return normalizeLocale(accepted) ?? "en";
+  return normalizeLocale(accepted) ?? "zh-CN";
 }
 
 export function isChineseLocale(locale: AppLocale) {

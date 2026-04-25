@@ -1,0 +1,12 @@
+{$DEPLOY_DOMAIN} {
+	encode zstd gzip
+
+	@health path /api/health
+	handle @health {
+		reverse_proxy mirror-web:3000
+	}
+
+	handle {
+		reverse_proxy mirror-web:3000
+	}
+}

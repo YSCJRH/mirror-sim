@@ -6,8 +6,10 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 ClaimLabel = Literal["evidence_backed", "inferred", "speculative"]
-InjectionKind = Literal["delay_document", "block_contact", "resource_failure"]
-ActionType = Literal["inform", "hide", "inspect", "move", "request", "delay", "publish", "evacuate"]
+InjectionKind = str
+ActionType = str
+SessionNodeStatus = Literal["pending", "running", "succeeded", "failed"]
+DecisionProvider = Literal["openai_compatible", "hosted_openai", "deterministic_only"]
 
 
 class MirrorBaseModel(BaseModel):
@@ -155,6 +157,94 @@ class CompareArtifact(MirrorBaseModel):
     reference_branch_id: str
     branches: list[CompareBranch] = Field(default_factory=list)
     reference_deltas: list[CompareBranchDelta] = Field(default_factory=list)
+
+
+class PerturbationPayload(MirrorBaseModel):
+    kind: str
+    target_id: str
+    timing: str
+    summary: str
+    parameters: dict[str, Any] = Field(default_factory=dict)
+    evidence_ids: list[str] = Field(default_factory=list)
+
+
+class SessionDecisionConfig(MirrorBaseModel):
+    provider: DecisionProvider = "openai_compatible"
+    model_id: str | None = None
+
+
+class SessionNodeRecord(MirrorBaseModel):
+    node_id: str
+    parent_node_id: str | None = None
+    status: SessionNodeStatus
+    label: str
+    node_path: str
+
+
+class SessionNodeManifest(MirrorBaseModel):
+    node_id: str
+    session_id: str
+    parent_node_id: str | None = None
+    status: SessionNodeStatus
+    world_id: str
+    scenario_id: str
+    label: str
+    perturbation: PerturbationPayload | None = None
+    run_id: str | None = None
+    summary_path: str | None = None
+    trace_path: str | None = None
+    snapshot_dir: str | None = None
+    compare_path: str | None = None
+    report_path: str | None = None
+    claims_path: str | None = None
+    resolution_path: str | None = None
+    decision_trace_path: str | None = None
+    created_at: str
+    notes: list[str] = Field(default_factory=list)
+
+
+class SimulationSessionManifest(MirrorBaseModel):
+    session_id: str
+    world_id: str
+    scenario_id: str
+    root_node_id: str
+    active_node_id: str
+    decision_config: SessionDecisionConfig = Field(default_factory=SessionDecisionConfig)
+    created_at: str
+    scenario_path: str | None = None
+    session_path: str | None = None
+    nodes: list[SessionNodeRecord] = Field(default_factory=list)
+
+
+class PerturbationResolution(MirrorBaseModel):
+    world_id: str
+    schema_version: str
+    perturbation: PerturbationPayload
+    target_source: str
+    actor_source: str | None = None
+    resolved_actor_id: str | None = None
+    timing_token: str
+    validated_parameters: dict[str, Any] = Field(default_factory=dict)
+    notes: list[str] = Field(default_factory=list)
+    resolution_hash: str
+
+
+class DecisionTraceEntry(MirrorBaseModel):
+    run_id: str
+    turn_index: int
+    actor_id: str
+    provider_mode: str
+    model_id: str | None = None
+    prompt_version: str | None = None
+    input_hash: str
+    output_hash: str | None = None
+    available_choices: list[str] = Field(default_factory=list)
+    selected_choice_index: int
+    selected_action_type: str
+    selected_target_id: str | None = None
+    rationale: str
+    validation_status: str
+    fallback_used: bool = False
 
 
 class Claim(MirrorBaseModel):

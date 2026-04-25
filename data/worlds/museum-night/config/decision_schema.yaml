@@ -1,0 +1,55 @@
+world_id: museum-night
+schema_version: "2026-04-22"
+allowed_action_types:
+  - inspect
+  - inform
+  - delay
+  - publish
+  - request
+  - hide
+  - move
+timing_tokens:
+  - lighting_window
+  - first_queue_warning
+  - before_checklist_publication
+  - pre_opening_window
+perturbations:
+  - kind: delay_document
+    target_sources:
+      - document
+    actor_sources:
+      - persona
+      - entity
+    timing_tokens:
+      - before_checklist_publication
+    required_parameters:
+      delay_turns: int
+    optional_parameters:
+      cause: str
+  - kind: block_contact
+    target_sources:
+      - persona
+    actor_sources:
+      - persona
+    timing_tokens:
+      - first_queue_warning
+    required_parameters: {}
+    optional_parameters:
+      cause: str
+  - kind: resource_failure
+    target_sources:
+      - entity
+    actor_sources:
+      - persona
+      - entity
+    timing_tokens:
+      - lighting_window
+    required_parameters:
+      duration_turns: int
+    optional_parameters:
+      cause: str
+decision_kernel:
+  prompt_version: "rule-bounded-v1"
+  max_attempts: 2
+  fallback_strategy: first_legal_choice
+  model_env_var: MIRROR_DECISION_MODEL

@@ -1,0 +1,232 @@
+name: deploy-web
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: mirror-deploy-web
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      REMOTE_DIR: ${{ vars.DEPLOY_PATH }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate deployment configuration
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_DOMAIN: ${{ vars.DEPLOY_DOMAIN }}
+        run: |
+          set -euo pipefail
+          missing=()
+          for name in DEPLOY_HOST DEPLOY_SSH_KEY DEPLOY_USER DEPLOY_DOMAIN; do
+            if [ -z "${!name:-}" ]; then
+              missing+=("$name")
+            fi
+          done
+          if [ "${#missing[@]}" -gt 0 ]; then
+            printf 'Missing deployment configuration: %s\n' "${missing[*]}" >&2
+            exit 1
+          fi
+
+      - name: Check tracked files for secrets
+        run: python scripts/check_no_secrets.py
+
+      - name: Install backend package
+        run: python -m pip install -e 'backend[dev]'
+
+      - name: Generate canonical deterministic demo artifacts
+        run: python -m backend.app.cli eval-demo
+
+      - name: Scan generated demo artifacts
+        run: python scripts/scan_frontend_bundle.py --path artifacts/demo
+
+      - name: Install frontend package
+        run: npm ci --prefix frontend
+
+      - name: Build frontend
+        run: npm run build --prefix frontend
+
+      - name: Scan frontend browser bundle for provider secrets
+        run: python scripts/scan_frontend_bundle.py
+
+      - name: Smoke public demo web
+        run: python scripts/smoke_public_demo_web.py
+
+      - name: Run backend tests
+        run: make test
+
+      - name: Build Docker image
+        id: image
+        run: |
+          set -euo pipefail
+          image_repo="$(printf 'ghcr.io/%s' "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          image_sha="${image_repo}:${GITHUB_SHA}"
+          image_main="${image_repo}:main"
+          docker build \
+            --build-arg MIRROR_COMMIT_SHA="$GITHUB_SHA" \
+            --label "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \
+            --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
+            -t "$image_sha" \
+            -t "$image_main" \
+            .
+          echo "image_sha=$image_sha" >> "$GITHUB_OUTPUT"
+          echo "image_main=$image_main" >> "$GITHUB_OUTPUT"
+
+      - name: Scan Docker image history
+        run: |
+          set -euo pipefail
+          docker history --no-trunc "${{ steps.image.outputs.image_sha }}" > image-history.txt
+          if grep -E 'sk-(proj-|svcacct-)?[A-Za-z0-9_-]{20,}|NEXT_PUBLIC_[A-Z_]*OPENAI_API_KEY|OPENAI_API_KEY=sk-|MIRROR_HOSTED_OPENAI_API_KEY=sk-' image-history.txt; then
+            echo "Potential provider secret exposure in Docker image history." >&2
+            exit 1
+          fi
+
+      - name: Log in to GHCR
+        env:
+          GHCR_TOKEN: ${{ github.token }}
+        run: |
+          printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+
+      - name: Push Docker image
+        run: |
+          docker push "${{ steps.image.outputs.image_sha }}"
+          docker push "${{ steps.image.outputs.image_main }}"
+
+      - name: Configure SSH
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/mirror_deploy
+          chmod 600 ~/.ssh/mirror_deploy
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Copy deployment descriptors
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          set -euo pipefail
+          remote_dir="${REMOTE_DIR:-/opt/mirror-web}"
+          target="${DEPLOY_USER}@${DEPLOY_HOST}"
+          ssh -i ~/.ssh/mirror_deploy "$target" "mkdir -p '$remote_dir/deploy'"
+          scp -i ~/.ssh/mirror_deploy compose.deploy.yml "$target:$remote_dir/compose.deploy.yml"
+          scp -i ~/.ssh/mirror_deploy deploy/Caddyfile "$target:$remote_dir/deploy/Caddyfile"
+
+      - name: Write remote production env
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_DOMAIN: ${{ vars.DEPLOY_DOMAIN }}
+          IMAGE_SHA: ${{ steps.image.outputs.image_sha }}
+        run: |
+          set -euo pipefail
+          remote_dir="${REMOTE_DIR:-/opt/mirror-web}"
+          target="${DEPLOY_USER}@${DEPLOY_HOST}"
+          umask 077
+          {
+            printf 'MIRROR_IMAGE=%s\n' "$IMAGE_SHA"
+            printf 'MIRROR_COMMIT_SHA=%s\n' "$GITHUB_SHA"
+            printf 'MIRROR_ENV=production\n'
+            printf 'MIRROR_BOOTSTRAP_DEMO=1\n'
+            printf 'MIRROR_PUBLIC_DEMO_MODE=1\n'
+            printf 'MIRROR_ALLOW_ANONYMOUS_RUNS=0\n'
+            printf 'MIRROR_HOSTED_MODEL_ENABLED=0\n'
+            printf 'DEPLOY_DOMAIN=%s\n' "$DEPLOY_DOMAIN"
+          } > .env.production.remote
+          ssh -i ~/.ssh/mirror_deploy "$target" "if [ -f '$remote_dir/.env.production' ]; then cp '$remote_dir/.env.production' '$remote_dir/.env.production.previous'; fi"
+          scp -i ~/.ssh/mirror_deploy .env.production.remote "$target:$remote_dir/.env.production"
+          ssh -i ~/.ssh/mirror_deploy "$target" "chmod 600 '$remote_dir/.env.production'"
+
+      - name: Deploy on VM
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          GHCR_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          remote_dir="${REMOTE_DIR:-/opt/mirror-web}"
+          target="${DEPLOY_USER}@${DEPLOY_HOST}"
+          printf '%s' "$GHCR_TOKEN" | ssh -i ~/.ssh/mirror_deploy "$target" "docker login ghcr.io -u '$GITHUB_ACTOR' --password-stdin >/dev/null"
+          ssh -i ~/.ssh/mirror_deploy "$target" "REMOTE_DIR='$remote_dir' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$REMOTE_DIR"
+
+          compose() {
+            docker compose --env-file .env.production -f compose.deploy.yml "$@"
+          }
+
+          rollback() {
+            if [ -f .env.production.previous ]; then
+              cp .env.production.previous .env.production
+              compose up -d --no-build --remove-orphans
+            fi
+          }
+
+          compose pull
+          if ! compose up -d --no-build --remove-orphans; then
+            rollback
+            exit 1
+          fi
+
+          for attempt in $(seq 1 60); do
+            if compose exec -T mirror-web node -e "fetch('http://127.0.0.1:3000/api/ready').then(async (r) => { const p = await r.json(); process.exit(r.ok && p.status === 'ready' ? 0 : 1); }).catch(() => process.exit(1))"; then
+              exit 0
+            fi
+            sleep 2
+          done
+
+          rollback
+          exit 1
+          REMOTE
+
+      - name: Remote container smoke
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          set -euo pipefail
+          remote_dir="${REMOTE_DIR:-/opt/mirror-web}"
+          target="${DEPLOY_USER}@${DEPLOY_HOST}"
+          ssh -i ~/.ssh/mirror_deploy "$target" "cd '$remote_dir' && docker compose --env-file .env.production -f compose.deploy.yml exec -T mirror-web python /app/mirror/scripts/smoke_public_demo_web.py --base-url http://127.0.0.1:3000 --no-start --timeout 60"
+
+      - name: Public health check
+        env:
+          DEPLOY_DOMAIN: ${{ vars.DEPLOY_DOMAIN }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            if curl --fail --show-error --silent "https://${DEPLOY_DOMAIN}/api/health" \
+              && curl --fail --show-error --silent "https://${DEPLOY_DOMAIN}/api/ready"; then
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
