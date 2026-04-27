@@ -23,6 +23,9 @@ TODO[verify]: Codex plugin UI labels and install controls can vary by Codex vers
 filesystem checks and MCP smoke below as the stable acceptance path, and record any UI-specific
 differences in a follow-up note.
 
+For the UI-facing acceptance checklist and evidence log, see
+`docs/deploy/mirror-codex-plugin-ui-acceptance.md`.
+
 ## Preconditions
 
 From the repository root:
@@ -165,6 +168,9 @@ If the plugin does not appear in Codex UI, first verify:
 - `.agents/plugins/marketplace.json` exists at repo root
 - `plugins/mirror-codex/.codex-plugin/plugin.json` has `"name": "mirror-codex"`
 - `.mcp.json` registers only `mirror-demo`
+
+Then follow `docs/deploy/mirror-codex-plugin-ui-acceptance.md` to record the exact Codex app
+labels and any version-specific install behavior.
 
 If remote smoke fails with a URL or TLS error, rerun with explicit retries and inspect whether
 PowerShell can reach the endpoints:

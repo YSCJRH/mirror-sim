@@ -17,6 +17,7 @@ ALLOWED_EXACT_PATHS = {
     "README.md",
     "docs/decisions/ADR-0010-mirror-codex-plugin-mcp-contract.md",
     "docs/deploy/mirror-codex-plugin.md",
+    "docs/deploy/mirror-codex-plugin-ui-acceptance.md",
     "docs/deploy/render-public-demo.md",
     "docs/releases/mirror-codex-plugin-v1.md",
     "make.ps1",
