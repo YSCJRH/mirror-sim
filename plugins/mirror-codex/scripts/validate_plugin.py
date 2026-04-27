@@ -116,6 +116,7 @@ def validate_mcp_placeholder(root: Path) -> None:
     assert_true((root / "scripts" / "run_mcp.py").exists(), "MCP entrypoint must exist.")
     assert_true((root / "scripts" / "smoke_mcp_stdio.py").exists(), "MCP stdio smoke script must exist.")
     assert_true((root / "scripts" / "acceptance_check.py").exists(), "plugin install acceptance script must exist.")
+    assert_true((root / "scripts" / "cli_marketplace_preflight.py").exists(), "Codex CLI marketplace preflight script must exist.")
     assert_true((root / "scripts" / "check_pr_scope.py").exists(), "plugin PR scope check script must exist.")
     assert_true((root / "mirror_codex_mcp" / "server.py").exists(), "MCP server module must exist.")
 
@@ -151,6 +152,7 @@ def validate_plugin_readme(root: Path) -> None:
     assert_true("annotations.readOnlyHint: true" in text, "plugin README must document read-only MCP annotations.")
     assert_true("smoke_mcp_stdio.py" in text, "plugin README must document the MCP stdio smoke.")
     assert_true("acceptance_check.py" in text, "plugin README must document the install acceptance check.")
+    assert_true("cli_marketplace_preflight.py" in text, "plugin README must document the Codex CLI marketplace preflight.")
     assert_true("check_pr_scope.py" in text, "plugin README must document the PR scope check.")
     for tool_name in REQUIRED_TOOL_NAMES:
         assert_true(tool_name in text, f"plugin README must mention MCP tool {tool_name}.")

@@ -73,6 +73,18 @@ metadata, and path-argument rejection:
 python plugins/mirror-codex/scripts/acceptance_check.py
 ```
 
+If the Codex CLI is installed, run the optional marketplace preflight in an isolated
+temporary `CODEX_HOME`:
+
+```powershell
+python plugins/mirror-codex/scripts/cli_marketplace_preflight.py
+```
+
+This verifies that `codex marketplace add` accepts the repository root as the local
+marketplace source and records whether `codex debug prompt-input` sees the `mirror-demo`
+skill. It does not call `codex exec`, does not call model providers, and does not replace
+clean Codex app UI acceptance.
+
 ## Codex Manual Acceptance
 
 After enabling the repo-local plugin in Codex, ask Codex:
