@@ -22,6 +22,21 @@ TODO[verify]: Record the exact Codex app UI labels and install/enable controls f
 Codex versioned environment. The current local CLI checks cannot inspect interactive Codex app
 controls directly.
 
+## Current Session Preflight
+
+Direct evidence: in the Codex thread that created this checklist, tool discovery for
+`mirror-codex` and `mirror-demo` did not expose Mirror plugin tools after PR #353 and PR #354
+were merged. This indicates the running thread cannot be used as a clean post-install UI
+acceptance session.
+
+Reasonable inference: repo-local plugin discovery is likely evaluated when a Codex app session
+or workspace is opened, not dynamically after a plugin lands on `main` inside an already-running
+thread.
+
+Do not close the UI `TODO[verify]` from this current-thread preflight alone. Use a new Codex
+app session opened at the repository root and record the exact UI labels and controls observed
+there.
+
 ## UI Acceptance Steps
 
 Start from a clean Codex app session opened at the repository root.
