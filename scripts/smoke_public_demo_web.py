@@ -15,6 +15,9 @@ from pathlib import Path
 from typing import Any
 
 
+TRANSIENT_HTTP_STATUSES = {408, 425, 429, 500, 502, 503, 504}
+
+
 def pick_free_port() -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.bind(("127.0.0.1", 0))
@@ -49,6 +52,56 @@ def request_headers(auth_header: str | None, *, json_body: bool = False) -> dict
     return headers
 
 
+def describe_url_error(error: BaseException) -> str:
+    if isinstance(error, urllib.error.URLError):
+        reason = error.reason
+        return f"{type(reason).__name__}: {reason}"
+    return f"{type(error).__name__}: {error}"
+
+
+def read_http_response(
+    request: urllib.request.Request,
+    *,
+    timeout: int,
+    attempts: int,
+    retry_delay: float,
+) -> tuple[int, str, str]:
+    attempts = max(1, attempts)
+    last_error = "no response"
+    for attempt in range(1, attempts + 1):
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                return (
+                    response.status,
+                    response.headers.get("Content-Type", ""),
+                    response.read().decode("utf-8", errors="replace"),
+                )
+        except urllib.error.HTTPError as error:
+            if error.code not in TRANSIENT_HTTP_STATUSES:
+                raise
+            body = error.read().decode("utf-8", errors="replace")
+            last_error = f"status {error.code}: {body[:240]}"
+            if error.code in TRANSIENT_HTTP_STATUSES and attempt < attempts:
+                time.sleep(retry_delay)
+                continue
+            raise RuntimeError(
+                f"HTTP request failed for {display_url(request.full_url)} after "
+                f"{attempt} attempt(s): {last_error}"
+            ) from error
+        except (urllib.error.URLError, TimeoutError, OSError) as error:
+            last_error = describe_url_error(error)
+            if attempt < attempts:
+                time.sleep(retry_delay)
+                continue
+            raise RuntimeError(
+                f"HTTP request failed for {display_url(request.full_url)} after "
+                f"{attempt} attempt(s): {last_error}"
+            ) from error
+    raise RuntimeError(
+        f"HTTP request failed for {display_url(request.full_url)} after {attempts} attempt(s): {last_error}"
+    )
+
+
 def wait_for_ready(base_url: str, timeout_seconds: int, auth_header: str | None) -> None:
     deadline = time.time() + timeout_seconds
     last_error = "no response"
@@ -63,7 +116,7 @@ def wait_for_ready(base_url: str, timeout_seconds: int, auth_header: str | None)
         except urllib.error.HTTPError as error:
             last_error = f"status {error.code}"
         except Exception as error:
-            last_error = str(error)
+            last_error = describe_url_error(error)
         time.sleep(1)
     raise RuntimeError(
         f"Mirror public demo did not become ready within {timeout_seconds} seconds at "
@@ -71,7 +124,15 @@ def wait_for_ready(base_url: str, timeout_seconds: int, auth_header: str | None)
     )
 
 
-def http_json(base_url: str, path: str, auth_header: str | None, payload: dict[str, Any] | None = None):
+def http_json(
+    base_url: str,
+    path: str,
+    auth_header: str | None,
+    payload: dict[str, Any] | None = None,
+    *,
+    attempts: int = 1,
+    retry_delay: float = 1.0,
+):
     data = None
     method = "GET"
     if payload is not None:
@@ -83,11 +144,15 @@ def http_json(base_url: str, path: str, auth_header: str | None, payload: dict[s
         headers=request_headers(auth_header, json_body=payload is not None),
         method=method,
     )
-    with urllib.request.urlopen(request, timeout=30) as response:
-        raw = response.read().decode("utf-8")
-        if "application/json" in response.headers.get("Content-Type", ""):
-            return json.loads(raw)
-        return {"status": response.status, "body": raw}
+    status, content_type, raw = read_http_response(
+        request,
+        timeout=30,
+        attempts=attempts,
+        retry_delay=retry_delay,
+    )
+    if "application/json" in content_type:
+        return json.loads(raw)
+    return {"status": status, "body": raw}
 
 
 def expect_http_status(
@@ -96,9 +161,19 @@ def expect_http_status(
     auth_header: str | None,
     expected_status: int,
     payload: dict[str, Any] | None = None,
+    *,
+    attempts: int = 1,
+    retry_delay: float = 1.0,
 ) -> None:
     try:
-        http_json(base_url, path, auth_header, payload)
+        http_json(
+            base_url,
+            path,
+            auth_header,
+            payload,
+            attempts=attempts,
+            retry_delay=retry_delay,
+        )
     except urllib.error.HTTPError as error:
         if error.code == expected_status:
             return
@@ -107,10 +182,21 @@ def expect_http_status(
     raise RuntimeError(f"Expected {expected_status} for {path}, got success.")
 
 
-def assert_status_200(url: str, auth_header: str | None) -> int:
+def assert_status_200(
+    url: str,
+    auth_header: str | None,
+    *,
+    attempts: int = 1,
+    retry_delay: float = 1.0,
+) -> int:
     request = urllib.request.Request(url, headers=request_headers(auth_header))
-    with urllib.request.urlopen(request, timeout=30) as response:
-        return response.status
+    status, _content_type, _raw = read_http_response(
+        request,
+        timeout=30,
+        attempts=attempts,
+        retry_delay=retry_delay,
+    )
+    return status
 
 
 def main() -> int:
@@ -120,6 +206,8 @@ def main() -> int:
     parser.add_argument("--timeout", type=int, default=30)
     parser.add_argument("--base-url", help="Use an already-running Mirror web base URL.")
     parser.add_argument("--no-start", action="store_true", help="Do not start a local Next server.")
+    parser.add_argument("--http-retries", type=int, default=5, help="Retry transient HTTP/TLS failures.")
+    parser.add_argument("--retry-delay", type=float, default=2.0, help="Seconds between transient HTTP retries.")
     parser.add_argument("--basic-auth-user", default=os.environ.get("MIRROR_SMOKE_BASIC_AUTH_USER"))
     parser.add_argument("--basic-auth-password", default=os.environ.get("MIRROR_SMOKE_BASIC_AUTH_PASSWORD"))
     args = parser.parse_args()
@@ -163,11 +251,32 @@ def main() -> int:
             env=env,
         )
 
+    http_attempts = max(1, args.http_retries)
+    retry_delay = max(0.0, args.retry_delay)
+
     try:
         wait_for_ready(base_url, args.timeout, auth_header)
-        health_payload = http_json(base_url, "/api/health", auth_header)
-        ready_payload = http_json(base_url, "/api/ready", auth_header)
-        manifest_payload = http_json(base_url, "/api/public-demo/manifest", auth_header)
+        health_payload = http_json(
+            base_url,
+            "/api/health",
+            auth_header,
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
+        ready_payload = http_json(
+            base_url,
+            "/api/ready",
+            auth_header,
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
+        manifest_payload = http_json(
+            base_url,
+            "/api/public-demo/manifest",
+            auth_header,
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
 
         if health_payload.get("status") != "ok":
             raise RuntimeError(f"Unexpected health payload: {health_payload}")
@@ -185,14 +294,62 @@ def main() -> int:
         if not expected_ids.issubset(artifact_ids):
             raise RuntimeError(f"Manifest missing expected ids: {expected_ids - artifact_ids}")
 
-        claims_payload = http_json(base_url, "/api/public-demo/artifacts/demo.claims", auth_header)
-        eval_payload = http_json(base_url, "/api/public-demo/artifacts/demo.eval_summary", auth_header)
-        compare_payload = http_json(base_url, "/api/public-demo/artifacts/demo.compare", auth_header)
-        report_payload = http_json(base_url, "/api/public-demo/artifacts/demo.report", auth_header)
-        documents_payload = http_json(base_url, "/api/public-demo/artifacts/demo.documents", auth_header)
-        chunks_payload = http_json(base_url, "/api/public-demo/artifacts/demo.chunks", auth_header)
-        graph_payload = http_json(base_url, "/api/public-demo/artifacts/demo.graph", auth_header)
-        rubric_payload = http_json(base_url, "/api/public-demo/artifacts/demo.rubric", auth_header)
+        claims_payload = http_json(
+            base_url,
+            "/api/public-demo/artifacts/demo.claims",
+            auth_header,
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
+        eval_payload = http_json(
+            base_url,
+            "/api/public-demo/artifacts/demo.eval_summary",
+            auth_header,
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
+        compare_payload = http_json(
+            base_url,
+            "/api/public-demo/artifacts/demo.compare",
+            auth_header,
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
+        report_payload = http_json(
+            base_url,
+            "/api/public-demo/artifacts/demo.report",
+            auth_header,
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
+        documents_payload = http_json(
+            base_url,
+            "/api/public-demo/artifacts/demo.documents",
+            auth_header,
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
+        chunks_payload = http_json(
+            base_url,
+            "/api/public-demo/artifacts/demo.chunks",
+            auth_header,
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
+        graph_payload = http_json(
+            base_url,
+            "/api/public-demo/artifacts/demo.graph",
+            auth_header,
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
+        rubric_payload = http_json(
+            base_url,
+            "/api/public-demo/artifacts/demo.rubric",
+            auth_header,
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
 
         public_payload_text = json.dumps(
             {
@@ -238,6 +395,8 @@ def main() -> int:
                 "scenarioId": "scenario_baseline",
                 "decisionProvider": "deterministic_only",
             },
+            attempts=http_attempts,
+            retry_delay=retry_delay,
         )
         expect_http_status(
             base_url,
@@ -251,6 +410,8 @@ def main() -> int:
                 "decisionProvider": "deterministic_only",
                 "perturbation": {"kind": "blocked_public_demo"},
             },
+            attempts=http_attempts,
+            retry_delay=retry_delay,
         )
         expect_http_status(
             base_url,
@@ -262,15 +423,50 @@ def main() -> int:
                 "sessionId": "public-demo-disabled",
                 "toNode": "node_root",
             },
+            attempts=http_attempts,
+            retry_delay=retry_delay,
         )
-        expect_http_status(base_url, "/api/worlds/create", auth_header, 403, {"name": "blocked"})
+        expect_http_status(
+            base_url,
+            "/api/worlds/create",
+            auth_header,
+            403,
+            {"name": "blocked"},
+            attempts=http_attempts,
+            retry_delay=retry_delay,
+        )
 
         page_statuses = {
-            "/": assert_status_200(f"{base_url}/", auth_header),
-            "/review": assert_status_200(f"{base_url}/review", auth_header),
-            f"/changes/{branch_id}": assert_status_200(f"{base_url}/changes/{branch_id}", auth_header),
-            f"/explain/{branch_id}": assert_status_200(f"{base_url}/explain/{branch_id}", auth_header),
-            "/worlds/new": assert_status_200(f"{base_url}/worlds/new", auth_header),
+            "/": assert_status_200(
+                f"{base_url}/",
+                auth_header,
+                attempts=http_attempts,
+                retry_delay=retry_delay,
+            ),
+            "/review": assert_status_200(
+                f"{base_url}/review",
+                auth_header,
+                attempts=http_attempts,
+                retry_delay=retry_delay,
+            ),
+            f"/changes/{branch_id}": assert_status_200(
+                f"{base_url}/changes/{branch_id}",
+                auth_header,
+                attempts=http_attempts,
+                retry_delay=retry_delay,
+            ),
+            f"/explain/{branch_id}": assert_status_200(
+                f"{base_url}/explain/{branch_id}",
+                auth_header,
+                attempts=http_attempts,
+                retry_delay=retry_delay,
+            ),
+            "/worlds/new": assert_status_200(
+                f"{base_url}/worlds/new",
+                auth_header,
+                attempts=http_attempts,
+                retry_delay=retry_delay,
+            ),
         }
 
         claims = claims_payload.get("data", [])
@@ -308,4 +504,7 @@ if __name__ == "__main__":
     except urllib.error.HTTPError as error:
         body = error.read().decode("utf-8", errors="replace")
         print(body, file=sys.stderr)
-        raise
+        raise SystemExit(1) from error
+    except RuntimeError as error:
+        print(error, file=sys.stderr)
+        raise SystemExit(1) from error

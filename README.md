@@ -116,6 +116,18 @@ make public-demo-check
 ./make.ps1 public-demo-check
 ```
 
+Validate the repo-local Codex plugin:
+
+```bash
+make plugin-check
+make plugin-release-check
+```
+
+```powershell
+./make.ps1 plugin-check
+./make.ps1 plugin-release-check
+```
+
 Start the legacy local development stack:
 
 ```bash

@@ -7,6 +7,7 @@
 - [ ] `./make.ps1 test`
 - [ ] `./make.ps1 smoke`
 - [ ] `./make.ps1 eval-demo`
+- [ ] `./make.ps1 plugin-release-check` (required for plugin, MCP, ADR, or public demo artifact-source changes)
 - [ ] Additional focused test(s) listed below
 
 ## Artifacts
