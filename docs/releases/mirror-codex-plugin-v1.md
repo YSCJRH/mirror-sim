@@ -113,6 +113,8 @@ npm run build --prefix frontend
 - Added plugin validation, MCP tests, stdio smoke, deterministic install acceptance, and PR
   scope hygiene. `plugin-release-check` now runs those checks plus secret scan, phase2 audit,
   and whitespace diff validation.
+- Scoped PR hygiene reports local-only plan files and generated editable-install egg metadata
+  separately so they do not get staged into the plugin PR.
 - Added the durable MCP contract ADR and operator docs for install acceptance, evidence
   navigation, release checks, and explicit remote public demo smoke.
 
@@ -131,8 +133,9 @@ npm run build --prefix frontend
   scan passed, and phase2 audit status `pass`.
 - Direct evidence: remote public demo smoke against `https://mirror-public-demo.onrender.com`
   reports 8 artifacts OK, 3 claims, eval status `pass`, and key pages returning 200.
-- Direct evidence: PR scope check reports local-only untracked `docs/plans/...` files as
-  excluded from the plugin PR.
+- Direct evidence: PR scope check reports local-only untracked `docs/plans/...` files and
+  generated `backend/mirror_engine.egg-info/...` packaging metadata as excluded from the
+  plugin PR.
 - Reasonable inference: `npm run build --prefix frontend` is not required for this PR because
   the change set does not modify frontend code or frontend routes.
 
