@@ -17,10 +17,16 @@ replace the deterministic filesystem and MCP checks.
   with command `python` and args `["./scripts/run_mcp.py"]`.
 - Direct evidence: `./make.ps1 plugin-release-check` validates the plugin manifest, MCP
   tools/resources/prompts, install acceptance, secret scan, phase2 audit, and PR scope.
+- Direct evidence: on 2026-04-28, a user-provided Codex app screenshot showed a visible
+  plugin pill labeled `Mirror Codex` in the Codex UI after global installation into the
+  user's Codex home.
+- Direct evidence: the screenshot showed Chinese UI text `完全访问权限` next to a shield icon.
+  Treat this as observed Codex session UI text only; do not reinterpret it as the plugin
+  manifest capability, which remains `Read`.
 
-TODO[verify]: Record the exact Codex app UI labels and install/enable controls from a clean
-Codex versioned environment. The current local CLI checks cannot inspect interactive Codex app
-controls directly.
+TODO[verify]: Record the exact Market install/enable controls and a successful manual
+`Mirror Demo` prompt-response workflow from a clean Codex app session. The screenshot proves
+visibility, not full click-path acceptance.
 
 ## Current Session Preflight
 
