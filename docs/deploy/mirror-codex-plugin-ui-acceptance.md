@@ -39,6 +39,12 @@ there.
 
 ## CLI Marketplace Preflight
 
+Run the scriptable preflight:
+
+```powershell
+python plugins/mirror-codex/scripts/cli_marketplace_preflight.py
+```
+
 Direct evidence: on 2026-04-27, `codex marketplace add D:\mirror` succeeded in an isolated
 temporary `CODEX_HOME` and wrote:
 

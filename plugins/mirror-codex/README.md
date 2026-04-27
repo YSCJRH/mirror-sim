@@ -21,6 +21,7 @@ This first version is intentionally read-only and local-first. It packages one s
 - `scripts/run_mcp.py`: MCP server entrypoint.
 - `scripts/smoke_mcp_stdio.py`: Fixed stdio smoke test for plugin install readiness.
 - `scripts/acceptance_check.py`: Repo-local plugin install acceptance check.
+- `scripts/cli_marketplace_preflight.py`: Optional Codex CLI marketplace registration preflight.
 - `scripts/check_pr_scope.py`: Workspace scope check for the plugin V1 PR.
 - `scripts/validate_plugin.py`: Static validation for the plugin shell.
 - `tests/`: Plugin MCP and sanitizer tests.
@@ -132,6 +133,17 @@ python plugins/mirror-codex/scripts/check_pr_scope.py --stage-list | git add --p
 ```
 
 For a clean local install check, enable the repo-local `mirror-codex` plugin from `.agents/plugins/marketplace.json`, then ask Codex to use the `mirror-demo` skill to inspect `demo.claims` and compare `branch_reporter_detained`. The same MCP path is covered by `smoke_mcp_stdio.py`.
+
+If the Codex CLI is installed, you can also run a local marketplace preflight without using
+your real Codex home:
+
+```powershell
+python plugins/mirror-codex/scripts/cli_marketplace_preflight.py
+```
+
+This script creates an isolated temporary `CODEX_HOME`, runs `codex marketplace add` against
+the repository root, and renders `codex debug prompt-input`. It does not call `codex exec`,
+does not call model providers, and does not close the Codex app UI `TODO[verify]`.
 
 Remote public demo checks are optional and must be explicit. They are not part of `plugin-check`:
 
