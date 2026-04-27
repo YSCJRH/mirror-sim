@@ -189,8 +189,9 @@ For plugin-facing changes, run:
 ```
 
 The release gate includes `plugins/mirror-codex/scripts/check_pr_scope.py`. It allows the
-plugin V1 files and reports local-only untracked `docs/plans/...` files separately so they
-stay out of the plugin PR.
+plugin V1 files and reports local-only untracked `docs/plans/...` files plus generated
+`backend/mirror_engine.egg-info/...` packaging metadata separately so they stay out of the
+plugin PR.
 
 To print the exact path list for staging, run:
 

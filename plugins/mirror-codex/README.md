@@ -116,7 +116,8 @@ git diff --check
 ```
 
 The PR scope check allows this plugin V1 change set and reports local-only untracked
-`docs/plans/...` files separately so they do not get staged into the plugin PR.
+`docs/plans/...` files and generated `backend/mirror_engine.egg-info/...` packaging metadata
+separately so they do not get staged into the plugin PR.
 
 To prepare a precise staging list without adding local-only plan files:
 

@@ -26,6 +26,7 @@ ALLOWED_PREFIXES = {
     "plugins/mirror-codex/",
 }
 LOCAL_ONLY_UNTRACKED_PREFIXES = {
+    "backend/mirror_engine.egg-info/",
     "docs/plans/",
 }
 

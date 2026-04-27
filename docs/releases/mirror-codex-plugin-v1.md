@@ -16,7 +16,8 @@ public demo.
 - `plugin-release-check` local release gate
 - `plugin-remote-check` explicit remote public demo gate
 - deterministic repo-local plugin install acceptance check
-- PR scope hygiene that keeps local-only `docs/plans/...` files out of the plugin PR
+- PR scope hygiene that keeps local-only `docs/plans/...` files and generated
+  `backend/mirror_engine.egg-info/...` packaging metadata out of the plugin PR
 - Linux, Windows, and deploy workflow gates for `plugin-release-check`
 - optional remote public demo smoke with HTTP retry controls
 
@@ -94,7 +95,8 @@ npm run build --prefix frontend
 - `acceptance_check.py` verifies marketplace discovery, plugin manifest shape, `.mcp.json`
   launch, tools/resources/prompts, claim evidence, sanitized documents, and path rejection.
 - `check_pr_scope.py` reports the plugin V1 file scope and excludes local-only untracked
-  `docs/plans/...` files from the plugin PR.
+  `docs/plans/...` files and generated `backend/mirror_engine.egg-info/...` packaging metadata
+  from the plugin PR.
 - MCP output must strip internal path fields such as `artifact_paths`, `summary_path`,
   `trace_path`, `snapshot_dir`, and document `source_path`.
 - Claims returned through the plugin must preserve both `label` and `evidence_ids`.
