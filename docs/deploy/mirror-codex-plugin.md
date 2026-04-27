@@ -34,6 +34,7 @@ From the repository root:
 python -m backend.app.cli eval-demo
 ./make.ps1 plugin-check
 ./make.ps1 plugin-release-check
+./make.ps1 plugin-cli-preflight
 ```
 
 The plugin check must report:
@@ -77,7 +78,7 @@ If the Codex CLI is installed, run the optional marketplace preflight in an isol
 temporary `CODEX_HOME`:
 
 ```powershell
-python plugins/mirror-codex/scripts/cli_marketplace_preflight.py
+./make.ps1 plugin-cli-preflight
 ```
 
 This verifies that `codex marketplace add` accepts the repository root as the local

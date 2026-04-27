@@ -121,11 +121,13 @@ Validate the repo-local Codex plugin:
 ```bash
 make plugin-check
 make plugin-release-check
+make plugin-cli-preflight
 ```
 
 ```powershell
 ./make.ps1 plugin-check
 ./make.ps1 plugin-release-check
+./make.ps1 plugin-cli-preflight
 ```
 
 Start the legacy local development stack:

@@ -67,6 +67,9 @@ switch ($Target) {
         Invoke-Native python -m backend.app.cli audit-phase phase2
         Invoke-Native git diff --check
     }
+    "plugin-cli-preflight" {
+        Invoke-Native python .\plugins\mirror-codex\scripts\cli_marketplace_preflight.py
+    }
     "plugin-remote-check" {
         Invoke-Native python .\scripts\smoke_public_demo_web.py --base-url $RemoteBaseUrl --timeout $RemoteTimeout --http-retries $RemoteRetries --retry-delay $RemoteRetryDelay
     }

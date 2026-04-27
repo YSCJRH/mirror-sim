@@ -42,7 +42,7 @@ there.
 Run the scriptable preflight:
 
 ```powershell
-python plugins/mirror-codex/scripts/cli_marketplace_preflight.py
+./make.ps1 plugin-cli-preflight
 ```
 
 Direct evidence: on 2026-04-27, `codex marketplace add D:\mirror` succeeded in an isolated
