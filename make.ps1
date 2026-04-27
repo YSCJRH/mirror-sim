@@ -70,6 +70,9 @@ switch ($Target) {
     "plugin-cli-preflight" {
         Invoke-Native python .\plugins\mirror-codex\scripts\cli_marketplace_preflight.py
     }
+    "plugin-app-preflight" {
+        Invoke-Native python .\plugins\mirror-codex\scripts\app_protocol_preflight.py
+    }
     "plugin-remote-check" {
         Invoke-Native python .\scripts\smoke_public_demo_web.py --base-url $RemoteBaseUrl --timeout $RemoteTimeout --http-retries $RemoteRetries --retry-delay $RemoteRetryDelay
     }

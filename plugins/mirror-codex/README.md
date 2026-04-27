@@ -22,6 +22,7 @@ This first version is intentionally read-only and local-first. It packages one s
 - `scripts/smoke_mcp_stdio.py`: Fixed stdio smoke test for plugin install readiness.
 - `scripts/acceptance_check.py`: Repo-local plugin install acceptance check.
 - `scripts/cli_marketplace_preflight.py`: Optional Codex CLI marketplace registration preflight.
+- `scripts/app_protocol_preflight.py`: Optional Codex app-server plugin install preflight.
 - `scripts/check_pr_scope.py`: Workspace scope check for the plugin V1 PR.
 - `scripts/validate_plugin.py`: Static validation for the plugin shell.
 - `tests/`: Plugin MCP and sanitizer tests.
@@ -102,6 +103,7 @@ Run these from the repository root:
 ./make.ps1 plugin-check
 ./make.ps1 plugin-release-check
 ./make.ps1 plugin-cli-preflight
+./make.ps1 plugin-app-preflight
 ```
 
 `plugin-check` runs static validation, MCP tests, the fixed stdio smoke, and repo-local plugin install acceptance. `plugin-release-check` adds plugin PR scope hygiene, secret scanning, phase2 audit, and whitespace diff validation. To run the same release steps manually:
@@ -145,6 +147,17 @@ your real Codex home:
 This script creates an isolated temporary `CODEX_HOME`, runs `codex marketplace add` against
 the repository root, and renders `codex debug prompt-input`. It does not call `codex exec`,
 does not call model providers, and does not close the Codex app UI `TODO[verify]`.
+
+For a closer non-interactive app-surface check, run:
+
+```powershell
+./make.ps1 plugin-app-preflight
+```
+
+This starts `codex app-server` with an isolated temporary `CODEX_HOME`, verifies
+`plugin/list`, `plugin/read`, `plugin/install`, `skills/list`, and `mcpServerStatus/list`,
+and confirms that `mirror-codex:mirror-demo` is installed and enabled through the app
+protocol. It still does not inspect interactive Codex app UI labels or controls.
 
 Remote public demo checks are optional and must be explicit. They are not part of `plugin-check`:
 
