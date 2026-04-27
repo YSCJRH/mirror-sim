@@ -37,6 +37,30 @@ Do not close the UI `TODO[verify]` from this current-thread preflight alone. Use
 app session opened at the repository root and record the exact UI labels and controls observed
 there.
 
+## CLI Marketplace Preflight
+
+Direct evidence: on 2026-04-27, `codex marketplace add D:\mirror` succeeded in an isolated
+temporary `CODEX_HOME` and wrote:
+
+```toml
+[marketplaces.mirror-local]
+source_type = "local"
+source = '\\?\D:\mirror'
+```
+
+Direct evidence: `codex marketplace add D:\mirror\.agents\plugins` failed because the CLI
+looks for `.agents/plugins/marketplace.json` under the supplied marketplace root. Use the
+repository root as the source when testing local marketplace registration from the CLI.
+
+Direct evidence: adding the marketplace, then manually setting
+`[plugins."mirror-codex@mirror-local"] enabled = true` in the isolated config, did not make
+the `mirror-demo` skill appear in `codex -C D:\mirror debug prompt-input`.
+
+Reasonable inference: local marketplace registration is scriptable, but plugin installation
+or enablement includes Codex app state that is not reproduced by manually editing config.
+This CLI preflight can support troubleshooting, but it still does not close the UI
+`TODO[verify]`.
+
 ## UI Acceptance Steps
 
 Start from a clean Codex app session opened at the repository root.
