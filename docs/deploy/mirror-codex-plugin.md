@@ -35,6 +35,7 @@ python -m backend.app.cli eval-demo
 ./make.ps1 plugin-check
 ./make.ps1 plugin-release-check
 ./make.ps1 plugin-cli-preflight
+./make.ps1 plugin-app-preflight
 ```
 
 The plugin check must report:
@@ -85,6 +86,18 @@ This verifies that `codex marketplace add` accepts the repository root as the lo
 marketplace source and records whether `codex debug prompt-input` sees the `mirror-demo`
 skill. It does not call `codex exec`, does not call model providers, and does not replace
 clean Codex app UI acceptance.
+
+For a closer non-interactive app-surface check, run:
+
+```powershell
+./make.ps1 plugin-app-preflight
+```
+
+This starts `codex app-server` with an isolated temporary `CODEX_HOME`, verifies
+`plugin/list`, `plugin/read`, `plugin/install`, `skills/list`, and `mcpServerStatus/list`,
+and confirms that `mirror-codex:mirror-demo` becomes installed and enabled through the app
+protocol. It does not call model providers and still does not replace clean Codex app UI
+acceptance.
 
 ## Codex Manual Acceptance
 

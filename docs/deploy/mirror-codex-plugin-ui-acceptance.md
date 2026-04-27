@@ -67,6 +67,23 @@ or enablement includes Codex app state that is not reproduced by manually editin
 This CLI preflight can support troubleshooting, but it still does not close the UI
 `TODO[verify]`.
 
+## App Protocol Preflight
+
+Run the scriptable app-server protocol preflight:
+
+```powershell
+./make.ps1 plugin-app-preflight
+```
+
+Direct evidence: `plugin/list`, `plugin/read`, `plugin/install`, `skills/list`, and
+`mcpServerStatus/list` can verify that `mirror-codex` is discoverable from `mirror-local`,
+installs into an isolated temporary `CODEX_HOME`, enables `mirror-codex:mirror-demo`, and
+exposes the `mirror-demo` MCP server through the Codex app protocol.
+
+Reasonable inference: this exercises the same plugin inventory and install protocol used by
+Codex app surfaces, but it is not a screenshot or click-path acceptance. It still does not
+close the UI `TODO[verify]`.
+
 ## UI Acceptance Steps
 
 Start from a clean Codex app session opened at the repository root.
