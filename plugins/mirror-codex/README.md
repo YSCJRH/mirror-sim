@@ -101,6 +101,7 @@ Run these from the repository root:
 ```powershell
 ./make.ps1 plugin-check
 ./make.ps1 plugin-release-check
+./make.ps1 plugin-cli-preflight
 ```
 
 `plugin-check` runs static validation, MCP tests, the fixed stdio smoke, and repo-local plugin install acceptance. `plugin-release-check` adds plugin PR scope hygiene, secret scanning, phase2 audit, and whitespace diff validation. To run the same release steps manually:
@@ -138,7 +139,7 @@ If the Codex CLI is installed, you can also run a local marketplace preflight wi
 your real Codex home:
 
 ```powershell
-python plugins/mirror-codex/scripts/cli_marketplace_preflight.py
+./make.ps1 plugin-cli-preflight
 ```
 
 This script creates an isolated temporary `CODEX_HOME`, runs `codex marketplace add` against

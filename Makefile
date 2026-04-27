@@ -4,7 +4,7 @@ MIRROR_REMOTE_SMOKE_TIMEOUT ?= 60
 MIRROR_REMOTE_SMOKE_RETRIES ?= 5
 MIRROR_REMOTE_SMOKE_RETRY_DELAY ?= 2
 
-.PHONY: setup smoke test eval-demo eval-transfer public-demo-check plugin-check plugin-release-check plugin-remote-check dev-api dev-web
+.PHONY: setup smoke test eval-demo eval-transfer public-demo-check plugin-check plugin-release-check plugin-cli-preflight plugin-remote-check dev-api dev-web
 
 setup:
 	$(PYTHON) -m pip install -e backend
@@ -39,6 +39,9 @@ plugin-release-check: plugin-check
 	$(PYTHON) scripts/check_no_secrets.py
 	$(PYTHON) -m backend.app.cli audit-phase phase2
 	git diff --check
+
+plugin-cli-preflight:
+	$(PYTHON) plugins/mirror-codex/scripts/cli_marketplace_preflight.py
 
 plugin-remote-check:
 	$(PYTHON) scripts/smoke_public_demo_web.py --base-url $(MIRROR_PUBLIC_DEMO_BASE_URL) --timeout $(MIRROR_REMOTE_SMOKE_TIMEOUT) --http-retries $(MIRROR_REMOTE_SMOKE_RETRIES) --retry-delay $(MIRROR_REMOTE_SMOKE_RETRY_DELAY)
