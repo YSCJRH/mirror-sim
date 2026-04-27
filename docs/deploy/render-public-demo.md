@@ -31,6 +31,8 @@ After the Render deploy finishes, verify:
 ```bash
 curl --fail https://<service>.onrender.com/api/health
 curl --fail https://<service>.onrender.com/api/ready
+python scripts/smoke_public_demo_web.py --base-url https://<service>.onrender.com --timeout 60
+MIRROR_PUBLIC_DEMO_BASE_URL=https://<service>.onrender.com make plugin-remote-check
 ```
 
 Expected public behavior:

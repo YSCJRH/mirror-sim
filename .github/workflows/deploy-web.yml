@@ -62,6 +62,9 @@ jobs:
       - name: Generate canonical deterministic demo artifacts
         run: python -m backend.app.cli eval-demo
 
+      - name: Check repo-local Codex plugin release gate
+        run: make plugin-release-check
+
       - name: Scan generated demo artifacts
         run: python scripts/scan_frontend_bundle.py --path artifacts/demo
 

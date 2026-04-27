@@ -1,0 +1,42 @@
+{
+  "name": "mirror-codex",
+  "version": "0.1.0",
+  "description": "Read-only Codex workflows and MCP tools for understanding Mirror's deterministic Phase 1 public demo.",
+  "author": {
+    "name": "YSCJRH",
+    "url": "https://github.com/YSCJRH"
+  },
+  "homepage": "https://github.com/YSCJRH/mirror-sim",
+  "repository": "https://github.com/YSCJRH/mirror-sim",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "mirror",
+    "simulation",
+    "deterministic-demo",
+    "read-only",
+    "evidence"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Mirror Codex",
+    "shortDescription": "Inspect Mirror's deterministic public demo safely.",
+    "longDescription": "Mirror Codex helps developers understand the read-only deterministic Fog Harbor public demo, inspect claim-linked evidence, run local checks, and keep provider secrets out of repository, frontend, logs, artifacts, and error output. Its MCP server exposes only hardcoded read-only tools over logical demo artifact ids and does not call model providers.",
+    "developerName": "YSCJRH",
+    "category": "Engineering",
+    "capabilities": [
+      "Read"
+    ],
+    "websiteURL": "https://github.com/YSCJRH/mirror-sim",
+    "privacyPolicyURL": "https://github.com/YSCJRH/mirror-sim#phase-1-public-demo-mode",
+    "termsOfServiceURL": "https://github.com/YSCJRH/mirror-sim/blob/main/LICENSE",
+    "defaultPrompt": [
+      "Use Mirror Demo to explain the public demo safety boundary.",
+      "Use Mirror Demo to inspect claims and evidence.",
+      "Use Mirror Demo to run public demo checks."
+    ],
+    "brandColor": "#2563EB",
+    "screenshots": []
+  }
+}

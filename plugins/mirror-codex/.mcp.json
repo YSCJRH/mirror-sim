@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "mirror-demo": {
+      "command": "python",
+      "args": [
+        "./scripts/run_mcp.py"
+      ]
+    }
+  }
+}

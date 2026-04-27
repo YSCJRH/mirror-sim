@@ -1,0 +1,20 @@
+{
+  "name": "mirror-local",
+  "interface": {
+    "displayName": "Mirror Local Plugins"
+  },
+  "plugins": [
+    {
+      "name": "mirror-codex",
+      "source": {
+        "source": "local",
+        "path": "./plugins/mirror-codex"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Engineering"
+    }
+  ]
+}
