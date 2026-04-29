@@ -23,6 +23,7 @@ This first version is intentionally read-only and local-first. It packages one s
 - `scripts/acceptance_check.py`: Repo-local plugin install acceptance check.
 - `scripts/cli_marketplace_preflight.py`: Optional Codex CLI marketplace registration preflight.
 - `scripts/app_protocol_preflight.py`: Optional Codex app-server plugin install preflight.
+- `scripts/write_ui_acceptance_template.py`: Blank interactive UI acceptance record helper.
 - `scripts/check_pr_scope.py`: Workspace scope check for the plugin V1 PR.
 - `scripts/validate_plugin.py`: Static validation for the plugin shell.
 - `tests/`: Plugin MCP and sanitizer tests.
@@ -136,6 +137,18 @@ python plugins/mirror-codex/scripts/check_pr_scope.py --stage-list | git add --p
 ```
 
 For a clean local install check, enable the repo-local `mirror-codex` plugin from `.agents/plugins/marketplace.json`, then ask Codex to use the `mirror-demo` skill to inspect `demo.claims` and compare `branch_reporter_detained`. The same MCP path is covered by `smoke_mcp_stdio.py`.
+
+For interactive Codex app UI acceptance, use
+`docs/deploy/mirror-codex-plugin-ui-acceptance.md` and record the session with
+`docs/deploy/mirror-codex-plugin-ui-acceptance-template.md`. To create a local ignored copy
+under `artifacts/manual/`, run:
+
+```powershell
+python plugins/mirror-codex/scripts/write_ui_acceptance_template.py
+```
+
+This helper only writes a blank record. It does not call Codex, model providers, or MCP tools,
+and it does not prove that UI tool cards appeared.
 
 If the Codex CLI is installed, you can also run a local marketplace preflight without using
 your real Codex home:
