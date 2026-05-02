@@ -87,6 +87,11 @@ PROMPT_NAMES = (
     "review-claim-evidence",
     "compare-demo-branches",
 )
+REPO_ROOT_SENTINELS = (
+    "AGENTS.md",
+    "mirror.md",
+    ".agents/plugins/marketplace.json",
+)
 
 
 class ToolInputError(ValueError):
@@ -97,7 +102,15 @@ class ToolDataError(RuntimeError):
     """Raised when canonical demo artifacts are missing or invalid."""
 
 
+def looks_like_repo_root(path: Path) -> bool:
+    return all(path.joinpath(sentinel).exists() for sentinel in REPO_ROOT_SENTINELS)
+
+
 def repo_root() -> Path:
+    cwd = Path.cwd().resolve()
+    for candidate in (cwd, *cwd.parents):
+        if looks_like_repo_root(candidate):
+            return candidate
     return Path(__file__).resolve().parents[3]
 
 

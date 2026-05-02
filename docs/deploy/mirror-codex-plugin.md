@@ -103,10 +103,11 @@ For a closer non-interactive app-surface check, run:
 ```
 
 This starts `codex app-server` with an isolated temporary `CODEX_HOME`, verifies
-`plugin/list`, `plugin/read`, `plugin/install`, `skills/list`, and `mcpServerStatus/list`,
-and confirms that `mirror-codex:mirror-demo` becomes installed and enabled through the app
-protocol. It does not call model providers and still does not replace clean Codex app UI
-acceptance.
+`plugin/list`, `plugin/read`, `plugin/install`, and `skills/list`, and confirms that
+`mirror-codex:mirror-demo` becomes installed and enabled through the app protocol. It also
+attempts `mcpServerStatus/list`; status timeout is recorded as open evidence unless the
+script is run with `--require-mcp-status`. It does not call model providers and still does
+not replace clean Codex app UI acceptance.
 
 ## Codex Manual Acceptance
 

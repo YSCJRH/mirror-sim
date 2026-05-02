@@ -8,6 +8,7 @@ import pytest
 
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = PLUGIN_ROOT.parents[1]
 sys.path.insert(0, str(PLUGIN_ROOT))
 
 from mirror_codex_mcp import server
@@ -15,6 +16,30 @@ from mirror_codex_mcp import server
 
 def as_text(payload: object) -> str:
     return json.dumps(payload, ensure_ascii=False)
+
+
+def test_repo_root_prefers_workspace_cwd_when_plugin_is_cached(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    cached_server = (
+        tmp_path
+        / "plugins"
+        / "cache"
+        / "mirror-local"
+        / "mirror-codex"
+        / "0.1.0"
+        / "mirror_codex_mcp"
+        / "server.py"
+    )
+    cached_server.parent.mkdir(parents=True)
+    cached_server.write_text("", encoding="utf-8")
+
+    monkeypatch.setattr(server, "__file__", str(cached_server))
+    monkeypatch.chdir(REPO_ROOT)
+
+    assert server.repo_root() == REPO_ROOT
+    assert server.artifact_path("demo.eval_summary").exists()
 
 
 def test_manifest_uses_logical_artifact_ids_only() -> None:
