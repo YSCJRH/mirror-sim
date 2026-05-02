@@ -36,9 +36,10 @@ Keep acceptance evidence in three separate layers:
   and direct calls through the repo-local `mirror_codex_mcp` module. This proves the
   deterministic read-only server contract, not interactive UI tool-card behavior.
 - App-server protocol evidence: `./make.ps1 plugin-app-preflight`, which verifies
-  `plugin/list`, `plugin/read`, `plugin/install`, `skills/list`, and `mcpServerStatus/list`
-  against an isolated `CODEX_HOME`. This is strong install-surface evidence, but still not a
-  screenshot or prompt-response acceptance record.
+  `plugin/list`, `plugin/read`, `plugin/install`, and `skills/list` against an isolated
+  `CODEX_HOME`. It also attempts `mcpServerStatus/list`; if that status request times out,
+  record it as open MCP status evidence, not as interactive UI evidence. This is strong
+  install-surface evidence, but still not a screenshot or prompt-response acceptance record.
 - Interactive UI evidence: a clean Codex app session where the plugin is visible, install or
   enable controls are recorded, the `mirror-demo` skill is available, and each manual prompt
   records observable tool cards or traces plus the assistant response.
@@ -100,10 +101,13 @@ Run the scriptable app-server protocol preflight:
 ./make.ps1 plugin-app-preflight
 ```
 
-Direct evidence: `plugin/list`, `plugin/read`, `plugin/install`, `skills/list`, and
-`mcpServerStatus/list` can verify that `mirror-codex` is discoverable from `mirror-local`,
-installs into an isolated temporary `CODEX_HOME`, enables `mirror-codex:mirror-demo`, and
-exposes the `mirror-demo` MCP server through the Codex app protocol.
+Direct evidence: `plugin/list`, `plugin/read`, `plugin/install`, and `skills/list` can verify
+that `mirror-codex` is discoverable from `mirror-local`, installs into an isolated temporary
+`CODEX_HOME`, and enables `mirror-codex:mirror-demo`.
+
+TODO[verify]: `mcpServerStatus/list` is attempted by the preflight and is recorded separately.
+If it times out, do not treat the run as MCP status evidence and do not close the UI
+`TODO[verify]` from it.
 
 Reasonable inference: this exercises the same plugin inventory and install protocol used by
 Codex app surfaces, but it is not a screenshot or click-path acceptance. It still does not

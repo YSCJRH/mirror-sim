@@ -168,9 +168,11 @@ For a closer non-interactive app-surface check, run:
 ```
 
 This starts `codex app-server` with an isolated temporary `CODEX_HOME`, verifies
-`plugin/list`, `plugin/read`, `plugin/install`, `skills/list`, and `mcpServerStatus/list`,
-and confirms that `mirror-codex:mirror-demo` is installed and enabled through the app
-protocol. It still does not inspect interactive Codex app UI labels or controls.
+`plugin/list`, `plugin/read`, `plugin/install`, and `skills/list`, and confirms that
+`mirror-codex:mirror-demo` is installed and enabled through the app protocol. It also attempts
+`mcpServerStatus/list`; status timeout is recorded as open evidence unless the script is run
+with `--require-mcp-status`. It still does not inspect interactive Codex app UI labels or
+controls.
 
 Remote public demo checks are optional and must be explicit. They are not part of `plugin-check`:
 

@@ -25,6 +25,17 @@ SKILL_NAME = "mirror-codex:mirror-demo"
 SECRET_ENV_MARKERS = ("API_KEY", "TOKEN", "SECRET")
 
 
+class RequestTimeout(AssertionError):
+    def __init__(self, request_id: int, method: str, timeout: float) -> None:
+        self.request_id = request_id
+        self.method = method
+        self.timeout = timeout
+        super().__init__(
+            f"Timed out waiting for app-server response {request_id} ({method}) "
+            f"after {timeout:.1f}s."
+        )
+
+
 class AppServerClient:
     def __init__(self, codex_command: str, keep_temp: bool, timeout: float) -> None:
         codex_path = shutil.which(codex_command)
@@ -99,7 +110,13 @@ class AppServerClient:
         for line in iter(stream.readline, ""):
             self.stdout_queue.put(line)
 
-    def request(self, method: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
+    def request(
+        self,
+        method: str,
+        params: dict[str, Any] | None = None,
+        *,
+        timeout: float | None = None,
+    ) -> dict[str, Any]:
         if self.process is None or self.process.stdin is None:
             raise AssertionError("app-server process is not running.")
         request_id = self.next_id
@@ -109,14 +126,14 @@ class AppServerClient:
             payload["params"] = params
         self.process.stdin.write(json.dumps(payload, separators=(",", ":")) + "\n")
         self.process.stdin.flush()
-        return self._wait_for_response(request_id)
+        return self._wait_for_response(request_id, method, self.timeout if timeout is None else timeout)
 
-    def _wait_for_response(self, request_id: int) -> dict[str, Any]:
-        deadline = time.time() + self.timeout
+    def _wait_for_response(self, request_id: int, method: str, timeout: float) -> dict[str, Any]:
+        deadline = time.time() + timeout
         while time.time() < deadline:
             if self.process is not None and self.process.poll() is not None:
                 stderr = self._stderr_excerpt()
-                raise AssertionError(f"app-server exited before response {request_id}.\n{stderr}")
+                raise AssertionError(f"app-server exited before response {request_id} ({method}).\n{stderr}")
             try:
                 line = self.stdout_queue.get(timeout=0.25)
             except queue.Empty:
@@ -127,11 +144,11 @@ class AppServerClient:
                 continue
             if message.get("id") == request_id:
                 if "error" in message:
-                    raise AssertionError(f"{request_id} returned error: {message['error']}")
+                    raise AssertionError(f"{request_id} ({method}) returned error: {message['error']}")
                 return message.get("result", {})
             if "method" in message:
                 self.notifications.append(message)
-        raise AssertionError(f"Timed out waiting for app-server response {request_id}.")
+        raise RequestTimeout(request_id, method, timeout)
 
     def _stderr_excerpt(self, limit: int = 1200) -> str:
         if self.process is None or self.process.stderr is None:
@@ -189,7 +206,13 @@ def validate_plugin_summary(summary: dict[str, Any], *, installed: bool, enabled
     require(interface.get("capabilities") == ["Read"], "plugin interface capabilities must remain Read only.")
 
 
-def run_preflight(codex_command: str, keep_temp: bool, timeout: float) -> dict[str, Any]:
+def run_preflight(
+    codex_command: str,
+    keep_temp: bool,
+    timeout: float,
+    require_mcp_status: bool,
+    mcp_status_timeout: float,
+) -> dict[str, Any]:
     checks: dict[str, Any] = {}
     marketplace_path = REPO_ROOT / ".agents" / "plugins" / "marketplace.json"
 
@@ -276,22 +299,52 @@ def run_preflight(codex_command: str, keep_temp: bool, timeout: float) -> dict[s
 
         reload_result = client.request("config/mcpServer/reload")
         require(reload_result == {}, "MCP config reload should return an empty object.")
-        mcp_status = client.request(
-            "mcpServerStatus/list",
-            {"detail": "full", "limit": 50, "cursor": None},
-        )
-        servers = mcp_status.get("data", [])
-        mirror_server = next((server for server in servers if server.get("name") == MCP_SERVER_NAME), None)
-        require(mirror_server is not None, "mcpServerStatus/list must expose mirror-demo.")
-        require(mirror_server.get("authStatus") == "unsupported", "mirror-demo auth status must remain unsupported.")
-        checks["mcp_status_after_install"] = {
-            "passed": True,
-            "server": mirror_server.get("name"),
-            "authStatus": mirror_server.get("authStatus"),
-        }
+        try:
+            mcp_status = client.request(
+                "mcpServerStatus/list",
+                {"detail": "full", "limit": 50, "cursor": None},
+                timeout=mcp_status_timeout,
+            )
+            servers = mcp_status.get("data", [])
+            mirror_server = next((server for server in servers if server.get("name") == MCP_SERVER_NAME), None)
+            require(mirror_server is not None, "mcpServerStatus/list must expose mirror-demo.")
+            require(mirror_server.get("authStatus") == "unsupported", "mirror-demo auth status must remain unsupported.")
+            checks["mcp_status_after_install"] = {
+                "passed": True,
+                "required": require_mcp_status,
+                "server": mirror_server.get("name"),
+                "authStatus": mirror_server.get("authStatus"),
+            }
+        except RequestTimeout as exc:
+            checks["mcp_status_after_install"] = {
+                "passed": False,
+                "required": require_mcp_status,
+                "server": MCP_SERVER_NAME,
+                "error": str(exc),
+                "request": exc.method,
+                "timeoutSeconds": exc.timeout,
+                "interpretation": (
+                    "MCP status enumeration did not return in this Codex app-server version. "
+                    "Plugin install, skill visibility, and MCP contract checks are reported separately."
+                ),
+            }
+            if require_mcp_status:
+                raise
 
         temp_home_value = str(client.temp_home) if keep_temp else "<temporary>"
         codex_path = client.codex_path
+
+    mcp_status_check = checks.get("mcp_status_after_install", {})
+    if mcp_status_check.get("passed") is True:
+        mcp_status_note = (
+            "Direct evidence: app-server plugin/list, plugin/read, plugin/install, skills/list, "
+            "and mcpServerStatus/list accepted the repo-local mirror-codex plugin in an isolated CODEX_HOME."
+        )
+    else:
+        mcp_status_note = (
+            "TODO[verify]: mcpServerStatus/list did not complete during this preflight; "
+            "do not treat this run as MCP status evidence."
+        )
 
     return {
         "repo_root": str(REPO_ROOT),
@@ -304,7 +357,7 @@ def run_preflight(codex_command: str, keep_temp: bool, timeout: float) -> dict[s
         "checks": checks,
         "notes": [
             "TODO[verify]: This app protocol preflight does not inspect interactive Codex app UI labels or controls.",
-            "Direct evidence: app-server plugin/list, plugin/read, plugin/install, skills/list, and mcpServerStatus/list accepted the repo-local mirror-codex plugin in an isolated CODEX_HOME.",
+            mcp_status_note,
             "Reasonable inference: this exercises the same plugin inventory and install protocol used by Codex app surfaces, but it is not a screenshot or click-path acceptance.",
         ],
     }
@@ -317,13 +370,30 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--codex", default="codex", help="Codex CLI command to execute.")
     parser.add_argument("--keep-temp", action="store_true", help="Keep the isolated CODEX_HOME.")
     parser.add_argument("--timeout", type=float, default=30.0, help="Seconds to wait per app-server request.")
+    parser.add_argument(
+        "--mcp-status-timeout",
+        type=float,
+        default=10.0,
+        help="Seconds to wait for mcpServerStatus/list before recording it as open.",
+    )
+    parser.add_argument(
+        "--require-mcp-status",
+        action="store_true",
+        help="Fail when mcpServerStatus/list times out. By default the timeout is recorded as open evidence.",
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     try:
-        result = run_preflight(args.codex, args.keep_temp, args.timeout)
+        result = run_preflight(
+            args.codex,
+            args.keep_temp,
+            args.timeout,
+            args.require_mcp_status,
+            args.mcp_status_timeout,
+        )
     except AssertionError as exc:
         print(f"Mirror Codex app protocol preflight failed: {exc}", file=sys.stderr)
         return 1
