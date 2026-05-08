@@ -12,7 +12,7 @@ Use this skill to help developers understand and inspect Mirror's deterministic 
 - Keep the workflow read-only, deterministic, and local-first.
 - Treat Mirror as a constrained what-if sandbox for fictional or explicitly authorized worlds.
 - Do not present Mirror as a real-world prediction machine.
-- Do not build real-person personas, digital doubles, political persuasion, law-enforcement scoring, hiring, credit, medical, or judicial decision systems.
+- Do not build real-person personas, real-person digital twins, digital doubles, political persuasion, law-enforcement scoring, hiring, credit, medical, judicial, or other high-risk decision systems.
 - Do not create worlds, upload corpora, start runtime sessions, generate branches, mutate artifacts, or call model providers.
 - Do not ask for or write provider secrets. Do not use `NEXT_PUBLIC_OPENAI_API_KEY`.
 - Keep user configuration in local env or the user's own deployment environment; never put it in repo files, frontend code, build logs, artifacts, or error pages.

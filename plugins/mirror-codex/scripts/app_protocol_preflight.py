@@ -21,6 +21,7 @@ PLUGIN_NAME = "mirror-codex"
 PLUGIN_ID = "mirror-codex@mirror-local"
 MARKETPLACE_NAME = "mirror-local"
 MCP_SERVER_NAME = "mirror-demo"
+MCP_RESOURCE_URI = "mirror-demo://manifest"
 SKILL_NAME = "mirror-codex:mirror-demo"
 SECRET_ENV_MARKERS = ("API_KEY", "TOKEN", "SECRET")
 
@@ -212,6 +213,8 @@ def run_preflight(
     timeout: float,
     require_mcp_status: bool,
     mcp_status_timeout: float,
+    require_mcp_resource: bool,
+    mcp_resource_timeout: float,
 ) -> dict[str, Any]:
     checks: dict[str, Any] = {}
     marketplace_path = REPO_ROOT / ".agents" / "plugins" / "marketplace.json"
@@ -331,8 +334,61 @@ def run_preflight(
             if require_mcp_status:
                 raise
 
+        try:
+            mcp_resource = client.request(
+                "mcpServer/resource/read",
+                {"server": MCP_SERVER_NAME, "uri": MCP_RESOURCE_URI},
+                timeout=mcp_resource_timeout,
+            )
+            contents = mcp_resource.get("contents", [])
+            require(isinstance(contents, list) and contents, "mcpServer/resource/read must return contents.")
+            first_content = contents[0]
+            require(
+                isinstance(first_content, dict) and first_content.get("uri") == MCP_RESOURCE_URI,
+                "mcpServer/resource/read must return the requested manifest resource.",
+            )
+            text = first_content.get("text")
+            require(isinstance(text, str) and "fog-harbor" in text, "manifest resource must include fog-harbor.")
+            checks["mcp_resource_read_manifest"] = {
+                "passed": True,
+                "required": require_mcp_resource,
+                "server": MCP_SERVER_NAME,
+                "uri": MCP_RESOURCE_URI,
+            }
+        except RequestTimeout as exc:
+            checks["mcp_resource_read_manifest"] = {
+                "passed": False,
+                "required": require_mcp_resource,
+                "server": MCP_SERVER_NAME,
+                "uri": MCP_RESOURCE_URI,
+                "error": str(exc),
+                "request": exc.method,
+                "timeoutSeconds": exc.timeout,
+                "interpretation": (
+                    "Direct MCP resource read did not return in this Codex app-server session. "
+                    "Treat this as open app/session integration evidence, not as MCP contract failure."
+                ),
+            }
+            if require_mcp_resource:
+                raise
+        except AssertionError as exc:
+            checks["mcp_resource_read_manifest"] = {
+                "passed": False,
+                "required": require_mcp_resource,
+                "server": MCP_SERVER_NAME,
+                "uri": MCP_RESOURCE_URI,
+                "error": str(exc),
+                "interpretation": (
+                    "Direct MCP resource read returned an unexpected app-server result. "
+                    "Treat this as open app/session integration evidence unless strict mode is active."
+                ),
+            }
+            if require_mcp_resource:
+                raise
+
         temp_home_value = str(client.temp_home) if keep_temp else "<temporary>"
         codex_path = client.codex_path
+        notifications = list(client.notifications)
 
     mcp_status_check = checks.get("mcp_status_after_install", {})
     if mcp_status_check.get("passed") is True:
@@ -346,6 +402,17 @@ def run_preflight(
             "do not treat this run as MCP status evidence."
         )
 
+    mcp_resource_check = checks.get("mcp_resource_read_manifest", {})
+    if mcp_resource_check.get("passed") is True:
+        mcp_resource_note = (
+            "Direct evidence: mcpServer/resource/read returned the fixed mirror-demo://manifest resource."
+        )
+    else:
+        mcp_resource_note = (
+            "TODO[verify]: mcpServer/resource/read for mirror-demo://manifest did not complete; "
+            "do not treat this run as MCP resource evidence."
+        )
+
     return {
         "repo_root": str(REPO_ROOT),
         "codex_command": codex_path,
@@ -355,9 +422,11 @@ def run_preflight(
         "calls_model_provider": False,
         "ui_todo_closed": False,
         "checks": checks,
+        "notifications": notifications,
         "notes": [
             "TODO[verify]: This app protocol preflight does not inspect interactive Codex app UI labels or controls.",
             mcp_status_note,
+            mcp_resource_note,
             "Reasonable inference: this exercises the same plugin inventory and install protocol used by Codex app surfaces, but it is not a screenshot or click-path acceptance.",
         ],
     }
@@ -381,6 +450,17 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Fail when mcpServerStatus/list times out. By default the timeout is recorded as open evidence.",
     )
+    parser.add_argument(
+        "--mcp-resource-timeout",
+        type=float,
+        default=10.0,
+        help="Seconds to wait for mcpServer/resource/read before recording it as open.",
+    )
+    parser.add_argument(
+        "--require-mcp-resource",
+        action="store_true",
+        help="Fail when mcpServer/resource/read does not return the manifest resource.",
+    )
     return parser.parse_args()
 
 
@@ -393,6 +473,8 @@ def main() -> int:
             args.timeout,
             args.require_mcp_status,
             args.mcp_status_timeout,
+            args.require_mcp_resource,
+            args.mcp_resource_timeout,
         )
     except AssertionError as exc:
         print(f"Mirror Codex app protocol preflight failed: {exc}", file=sys.stderr)
