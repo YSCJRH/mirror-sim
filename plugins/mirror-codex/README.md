@@ -7,6 +7,8 @@ This first version is intentionally read-only and local-first. It packages one s
 ## Boundaries
 
 - Mirror is a constrained, evidence-backed, replayable what-if simulation sandbox for fictional or explicitly authorized worlds.
+- Mirror Codex is not a real-world prediction tool, real-person digital twin system,
+  political persuasion tool, or high-risk decision system.
 - The Phase 1 public demo is deterministic-only, read-only, anonymous, and precomputed.
 - The public path does not create worlds, upload corpora, start new runs, enable Hosted GPT or BYOK, call the OpenAI API, add auth, add billing, add a database, add object storage, or add quotas.
 - User configuration and provider secrets must stay in the user's local environment or their own deployment environment. They must not be committed, exposed to frontend code, printed in build logs, written to artifacts, or included in error pages.
@@ -170,9 +172,10 @@ For a closer non-interactive app-surface check, run:
 This starts `codex app-server` with an isolated temporary `CODEX_HOME`, verifies
 `plugin/list`, `plugin/read`, `plugin/install`, and `skills/list`, and confirms that
 `mirror-codex:mirror-demo` is installed and enabled through the app protocol. It also attempts
-`mcpServerStatus/list`; status timeout is recorded as open evidence unless the script is run
-with `--require-mcp-status`. It still does not inspect interactive Codex app UI labels or
-controls.
+`mcpServerStatus/list` and `mcpServer/resource/read` for `mirror-demo://manifest`; timeouts are
+recorded as open app/session integration evidence unless the script is run with
+`--require-mcp-status` or `--require-mcp-resource`. It still does not inspect interactive
+Codex app UI labels or controls.
 
 Remote public demo checks are optional and must be explicit. They are not part of `plugin-check`:
 

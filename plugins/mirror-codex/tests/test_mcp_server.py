@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -14,8 +15,51 @@ sys.path.insert(0, str(PLUGIN_ROOT))
 from mirror_codex_mcp import server
 
 
+FORBIDDEN_PUBLIC_OUTPUT_MARKERS = (
+    "artifact_paths",
+    "summary_path",
+    "trace_path",
+    "snapshot_dir",
+    "source_path",
+    "D:/mirror",
+    "D:\\mirror",
+    "artifacts/demo",
+)
+SECRET_SHAPE_PATTERNS = (
+    re.compile(r"\bsk-(?:proj-|svcacct-)?[A-Za-z0-9_-]{20,}\b"),
+    re.compile(r"(?i)NEXT_PUBLIC_[A-Z_]*OPENAI_API_KEY\s*[:=]"),
+    re.compile(r"(?i)(OPENAI_API_KEY|MIRROR_HOSTED_OPENAI_API_KEY)\s*[:=]"),
+)
+
+
 def as_text(payload: object) -> str:
     return json.dumps(payload, ensure_ascii=False)
+
+
+def assert_public_output_is_sanitized(payload: object) -> None:
+    decoded_strings: list[str] = []
+
+    def walk(value: object) -> None:
+        if isinstance(value, str):
+            decoded_strings.append(value)
+            return
+        if isinstance(value, dict):
+            for key, item in value.items():
+                walk(key)
+                walk(item)
+            return
+        if isinstance(value, list):
+            for item in value:
+                walk(item)
+
+    walk(payload)
+    text = as_text(payload)
+    search_surfaces = [text, *decoded_strings]
+    for surface in search_surfaces:
+        for marker in FORBIDDEN_PUBLIC_OUTPUT_MARKERS:
+            assert marker not in surface
+        for pattern in SECRET_SHAPE_PATTERNS:
+            assert pattern.search(surface) is None
 
 
 def test_repo_root_prefers_workspace_cwd_when_plugin_is_cached(
@@ -73,6 +117,14 @@ def test_artifact_sanitizers_match_public_api_boundary() -> None:
     assert "snapshot_dir" not in combined
     assert "source_path" not in combined
     assert "D:/mirror" not in combined
+
+
+def test_all_artifact_and_resource_outputs_are_sanitized() -> None:
+    for artifact_id in server.PUBLIC_DEMO_ARTIFACTS:
+        assert_public_output_is_sanitized(server.get_demo_artifact(artifact_id))
+
+    for uri in server.RESOURCE_URIS:
+        assert_public_output_is_sanitized(server.read_resource(uri))
 
 
 def test_rejects_path_like_artifact_ids() -> None:
