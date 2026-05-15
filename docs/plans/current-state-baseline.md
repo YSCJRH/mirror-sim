@@ -243,6 +243,8 @@ This note is the intentional post-Phase-46 stop-state baseline after the formal 
 - The repo is now in the intentional `paused` stop-state with no open milestone and no approved Phase 47 successor.
 - The Phase 46 unlock order is now fully resolved: the queue-sync issue is closed after successor bootstrap, the review-scorecard modularization issue is closed after merging PR `#340`, the default-operator-path issue is closed after merging PR `#342`, the advanced-navigation issue is closed after merging PR `#344`, and the exit gate closes with the milestone.
 - No Phase 47 milestone is approved or open in this round; any successor beyond Phase 46 requires a fresh decision against the blueprint triggers in `mirror.md`.
+- The public successor-gate proposal now lives in `docs/plans/phase-47-successor-gate-2026-05-16.md`. It is a decision and hygiene baseline, not an execution queue by itself.
+- Local untracked private-beta, kernel, and design-system planning files under `docs/plans/...` are candidate inputs only until a PR intentionally promotes them.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
 - The local queue heartbeat remains active as `mirror-queue-heartbeat` but should now report the repo as `paused` until an approved successor milestone exists.

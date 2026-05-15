@@ -258,8 +258,9 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 
 - `v0.1.0` is the formal release baseline.
 - The current stop-state / queue state lives in [docs/plans/current-state-baseline.md](docs/plans/current-state-baseline.md).
-- The current private-beta candidate status is tracked in [docs/plans/private-beta-readiness-2026-04-23.md](docs/plans/private-beta-readiness-2026-04-23.md).
-- No Phase 47 is pre-opened or implied here.
+- The proposed successor gate lives in [docs/plans/phase-47-successor-gate-2026-05-16.md](docs/plans/phase-47-successor-gate-2026-05-16.md).
+- Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
+- No Phase 47 is pre-opened or implied by this README.
 - Fog Harbor remains the canonical demo world; `museum-night` is the minimal transfer world used to prove the pipeline is not single-world-only.
 
 ---
