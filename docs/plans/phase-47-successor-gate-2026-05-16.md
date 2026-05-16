@@ -4,7 +4,7 @@ Date: 2026-05-16
 
 This note defines the public baseline for reopening Mirror after the post-Phase-46
 `v0.1.0` stop-state. The original gate proposal did not approve Phase 47 by itself; the
-GitHub queue is now open after review.
+GitHub queue was opened after review and completed through the closeout gate.
 
 ## Current Direct Evidence
 
@@ -12,14 +12,15 @@ GitHub queue is now open after review.
   branch was created.
 - The latest published release remains `v0.1.0`.
 - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports
-  `ready` with active milestone `Phase 47 - Boundary Readiness and Successor Hygiene`.
+  `paused` after the Phase 47 work items closed and no ready work items remain.
 - `docs/plans/current-state-baseline.md` records the intentional post-Phase-46 stop-state.
 - `README.md` defines the Phase 1 public demo as read-only, anonymous, and
   deterministic-only.
 - `plugins/mirror-codex` defines a read-only, local-first Codex plugin for the deterministic
   public demo.
-- GitHub issue `#365` is the open blocked Phase 47 exit gate.
-- GitHub issues `#366` through `#369` are the initial ready Phase 47 work items.
+- GitHub issue `#365` is the protected Phase 47 exit gate that remains open until this
+  closeout PR merges.
+- GitHub issues `#366` through `#369` are closed Phase 47 work items.
 
 ## Blueprint Boundary
 
@@ -61,7 +62,11 @@ the first successor hygiene PR.
 
 ## Entry Criteria
 
-Builder automation may resume only for the active Phase 47 milestone while all remain true:
+Builder automation was eligible to resume only while Phase 47 had one open successor
+milestone, one blocked exit gate, at least one ready work item, and `audit-github-queue`
+reported `ready`. That condition no longer holds after `#366` through `#369` closed.
+
+The historical criteria were:
 
 - Exactly one successor milestone is approved and open in GitHub.
 - One blocked exit-gate issue exists in that milestone.
@@ -70,7 +75,7 @@ Builder automation may resume only for the active Phase 47 milestone while all r
   `protected-core`.
 - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`.
 
-## Proposed First Milestone
+## Executed First Milestone
 
 Milestone:
 
@@ -84,41 +89,51 @@ Exit gate issue:
 Phase 47 exit gate
 ```
 
-Initial work items:
+Executed work items:
 
 1. `Phase 47: sync repo truth to successor queue`
    - Scope: update tracked baseline docs only.
    - Lane: `contract-safe`.
-   - Done when `current-state-baseline`, `phase-execution-queue`, and README agree on the
-     successor posture.
+   - Closed by PR `#370` after `current-state-baseline`, `phase-execution-queue`, and
+     README agreed on the successor posture.
 
 2. `Phase 47: public/private/plugin boundary regression`
    - Scope: verify public demo, private-beta routes, and Mirror Codex plugin boundaries.
    - Lane: `protected-core`.
-   - Done when public demo checks, plugin release checks, and secret scans pass without
-     changing public API, plugin MCP contract, scenario DSL, claim labels, run trace shape,
-     or artifact layout.
+   - Closed by PR `#371` after public demo checks, plugin release checks, and secret scans
+     passed without changing public API, plugin MCP contract, scenario DSL, claim labels, run
+     trace shape, or artifact layout.
 
 3. `Phase 47: runtime world safety preflight`
    - Scope: harden create-world safety checks before unsafe user-authored content is written.
    - Lane: `protected-core`.
-   - Done when real-person, digital-twin, political persuasion, real-world prediction, and
-     high-risk decision examples are rejected in English and Chinese without leaving unsafe
-     partial world state.
+   - Closed by PR `#372` after real-person, digital-twin, political persuasion,
+     real-world prediction, and high-risk decision examples were rejected in English and
+     Chinese without leaving unsafe partial world state.
 
 4. `Phase 47: main-path product containment`
    - Scope: keep the default operator path centered on compare, evidence, and eval.
    - Lane: `contract-safe` unless it changes durable artifacts, routes, or contracts.
-   - Done when packet-heavy compatibility surfaces remain secondary and the main review path
-     stays analysis-first.
+   - Closed by PR `#373` after packet-heavy compatibility surfaces remained secondary and the
+     main review path stayed analysis-first.
 
 Current GitHub mapping:
 
-- `#365` `Phase 47 exit gate`
-- `#366` `Phase 47: sync repo truth to successor queue`
-- `#367` `Phase 47: public/private/plugin boundary regression`
-- `#368` `Phase 47: runtime world safety preflight`
-- `#369` `Phase 47: main-path product containment`
+- `#365` `Phase 47 exit gate` remains open until this closeout PR merges.
+- `#366` `Phase 47: sync repo truth to successor queue` closed by PR `#370`.
+- `#367` `Phase 47: public/private/plugin boundary regression` closed by PR `#371`.
+- `#368` `Phase 47: runtime world safety preflight` closed by PR `#372`.
+- `#369` `Phase 47: main-path product containment` closed by PR `#373`.
+
+## Closeout Validation
+
+- `./make.ps1 public-demo-check` passed during the boundary-regression work.
+- `./make.ps1 plugin-release-check` passed during the boundary-regression work.
+- `python -m pytest backend/tests -q` passed after the runtime-world safety preflight.
+- `python scripts/check_no_secrets.py` passed during closeout.
+- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `paused`
+  once the Phase 47 implementation work items are closed.
+- `git diff --check` passed during closeout.
 
 ## Deferred Work
 
