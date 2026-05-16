@@ -11,6 +11,7 @@ from backend.app.domain.models import MirrorBaseModel
 from backend.app.graph.service import build_graph
 from backend.app.ingest.service import ingest_manifest
 from backend.app.personas.service import build_personas
+from backend.app.safety.service import ensure_safe_world_template_payload
 from backend.app.utils import ensure_dir, slugify, write_json
 from backend.app.worlds import state_artifacts_root, state_worlds_root
 
@@ -195,6 +196,7 @@ def create_bounded_incident_world(
         raise ValueError("authorization_confirmed must be true before publishing a world.")
     if len(spec.documents) == 0:
         raise ValueError("At least one authorized document is required.")
+    ensure_safe_world_template_payload(spec.model_dump())
 
     root = repo_root or Path(__file__).resolve().parents[3]
     world_id = slugify(spec.world_name)
