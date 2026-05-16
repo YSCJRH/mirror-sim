@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note records the completed Phase 47 boundary-readiness closeout and the return to a paused successor queue after the formal `v0.1.0` release baseline.
+This note records the completed Phase 47 boundary-readiness closeout and the approved Phase 48 successor queue after the formal `v0.1.0` release baseline.
 
 ## Snapshot
 
@@ -214,13 +214,19 @@ This note records the completed Phase 47 boundary-readiness closeout and the ret
   - `gh api repos/YSCJRH/mirror-sim/releases`
     - release `v0.1.0` exists and matches the committed release notes baseline
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - queue reports `paused` after the Phase 47 work items closed and no ready work items remain
+    - queue reports `ready` with `Phase 48 - Successor Intake and Boundary Contract Triage` as the active milestone
   - `gh issue list --milestone "Phase 47 - Boundary Readiness and Successor Hygiene" --state all`
-    - `#365` `Phase 47 exit gate` remains open and blocked until the Phase 47 closeout PR merges
+    - `#365` `Phase 47 exit gate` is `closed` after merging PR `#374`
     - `#366` `Phase 47: sync repo truth to successor queue` is `closed` after merging PR `#370`
     - `#367` `Phase 47: public/private/plugin boundary regression` is `closed` after merging PR `#371`
     - `#368` `Phase 47: runtime world safety preflight` is `closed` after merging PR `#372`
     - `#369` `Phase 47: main-path product containment` is `closed` after merging PR `#373`
+  - `gh issue list --milestone "Phase 48 - Successor Intake and Boundary Contract Triage" --state all`
+    - `#375` `Phase 48 exit gate` is `open`, `blocked`, and `lane:protected-core`
+    - `#376` `Phase 48: sync repo truth after Phase 47 closeout` is the initial repo-truth sync item for this baseline update
+    - `#377` `Phase 48: public private plugin boundary acceptance` is `open` and `ready`
+    - `#378` `Phase 48: private beta runtime contract audit` is `open` and `ready`
+    - `#379` `Phase 48: kernel perturbation gap brief` is `open` and `ready`
 
 ## Trusted Source Of Truth
 
@@ -242,16 +248,18 @@ This note records the completed Phase 47 boundary-readiness closeout and the ret
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
 - The default workbench path now consumes the canonical compare artifact directly and keeps focused divergent trace surfaces ahead of heavier packet-driven review flows.
 - The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, decision-template snippets, role preset cards, response-packaging shortcuts, apply-and-copy preset actions, grouped response-pack export, active preset session summary strips, route-filtered response kit choosers, route-kit comparison cards, preset session handoff packets, send-readiness cue strips, compact-versus-full handoff packet variants, destination-specific sender notes, compact-versus-full handoff packet diff previews, final send summary cards, destination-aware packet recommendation banners, delivery-bundle exports, receiver follow-up packs, delivery checkpoint boards, receiver response packets, reply outcome trackers, resolution handoff packs, resolution status boards, next-step routing packs, action readiness boards, escalation handoff packets, execution kickoff boards, execution progress trackers, execution outcome boards, execution correction boards, execution recovery boards, execution recovery checkpoint boards, execution recovery clearance boards, execution recovery release boards, escalation decision guides, escalation trigger packets, escalation dispatch packets, escalation delivery packets, escalation confirmation packets, escalation receipt packets, escalation acknowledgment packets, and escalation closure packets without introducing backend API expansion.
-- The current repository state has completed the Phase 47 boundary-readiness queue, preserved `v0.1.0` as the latest published release baseline, and returned to a paused successor posture.
+- The current repository state has completed the Phase 47 boundary-readiness queue, preserved `v0.1.0` as the latest published release baseline, and opened the approved Phase 48 successor queue.
 
 ## Next Entry Point
 
-- The repo is back in the intentional `paused` successor posture after Phase 47 closeout; the next build round requires a fresh approved milestone, blocked exit gate, and ready work items.
-- The Phase 47 unlock order is now resolved: the queue-sync issue is closed after PR `#370`, the boundary-regression report is closed after PR `#371`, the runtime-world safety preflight is closed after PR `#372`, the main-path containment report is closed after PR `#373`, and the exit gate is ready to close with the Phase 47 milestone after this closeout merges.
-- The completed successor milestone is `Phase 47 - Boundary Readiness and Successor Hygiene`.
-- The Phase 47 exit gate is `#365` `Phase 47 exit gate`, which remains the open blocked closeout gate until this PR merges.
-- The public successor-gate baseline lives in `docs/plans/phase-47-successor-gate-2026-05-16.md`.
+- Phase 48 is the active approved successor queue; `audit-github-queue` reports `ready`.
+- The Phase 47 unlock order is resolved: the queue-sync issue is closed after PR `#370`, the boundary-regression report is closed after PR `#371`, the runtime-world safety preflight is closed after PR `#372`, the main-path containment report is closed after PR `#373`, and the exit gate is closed after PR `#374`.
+- The active successor milestone is `Phase 48 - Successor Intake and Boundary Contract Triage`.
+- The Phase 48 exit gate is `#375` `Phase 48 exit gate`, which remains the open blocked closeout gate for this phase.
+- `#376` is the initial Phase 48 repo-truth sync item; `#377` through `#379` are the remaining ready follow-up work items after this baseline lands.
+- The completed Phase 47 successor-gate baseline lives in `docs/plans/phase-47-successor-gate-2026-05-16.md`.
+- The active Phase 48 successor-gate baseline lives in `docs/plans/phase-48-successor-gate-2026-05-17.md`.
 - Local untracked private-beta, kernel, and design-system planning files under `docs/plans/...` are candidate inputs only until a PR intentionally promotes them.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
-- The local queue heartbeat remains active as `mirror-queue-heartbeat` but should not consume new work until a new successor milestone is approved.
+- The local queue heartbeat remains active as `mirror-queue-heartbeat` and should consume only the approved Phase 48 milestone while `audit-github-queue` reports `ready`.

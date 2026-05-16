@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut and the completed Phase 47 boundary-readiness closeout.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 47 boundary-readiness closeout, and the approved Phase 48 successor queue.
 
 ## Current Gate State
 
@@ -50,7 +50,8 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 44 exit gate: closed
 - Phase 45 exit gate: closed
 - Phase 46 exit gate: closed
-- Phase 47 exit gate: closing with the closeout PR
+- Phase 47 exit gate: closed
+- Phase 48 exit gate: open and blocked
 
 Local phase audits currently report:
 
@@ -58,31 +59,34 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
+## Phase 48 Successor Queue
+
+- `audit-github-queue`
+  - reports `ready` with `Phase 48 - Successor Intake and Boundary Contract Triage` as the active milestone
+- milestone `Phase 48 - Successor Intake and Boundary Contract Triage`
+  - open
+- `#375` `Phase 48 exit gate`
+  - open and blocked
+  - labeled `lane:protected-core` because it is the protected closeout gate
+- `#376` `Phase 48: sync repo truth after Phase 47 closeout`
+  - first docs-only repo-truth sync work item
+  - expected to close with the PR that introduces this Phase 48 baseline
+- `#377` `Phase 48: public private plugin boundary acceptance`
+  - open and ready
+- `#378` `Phase 48: private beta runtime contract audit`
+  - open and ready
+- `#379` `Phase 48: kernel perturbation gap brief`
+  - open and ready
+- phase gate baseline
+  - active Phase 48 gate note: `docs/plans/phase-48-successor-gate-2026-05-17.md`
+
 ## Phase 47 Closeout
 
-- milestone `Phase 46 - Workbench Focus and Modularity`
-  - closed
-- `Phase 46 exit gate`
-  - closed
-- `Phase 46: sync repo truth to Phase 46 queue`
-  - closed
-  - merged via the Phase 46 queue-sync PR
-- `Phase 46: extract review-scorecard into modular feature slices`
-  - closed
-  - merged via PR `#340`
-- `Phase 46: define the default operator path around compare-evidence-eval`
-  - closed
-  - merged via PR `#342`
-- `Phase 46: move secondary packet surfaces behind advanced navigation`
-  - closed
-  - merged via PR `#344`
-- `audit-github-queue`
-  - reports `paused` after the Phase 47 work items closed and no ready work items remain
 - milestone `Phase 47 - Boundary Readiness and Successor Hygiene`
-  - remains open until the Phase 47 closeout PR merges
+  - closed after PR `#374`
 - `#365` `Phase 47 exit gate`
-  - remains open and blocked until this Phase 47 closeout PR merges
-  - labeled `lane:protected-core` because it is the protected closeout gate
+  - closed after PR `#374`
+  - labeled `lane:protected-core` because it was the protected closeout gate
 - `#366` `Phase 47: sync repo truth to successor queue`
   - closed
   - merged via PR `#370`
@@ -128,7 +132,8 @@ Local phase audits currently report:
     - merged via PR `#321`
 - successor posture
   - Phase 47 completed as a boundary readiness and successor hygiene round
-  - any work beyond the Phase 47 queue requires a fresh decision against the trigger conditions in `mirror.md`
+  - Phase 48 is the active approved successor queue
+  - any work beyond the Phase 48 queue requires a fresh decision against the trigger conditions in `mirror.md`
 
 ## Closeout Snapshot
 
@@ -586,7 +591,7 @@ Local phase audits currently report:
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 47 is closed; do not resume builder automation until a new successor queue is explicitly approved.
+- Phase 48 is the active approved successor queue; do not open a parallel execution queue.
 
 ## Historical Branch Status
 

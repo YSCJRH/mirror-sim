@@ -11,16 +11,19 @@ GitHub queue was opened after review and completed through the closeout gate.
 - At authoring time, local `main` was aligned with `origin/main` before this successor-gate
   branch was created.
 - The latest published release remains `v0.1.0`.
-- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports
-  `paused` after the Phase 47 work items closed and no ready work items remain.
-- `docs/plans/current-state-baseline.md` records the intentional post-Phase-46 stop-state.
+- During Phase 47 closeout, `python -m backend.app.cli audit-github-queue --repo
+  YSCJRH/mirror-sim` reported `paused` after the Phase 47 work items closed and before
+  Phase 48 was opened.
+- At Phase 47 authoring time, `docs/plans/current-state-baseline.md` recorded the
+  intentional post-Phase-46 stop-state.
 - `README.md` defines the Phase 1 public demo as read-only, anonymous, and
   deterministic-only.
 - `plugins/mirror-codex` defines a read-only, local-first Codex plugin for the deterministic
   public demo.
-- GitHub issue `#365` is the protected Phase 47 exit gate that remains open until this
-  closeout PR merges.
+- GitHub issue `#365` was the protected Phase 47 exit gate and is closed after PR `#374`.
 - GitHub issues `#366` through `#369` are closed Phase 47 work items.
+- The current successor queue is superseded by the Phase 48 gate note at
+  `docs/plans/phase-48-successor-gate-2026-05-17.md`.
 
 ## Blueprint Boundary
 
@@ -119,7 +122,7 @@ Executed work items:
 
 Current GitHub mapping:
 
-- `#365` `Phase 47 exit gate` remains open until this closeout PR merges.
+- `#365` `Phase 47 exit gate` closed by PR `#374`.
 - `#366` `Phase 47: sync repo truth to successor queue` closed by PR `#370`.
 - `#367` `Phase 47: public/private/plugin boundary regression` closed by PR `#371`.
 - `#368` `Phase 47: runtime world safety preflight` closed by PR `#372`.
@@ -131,8 +134,8 @@ Current GitHub mapping:
 - `./make.ps1 plugin-release-check` passed during the boundary-regression work.
 - `python -m pytest backend/tests -q` passed after the runtime-world safety preflight.
 - `python scripts/check_no_secrets.py` passed during closeout.
-- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `paused`
-  once the Phase 47 implementation work items are closed.
+- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reported
+  `paused` after the Phase 47 implementation work items closed and before Phase 48 opened.
 - `git diff --check` passed during closeout.
 
 ## Deferred Work
