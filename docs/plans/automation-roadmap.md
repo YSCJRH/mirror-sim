@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, Phase 36 closeout is complete, Phase 37 closeout is complete, Phase 38 closeout is complete, Phase 39 closeout is complete, Phase 40 closeout is complete, Phase 41 closeout is complete, Phase 42 closeout is complete, Phase 43 closeout is complete, Phase 44 closeout is complete, Phase 45 execution work is complete, Phase 46 closeout is complete, the first formal release remains published as `v0.1.0`, and the repo has returned to the intentional `paused` stop-state with no approved successor milestone.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, Phase 36 closeout is complete, Phase 37 closeout is complete, Phase 38 closeout is complete, Phase 39 closeout is complete, Phase 40 closeout is complete, Phase 41 closeout is complete, Phase 42 closeout is complete, Phase 43 closeout is complete, Phase 44 closeout is complete, Phase 45 execution work is complete, Phase 46 closeout is complete, the first formal release remains published as `v0.1.0`, and Phase 47 is now open as the approved boundary readiness and successor hygiene queue.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -153,12 +153,12 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - `#337` `Phase 46: extract review-scorecard into modular feature slices` is merged and closed via PR `#340`.
 - `#338` `Phase 46: define the default operator path around compare-evidence-eval` is merged and closed via PR `#342`.
 - `#339` `Phase 46: move secondary packet surfaces behind advanced navigation` is merged and closed via PR `#344`.
-- `audit-github-queue` now reports `paused` with no active milestone because no approved successor queue is open.
-- No Phase 47 milestone is approved or open in this round.
+- `audit-github-queue` now reports `ready` with active milestone `Phase 47 - Boundary Readiness and Successor Hygiene`.
+- Phase 47 is approved and open through issues `#365-#369`.
 - The first formal repository release is published as `v0.1.0`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
-- The local Codex queue heartbeat should now remain `paused` until an approved successor milestone is defined.
+- The local Codex queue heartbeat should now consume only the active Phase 47 milestone.
 
 ## Day 0 Bootstrap
 
@@ -211,5 +211,5 @@ Before builder automation is allowed to write code or auto-merge:
 - Long-running execution must run from isolated worktrees rather than the current `main` checkout.
 - Queue pickup order, one-writer ownership, and branch hygiene should follow `docs/plans/long-running-loop-runbook.md`.
 - When the active milestone exists and the queue reports `ready`, the builder may resume against that milestone only.
-- No Phase 47 milestone is approved in this round; reopening the queue after Phase 46 requires a fresh approval round.
+- Phase 47 is the currently approved queue; do not open another successor queue while it remains active.
 - When no open milestone exists and `audit-github-queue` reports `paused`, treat that state as an intentional released stop-state rather than a broken queue.
