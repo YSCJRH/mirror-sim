@@ -6,14 +6,51 @@ from typing import Any
 
 BLOCKED_TOPIC_TERMS = [
     "political persuasion",
+    "political influence",
     "voter targeting",
+    "real voters",
     "law enforcement scoring",
     "social credit",
     "credit score",
     "medical diagnosis",
     "judicial prediction",
     "real person persona",
+    "real-person persona",
+    "real person profile",
+    "real-person profile",
+    "real person digital twin",
+    "real-person digital twin",
+    "digital twin",
+    "digital double",
     "surveillance scrape",
+    "real-world prediction",
+    "real world prediction",
+    "predict real-world",
+    "real city tomorrow",
+    "high-risk decision",
+    "hidden surveillance",
+    "政治劝服",
+    "政治说服",
+    "政治影响",
+    "选民定向",
+    "真实选民",
+    "执法评分",
+    "社会信用",
+    "信用评分",
+    "医疗诊断",
+    "司法预测",
+    "真人画像",
+    "真人档案",
+    "真人分身",
+    "真人数字孪生",
+    "数字孪生",
+    "数字分身",
+    "监控抓取",
+    "隐蔽监控",
+    "真实世界",
+    "现实世界",
+    "现实预测",
+    "高风险决策",
 ]
 
 BLOCKED_REPORT_PHRASES = [
@@ -46,6 +83,12 @@ def ensure_safe_scenario(payload: Any) -> None:
     hits = _find_hits(_stringify(payload), BLOCKED_TOPIC_TERMS)
     if hits:
         raise ValueError(f"Unsafe scenario payload: {hits}")
+
+
+def ensure_safe_world_template_payload(payload: Any) -> None:
+    hits = _find_hits(_stringify(payload), BLOCKED_TOPIC_TERMS)
+    if hits:
+        raise ValueError(f"Unsafe world template payload: {hits}")
 
 
 def ensure_safe_report(text: str) -> None:

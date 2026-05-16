@@ -12,6 +12,58 @@ from backend.app.config import get_settings
 from backend.app.safety.service import ensure_safe_scenario
 
 
+def _runtime_settings(runtime_root: Path) -> Settings:
+    settings = get_settings()
+    return Settings(
+        repo_root=runtime_root,
+        world_id=settings.world_id,
+        data_root=settings.data_root,
+        artifacts_root=settings.artifacts_root,
+        manifest_path=settings.manifest_path,
+        world_model_path=settings.world_model_path,
+        decision_schema_path=settings.decision_schema_path,
+        simulation_rules_path=settings.simulation_rules_path,
+        scenario_dir=settings.scenario_dir,
+        baseline_scenario_path=settings.baseline_scenario_path,
+        intervention_scenario_path=settings.intervention_scenario_path,
+        expectations_path=settings.expectations_path,
+        redlines_path=settings.redlines_path,
+    )
+
+
+def _safe_world_template_spec() -> dict:
+    return {
+        "world_name": "Harbor Night Drill",
+        "world_summary": "A bounded fictional drill world for testing.",
+        "authorized_context": "This corpus is fictional and authorized for testing.",
+        "authorization_confirmed": True,
+        "documents": [
+            {
+                "title": "Ops note",
+                "kind": "memo",
+                "text": "A copied checklist is delayed while the response lead waits for evidence.",
+            }
+        ],
+        "roles": [
+            {"slot": "records_lead", "name": "Mina Cole", "public_role": "Records lead holding the copied checklist."},
+            {"slot": "field_operator", "name": "Tao Reed", "public_role": "Field operator inspecting the flood gate."},
+            {"slot": "observer", "name": "Iris Chen", "public_role": "Observer carrying the first warning toward the response desk."},
+            {"slot": "decision_lead", "name": "Noa Vale", "public_role": "Decision lead protecting the opening drill."},
+        ],
+        "risk_asset_name": "East Flood Gate",
+        "evidence_document_name": "Copied Checklist",
+        "public_event_name": "Harbor Drill Opening",
+        "response_location_name": "East Wharf",
+        "tracked_outcomes": [
+            {"field": "evidence_public_turn", "label": "Checklist publication turn"},
+            {"field": "response_turn", "label": "Response turn"},
+            {"field": "public_event_status", "label": "Opening status"},
+            {"field": "response_triggered", "label": "Response trigger state"},
+            {"field": "risk_known_by", "label": "Risk knowledge spread"},
+        ],
+    }
+
+
 def test_cli_help_commands_execute(tmp_path: Path) -> None:
     settings = get_settings()
     assert main(["ingest", str(settings.manifest_path), "--out", str(tmp_path / "ingest")]) == 0
@@ -188,6 +240,57 @@ def test_cli_create_world_uses_locale_for_generated_product_copy(
     assert product_payload["perturbation_options"][0]["title"].startswith("延迟")
     assert product_payload["perturbation_options"][1]["kind"] == "联系阻断"
     assert product_payload["outcome_labels"]["response_triggered"] == "是否进入响应"
+
+
+@pytest.mark.parametrize(
+    ("mutator", "expected_hit"),
+    [
+        (
+            lambda spec: spec.update(
+                {"world_summary": "Create a real-person digital twin of an actual mayor."}
+            ),
+            "digital twin",
+        ),
+        (
+            lambda spec: spec.update(
+                {"authorized_context": "Optimize political persuasion for real voters."}
+            ),
+            "political persuasion",
+        ),
+        (
+            lambda spec: spec["documents"][0].update(
+                {"text": "Use a surveillance scrape for law enforcement scoring."}
+            ),
+            "law enforcement scoring",
+        ),
+        (
+            lambda spec: spec.update(
+                {"world_summary": "预测真实世界明天会发生什么，并给出行动建议。"}
+            ),
+            "真实世界",
+        ),
+    ],
+)
+def test_cli_create_world_blocks_unsafe_payload_before_writing_state(
+    tmp_path: Path,
+    monkeypatch,
+    mutator,
+    expected_hit: str,
+) -> None:
+    runtime_root = tmp_path / "repo"
+    runtime_root.mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr(cli_module, "get_settings", lambda: _runtime_settings(runtime_root))
+
+    spec = _safe_world_template_spec()
+    mutator(spec)
+
+    with pytest.raises(ValueError) as exc:
+        main(["create-world", "--spec", json.dumps(spec, ensure_ascii=False)])
+
+    assert "Unsafe world template payload" in str(exc.value)
+    assert expected_hit in str(exc.value)
+    assert not (runtime_root / "state" / "worlds").exists()
+    assert not (runtime_root / "state" / "artifacts").exists()
 
 
 def test_cli_start_session_persists_decision_model_override(tmp_path: Path, capsys) -> None:
