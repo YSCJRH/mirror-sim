@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note is the intentional post-Phase-46 stop-state baseline after the formal `v0.1.0` release closeout, the completed Phase 46 workbench-focus queue, and the absence of an approved Phase 47 successor.
+This note records the transition from the intentional post-Phase-46 `v0.1.0` stop-state into the approved Phase 47 successor queue.
 
 ## Snapshot
 
@@ -214,7 +214,7 @@ This note is the intentional post-Phase-46 stop-state baseline after the formal 
   - `gh api repos/YSCJRH/mirror-sim/releases`
     - release `v0.1.0` exists and matches the committed release notes baseline
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - queue now reports `paused` with no active milestone because no approved successor phase is open
+    - queue now reports `ready` with active milestone `Phase 47 - Boundary Readiness and Successor Hygiene`
 
 ## Trusted Source Of Truth
 
@@ -236,15 +236,17 @@ This note is the intentional post-Phase-46 stop-state baseline after the formal 
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
 - The default workbench path now consumes the canonical compare artifact directly and keeps focused divergent trace surfaces ahead of heavier packet-driven review flows.
 - The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, decision-template snippets, role preset cards, response-packaging shortcuts, apply-and-copy preset actions, grouped response-pack export, active preset session summary strips, route-filtered response kit choosers, route-kit comparison cards, preset session handoff packets, send-readiness cue strips, compact-versus-full handoff packet variants, destination-specific sender notes, compact-versus-full handoff packet diff previews, final send summary cards, destination-aware packet recommendation banners, delivery-bundle exports, receiver follow-up packs, delivery checkpoint boards, receiver response packets, reply outcome trackers, resolution handoff packs, resolution status boards, next-step routing packs, action readiness boards, escalation handoff packets, execution kickoff boards, execution progress trackers, execution outcome boards, execution correction boards, execution recovery boards, execution recovery checkpoint boards, execution recovery clearance boards, execution recovery release boards, escalation decision guides, escalation trigger packets, escalation dispatch packets, escalation delivery packets, escalation confirmation packets, escalation receipt packets, escalation acknowledgment packets, and escalation closure packets without introducing backend API expansion.
-- The current repository state has now completed the Phase 46 workbench-focus queue and returned to the intentional `paused` stop-state while preserving `v0.1.0` as the latest published release baseline.
+- The current repository state has completed the Phase 46 workbench-focus queue, preserved `v0.1.0` as the latest published release baseline, and opened the Phase 47 successor queue.
 
 ## Next Entry Point
 
-- The repo is now in the intentional `paused` stop-state with no open milestone and no approved Phase 47 successor.
+- The repo has left the intentional `paused` stop-state because the Phase 47 successor milestone is now open and `audit-github-queue` reports `ready`.
 - The Phase 46 unlock order is now fully resolved: the queue-sync issue is closed after successor bootstrap, the review-scorecard modularization issue is closed after merging PR `#340`, the default-operator-path issue is closed after merging PR `#342`, the advanced-navigation issue is closed after merging PR `#344`, and the exit gate closes with the milestone.
-- No Phase 47 milestone is approved or open in this round; any successor beyond Phase 46 requires a fresh decision against the blueprint triggers in `mirror.md`.
-- The public successor-gate proposal now lives in `docs/plans/phase-47-successor-gate-2026-05-16.md`. It is a decision and hygiene baseline, not an execution queue by itself.
+- The approved successor milestone is `Phase 47 - Boundary Readiness and Successor Hygiene`.
+- The open Phase 47 exit gate is `#365` `Phase 47 exit gate`, labeled `lane:protected-core` and `status:blocked`.
+- The initial ready work items are `#366` through `#369`.
+- The public successor-gate baseline lives in `docs/plans/phase-47-successor-gate-2026-05-16.md`.
 - Local untracked private-beta, kernel, and design-system planning files under `docs/plans/...` are candidate inputs only until a PR intentionally promotes them.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
-- The local queue heartbeat remains active as `mirror-queue-heartbeat` but should now report the repo as `paused` until an approved successor milestone exists.
+- The local queue heartbeat remains active as `mirror-queue-heartbeat` and should now consume only the active Phase 47 milestone.

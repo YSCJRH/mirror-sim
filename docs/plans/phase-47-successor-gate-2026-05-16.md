@@ -2,9 +2,9 @@
 
 Date: 2026-05-16
 
-This note defines the public baseline for deciding whether to reopen Mirror after the
-post-Phase-46 `v0.1.0` stop-state. It does not approve Phase 47 by itself and does not
-create a live execution queue.
+This note defines the public baseline for reopening Mirror after the post-Phase-46
+`v0.1.0` stop-state. The original gate proposal did not approve Phase 47 by itself; the
+GitHub queue is now open after review.
 
 ## Current Direct Evidence
 
@@ -12,12 +12,14 @@ create a live execution queue.
   branch was created.
 - The latest published release remains `v0.1.0`.
 - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports
-  `paused` with no active milestone.
+  `ready` with active milestone `Phase 47 - Boundary Readiness and Successor Hygiene`.
 - `docs/plans/current-state-baseline.md` records the intentional post-Phase-46 stop-state.
 - `README.md` defines the Phase 1 public demo as read-only, anonymous, and
   deterministic-only.
 - `plugins/mirror-codex` defines a read-only, local-first Codex plugin for the deterministic
   public demo.
+- GitHub issue `#365` is the open blocked Phase 47 exit gate.
+- GitHub issues `#366` through `#369` are the initial ready Phase 47 work items.
 
 ## Blueprint Boundary
 
@@ -59,7 +61,7 @@ the first successor hygiene PR.
 
 ## Entry Criteria
 
-Do not resume builder automation until all are true:
+Builder automation may resume only for the active Phase 47 milestone while all remain true:
 
 - Exactly one successor milestone is approved and open in GitHub.
 - One blocked exit-gate issue exists in that milestone.
@@ -109,6 +111,14 @@ Initial work items:
    - Lane: `contract-safe` unless it changes durable artifacts, routes, or contracts.
    - Done when packet-heavy compatibility surfaces remain secondary and the main review path
      stays analysis-first.
+
+Current GitHub mapping:
+
+- `#365` `Phase 47 exit gate`
+- `#366` `Phase 47: sync repo truth to successor queue`
+- `#367` `Phase 47: public/private/plugin boundary regression`
+- `#368` `Phase 47: runtime world safety preflight`
+- `#369` `Phase 47: main-path product containment`
 
 ## Deferred Work
 
@@ -169,8 +179,6 @@ Only run frontend and runtime checks when those surfaces are touched.
 
 ## Open Items
 
-- TODO[verify]: Create the GitHub milestone and exit-gate issue only after this successor
-  gate is reviewed and approved.
 - TODO[verify]: Reconcile the untracked private-beta readiness note before citing it as a
   public source of truth.
 - TODO[verify]: Keep the Mirror Codex interactive UI tool-card acceptance item open until a
