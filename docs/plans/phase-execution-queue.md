@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 46 closeout, and the approved Phase 47 successor queue.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut and the completed Phase 47 boundary-readiness closeout.
 
 ## Current Gate State
 
@@ -50,7 +50,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 44 exit gate: closed
 - Phase 45 exit gate: closed
 - Phase 46 exit gate: closed
-- Phase 47 exit gate: open and blocked
+- Phase 47 exit gate: closing with the closeout PR
 
 Local phase audits currently report:
 
@@ -58,7 +58,7 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 47 Successor Queue
+## Phase 47 Closeout
 
 - milestone `Phase 46 - Workbench Focus and Modularity`
   - closed
@@ -77,24 +77,24 @@ Local phase audits currently report:
   - closed
   - merged via PR `#344`
 - `audit-github-queue`
-  - reports `ready` with active milestone `Phase 47 - Boundary Readiness and Successor Hygiene`
+  - reports `paused` after the Phase 47 work items closed and no ready work items remain
 - milestone `Phase 47 - Boundary Readiness and Successor Hygiene`
-  - open
+  - remains open until the Phase 47 closeout PR merges
 - `#365` `Phase 47 exit gate`
-  - open
-  - labeled `lane:protected-core` and `status:blocked`
+  - remains open and blocked until this Phase 47 closeout PR merges
+  - labeled `lane:protected-core` because it is the protected closeout gate
 - `#366` `Phase 47: sync repo truth to successor queue`
-  - open
-  - labeled `status:ready`
+  - closed
+  - merged via PR `#370`
 - `#367` `Phase 47: public/private/plugin boundary regression`
-  - open
-  - labeled `status:ready`
+  - closed
+  - merged via PR `#371`
 - `#368` `Phase 47: runtime world safety preflight`
-  - open
-  - labeled `status:ready`
+  - closed
+  - merged via PR `#372`
 - `#369` `Phase 47: main-path product containment`
-  - open
-  - labeled `status:ready`
+  - closed
+  - merged via PR `#373`
 - recent closeout
   - milestone `Phase 45 - Branch Generalization and Compare Contracts`
     - closed
@@ -127,8 +127,8 @@ Local phase audits currently report:
     - closed
     - merged via PR `#321`
 - successor posture
-  - Phase 47 is approved as a boundary readiness and successor hygiene round
-  - any work beyond the Phase 47 queue still requires a fresh decision against the trigger conditions in `mirror.md`
+  - Phase 47 completed as a boundary readiness and successor hygiene round
+  - any work beyond the Phase 47 queue requires a fresh decision against the trigger conditions in `mirror.md`
 
 ## Closeout Snapshot
 
@@ -586,7 +586,7 @@ Local phase audits currently report:
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 47 is the currently approved queue; do not open another successor queue while it remains active.
+- Phase 47 is closed; do not resume builder automation until a new successor queue is explicitly approved.
 
 ## Historical Branch Status
 
