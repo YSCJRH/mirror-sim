@@ -224,7 +224,7 @@ This note records the completed Phase 47 boundary-readiness closeout and the app
   - `gh issue list --milestone "Phase 48 - Successor Intake and Boundary Contract Triage" --state all`
     - `#375` `Phase 48 exit gate` is `open`, `blocked`, and `lane:protected-core`
     - `#376` `Phase 48: sync repo truth after Phase 47 closeout` is the initial repo-truth sync item for this baseline update
-    - `#377` `Phase 48: public private plugin boundary acceptance` is `open` and `ready`
+    - `#377` `Phase 48: public private plugin boundary acceptance` is recorded in `docs/plans/phase-48-boundary-acceptance-2026-05-17.md`
     - `#378` `Phase 48: private beta runtime contract audit` is `open` and `ready`
     - `#379` `Phase 48: kernel perturbation gap brief` is `open` and `ready`
 
@@ -256,7 +256,7 @@ This note records the completed Phase 47 boundary-readiness closeout and the app
 - The Phase 47 unlock order is resolved: the queue-sync issue is closed after PR `#370`, the boundary-regression report is closed after PR `#371`, the runtime-world safety preflight is closed after PR `#372`, the main-path containment report is closed after PR `#373`, and the exit gate is closed after PR `#374`.
 - The active successor milestone is `Phase 48 - Successor Intake and Boundary Contract Triage`.
 - The Phase 48 exit gate is `#375` `Phase 48 exit gate`, which remains the open blocked closeout gate for this phase.
-- `#376` is the initial Phase 48 repo-truth sync item; `#377` through `#379` are the remaining ready follow-up work items after this baseline lands.
+- `#376` is the initial Phase 48 repo-truth sync item, `#377` is recorded by `docs/plans/phase-48-boundary-acceptance-2026-05-17.md`, and `#378` through `#379` are the remaining ready follow-up work items after this acceptance pass lands.
 - The completed Phase 47 successor-gate baseline lives in `docs/plans/phase-47-successor-gate-2026-05-16.md`.
 - The active Phase 48 successor-gate baseline lives in `docs/plans/phase-48-successor-gate-2026-05-17.md`.
 - Local untracked private-beta, kernel, and design-system planning files under `docs/plans/...` are candidate inputs only until a PR intentionally promotes them.

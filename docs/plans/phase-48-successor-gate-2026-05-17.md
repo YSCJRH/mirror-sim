@@ -18,7 +18,8 @@ turns kernel and perturbation notes into explicit candidate work for a later pha
 - Milestone `Phase 48 - Successor Intake and Boundary Contract Triage` is open.
 - Issue `#375` `Phase 48 exit gate` is open, blocked, and protected-core.
 - Issue `#376` is the initial repo-truth sync work item for this baseline update.
-- Issues `#377` through `#379` are open ready Phase 48 follow-up work items.
+- Issue `#377` records the Phase 48 public/private/plugin boundary acceptance pass.
+- Issues `#378` through `#379` are open ready Phase 48 follow-up work items.
 - Local untracked planning files under `docs/plans/...` remain candidate inputs only until a
   reviewed PR intentionally promotes selected facts.
 
@@ -69,6 +70,8 @@ contracts.
   - Lane: `protected-core`.
   - Scope: verify the public demo, private route boundary, and Mirror Codex plugin evidence
     without changing the public API or plugin contract.
+  - Disposition: recorded by `docs/plans/phase-48-boundary-acceptance-2026-05-17.md` and
+    expected to close with the PR that introduces that report.
 - `#378` `Phase 48: private beta runtime contract audit`
   - Lane: `protected-core`.
   - Scope: reconcile private-beta runtime docs, route language, provider-secret handling,
@@ -80,7 +83,7 @@ contracts.
 ## Non-Goals
 
 - Do not change `compare.json`, claim/evidence shape, scenario DSL, run trace shape, public
-  demo artifact layout, or plugin MCP tool/resource contract during `#376`.
+  demo artifact layout, or plugin MCP tool/resource contract during Phase 48 intake work.
 - Do not add Hosted GPT, BYOK, upload, auth, billing, database, object storage, or quota
   behavior on the public path or plugin path.
 - Do not add mutating Mirror Codex MCP tools.
