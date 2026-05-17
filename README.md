@@ -260,7 +260,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - The current stop-state / queue state lives in [docs/plans/current-state-baseline.md](docs/plans/current-state-baseline.md).
 - The completed Phase 47 successor gate lives in [docs/plans/phase-47-successor-gate-2026-05-16.md](docs/plans/phase-47-successor-gate-2026-05-16.md).
 - The active successor gate lives in [docs/plans/phase-48-successor-gate-2026-05-17.md](docs/plans/phase-48-successor-gate-2026-05-17.md).
-- Phase 48 is the active approved successor queue; `audit-github-queue` reports `ready` with `#375` as the blocked exit gate, `#376` as the initial repo-truth sync item, and `#377` through `#379` as ready follow-up work.
+- Phase 48 is the active approved successor queue; `audit-github-queue` reports `ready` with `#375` as the blocked exit gate and the current ready follow-up work tracked in GitHub.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
 - Fog Harbor remains the canonical demo world; `museum-night` is the minimal transfer world used to prove the pipeline is not single-world-only.
 

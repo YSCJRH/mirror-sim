@@ -72,7 +72,8 @@ Local phase audits currently report:
   - first docs-only repo-truth sync work item
   - expected to close with the PR that introduces this Phase 48 baseline
 - `#377` `Phase 48: public private plugin boundary acceptance`
-  - open and ready
+  - boundary acceptance recorded in `docs/plans/phase-48-boundary-acceptance-2026-05-17.md`
+  - expected to close with the PR that introduces that report
 - `#378` `Phase 48: private beta runtime contract audit`
   - open and ready
 - `#379` `Phase 48: kernel perturbation gap brief`
