@@ -50,6 +50,9 @@ The blueprint and safety boundaries still require:
   - bypass state preconditions
   - bypass replay/audit persistence
   - expand beyond the bounded world contract
+- The decision kernel must also enforce the world-local `allowed_action_types` list at its
+  own boundary. This keeps the kernel from accepting a caller-supplied `StepChoice` that
+  skipped upstream scenario or simulation validation.
 
 - Replayability is a hard requirement.
   - every decision point must persist:
@@ -61,6 +64,33 @@ The blueprint and safety boundaries still require:
     - validation result
     - fallback flag
   - replay must prefer stored decisions over re-sampling
+  - replay rows are append-only audit entries: they record the current replay context while
+    preserving the cached decision's model identifier, prompt version, rationale, and output
+    hash.
+  - the stable v1 `decision_trace.jsonl` fields are:
+    - `run_id`
+    - `turn_index`
+    - `actor_id`
+    - `provider_mode`
+    - `model_id`
+    - `prompt_version`
+    - `input_hash`
+    - `output_hash`
+    - `available_choices`
+    - `selected_choice_index`
+    - `selected_action_type`
+    - `selected_target_id`
+    - `rationale`
+    - `validation_status`
+    - `fallback_used`
+  - stable `provider_mode` values are `openai_compatible`, `hosted_openai`,
+    `deterministic_fallback`, `single_choice`, and `replay_cache`.
+  - stable `validation_status` values are `accepted_after_attempt_<n>`,
+    `accepted_via_fallback`, `accepted_single_choice`, and `accepted_from_replay`.
+  - trace privacy is part of replayability: `input_hash` and `output_hash` are hashes, and
+    raw provider credentials, beta access codes, request headers, provider exception text,
+    local filesystem paths, raw prompts, and raw provider outputs must not be written into
+    `decision_trace.jsonl`.
 
 - Deterministic fallback is mandatory.
   - if the model is unavailable

@@ -14,6 +14,9 @@ from backend.app.simulation.rules import StepChoice
 from backend.app.utils import ensure_dir, read_jsonl
 
 
+_TRACE_FIELD_UNSET = object()
+
+
 def _hash_json(payload: Any) -> str:
     return hashlib.sha256(
         json.dumps(payload, sort_keys=True, ensure_ascii=False).encode("utf-8")
@@ -175,6 +178,7 @@ class DecisionKernel:
         state: dict[str, Any],
         choices: list[StepChoice],
     ) -> StepChoice:
+        self._validate_choices(choices)
         available_choices = [
             {
                 "index": index,
@@ -207,6 +211,8 @@ class DecisionKernel:
                 output_hash=replay_entry.output_hash,
                 fallback_used=replay_entry.fallback_used,
                 validation_status="accepted_from_replay",
+                model_id=replay_entry.model_id,
+                prompt_version=replay_entry.prompt_version,
             )
 
         if len(choices) == 1:
@@ -247,15 +253,12 @@ class DecisionKernel:
                             fallback_used=False,
                             validation_status=f"accepted_after_attempt_{attempt + 1}",
                         )
-                except Exception as exc:  # noqa: BLE001
-                    last_error = str(exc)
+                except Exception:  # noqa: BLE001
                     continue
             fallback_rationale = (
                 f"LLM proposal was unavailable or invalid; fallback strategy "
                 f"`{self.schema.decision_kernel.fallback_strategy}` selected the first legal choice."
             )
-            if "last_error" in locals():
-                fallback_rationale += f" Last error: {last_error}"
         elif self.provider in {"openai_compatible", HOSTED_PROVIDER}:
             fallback_rationale = (
                 "No model or API credential is configured for the selected provider; "
@@ -293,15 +296,27 @@ class DecisionKernel:
         output_hash: str | None,
         fallback_used: bool,
         validation_status: str,
+        model_id: str | None | object = _TRACE_FIELD_UNSET,
+        prompt_version: str | None | object = _TRACE_FIELD_UNSET,
     ) -> StepChoice:
         selected = choices[selected_choice_index]
+        trace_model_id = (
+            self.model_id if model_id is _TRACE_FIELD_UNSET else model_id
+        )
+        trace_prompt_version = (
+            self.schema.decision_kernel.prompt_version
+            if prompt_version is _TRACE_FIELD_UNSET
+            else prompt_version
+        )
         entry = DecisionTraceEntry(
             run_id=self.run_id,
             turn_index=turn_index,
             actor_id=actor_id,
             provider_mode=provider_mode,
-            model_id=self.model_id,
-            prompt_version=self.schema.decision_kernel.prompt_version,
+            model_id=trace_model_id if isinstance(trace_model_id, str) else None,
+            prompt_version=(
+                trace_prompt_version if isinstance(trace_prompt_version, str) else None
+            ),
             input_hash=input_hash,
             output_hash=output_hash,
             available_choices=[_choice_summary(choice) for choice in choices],
@@ -316,3 +331,18 @@ class DecisionKernel:
             _append_trace(self.decision_trace_path, entry)
         self.replay_cache[input_hash] = entry
         return selected
+
+    def _validate_choices(self, choices: list[StepChoice]) -> None:
+        allowed_action_types = set(self.schema.allowed_action_types)
+        invalid_action_types = sorted(
+            {
+                choice.action.action_type
+                for choice in choices
+                if choice.action.action_type not in allowed_action_types
+            }
+        )
+        if invalid_action_types:
+            raise ValueError(
+                "Choice action type(s) not allowed by decision schema: "
+                + ", ".join(invalid_action_types)
+            )

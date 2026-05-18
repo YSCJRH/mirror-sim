@@ -231,7 +231,8 @@ This note records the completed Phase 48 successor-intake closeout and the appro
     - milestone `Phase 48 - Successor Intake and Boundary Contract Triage` is `closed`
   - `gh issue list --milestone "Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening" --state all`
     - `#383` `Phase 49 exit gate` is `open`, `blocked`, and `lane:protected-core`
-    - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is the first `status:ready` protected-core work item for the new baseline
+    - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is `closed` by PR `#385`
+    - `#386` `Phase 49: ratify kernel trace and replay contract` is the current `status:ready` protected-core work item
 
 ## Trusted Source Of Truth
 
@@ -262,7 +263,8 @@ This note records the completed Phase 48 successor-intake closeout and the appro
 - The Phase 48 unlock order is resolved: `#376` and `#377` closed through earlier Phase 48 PRs, `#378` and `#379` closed through PR `#382`, and `#375` closed after the post-merge exit-gate reassessment.
 - The active successor milestone is `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`.
 - The Phase 49 exit gate is `#383` `Phase 49 exit gate`, which remains the open blocked closeout gate for this phase.
-- `#384` `Phase 49: sync repo truth and protect runtime core lanes` is the current ready work item.
+- `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
+- `#386` `Phase 49: ratify kernel trace and replay contract` is the current ready work item.
 - The completed Phase 47 successor-gate baseline lives in `docs/plans/phase-47-successor-gate-2026-05-16.md`.
 - The completed Phase 48 successor-gate baseline lives in `docs/plans/phase-48-successor-gate-2026-05-17.md`.
 - The active Phase 49 successor-gate baseline lives in `docs/plans/phase-49-successor-gate-2026-05-18.md`.

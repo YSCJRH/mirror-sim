@@ -33,6 +33,7 @@ def test_phase49_successor_gate_records_work_packages_and_boundaries() -> None:
         "Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening",
         "`#383` `Phase 49 exit gate`",
         "`#384` `Phase 49: sync repo truth and protect runtime core lanes`",
+        "`#386` `Phase 49: ratify kernel trace and replay contract`",
         "Kernel trace and replay contract",
         "Perturbation schema and resolver contract",
         "Branch generation and compare emission policy",
@@ -64,3 +65,4 @@ def test_active_state_docs_point_to_phase49_queue() -> None:
         assert "Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening" in text
         assert "`#383`" in text
         assert "`#384`" in text
+        assert "`#386`" in text

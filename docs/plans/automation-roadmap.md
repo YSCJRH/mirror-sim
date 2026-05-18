@@ -164,7 +164,8 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 49 is the active approved successor queue.
 - milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening` is open.
 - `#383` `Phase 49 exit gate` is open, blocked, and protected-core.
-- `#384` `Phase 49: sync repo truth and protect runtime core lanes` is the current ready work item.
+- `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
+- `#386` `Phase 49: ratify kernel trace and replay contract` is the current ready work item.
 - `audit-github-queue` reports `ready` with Phase 49 as the active milestone.
 - The first formal repository release is published as `v0.1.0`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
