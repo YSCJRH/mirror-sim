@@ -13,7 +13,7 @@ def test_phase50_successor_gate_exists_with_required_sections() -> None:
     required_sections = [
         "# Phase 50 Successor Gate",
         "Issue: `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`",
-        "Current work item: `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`",
+        "Final work item: `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`",
         "## Phase 49 Closeout Evidence",
         "## Phase 50 Operational Queue",
         "## Protected-Core Lane Coverage",
@@ -33,6 +33,7 @@ def test_phase50_successor_gate_records_queue_and_boundaries() -> None:
     gate = PHASE50_GATE_PATH.read_text(encoding="utf-8")
     required_phrases = [
         "Phase 50 - Runtime Orchestration Measurement and Product Boundary",
+        "Closed GitHub objects:",
         "`#396` `Phase 50 exit gate`",
         "`#397` `Phase 50: sync repo truth after Phase 49 closeout`",
         "`#398` `Phase 50: measure runtime generation duration before task_id decision`",
@@ -48,9 +49,18 @@ def test_phase50_successor_gate_records_queue_and_boundaries() -> None:
         "Keep synchronous generation for v1",
         "`#401` `Phase 50: ratify private-beta launch hub and public-path boundary`",
         "`docs/plans/phase-50-product-boundary-2026-05-18.md`",
+        "`docs/plans/phase-51-successor-gate-2026-05-18.md`",
     ]
     for phrase in required_phrases:
         assert phrase in gate
+
+    stale_active_phrases = [
+        "Active GitHub objects:",
+        "Status: current ready work item.",
+        "with Phase 50 as the only open milestone",
+    ]
+    for phrase in stale_active_phrases:
+        assert phrase not in gate
 
 
 def test_active_state_docs_point_to_phase50_queue() -> None:

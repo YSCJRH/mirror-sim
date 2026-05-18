@@ -44,6 +44,7 @@ def test_classify_paths_marks_phase_queue_docs_protected() -> None:
         "docs/plans/current-state-baseline.md",
         "docs/plans/phase-execution-queue.md",
         "docs/plans/phase-50-successor-gate-2026-05-18.md",
+        "docs/plans/phase-51-successor-gate-2026-05-18.md",
     ]
 
     decision = classify_paths(phase_queue_paths)
