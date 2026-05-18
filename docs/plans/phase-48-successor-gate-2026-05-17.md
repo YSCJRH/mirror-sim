@@ -3,9 +3,9 @@
 Date: 2026-05-17
 
 This note defines the public baseline for Phase 48 after the Phase 47 boundary-readiness
-closeout. Phase 48 is an intake and triage phase: it reconciles repo truth, validates the
-public/private/plugin boundary evidence, audits private-beta runtime contract language, and
-turns kernel and perturbation notes into explicit candidate work for a later phase.
+closeout. Phase 48 was an intake and triage phase: it reconciled repo truth, validated the
+public/private/plugin boundary evidence, audited private-beta runtime contract language, and
+turned kernel and perturbation notes into explicit candidate work for a later phase.
 
 ## Current Direct Evidence
 
@@ -13,14 +13,22 @@ turns kernel and perturbation notes into explicit candidate work for a later pha
 - Phase 47 completed through PRs `#370` through `#374`.
 - Milestone `Phase 47 - Boundary Readiness and Successor Hygiene` is closed.
 - Issue `#365` `Phase 47 exit gate` is closed after PR `#374`.
-- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
-  with `Phase 48 - Successor Intake and Boundary Contract Triage` as the active milestone.
-- Milestone `Phase 48 - Successor Intake and Boundary Contract Triage` is open.
-- Issue `#375` `Phase 48 exit gate` is open, blocked, and protected-core.
-- Issue `#376` is the initial repo-truth sync work item for this baseline update.
-- Issue `#377` records the Phase 48 public/private/plugin boundary acceptance pass.
-- Issue `#378` records the private-beta runtime contract audit.
-- Issue `#379` records the Phase 48 kernel perturbation gap brief.
+- PR `#382` merged the private-beta runtime contract audit and kernel perturbation gap
+  brief into `main`.
+- Milestone `Phase 48 - Successor Intake and Boundary Contract Triage` is closed.
+- Issue `#375` `Phase 48 exit gate` is closed after the post-merge reassessment.
+- Issue `#376` closed the initial repo-truth sync work item for this baseline update.
+- Issue `#377` records the Phase 48 public/private/plugin boundary acceptance pass and is
+  closed.
+- Issue `#378` records the private-beta runtime contract audit and is closed by PR `#382`.
+- Issue `#379` records the Phase 48 kernel perturbation gap brief and is closed by PR
+  `#382`.
+- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` now reports
+  `ready` with `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening` as the
+  active milestone.
+- Issue `#383` `Phase 49 exit gate` is open, blocked, and protected-core.
+- Issue `#384` `Phase 49: sync repo truth and protect runtime core lanes` is the current
+  ready work item.
 - Local untracked planning files under `docs/plans/...` remain candidate inputs only until a
   reviewed PR intentionally promotes selected facts.
 
@@ -57,6 +65,20 @@ into explicit candidate work without expanding the public path or plugin contrac
 Phase 48 is deliberately not a runtime expansion phase. It should produce evidence,
 classification, and successor recommendations before implementation work changes core
 contracts.
+
+## Closeout Disposition
+
+Phase 48 is closed. Its completed successor evidence is superseded by the active Phase 49
+successor gate at `docs/plans/phase-49-successor-gate-2026-05-18.md`.
+
+The approved successor milestone is:
+
+```text
+Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening
+```
+
+The active Phase 49 queue starts with `#383` `Phase 49 exit gate` and `#384`
+`Phase 49: sync repo truth and protect runtime core lanes`.
 
 ## Work Item Mapping
 
