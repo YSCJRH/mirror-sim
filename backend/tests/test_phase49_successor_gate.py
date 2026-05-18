@@ -13,6 +13,7 @@ def test_phase49_successor_gate_exists_with_required_sections() -> None:
     required_sections = [
         "# Phase 49 Successor Gate",
         "Issue: `#384` `Phase 49: sync repo truth and protect runtime core lanes`",
+        "Closeout baseline: PR `#395`, issue `#383`, and milestone",
         "## Phase 48 Closeout Evidence",
         "## Phase 49 Operational Queue",
         "## Protected-Core Lane Coverage",
@@ -31,6 +32,8 @@ def test_phase49_successor_gate_records_work_packages_and_boundaries() -> None:
     gate = PHASE49_GATE_PATH.read_text(encoding="utf-8")
     required_phrases = [
         "Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening",
+        "Phase 49 is now closed",
+        "`docs/plans/phase-50-successor-gate-2026-05-18.md`",
         "`#383` `Phase 49 exit gate`",
         "`#384` `Phase 49: sync repo truth and protect runtime core lanes`",
         "`#386` `Phase 49: ratify kernel trace and replay contract`",
@@ -51,12 +54,13 @@ def test_phase49_successor_gate_records_work_packages_and_boundaries() -> None:
         "Latest-session versus latest-activity semantics are now ratified",
         "Checkpoint rollback remains deferred",
         "Fog Harbor-shaped report and eval assumptions are now inventoried",
+        "with Phase 50 as the only open milestone",
     ]
     for phrase in required_phrases:
         assert phrase in gate
 
 
-def test_active_state_docs_point_to_phase49_queue() -> None:
+def test_active_state_docs_carry_completed_phase49_and_phase50_handoff() -> None:
     required_docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -69,6 +73,7 @@ def test_active_state_docs_point_to_phase49_queue() -> None:
         text = path.read_text(encoding="utf-8")
         assert "Phase 48" in text
         assert "Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening" in text
+        assert "Phase 50 - Runtime Orchestration Measurement and Product Boundary" in text
         assert "`#383`" in text
         assert "`#384`" in text
         assert "`#386`" in text
@@ -76,3 +81,5 @@ def test_active_state_docs_point_to_phase49_queue() -> None:
         assert "`#390`" in text
         assert "`#392`" in text
         assert "`#394`" in text
+        assert "`#396`" in text
+        assert "`#397`" in text

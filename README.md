@@ -264,9 +264,11 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - The current stop-state / queue state lives in [docs/plans/current-state-baseline.md](docs/plans/current-state-baseline.md).
 - The completed Phase 47 successor gate lives in [docs/plans/phase-47-successor-gate-2026-05-16.md](docs/plans/phase-47-successor-gate-2026-05-16.md).
 - The completed Phase 48 successor gate lives in [docs/plans/phase-48-successor-gate-2026-05-17.md](docs/plans/phase-48-successor-gate-2026-05-17.md).
-- The active successor gate lives in [docs/plans/phase-49-successor-gate-2026-05-18.md](docs/plans/phase-49-successor-gate-2026-05-18.md).
+- The completed Phase 49 successor gate lives in [docs/plans/phase-49-successor-gate-2026-05-18.md](docs/plans/phase-49-successor-gate-2026-05-18.md).
+- The active successor gate lives in [docs/plans/phase-50-successor-gate-2026-05-18.md](docs/plans/phase-50-successor-gate-2026-05-18.md).
 - Phase 48 is closed after PR `#382`, issue `#375`, and milestone `Phase 48 - Successor Intake and Boundary Contract Triage`.
-- Phase 49 is the active approved successor queue: `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; `audit-github-queue` reports `ready` with `#383` as the blocked exit gate, `#384` closed by PR `#385`, `#386` closed by PR `#387`, `#388` closed by PR `#389`, `#390` closed by PR `#391`, `#392` closed by PR `#393`, and `#394` as the current ready work item.
+- Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
+- Phase 50 is the active approved successor queue: `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; `audit-github-queue` reports `ready` with `#396` as the blocked exit gate, `#397` as the current ready repo-truth sync item, and `#398` blocked until the Phase 50 baseline lands. Phase 50 measures before any `task_id` or worker contract is introduced.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
 - Fog Harbor remains the canonical demo world; `museum-night` is the minimal transfer world used to prove the pipeline is not single-world-only.
 

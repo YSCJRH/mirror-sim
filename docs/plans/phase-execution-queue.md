@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 48 successor-intake closeout, and the approved Phase 49 successor queue.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 49 contract-hardening closeout, and the approved Phase 50 successor queue.
 
 ## Current Gate State
 
@@ -52,7 +52,8 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 46 exit gate: closed
 - Phase 47 exit gate: closed
 - Phase 48 exit gate: closed
-- Phase 49 exit gate: open and blocked
+- Phase 49 exit gate: closed
+- Phase 50 exit gate: open and blocked
 
 Local phase audits currently report:
 
@@ -60,15 +61,31 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 49 Successor Queue
+## Phase 50 Successor Queue
 
 - `audit-github-queue`
-  - reports `ready` with `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening` as the active milestone
-- milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`
+  - reports `ready` with `Phase 50 - Runtime Orchestration Measurement and Product Boundary` as the active milestone
+- milestone `Phase 50 - Runtime Orchestration Measurement and Product Boundary`
   - open
-- `#383` `Phase 49 exit gate`
+- `#396` `Phase 50 exit gate`
   - open and blocked
   - labeled `lane:protected-core` because it is the protected closeout gate
+- `#397` `Phase 50: sync repo truth after Phase 49 closeout`
+  - current protected-core repo-truth work item
+  - expected to close with the PR that syncs durable docs to Phase 50
+- `#398` `Phase 50: measure runtime generation duration before task_id decision`
+  - blocked until the Phase 50 baseline lands
+  - will measure runtime generation duration before any async orchestration ADR or implementation
+- phase gate baseline
+  - active Phase 50 gate note: `docs/plans/phase-50-successor-gate-2026-05-18.md`
+
+## Phase 49 Closeout
+
+- milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`
+  - closed after PR `#395` and the post-merge exit-gate reassessment
+- `#383` `Phase 49 exit gate`
+  - closed after the post-merge reassessment on `main`
+  - labeled `lane:protected-core` because it was the protected closeout gate
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes`
   - first protected-core repo-truth and lane-policy work item
   - closed by PR `#385`
@@ -85,10 +102,10 @@ Local phase audits currently report:
   - closed by PR `#393`
   - ratified `last_activity_at` and pointer-only rollback scope
 - `#394` `Phase 49: strengthen transfer eval outcome coverage`
-  - current protected-core transfer eval outcome coverage work item
-  - expected to close with the PR that strengthens world-local tracked-outcome coverage and records Fog Harbor-shaped transfer assumptions
+  - closed by PR `#395`
+  - strengthened world-local tracked-outcome coverage and recorded Fog Harbor-shaped transfer assumptions
 - phase gate baseline
-  - active Phase 49 gate note: `docs/plans/phase-49-successor-gate-2026-05-18.md`
+  - completed Phase 49 gate note: `docs/plans/phase-49-successor-gate-2026-05-18.md`
 
 ## Phase 48 Closeout
 
@@ -161,8 +178,9 @@ Local phase audits currently report:
     - merged via PR `#321`
 - successor posture
   - Phase 48 completed as a successor-intake and boundary contract triage round
-  - Phase 49 is the active approved successor queue
-  - any work beyond the Phase 49 queue requires a fresh decision against the trigger conditions in `mirror.md`
+  - Phase 49 completed as a contract-hardening round
+  - Phase 50 is the active approved successor queue
+  - any work beyond the Phase 50 queue requires a fresh decision against the trigger conditions in `mirror.md`
 
 ## Closeout Snapshot
 
@@ -620,7 +638,7 @@ Local phase audits currently report:
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 49 is the active approved successor queue; do not open a parallel execution queue.
+- Phase 50 is the active approved successor queue; do not open a parallel execution queue.
 - The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
 
 ## Historical Branch Status

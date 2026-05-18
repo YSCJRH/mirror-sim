@@ -24,11 +24,12 @@ turned kernel and perturbation notes into explicit candidate work for a later ph
 - Issue `#379` records the Phase 48 kernel perturbation gap brief and is closed by PR
   `#382`.
 - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` now reports
-  `ready` with `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening` as the
+  `ready` with `Phase 50 - Runtime Orchestration Measurement and Product Boundary` as the
   active milestone.
-- Issue `#383` `Phase 49 exit gate` is open, blocked, and protected-core.
-- Issue `#384` `Phase 49: sync repo truth and protect runtime core lanes` is the current
-  ready work item.
+- Issue `#383` `Phase 49 exit gate` is closed after the Phase 49 closeout reassessment.
+- Issue `#396` `Phase 50 exit gate` is open, blocked, and protected-core.
+- Issue `#397` `Phase 50: sync repo truth after Phase 49 closeout` is the current ready
+  work item.
 - Local untracked planning files under `docs/plans/...` remain candidate inputs only until a
   reviewed PR intentionally promotes selected facts.
 
@@ -68,20 +69,22 @@ contracts.
 
 ## Closeout Disposition
 
-Phase 48 is closed. Its completed successor evidence is superseded by the active Phase 49
-successor gate at `docs/plans/phase-49-successor-gate-2026-05-18.md`.
+Phase 48 is closed. Its completed successor evidence is superseded by the completed Phase 49
+successor gate at `docs/plans/phase-49-successor-gate-2026-05-18.md` and the active Phase 50
+successor gate at `docs/plans/phase-50-successor-gate-2026-05-18.md`.
 
-The approved successor milestone is:
+The approved active successor milestone is:
 
 ```text
-Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening
+Phase 50 - Runtime Orchestration Measurement and Product Boundary
 ```
 
-The active Phase 49 queue starts with `#383` `Phase 49 exit gate` and `#384`
-`Phase 49: sync repo truth and protect runtime core lanes`; after PR `#385`, `#386`
-closed through PR `#387`, `#388` closed through PR `#389`, `#390` closed
-through PR `#391`, and `#392` closed through PR `#393`, the current ready work
-item is `#394` `Phase 49: strengthen transfer eval outcome coverage`.
+The Phase 49 queue, `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`,
+closed through `#383`, PRs `#385`, `#387`, `#389`, `#391`, `#393`, and PR `#395`.
+Its completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
+The active Phase 50 queue starts with `#396` `Phase 50 exit gate`, `#397`
+`Phase 50: sync repo truth after Phase 49 closeout`, and blocked follow-up `#398`
+`Phase 50: measure runtime generation duration before task_id decision`.
 
 ## Work Item Mapping
 

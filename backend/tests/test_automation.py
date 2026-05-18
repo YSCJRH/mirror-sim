@@ -38,6 +38,21 @@ def test_classify_paths_marks_bootstrap_and_automation_changes_protected() -> No
     ]
 
 
+def test_classify_paths_marks_phase_queue_docs_protected() -> None:
+    phase_queue_paths = [
+        "docs/plans/automation-roadmap.md",
+        "docs/plans/current-state-baseline.md",
+        "docs/plans/phase-execution-queue.md",
+        "docs/plans/phase-50-successor-gate-2026-05-18.md",
+    ]
+
+    decision = classify_paths(phase_queue_paths)
+
+    assert decision.lane == "lane:protected-core"
+    assert "risk:core-contract" in decision.labels
+    assert decision.protected_hits == sorted(phase_queue_paths)
+
+
 def test_classify_paths_marks_phase49_runtime_core_paths_protected() -> None:
     phase49_core_paths = [
         "backend/app/decision_kernel/service.py",
