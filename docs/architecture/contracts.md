@@ -349,6 +349,9 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
 - Public API responses must not expose absolute repository paths, runtime paths, provider secrets, or arbitrary path lookup results.
 - Public API responses must strip artifact-internal path fields before returning content, including `artifact_paths`, `summary_path`, `trace_path`, `snapshot_dir`, and document `source_path`.
 - Public demo mutation routes must be disabled when `MIRROR_PUBLIC_DEMO_MODE=1` and `MIRROR_ALLOW_ANONYMOUS_RUNS` is not `1`.
+- `MIRROR_ALLOW_ANONYMOUS_RUNS=1` is a private-preview/runtime override for local or
+  explicitly authorized deployments. It is not part of the Phase 1 public demo release
+  profile.
 - Phase 1 public demo mode does not start sessions, generate branches, upload corpus data, create worlds, enable Hosted GPT, accept BYOK, or call the OpenAI API.
 
 ## Artifact Contract

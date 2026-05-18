@@ -44,12 +44,7 @@ export async function POST(request: Request) {
     const locale = resolveLocale(body, request);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : locale === "zh-CN"
-              ? "回退当前实验失败。"
-              : "Failed to rollback runtime session.",
+        error: locale === "zh-CN" ? "回退当前实验失败。" : "Failed to rollback runtime session.",
       },
       { status: 500 }
     );

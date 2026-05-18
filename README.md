@@ -224,7 +224,7 @@ This keeps the private-beta runtime replayable while still allowing explicitly c
 
 Current private-beta candidate entrypoints:
 
-- `/` -> launch hub
+- `/` -> current tracked root remains the guided public Fog Harbor demo
 - `/worlds/<world_id>` -> world home
 - `/worlds/new` -> bounded-world creation wizard
 - `/worlds/<world_id>/perturb` -> main operator path
@@ -232,6 +232,10 @@ Current private-beta candidate entrypoints:
 - `/worlds/<world_id>/runtime/<session_id>/explain` -> live explain workspace
 - `/worlds/<world_id>/runtime/<session_id>/report` -> live report workspace
 - `/worlds/<world_id>/review` -> world-scoped review surface
+
+TODO[verify]: Decide whether a future private-beta launch hub should conditionally replace
+`/`, live at a separate route, or remain a planning-only concept. Current tracked code keeps
+`/` as the public demo.
 
 ---
 

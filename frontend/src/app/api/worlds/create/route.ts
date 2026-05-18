@@ -30,12 +30,7 @@ export async function POST(request: Request) {
     const locale = resolveLocale(body, request);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : locale === "zh-CN"
-              ? "创建受约束世界失败。"
-              : "Failed to create bounded incident world.",
+        error: locale === "zh-CN" ? "创建受约束世界失败。" : "Failed to create bounded incident world.",
       },
       { status: 500 }
     );

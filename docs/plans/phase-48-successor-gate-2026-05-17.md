@@ -19,7 +19,8 @@ turns kernel and perturbation notes into explicit candidate work for a later pha
 - Issue `#375` `Phase 48 exit gate` is open, blocked, and protected-core.
 - Issue `#376` is the initial repo-truth sync work item for this baseline update.
 - Issue `#377` records the Phase 48 public/private/plugin boundary acceptance pass.
-- Issues `#378` through `#379` are open ready Phase 48 follow-up work items.
+- Issue `#378` records the private-beta runtime contract audit.
+- Issue `#379` records the Phase 48 kernel perturbation gap brief.
 - Local untracked planning files under `docs/plans/...` remain candidate inputs only until a
   reviewed PR intentionally promotes selected facts.
 
@@ -76,9 +77,15 @@ contracts.
   - Lane: `protected-core`.
   - Scope: reconcile private-beta runtime docs, route language, provider-secret handling,
     and acceptance criteria before any new runtime implementation.
+  - Disposition: recorded by
+    `docs/plans/phase-48-private-beta-runtime-contract-audit-2026-05-18.md` and expected to
+    close with the PR that introduces that report.
 - `#379` `Phase 48: kernel perturbation gap brief`
   - Lane: `protected-core`.
   - Scope: convert kernel and perturbation follow-ups into explicit Phase 49 candidate work.
+  - Disposition: recorded by
+    `docs/plans/phase-48-kernel-perturbation-gap-brief-2026-05-18.md` and expected to close
+    with the PR that introduces that brief.
 
 ## Non-Goals
 
@@ -138,7 +145,5 @@ Run `npm run build --prefix frontend` only for Phase 48 work that touches fronte
 
 - TODO[verify]: Codex UI tool-card evidence remains open until a clean Codex app session
   shows observable MCP tool or resource cards/traces for the Mirror Codex plugin.
-- TODO[verify]: Private-beta runtime route and provider-secret claims must be reconciled
-  against tracked code and docs before candidate planning files become durable truth.
-- TODO[verify]: Kernel and perturbation follow-up work should be converted into Phase 49
-  candidate issues before any core runtime contract expansion.
+- TODO[verify]: Latest-session versus latest-activity semantics remain a follow-up candidate
+  after the Phase 48 private-beta runtime audit.

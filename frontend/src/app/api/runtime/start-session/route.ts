@@ -11,23 +11,18 @@ function resolveLocale(body: { locale?: string }, request: Request) {
   return normalizeLocale(body.locale) ?? normalizeLocale(request.headers.get("accept-language")) ?? "zh-CN";
 }
 
-function validateHostedAccess(body: { betaAccessCode?: string }) {
-  if (process.env.MIRROR_HOSTED_MODEL_ENABLED !== "1") {
-    return "Hosted model access is disabled.";
-  }
-  if (!process.env.MIRROR_HOSTED_OPENAI_API_KEY) {
-    return "Hosted model access is missing a server-side API key.";
-  }
-  if (!process.env.MIRROR_HOSTED_DECISION_MODEL && !process.env.MIRROR_DECISION_MODEL) {
-    return "Hosted model access is missing a configured model.";
-  }
-  if (!process.env.MIRROR_BETA_ACCESS_CODE) {
-    return "Hosted model access requires a configured beta access code.";
-  }
-  if (body.betaAccessCode !== process.env.MIRROR_BETA_ACCESS_CODE) {
-    return "Hosted model access code is invalid.";
-  }
-  return null;
+function hostedAccessAllowed(body: { betaAccessCode?: string }) {
+  return (
+    process.env.MIRROR_HOSTED_MODEL_ENABLED === "1" &&
+    Boolean(process.env.MIRROR_HOSTED_OPENAI_API_KEY) &&
+    Boolean(process.env.MIRROR_HOSTED_DECISION_MODEL || process.env.MIRROR_DECISION_MODEL) &&
+    Boolean(process.env.MIRROR_BETA_ACCESS_CODE) &&
+    body.betaAccessCode === process.env.MIRROR_BETA_ACCESS_CODE
+  );
+}
+
+function hostedAccessError(locale: "en" | "zh-CN") {
+  return locale === "zh-CN" ? "托管模型访问当前不可用。" : "Hosted model access is unavailable.";
 }
 
 export async function POST(request: Request) {
@@ -59,24 +54,22 @@ export async function POST(request: Request) {
       );
     }
 
-    if (body.decisionProvider === "hosted_openai") {
-      const hostedError = validateHostedAccess(body);
-      if (hostedError) {
-        return NextResponse.json({ error: hostedError }, { status: 403 });
+    const decisionProvider = body.decisionProvider?.trim() || "openai_compatible";
+    const decisionModel = body.decisionModel?.trim();
+
+    if (decisionProvider === "hosted_openai") {
+      if (!hostedAccessAllowed(body)) {
+        return NextResponse.json({ error: hostedAccessError(locale) }, { status: 403 });
       }
     }
 
-    if (
-      body.decisionProvider === "openai_compatible" &&
-      !body.decisionModel &&
-      !process.env.MIRROR_DECISION_MODEL
-    ) {
+    if (decisionProvider === "openai_compatible" && !decisionModel) {
       return NextResponse.json(
         {
           error:
             locale === "zh-CN"
-              ? "使用模型驱动模式时，必须提供模型名称。"
-              : "A decision model is required for openai_compatible sessions.",
+              ? "模型驱动模式当前不可用。"
+              : "Model-driven sessions are unavailable.",
         },
         { status: 400 }
       );
@@ -85,20 +78,15 @@ export async function POST(request: Request) {
     const payload = await startRuntimeSession(
       body.worldId,
       body.scenarioId,
-      body.decisionProvider,
-      body.decisionModel
+      decisionProvider,
+      decisionModel
     );
     return NextResponse.json(payload);
   } catch (error) {
     const locale = resolveLocale(body, request);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : locale === "zh-CN"
-              ? "启动实验失败。"
-              : "Failed to start runtime session.",
+        error: locale === "zh-CN" ? "启动实验失败。" : "Failed to start runtime session.",
       },
       { status: 500 }
     );

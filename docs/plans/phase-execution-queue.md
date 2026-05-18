@@ -75,9 +75,11 @@ Local phase audits currently report:
   - boundary acceptance recorded in `docs/plans/phase-48-boundary-acceptance-2026-05-17.md`
   - expected to close with the PR that introduces that report
 - `#378` `Phase 48: private beta runtime contract audit`
-  - open and ready
+  - private-beta runtime contract audit recorded in `docs/plans/phase-48-private-beta-runtime-contract-audit-2026-05-18.md`
+  - expected to close with the PR that introduces that report
 - `#379` `Phase 48: kernel perturbation gap brief`
-  - open and ready
+  - kernel perturbation gap brief recorded in `docs/plans/phase-48-kernel-perturbation-gap-brief-2026-05-18.md`
+  - expected to close with the PR that introduces that brief
 - phase gate baseline
   - active Phase 48 gate note: `docs/plans/phase-48-successor-gate-2026-05-17.md`
 

@@ -22,18 +22,14 @@ async function runMirrorCli(
         env: {
           ...process.env,
           ...Object.fromEntries(
-            Object.entries(runtimeEnv).filter((entry): entry is [string, string] => Boolean(entry[1]))
+            Object.entries(runtimeEnv).filter((entry): entry is [string, string] => entry[1] !== undefined)
           ),
         },
       }
     );
     return JSON.parse(stdout);
-  } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : "Failed to execute Mirror runtime command.";
-    throw new Error(message);
+  } catch {
+    throw new Error("Mirror runtime command failed.");
   }
 }
 
@@ -93,8 +89,8 @@ export async function generateRuntimeBranch(
     args.push("--beta-user-id", credentials.betaUserId);
   }
   return runMirrorCli(args, {
-    OPENAI_API_KEY: credentials?.apiKey,
-    OPENAI_BASE_URL: credentials?.baseUrl,
+    OPENAI_API_KEY: credentials?.apiKey ?? "",
+    OPENAI_BASE_URL: credentials?.baseUrl ?? "",
     MIRROR_BETA_USER_ID: credentials?.betaUserId,
   });
 }
