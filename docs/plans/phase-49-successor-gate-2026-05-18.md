@@ -4,12 +4,16 @@ Date: 2026-05-18
 
 Issue: `#384` `Phase 49: sync repo truth and protect runtime core lanes`
 
-Current work item: `#394` `Phase 49: strengthen transfer eval outcome coverage`
+Closeout baseline: PR `#395`, issue `#383`, and milestone
+`Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`
 
 This note records the post-Phase-48 baseline and opens the Phase 49 successor queue.
 Phase 49 is a protected-core contract-hardening phase for the decision kernel,
 perturbation resolver, runtime session semantics, compare emission, rollback behavior, and
 transfer eval posture. It is not a public-demo or plugin expansion phase.
+
+Phase 49 is now closed. The active successor gate is
+`docs/plans/phase-50-successor-gate-2026-05-18.md`.
 
 ## Phase 48 Closeout Evidence
 
@@ -55,7 +59,7 @@ Active GitHub objects:
 
 - `#383` `Phase 49 exit gate`
   - Lane: `protected-core`.
-  - Status: blocked closeout gate for Phase 49.
+  - Status: closed after PR `#395` merged and the closeout reassessment passed.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes`
   - Lane: `protected-core`.
   - Status: closed by PR `#385`.
@@ -83,13 +87,13 @@ Active GitHub objects:
     preserve v1 rollback as active-pointer movement without deleting or rewriting artifacts.
 - `#394` `Phase 49: strengthen transfer eval outcome coverage`
   - Lane: `protected-core`.
-  - Status: current ready work item.
+  - Status: closed by PR `#395`.
   - Scope: strengthen two-world transfer eval assertions by checking world-local tracked
     outcome coverage and recording remaining Fog Harbor-shaped assumptions.
 
+After closing `#383` and the Phase 49 milestone,
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
-with Phase 49 as the only open milestone, `#383` as the protected blocked exit gate, and
-`#394` as the current ready work item.
+with Phase 50 as the only open milestone.
 
 ## Protected-Core Lane Coverage
 
