@@ -12,8 +12,7 @@ def test_phase51_successor_gate_exists_with_required_sections() -> None:
     gate = PHASE51_GATE_PATH.read_text(encoding="utf-8")
     required_sections = [
         "# Phase 51 Successor Gate",
-        "Issue: `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`",
-        "Current work item: `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`",
+        "Final work item: `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`",
         "## Phase 50 Closeout Evidence",
         "## Phase 51 Operational Queue",
         "## Protected-Core Lane Coverage",
@@ -37,6 +36,8 @@ def test_phase51_successor_gate_records_queue_and_boundaries() -> None:
         "`#404` `Phase 51: sync repo truth after Phase 50 closeout`",
         "`#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`",
         "`#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`",
+        "Closed GitHub objects:",
+        "Status: closed by PR `#409`.",
         "Private-beta route contract",
         "Phase 51 Private-Beta Route Ownership Contract",
         "Phase 51 Runtime Readiness and World-Scoped Guard Verification",
@@ -58,13 +59,12 @@ def test_phase51_successor_gate_records_queue_and_boundaries() -> None:
         assert phrase in gate
 
 
-def test_active_state_docs_point_to_phase51_queue() -> None:
+def test_active_state_docs_record_phase51_closeout_and_phase52_queue() -> None:
     required_docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
         Path("docs/plans/phase-execution-queue.md"),
         Path("docs/plans/automation-roadmap.md"),
-        Path("docs/plans/phase-50-successor-gate-2026-05-18.md"),
     ]
 
     for path in required_docs:
@@ -75,5 +75,7 @@ def test_active_state_docs_point_to_phase51_queue() -> None:
         assert "`#404`" in text
         assert "`#405`" in text
         assert "`#406`" in text
+        assert "Phase 51 is closed" in text
+        assert "Phase 52 - Legacy Route Containment and Runtime Scope Audit" in text
         assert "private-beta route ownership" in text
         assert "world-scoped session guards" in text

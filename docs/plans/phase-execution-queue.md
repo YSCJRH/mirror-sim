@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 50 runtime-boundary closeout, and the approved Phase 51 successor queue.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 51 route/runtime-readiness closeout, and the approved Phase 52 successor queue.
 
 ## Current Gate State
 
@@ -54,7 +54,8 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 48 exit gate: closed
 - Phase 49 exit gate: closed
 - Phase 50 exit gate: closed
-- Phase 51 exit gate: open and blocked
+- Phase 51 exit gate: closed
+- Phase 52 exit gate: open and blocked
 
 Local phase audits currently report:
 
@@ -62,15 +63,38 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 51 Successor Queue
+## Phase 52 Successor Queue
 
 - `audit-github-queue`
-  - reports `ready` with `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate` as the active milestone
-- milestone `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`
+  - reports `ready` with `Phase 52 - Legacy Route Containment and Runtime Scope Audit` as the active milestone
+- milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit`
   - open
-- `#403` `Phase 51 exit gate`
+- `#410` `Phase 52 exit gate`
   - open and blocked
   - labeled `lane:protected-core` because it is the protected closeout gate
+- `#411` `Phase 52: sync repo truth after Phase 51 closeout and define successor gate`
+  - current protected-core repo-truth work item
+  - syncs durable docs to Phase 52 after Phase 51 closeout
+- `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract`
+  - open and blocked until the repo-truth sync lands
+  - audits legacy top-level runtime routes before any route is presented as the private-beta main path
+- `#413` `Phase 52: strengthen runtime mutation guard regression baseline`
+  - open and blocked until the legacy route audit lands
+  - strengthens runtime mutation guard regression coverage
+- boundary posture
+  - Phase 52 does not widen public/plugin/async contracts.
+- phase gate baseline
+  - active Phase 52 gate note: `docs/plans/phase-52-successor-gate-2026-05-18.md`
+
+## Phase 51 Closeout
+
+Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`.
+
+- milestone `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`
+  - closed after PR `#409` and the post-merge exit-gate reassessment
+- `#403` `Phase 51 exit gate`
+  - closed after the post-merge reassessment on `main`
+  - labeled `lane:protected-core` because it was the protected closeout gate
 - `#404` `Phase 51: sync repo truth after Phase 50 closeout`
   - closed by PR `#407`
   - synced durable docs to Phase 51
@@ -80,11 +104,11 @@ Local phase audits currently report:
   - Phase 51 Private-Beta Route Ownership Contract: private-beta launch hub remains planning-only
   - durable route ownership contract: `docs/architecture/contracts.md` and `docs/decisions/ADR-0011-private-beta-route-ownership.md`
 - `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`
-  - current protected-core runtime-readiness work item
+  - closed by PR `#409`
   - verifies runtime readiness and world-scoped session guards before runtime surfaces widen
   - Phase 51 Runtime Readiness and World-Scoped Guard Verification: synchronous v1 generation remains the current runtime contract and route-derived `worldId` guards now protect branch generation, rollback, and world-scoped workspace loading
 - phase gate baseline
-  - active Phase 51 gate note: `docs/plans/phase-51-successor-gate-2026-05-18.md`
+  - completed Phase 51 gate note: `docs/plans/phase-51-successor-gate-2026-05-18.md`
   - route contract note: `docs/plans/phase-51-private-beta-route-contract-2026-05-18.md`
   - runtime guard note: `docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md`
 
@@ -208,8 +232,9 @@ Local phase audits currently report:
   - Phase 48 completed as a successor-intake and boundary contract triage round
   - Phase 49 completed as a contract-hardening round
   - Phase 50 completed as a runtime-orchestration measurement and product-boundary round
-  - Phase 51 is the active approved successor queue
-  - any work beyond the Phase 51 queue requires a fresh decision against the trigger conditions in `mirror.md`
+  - Phase 51 completed as a private-beta route contract and runtime-readiness round
+  - Phase 52 is the active approved successor queue
+  - any work beyond the Phase 52 queue requires a fresh decision against the trigger conditions in `mirror.md`
 
 ## Closeout Snapshot
 
@@ -667,7 +692,7 @@ Local phase audits currently report:
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 51 is the active approved successor queue; do not open a parallel execution queue.
+- Phase 52 is the active approved successor queue; do not open a parallel execution queue.
 - The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
 
 ## Historical Branch Status
