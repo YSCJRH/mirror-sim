@@ -403,8 +403,9 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
 - Required files:
   - `session.json`
   - `nodes/<node_id>/node.json`
-- Optional files:
+- Required files for every successful generated non-root node:
   - `compare/<node_id>/compare.json`
+- Optional node-scoped materialized files:
   - `nodes/<node_id>/report/report.md`
   - `nodes/<node_id>/report/claims.json`
   - `nodes/<node_id>/resolution.json`
@@ -414,14 +415,22 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
   - `summary_path`
   - `trace_path`
   - `snapshot_dir`
-  - `compare_path` when parent-vs-child comparison is materialized
+  - `compare_path` for every successful generated non-root node
   - `report_path` when a node-scoped report is materialized
   - `claims_path` when node-scoped claims are materialized
   - `resolution_path` when perturbation resolution is materialized
   - `decision_trace_path` when decision replay/audit is materialized
+- Root node manifests must keep `compare_path: null`; the root checkpoint has no parent.
 - Interactive session compare artifacts are separate from scenario-level compare artifacts.
   - `artifacts/<scope>/compare/<scenario_id>/compare.json` remains the contract for pre-authored scenario compare sets
-  - `artifacts/<scope>/sessions/<session_id>/compare/<node_id>/compare.json` is the contract for one generated node compared to its parent checkpoint when emitted
+  - `artifacts/<scope>/sessions/<session_id>/compare/<node_id>/compare.json` is the contract for one generated node compared to its parent checkpoint
+- Every successful generated non-root runtime node must emit a parent-vs-child compare artifact.
+  - The reference branch is the immediate parent checkpoint, not always the session root.
+  - The candidate branch is the generated child node.
+  - The compare artifact uses the existing `CompareArtifact` shape with `branch_count: 2`.
+  - The compare artifact must publish branch file references under the session namespace.
+- Runtime compare emission must not create or mutate scenario-level compare artifacts under
+  `artifacts/<scope>/compare/<scenario_id>/`.
 - The frontend may treat `session.json` plus `node.json` as the source of truth for:
   - branch tree rendering
   - current active node

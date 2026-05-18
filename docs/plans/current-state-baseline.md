@@ -233,7 +233,8 @@ This note records the completed Phase 48 successor-intake closeout and the appro
     - `#383` `Phase 49 exit gate` is `open`, `blocked`, and `lane:protected-core`
     - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is `closed` by PR `#385`
     - `#386` `Phase 49: ratify kernel trace and replay contract` is `closed` by PR `#387`
-    - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is the current `status:ready` protected-core work item
+    - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is `closed` by PR `#389`
+    - `#390` `Phase 49: ratify runtime parent-child compare emission policy` is the current `status:ready` protected-core work item
 
 ## Trusted Source Of Truth
 
@@ -266,7 +267,8 @@ This note records the completed Phase 48 successor-intake closeout and the appro
 - The Phase 49 exit gate is `#383` `Phase 49 exit gate`, which remains the open blocked closeout gate for this phase.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
-- `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is the current ready work item.
+- `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.
+- `#390` `Phase 49: ratify runtime parent-child compare emission policy` is the current ready work item.
 - The completed Phase 47 successor-gate baseline lives in `docs/plans/phase-47-successor-gate-2026-05-16.md`.
 - The completed Phase 48 successor-gate baseline lives in `docs/plans/phase-48-successor-gate-2026-05-17.md`.
 - The active Phase 49 successor-gate baseline lives in `docs/plans/phase-49-successor-gate-2026-05-18.md`.

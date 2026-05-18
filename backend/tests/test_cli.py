@@ -649,6 +649,26 @@ def test_cli_generate_branch_from_existing_child_node(tmp_path: Path, capsys) ->
     )
     first_payload = json.loads(capsys.readouterr().out)
     first_child_id = first_payload["active_node_id"]
+    root_node = json.loads(
+        (tmp_path / "sessions" / session_id / "nodes" / "node_root" / "node.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    first_child = json.loads(
+        (tmp_path / "sessions" / session_id / "nodes" / first_child_id / "node.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert root_node["compare_path"] is None
+    assert first_child["compare_path"] == f"sessions/{session_id}/compare/{first_child_id}/compare.json"
+    assert not (tmp_path / "compare").exists()
+
+    first_compare = json.loads((tmp_path / first_child["compare_path"]).read_text(encoding="utf-8"))
+    assert first_compare["branch_count"] == 2
+    first_reference_branch = next(branch for branch in first_compare["branches"] if branch["is_reference"])
+    first_candidate_branch = next(branch for branch in first_compare["branches"] if not branch["is_reference"])
+    assert f"nodes/node_root/run/summary.json" in first_reference_branch["summary_path"]
+    assert f"nodes/{first_child_id}/run/summary.json" in first_candidate_branch["summary_path"]
 
     assert (
         main(
@@ -684,7 +704,19 @@ def test_cli_generate_branch_from_existing_child_node(tmp_path: Path, capsys) ->
 
     compare_artifact = json.loads((tmp_path / second_child["compare_path"]).read_text(encoding="utf-8"))
     reference_branch = next(branch for branch in compare_artifact["branches"] if branch["is_reference"])
+    candidate_branch = next(branch for branch in compare_artifact["branches"] if not branch["is_reference"])
     assert f"nodes/{first_child_id}/run/summary.json" in reference_branch["summary_path"]
+    assert f"nodes/{second_child_id}/run/summary.json" in candidate_branch["summary_path"]
+    compare_files = sorted(
+        path.relative_to(tmp_path / "sessions" / session_id).as_posix()
+        for path in (tmp_path / "sessions" / session_id / "compare").rglob("compare.json")
+    )
+    assert compare_files == sorted(
+        [
+            f"compare/{first_child_id}/compare.json",
+            f"compare/{second_child_id}/compare.json",
+        ]
+    )
     assert (tmp_path / second_child["summary_path"]).exists()
     assert (tmp_path / second_child["report_path"]).exists()
     assert (tmp_path / second_child["claims_path"]).exists()

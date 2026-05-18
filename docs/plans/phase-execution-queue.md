@@ -76,8 +76,11 @@ Local phase audits currently report:
   - closed by PR `#387`
   - documented the v1 trace contract and hardened trace privacy tests
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract`
-  - current protected-core perturbation schema/resolver contract work item
-  - expected to close with the PR that documents the template-plus-parameters contract and hardens resolver tests
+  - closed by PR `#389`
+  - documented the template-plus-parameters contract and hardened resolver tests
+- `#390` `Phase 49: ratify runtime parent-child compare emission policy`
+  - current protected-core runtime compare emission work item
+  - expected to close with the PR that ratifies unconditional session-scoped parent-vs-child compare emission for generated runtime nodes
 - phase gate baseline
   - active Phase 49 gate note: `docs/plans/phase-49-successor-gate-2026-05-18.md`
 

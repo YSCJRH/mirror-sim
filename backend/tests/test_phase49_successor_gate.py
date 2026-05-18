@@ -35,6 +35,7 @@ def test_phase49_successor_gate_records_work_packages_and_boundaries() -> None:
         "`#384` `Phase 49: sync repo truth and protect runtime core lanes`",
         "`#386` `Phase 49: ratify kernel trace and replay contract`",
         "`#388` `Phase 49: ratify perturbation schema and resolver authoring contract`",
+        "`#390` `Phase 49: ratify runtime parent-child compare emission policy`",
         "Kernel trace and replay contract",
         "Perturbation schema and resolver contract",
         "Branch generation and compare emission policy",
@@ -68,3 +69,4 @@ def test_active_state_docs_point_to_phase49_queue() -> None:
         assert "`#384`" in text
         assert "`#386`" in text
         assert "`#388`" in text
+        assert "`#390`" in text

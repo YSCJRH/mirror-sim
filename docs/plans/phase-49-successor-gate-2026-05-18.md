@@ -4,7 +4,7 @@ Date: 2026-05-18
 
 Issue: `#384` `Phase 49: sync repo truth and protect runtime core lanes`
 
-Current work item: `#388` `Phase 49: ratify perturbation schema and resolver authoring contract`
+Current work item: `#390` `Phase 49: ratify runtime parent-child compare emission policy`
 
 This note records the post-Phase-48 baseline and opens the Phase 49 successor queue.
 Phase 49 is a protected-core contract-hardening phase for the decision kernel,
@@ -68,13 +68,18 @@ Active GitHub objects:
     trace privacy tests.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract`
   - Lane: `protected-core`.
-  - Status: current ready work item.
+  - Status: closed by PR `#389`.
   - Scope: promote the world-local perturbation schema and resolver authoring contract,
     including template-plus-parameters mapping and invalid payload rejection tests.
+- `#390` `Phase 49: ratify runtime parent-child compare emission policy`
+  - Lane: `protected-core`.
+  - Status: current ready work item.
+  - Scope: ratify that every successful generated runtime child node emits a session-scoped
+    parent-vs-child compare artifact without changing scenario-level compare contracts.
 
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
 with Phase 49 as the only open milestone, `#383` as the protected blocked exit gate, and
-`#388` as the current ready work item.
+`#390` as the current ready work item.
 
 ## Protected-Core Lane Coverage
 
@@ -107,8 +112,9 @@ public demo artifact layout, or the Mirror Codex MCP contract.
   `docs/decisions/ADR-0007-rule-bounded-llm-kernel.md` and
   `docs/architecture/contracts.md`; TODO[verify]: re-open contract review before accepting
   any caller-supplied action outside a world-local `allowed_action_types` list.
-- TODO[verify]: Decide whether every generated runtime node must emit parent-vs-child
-  compare output.
+- Every successful generated non-root runtime node now emits a session-scoped parent-vs-child
+  compare output; TODO[verify]: re-open contract review before making runtime compare
+  emission optional or changing reference-branch selection away from the immediate parent.
 - TODO[verify]: Decide whether checkpoint rollback exists in Phase 49 or remains deferred.
 - TODO[verify]: Identify which Fog Harbor-shaped report and eval assumptions still block a
   stronger `museum-night` transfer proof.
@@ -127,7 +133,8 @@ public demo artifact layout, or the Mirror Codex MCP contract.
    - Define template-plus-parameters before any free-form authoring path.
 
 3. Branch generation and compare emission policy
-   - Decide whether every generated node emits parent-vs-child `compare.json`.
+   - Ratify that every successful generated non-root runtime node emits parent-vs-child
+     `compare.json`.
    - Preserve the existing public `compare.json` contract while extending session-scoped
      artifacts only through review.
 
@@ -169,9 +176,9 @@ Phase 49 must stay aligned with `mirror.md` and `AGENTS.md`:
 - Do not add mutating Mirror Codex MCP tools.
 - Do not promote local untracked April/private-beta planning files as durable truth without a
   reviewed PR.
-- Do not implement free-form natural-language perturbation execution, async worker, or
-  checkpoint semantics inside `#388`; `#388` only ratifies the perturbation
-  schema/resolver authoring contract and hardens resolver tests.
+- Do not implement free-form natural-language perturbation execution, async worker,
+  checkpoint semantics, or frontend compare UI inside `#390`; `#390` only ratifies runtime
+  compare emission policy and hardens CLI/session artifact tests.
 
 ## Validation Commands
 
@@ -202,6 +209,17 @@ python -m pytest backend/tests/test_decision_kernel.py -q
 python -m pytest backend/tests/test_cli.py -k "generate_branch or perturbation" -q
 python -m pytest backend/tests/test_phase49_successor_gate.py backend/tests/test_automation.py -q
 python -m backend.app.cli classify-lane --files docs/architecture/contracts.md docs/decisions/ADR-0006-interactive-simulator-runtime-v1.md backend/app/perturbations/service.py backend/tests/test_decision_kernel.py backend/tests/test_cli.py docs/plans/phase-49-successor-gate-2026-05-18.md README.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md
+python scripts/check_no_secrets.py
+python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
+git diff --check
+```
+
+For `#390`, run:
+
+```powershell
+python -m pytest backend/tests/test_cli.py -k "generate_branch or compare" -q
+python -m pytest backend/tests/test_phase49_successor_gate.py backend/tests/test_automation.py -q
+python -m backend.app.cli classify-lane --files docs/architecture/contracts.md docs/decisions/ADR-0006-interactive-simulator-runtime-v1.md backend/app/sessions/service.py backend/tests/test_cli.py docs/plans/phase-49-successor-gate-2026-05-18.md README.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 git diff --check
