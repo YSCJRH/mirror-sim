@@ -271,13 +271,15 @@ This note records the completed Phase 51 route/runtime-readiness closeout and th
   - `gh issue list --milestone "Phase 52 - Legacy Route Containment and Runtime Scope Audit" --state all`
     - `#410` `Phase 52 exit gate` is `open`, `blocked`, and `lane:protected-core`
     - `#411` `Phase 52: sync repo truth after Phase 51 closeout and define successor gate` is `closed` by PR `#414`
-    - `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract` is the current `status:ready` protected-core work item
-    - `#413` `Phase 52: strengthen runtime mutation guard regression baseline` is `open` and blocked until the legacy route audit lands
+    - `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract` is `closed` by PR `#415`
+    - `#413` `Phase 52: strengthen runtime mutation guard regression baseline` is the current `status:ready` protected-core work item
   - Phase 52 successor gate:
-    - Phase 52 Legacy Top-Level Runtime Route Audit is the current protected route-containment audit surface
+    - Phase 52 Legacy Top-Level Runtime Route Audit is the completed protected route-containment audit surface
     - `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md` records the route audit note
-    - legacy top-level runtime routes remain the current protected route-containment audit surface
-    - runtime mutation guard regression coverage remains the follow-up after route audit
+    - Phase 52 Runtime Mutation Guard Regression Baseline is the current protected guard-regression surface
+    - `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md` records the runtime guard note
+    - legacy top-level runtime routes remain explicitly contained
+    - runtime mutation guard regression coverage keeps route-derived `worldId` and public-demo blocking in scope
     - `docs/plans/phase-52-successor-gate-2026-05-18.md` records the active gate note
 
 ## Trusted Source Of Truth
@@ -324,10 +326,11 @@ This note records the completed Phase 51 route/runtime-readiness closeout and th
 - The durable route ownership contract lives in `docs/architecture/contracts.md` and `docs/decisions/ADR-0011-private-beta-route-ownership.md`.
 - Phase 51 Runtime Readiness and World-Scoped Guard Verification keeps synchronous v1 generation, records route-derived `worldId` mutation guards, and lives in `docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md`.
 - `#411` `Phase 52: sync repo truth after Phase 51 closeout and define successor gate` is closed by PR `#414`.
-- `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract` is the current ready Phase 52 Legacy Top-Level Runtime Route Audit.
-- `#413` `Phase 52: strengthen runtime mutation guard regression baseline` is blocked until `#412` lands.
+- `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract` is closed by PR `#415`.
+- `#413` `Phase 52: strengthen runtime mutation guard regression baseline` is the current ready Phase 52 Runtime Mutation Guard Regression Baseline.
 - Phase 52 focuses on legacy top-level runtime routes and runtime mutation guard regression coverage without widening public/plugin/async contracts.
 - The Phase 52 Legacy Top-Level Runtime Route Audit note lives in `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`.
+- The Phase 52 Runtime Mutation Guard Regression Baseline note lives in `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md` and keeps route-derived `worldId` guard coverage in scope.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.

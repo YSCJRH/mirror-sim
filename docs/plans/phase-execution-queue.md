@@ -76,13 +76,16 @@ Local phase audits currently report:
   - closed by PR `#414`
   - synced durable docs to Phase 52 after Phase 51 closeout
 - `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract`
-  - current protected-core route-containment work item
+  - closed by PR `#415`
   - Phase 52 Legacy Top-Level Runtime Route Audit
   - audits legacy top-level runtime routes before any route is presented as the private-beta main path
   - route audit note: `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`
 - `#413` `Phase 52: strengthen runtime mutation guard regression baseline`
-  - open and blocked until the legacy route audit lands
+  - current protected-core guard-regression work item
+  - Phase 52 Runtime Mutation Guard Regression Baseline
   - strengthens runtime mutation guard regression coverage
+  - keeps route-derived `worldId` and public-demo mutation blocking covered
+  - runtime guard note: `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`
 - boundary posture
   - Phase 52 does not widen public/plugin/async contracts.
 - phase gate baseline

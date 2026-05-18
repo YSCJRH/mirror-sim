@@ -12,8 +12,8 @@ def test_phase52_successor_gate_exists_with_required_sections() -> None:
     gate = PHASE52_GATE_PATH.read_text(encoding="utf-8")
     required_sections = [
         "# Phase 52 Successor Gate",
-        "Issue: `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract`",
-        "Current work item: `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract`",
+        "Issue: `#413` `Phase 52: strengthen runtime mutation guard regression baseline`",
+        "Current work item: `#413` `Phase 52: strengthen runtime mutation guard regression baseline`",
         "## Phase 51 Closeout Evidence",
         "## Phase 52 Operational Queue",
         "## Protected-Core Lane Coverage",
@@ -40,8 +40,8 @@ def test_phase52_successor_gate_records_queue_and_boundaries() -> None:
         "Status: blocked closeout gate for Phase 52.",
         "Status: closed by PR",
         "Status: current ready work item.",
-        "Status: blocked until the legacy route audit lands.",
         "Phase 52 Legacy Top-Level Runtime Route Audit",
+        "Phase 52 Runtime Mutation Guard Regression Baseline",
         "Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`",
         "legacy top-level runtime routes",
         "route-derived `worldId`",
@@ -56,6 +56,7 @@ def test_phase52_successor_gate_records_queue_and_boundaries() -> None:
         "Do not recreate local Codex automations without a new explicit operator request",
         "`docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md`",
         "`docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`",
+        "`docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`",
         "`docs/plans/phase-52-successor-gate-2026-05-18.md`",
     ]
     for phrase in required_phrases:
@@ -81,6 +82,8 @@ def test_active_state_docs_point_to_phase52_queue() -> None:
         assert "`#413`" in text
         assert "Phase 52 Legacy Top-Level Runtime Route Audit" in text
         assert "`docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`" in text
+        assert "Phase 52 Runtime Mutation Guard Regression Baseline" in text
+        assert "`docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`" in text
         assert "legacy top-level runtime routes" in text
         assert "runtime mutation guard regression" in text
         assert (

@@ -2,16 +2,17 @@
 
 Date: 2026-05-18
 
-Issue: `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract`
+Issue: `#413` `Phase 52: strengthen runtime mutation guard regression baseline`
 
-Current work item: `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract`
+Current work item: `#413` `Phase 52: strengthen runtime mutation guard regression baseline`
 
 This note records the post-Phase-51 baseline and the Phase 52 successor queue. Phase 52
 is a protected-core route-containment and runtime-scope audit phase. It has synced repo
 truth after the Phase 51 closeout, now audits legacy top-level runtime routes through the
-Phase 52 Legacy Top-Level Runtime Route Audit, and then strengthens runtime mutation
-guard regression coverage. It is not a launch-hub, public-path, plugin, async-runtime, or
+Phase 52 Legacy Top-Level Runtime Route Audit, and now strengthens runtime mutation
+guard regression coverage through the Phase 52 Runtime Mutation Guard Regression Baseline. It is not a launch-hub, public-path, plugin, async-runtime, or
 schema-expansion phase.
+It does not widen public/plugin/async contracts.
 
 This gate is recorded at `docs/plans/phase-52-successor-gate-2026-05-18.md`.
 
@@ -50,17 +51,17 @@ Active GitHub objects:
   - Scope: synced tracked docs to Phase 52 after closing Phase 51.
 - `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract`
   - Lane: `protected-core`.
-  - Status: current ready work item.
-  - Scope: audit legacy top-level runtime routes before presenting any route as the
+  - Status: closed by PR `#415`.
+  - Scope: audited legacy top-level runtime routes before presenting any route as the
     private-beta main path.
 - `#413` `Phase 52: strengthen runtime mutation guard regression baseline`
   - Lane: `protected-core`.
-  - Status: blocked until the legacy route audit lands.
+  - Status: current ready work item.
   - Scope: strengthen regression coverage for runtime mutation guard boundaries.
 
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
 with Phase 52 as the only open milestone, `#410` as the protected blocked exit gate, and
-`#412` as the current ready work item.
+`#413` as the current ready work item.
 
 ## Protected-Core Lane Coverage
 
@@ -95,6 +96,8 @@ public demo artifact layout, or the Mirror Codex MCP contract.
   `worldId` guards for private-beta mutation paths.
 - Phase 52 Legacy Top-Level Runtime Route Audit is recorded in
   `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`.
+- Phase 52 Runtime Mutation Guard Regression Baseline is recorded in
+  `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`.
 - TODO[verify]: open a separate migration work item before redirecting or deleting any
   legacy top-level runtime route.
 - TODO[verify]: require route-derived `worldId` or an equivalent reviewed scope guard
@@ -118,11 +121,14 @@ public demo artifact layout, or the Mirror Codex MCP contract.
      legacy compatibility surfaces unless a later reviewed migration work item changes
      that posture.
    - Preserve public demo, plugin, private-beta, and async-runtime boundaries.
+   - Closed by PR `#415`.
 
 3. Runtime mutation guard regression baseline
    - Strengthen coverage that product/web-wrapper mutation calls pass route-derived
      `worldId` or an equivalent reviewed scope guard.
    - Preserve public-demo blocking and backend expected-world mismatch rejection.
+   - Record the Phase 52 Runtime Mutation Guard Regression Baseline in
+     `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`.
 
 ## Blueprint Boundary
 
@@ -158,13 +164,13 @@ Phase 52 must stay aligned with `mirror.md` and `AGENTS.md`:
 
 ## Validation Commands
 
-For `#412`, run:
+For `#413`, run:
 
 ```powershell
-python -m pytest backend/tests/test_phase52_legacy_route_audit_note.py backend/tests/test_phase52_successor_gate.py backend/tests/test_phase51_route_contract_note.py backend/tests/test_phase51_runtime_guard_note.py -q
+python -m pytest backend/tests/test_phase52_runtime_guard_regression_note.py backend/tests/test_phase52_successor_gate.py backend/tests/test_phase52_legacy_route_audit_note.py backend/tests/test_phase51_runtime_guard_note.py backend/tests/test_frontend_runtime_error_redaction.py::test_runtime_composer_generate_request_includes_world_id backend/tests/test_frontend_runtime_error_redaction.py::test_minimal_home_runtime_mutations_include_world_id backend/tests/test_frontend_runtime_error_redaction.py::test_runtime_cli_passes_expected_world_to_mutating_session_commands backend/tests/test_cli.py::test_generate_branch_rejects_expected_world_mismatch backend/tests/test_cli.py::test_rollback_session_rejects_expected_world_mismatch backend/tests/test_cli.py::test_cli_generate_branch_passes_expected_world_guard backend/tests/test_cli.py::test_cli_rollback_session_passes_expected_world_guard -q
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
-python -m backend.app.cli classify-lane --files README.md docs/architecture/contracts.md docs/plans/current-state-baseline.md docs/plans/automation-roadmap.md docs/plans/phase-execution-queue.md docs/plans/phase-51-successor-gate-2026-05-18.md docs/plans/phase-52-successor-gate-2026-05-18.md docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md backend/tests/test_phase52_legacy_route_audit_note.py backend/tests/test_phase52_successor_gate.py
+python -m backend.app.cli classify-lane --files README.md docs/architecture/contracts.md docs/plans/current-state-baseline.md docs/plans/automation-roadmap.md docs/plans/phase-execution-queue.md docs/plans/phase-51-successor-gate-2026-05-18.md docs/plans/phase-52-successor-gate-2026-05-18.md docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md backend/tests/test_phase52_runtime_guard_regression_note.py backend/tests/test_phase52_successor_gate.py backend/tests/test_cli.py
 git diff --check
 ./make.ps1 test
 ./make.ps1 eval-demo

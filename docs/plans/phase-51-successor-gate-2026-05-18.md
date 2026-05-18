@@ -217,9 +217,9 @@ Phase 52 is the active approved successor queue:
 - `#411` `Phase 52: sync repo truth after Phase 51 closeout and define successor gate`
   is closed by PR `#414`.
 - `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract`
-  is the current ready Phase 52 Legacy Top-Level Runtime Route Audit.
-- `#413` `Phase 52: strengthen runtime mutation guard regression baseline` is blocked until
-  the legacy route audit lands.
+  is closed by PR `#415`.
+- `#413` `Phase 52: strengthen runtime mutation guard regression baseline` is the current
+  ready Phase 52 Runtime Mutation Guard Regression Baseline.
 
 Phase 52 keeps legacy top-level runtime routes and runtime mutation guard regression as
 protected-core follow-up surfaces. It does not widen public/plugin/async contracts, implement
@@ -227,9 +227,10 @@ a launch hub, replace `/`, or change session/node/report/claim/trace/compare art
 contracts.
 
 The active Phase 52 successor-gate baseline lives in
-`docs/plans/phase-52-successor-gate-2026-05-18.md`, and the Phase 52 Legacy Top-Level
-Runtime Route Audit note lives in
-`docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`.
+`docs/plans/phase-52-successor-gate-2026-05-18.md`, and the Phase 52 Legacy Top-Level Runtime Route Audit note lives in
+`docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`. The Phase 52 Runtime
+Mutation Guard Regression Baseline note lives in
+`docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`.
 
 For `#405`, run:
 
