@@ -17,9 +17,17 @@
     "docs/decisions/",
     "scripts/bootstrap_github.py",
     "backend/app/automation/",
+    "backend/app/decision_kernel/",
     "backend/app/domain/",
+    "backend/app/model_access/",
+    "backend/app/perturbations/",
     "backend/app/scenarios/",
+    "backend/app/safety/",
+    "backend/app/sessions/",
     "backend/app/simulation/",
-    "backend/app/reports/"
+    "backend/app/reports/",
+    "frontend/src/app/api/runtime/",
+    "frontend/src/app/api/worlds/create/",
+    "frontend/src/app/lib/runtime-cli.ts"
   ]
 }

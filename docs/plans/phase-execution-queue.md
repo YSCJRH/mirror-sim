@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 47 boundary-readiness closeout, and the approved Phase 48 successor queue.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 48 successor-intake closeout, and the approved Phase 49 successor queue.
 
 ## Current Gate State
 
@@ -51,7 +51,8 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 45 exit gate: closed
 - Phase 46 exit gate: closed
 - Phase 47 exit gate: closed
-- Phase 48 exit gate: open and blocked
+- Phase 48 exit gate: closed
+- Phase 49 exit gate: open and blocked
 
 Local phase audits currently report:
 
@@ -59,29 +60,39 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 48 Successor Queue
+## Phase 49 Successor Queue
 
 - `audit-github-queue`
-  - reports `ready` with `Phase 48 - Successor Intake and Boundary Contract Triage` as the active milestone
-- milestone `Phase 48 - Successor Intake and Boundary Contract Triage`
+  - reports `ready` with `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening` as the active milestone
+- milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`
   - open
-- `#375` `Phase 48 exit gate`
+- `#383` `Phase 49 exit gate`
   - open and blocked
   - labeled `lane:protected-core` because it is the protected closeout gate
-- `#376` `Phase 48: sync repo truth after Phase 47 closeout`
-  - first docs-only repo-truth sync work item
-  - expected to close with the PR that introduces this Phase 48 baseline
-- `#377` `Phase 48: public private plugin boundary acceptance`
-  - boundary acceptance recorded in `docs/plans/phase-48-boundary-acceptance-2026-05-17.md`
-  - expected to close with the PR that introduces that report
-- `#378` `Phase 48: private beta runtime contract audit`
-  - private-beta runtime contract audit recorded in `docs/plans/phase-48-private-beta-runtime-contract-audit-2026-05-18.md`
-  - expected to close with the PR that introduces that report
-- `#379` `Phase 48: kernel perturbation gap brief`
-  - kernel perturbation gap brief recorded in `docs/plans/phase-48-kernel-perturbation-gap-brief-2026-05-18.md`
-  - expected to close with the PR that introduces that brief
+- `#384` `Phase 49: sync repo truth and protect runtime core lanes`
+  - first protected-core repo-truth and lane-policy work item
+  - expected to close with the PR that introduces the Phase 49 baseline and runtime-core lane protection
 - phase gate baseline
-  - active Phase 48 gate note: `docs/plans/phase-48-successor-gate-2026-05-17.md`
+  - active Phase 49 gate note: `docs/plans/phase-49-successor-gate-2026-05-18.md`
+
+## Phase 48 Closeout
+
+- milestone `Phase 48 - Successor Intake and Boundary Contract Triage`
+  - closed after PR `#382` and the post-merge exit-gate reassessment
+- `#375` `Phase 48 exit gate`
+  - closed after the post-merge reassessment on `main`
+  - labeled `lane:protected-core` because it was the protected closeout gate
+- `#376` `Phase 48: sync repo truth after Phase 47 closeout`
+  - closed
+- `#377` `Phase 48: public private plugin boundary acceptance`
+  - closed
+  - recorded in `docs/plans/phase-48-boundary-acceptance-2026-05-17.md`
+- `#378` `Phase 48: private beta runtime contract audit`
+  - closed by PR `#382`
+  - recorded in `docs/plans/phase-48-private-beta-runtime-contract-audit-2026-05-18.md`
+- `#379` `Phase 48: kernel perturbation gap brief`
+  - closed by PR `#382`
+  - recorded in `docs/plans/phase-48-kernel-perturbation-gap-brief-2026-05-18.md`
 
 ## Phase 47 Closeout
 
@@ -134,9 +145,9 @@ Local phase audits currently report:
     - closed
     - merged via PR `#321`
 - successor posture
-  - Phase 47 completed as a boundary readiness and successor hygiene round
-  - Phase 48 is the active approved successor queue
-  - any work beyond the Phase 48 queue requires a fresh decision against the trigger conditions in `mirror.md`
+  - Phase 48 completed as a successor-intake and boundary contract triage round
+  - Phase 49 is the active approved successor queue
+  - any work beyond the Phase 49 queue requires a fresh decision against the trigger conditions in `mirror.md`
 
 ## Closeout Snapshot
 
@@ -594,7 +605,8 @@ Local phase audits currently report:
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 48 is the active approved successor queue; do not open a parallel execution queue.
+- Phase 49 is the active approved successor queue; do not open a parallel execution queue.
+- The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
 
 ## Historical Branch Status
 

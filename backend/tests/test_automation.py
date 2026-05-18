@@ -38,6 +38,27 @@ def test_classify_paths_marks_bootstrap_and_automation_changes_protected() -> No
     ]
 
 
+def test_classify_paths_marks_phase49_runtime_core_paths_protected() -> None:
+    phase49_core_paths = [
+        "backend/app/decision_kernel/service.py",
+        "backend/app/perturbations/service.py",
+        "backend/app/sessions/service.py",
+        "backend/app/model_access/service.py",
+        "backend/app/safety/service.py",
+        "frontend/src/app/api/runtime/start-session/route.ts",
+        "frontend/src/app/api/runtime/generate-branch/route.ts",
+        "frontend/src/app/api/runtime/rollback-session/route.ts",
+        "frontend/src/app/api/worlds/create/route.ts",
+        "frontend/src/app/lib/runtime-cli.ts",
+    ]
+
+    decision = classify_paths(phase49_core_paths)
+
+    assert decision.lane == "lane:protected-core"
+    assert "risk:core-contract" in decision.labels
+    assert decision.protected_hits == sorted(phase49_core_paths)
+
+
 def test_phase1_and_phase2_audit_pass_with_demo_artifacts(tmp_path: Path) -> None:
     settings = get_settings()
     run_phase0_demo(settings=settings, artifacts_root=tmp_path / "demo")
