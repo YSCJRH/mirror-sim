@@ -2,9 +2,9 @@
 
 Date: 2026-05-18
 
-Issue: `#397` `Phase 50: sync repo truth after Phase 49 closeout`
+Issue: `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`
 
-Current work item: `#397` `Phase 50: sync repo truth after Phase 49 closeout`
+Current work item: `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`
 
 This note records the post-Phase-49 baseline and opens the Phase 50 successor queue.
 Phase 50 is a protected-core measurement and boundary phase for runtime orchestration.
@@ -65,17 +65,22 @@ Active GitHub objects:
   - Status: blocked closeout gate for Phase 50.
 - `#397` `Phase 50: sync repo truth after Phase 49 closeout`
   - Lane: `protected-core`.
-  - Status: current ready work item.
+  - Status: closed by PR `#399`.
   - Scope: sync tracked docs to Phase 50 after closing Phase 49.
 - `#398` `Phase 50: measure runtime generation duration before task_id decision`
   - Lane: `protected-core`.
-  - Status: blocked until `#397` lands.
+  - Status: closed by PR `#400`.
   - Scope: measure the current runtime branch-generation path and decide whether to keep
     synchronous v1 generation or open a dedicated async-orchestration ADR.
+- `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`
+  - Lane: `protected-core`.
+  - Status: current ready work item.
+  - Scope: record the Phase 50 Product Boundary Decision, keep launch hub remains planning-only for now,
+    and preserve public demo/plugin/hosted-model boundaries before any product-path widening.
 
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
 with Phase 50 as the only open milestone, `#396` as the protected blocked exit gate, and
-`#397` as the current ready work item.
+`#401` as the current ready work item.
 
 ## Protected-Core Lane Coverage
 
@@ -134,8 +139,11 @@ public demo artifact layout, or the Mirror Codex MCP contract.
   Current local deterministic measurements support: Keep synchronous generation for v1.
   TODO[verify]: rerun hosted/private-beta model measurements before introducing `task_id`,
   worker, retry, status, or cleanup semantics.
-- TODO[verify]: Decide whether a future private-beta launch hub should conditionally replace
-  `/`, live at a separate route, or remain a planning-only concept.
+- Phase 50 Product Boundary Decision is now recorded in
+  `docs/plans/phase-50-product-boundary-2026-05-18.md`.
+  The launch hub remains planning-only for now; `/` remains the guided public demo.
+  TODO[verify]: open a reviewed route contract before replacing `/` or adding a private-beta
+  launch hub route.
 
 ## Phase 50 Work Package Map
 
@@ -153,7 +161,9 @@ public demo artifact layout, or the Mirror Codex MCP contract.
      async orchestration.
 
 3. Product boundary follow-up
-   - Keep private-beta route and launch-hub language explicit.
+   - Recorded the Phase 50 Product Boundary Decision in
+     `docs/plans/phase-50-product-boundary-2026-05-18.md`.
+   - Decision: launch hub remains planning-only for now.
    - Do not move public demo, plugin, or hosted-model behavior without a separate reviewed
      contract decision.
 
@@ -174,9 +184,9 @@ Phase 50 must stay aligned with `mirror.md` and `AGENTS.md`:
 ## Non-Goals
 
 - Do not implement async workers, queues, `task_id`, retry, status, cleanup, checkpoint
-  mutation/deletion, or restore semantics inside `#397`.
+  mutation/deletion, or restore semantics inside `#401`.
 - Do not change scenario DSL, claim/evidence shape, run trace shape, compare artifact shape,
-  public demo artifact layout, or plugin MCP tool/resource contract in `#397`.
+  public demo artifact layout, or plugin MCP tool/resource contract in `#401`.
 - Do not add Hosted GPT, BYOK, upload, auth, billing, database, object storage, or quota
   behavior to the public path or plugin path.
 - Do not add mutating Mirror Codex MCP tools.
@@ -203,5 +213,16 @@ For `#398`, run:
 python scripts/check_no_secrets.py
 python -m backend.app.cli classify-lane --files docs/architecture/contracts.md docs/decisions/ADR-0006-interactive-simulator-runtime-v1.md backend/app/sessions/service.py frontend/src/app/api/runtime/generate-branch/route.ts
 python -m pytest backend/tests/test_cli.py -k "start_session or generate_branch" -q
+./make.ps1 eval-demo
+```
+
+For `#401`, run:
+
+```powershell
+python -m pytest backend/tests/test_phase50_product_boundary_note.py backend/tests/test_phase50_successor_gate.py backend/tests/test_automation.py -q
+python scripts/check_no_secrets.py
+python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
+python -m backend.app.cli classify-lane --files README.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md docs/plans/phase-50-successor-gate-2026-05-18.md docs/plans/phase-50-product-boundary-2026-05-18.md backend/tests/test_phase50_product_boundary_note.py backend/tests/test_phase50_successor_gate.py
+git diff --check
 ./make.ps1 eval-demo
 ```

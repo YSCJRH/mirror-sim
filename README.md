@@ -233,9 +233,10 @@ Current private-beta candidate entrypoints:
 - `/worlds/<world_id>/runtime/<session_id>/report` -> live report workspace
 - `/worlds/<world_id>/review` -> world-scoped review surface
 
-TODO[verify]: Decide whether a future private-beta launch hub should conditionally replace
-`/`, live at a separate route, or remain a planning-only concept. Current tracked code keeps
-`/` as the public demo.
+Phase 50 Product Boundary Decision (`#401`): the private-beta launch hub remains planning-only for now.
+Current tracked code keeps `/` as the public demo, and any future private-beta launch hub route
+requires a separate reviewed route contract before replacing `/` or widening public/plugin
+behavior. See `docs/plans/phase-50-product-boundary-2026-05-18.md`.
 
 ---
 
@@ -268,7 +269,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - The active successor gate lives in [docs/plans/phase-50-successor-gate-2026-05-18.md](docs/plans/phase-50-successor-gate-2026-05-18.md).
 - Phase 48 is closed after PR `#382`, issue `#375`, and milestone `Phase 48 - Successor Intake and Boundary Contract Triage`.
 - Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
-- Phase 50 is the active approved successor queue: `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; `audit-github-queue` reports `ready` with `#396` as the blocked exit gate, `#397` as the current ready repo-truth sync item, and `#398` blocked until the Phase 50 baseline lands. Phase 50 measures before any `task_id` or worker contract is introduced.
+- Phase 50 is the active approved successor queue: `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; `audit-github-queue` reports `ready` with `#396` as the blocked exit gate, `#397` closed by PR `#399`, `#398` closed by PR `#400`, and `#401` as the current ready product-boundary item. Phase 50 measures before any `task_id` or worker contract is introduced and keeps the private-beta launch hub planning-only for now.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
 - Fog Harbor remains the canonical demo world; `museum-night` is the minimal transfer world used to prove the pipeline is not single-world-only.
 

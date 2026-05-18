@@ -71,11 +71,14 @@ Local phase audits currently report:
   - open and blocked
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#397` `Phase 50: sync repo truth after Phase 49 closeout`
-  - current protected-core repo-truth work item
-  - expected to close with the PR that syncs durable docs to Phase 50
+  - closed by PR `#399`
+  - synced durable docs to Phase 50
 - `#398` `Phase 50: measure runtime generation duration before task_id decision`
-  - blocked until the Phase 50 baseline lands
-  - will measure runtime generation duration before any async orchestration ADR or implementation
+  - closed by PR `#400`
+  - recorded that synchronous v1 generation remains the current contract
+- `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`
+  - current protected-core product-boundary work item
+  - Phase 50 Product Boundary Decision: launch hub remains planning-only for now
 - phase gate baseline
   - active Phase 50 gate note: `docs/plans/phase-50-successor-gate-2026-05-18.md`
 
