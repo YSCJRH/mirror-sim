@@ -4,7 +4,7 @@ Date: 2026-05-18
 
 Issue: `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`
 
-Current work item: `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`
+Final work item: `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`
 
 This note records the post-Phase-49 baseline and opens the Phase 50 successor queue.
 Phase 50 is a protected-core measurement and boundary phase for runtime orchestration.
@@ -58,11 +58,11 @@ Phase 50 title:
 Phase 50 - Runtime Orchestration Measurement and Product Boundary
 ```
 
-Active GitHub objects:
+Closed GitHub objects:
 
 - `#396` `Phase 50 exit gate`
   - Lane: `protected-core`.
-  - Status: blocked closeout gate for Phase 50.
+  - Status: closed after the Phase 50 post-merge reassessment.
 - `#397` `Phase 50: sync repo truth after Phase 49 closeout`
   - Lane: `protected-core`.
   - Status: closed by PR `#399`.
@@ -74,13 +74,13 @@ Active GitHub objects:
     synchronous v1 generation or open a dedicated async-orchestration ADR.
 - `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`
   - Lane: `protected-core`.
-  - Status: current ready work item.
+  - Status: closed by PR `#402`.
   - Scope: record the Phase 50 Product Boundary Decision, keep launch hub remains planning-only for now,
     and preserve public demo/plugin/hosted-model boundaries before any product-path widening.
 
-`python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
-with Phase 50 as the only open milestone, `#396` as the protected blocked exit gate, and
-`#401` as the current ready work item.
+After the Phase 50 closeout, `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
+reports `ready` with Phase 51 as the only open milestone. The active successor queue is recorded in
+`docs/plans/phase-51-successor-gate-2026-05-18.md`.
 
 ## Protected-Core Lane Coverage
 
@@ -166,6 +166,30 @@ public demo artifact layout, or the Mirror Codex MCP contract.
    - Decision: launch hub remains planning-only for now.
    - Do not move public demo, plugin, or hosted-model behavior without a separate reviewed
      contract decision.
+
+## Phase 51 Successor Handoff
+
+Phase 50 is closed after PR `#402`, issue `#396`, and milestone
+`Phase 50 - Runtime Orchestration Measurement and Product Boundary`.
+
+The active approved successor queue is now:
+
+```text
+Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate
+```
+
+- `#403` `Phase 51 exit gate`
+  - Status: open and blocked.
+- `#404` `Phase 51: sync repo truth after Phase 50 closeout`
+  - Status: current ready repo-truth work item.
+- `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`
+  - Status: blocked until the Phase 51 baseline lands.
+- `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`
+  - Status: blocked until the route ownership contract lands.
+
+Phase 51 carries forward the Phase 50 Product Boundary Decision and requires a reviewed
+private-beta route ownership contract before any launch-hub implementation. It also verifies
+runtime readiness and world-scoped session guards before product-path runtime surfaces widen.
 
 ## Blueprint Boundary
 

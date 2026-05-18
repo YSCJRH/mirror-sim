@@ -266,10 +266,12 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - The completed Phase 47 successor gate lives in [docs/plans/phase-47-successor-gate-2026-05-16.md](docs/plans/phase-47-successor-gate-2026-05-16.md).
 - The completed Phase 48 successor gate lives in [docs/plans/phase-48-successor-gate-2026-05-17.md](docs/plans/phase-48-successor-gate-2026-05-17.md).
 - The completed Phase 49 successor gate lives in [docs/plans/phase-49-successor-gate-2026-05-18.md](docs/plans/phase-49-successor-gate-2026-05-18.md).
-- The active successor gate lives in [docs/plans/phase-50-successor-gate-2026-05-18.md](docs/plans/phase-50-successor-gate-2026-05-18.md).
+- The completed Phase 50 successor gate lives in [docs/plans/phase-50-successor-gate-2026-05-18.md](docs/plans/phase-50-successor-gate-2026-05-18.md).
+- The active successor gate lives in [docs/plans/phase-51-successor-gate-2026-05-18.md](docs/plans/phase-51-successor-gate-2026-05-18.md).
 - Phase 48 is closed after PR `#382`, issue `#375`, and milestone `Phase 48 - Successor Intake and Boundary Contract Triage`.
 - Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
-- Phase 50 is the active approved successor queue: `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; `audit-github-queue` reports `ready` with `#396` as the blocked exit gate, `#397` closed by PR `#399`, `#398` closed by PR `#400`, and `#401` as the current ready product-boundary item. Phase 50 measures before any `task_id` or worker contract is introduced and keeps the private-beta launch hub planning-only for now.
+- Phase 50 is closed after PR `#402`, issue `#396`, and milestone `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; completed work items were `#397`, `#398`, and `#401`. Phase 50 measured before any `task_id` or worker contract is introduced and kept the private-beta launch hub planning-only for now.
+- Phase 51 is the active approved successor queue: `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`; `audit-github-queue` reports `ready` with `#403` as the blocked exit gate, `#404` as the current ready repo-truth item, `#405` as the blocked private-beta route ownership contract, and `#406` as the blocked runtime readiness and world-scoped session guards item.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
 - Fog Harbor remains the canonical demo world; `museum-night` is the minimal transfer world used to prove the pipeline is not single-world-only.
 
