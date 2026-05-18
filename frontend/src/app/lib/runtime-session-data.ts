@@ -43,6 +43,7 @@ export type RuntimeSessionManifest = {
     model_id: string | null;
   };
   created_at: string;
+  last_activity_at?: string | null;
   scenario_path?: string | null;
   session_path?: string | null;
   nodes: RuntimeSessionNodeRecord[];
@@ -142,6 +143,7 @@ export type RuntimeSessionLocator = {
   sessionId: string;
   activeNodeId: string;
   createdAt: string;
+  lastActivityAt: string;
 };
 
 export type RuntimeClaimDrilldown = {
@@ -191,6 +193,7 @@ async function listRuntimeSessionLocatorsForWorld(
               sessionId: session.session_id,
               activeNodeId: session.active_node_id,
               createdAt: session.created_at,
+              lastActivityAt: session.last_activity_at ?? session.created_at,
             } satisfies RuntimeSessionLocator;
           } catch {
             return null;
@@ -202,7 +205,7 @@ async function listRuntimeSessionLocatorsForWorld(
       .filter((manifest): manifest is RuntimeSessionLocator => Boolean(manifest))
       .sort(
         (left, right) =>
-          new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime()
+          new Date(right.lastActivityAt).getTime() - new Date(left.lastActivityAt).getTime()
       );
   } catch {
     return [];

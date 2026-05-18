@@ -67,6 +67,13 @@ This ADR adds the next layer without weakening those contracts.
   - rollback does not rewrite prior run artifacts
   - re-perturbing from any node creates a new child node
 
+- Freeze session activity ordering.
+  - `created_at` records session creation time
+  - `last_activity_at` records the latest successful generated branch or rollback activity
+  - new sessions initialize `last_activity_at` from `created_at`
+  - older session manifests without `last_activity_at` remain readable by falling back to `created_at`
+  - rollback to the current active node does not update activity time because no pointer moved
+
 - Freeze the minimum perturbation execution payload.
   - required:
     - `kind`

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 ClaimLabel = Literal["evidence_backed", "inferred", "speculative"]
@@ -211,9 +211,16 @@ class SimulationSessionManifest(MirrorBaseModel):
     active_node_id: str
     decision_config: SessionDecisionConfig = Field(default_factory=SessionDecisionConfig)
     created_at: str
+    last_activity_at: str | None = None
     scenario_path: str | None = None
     session_path: str | None = None
     nodes: list[SessionNodeRecord] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def fill_last_activity_at(self):
+        if self.last_activity_at is None:
+            self.last_activity_at = self.created_at
+        return self
 
 
 class PerturbationResolution(MirrorBaseModel):

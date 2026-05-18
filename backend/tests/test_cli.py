@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 import backend.app.cli as cli_module
+import backend.app.sessions.service as sessions_service
 from backend.app.cli import main
 from backend.app.config import Settings
 from backend.app.automation.service import GitHubQueueAudit, AuditCheck
@@ -29,6 +30,15 @@ def _runtime_settings(runtime_root: Path) -> Settings:
         expectations_path=settings.expectations_path,
         redlines_path=settings.redlines_path,
     )
+
+
+def _fixed_clock(*values: str):
+    remaining = iter(values)
+
+    def next_value() -> str:
+        return next(remaining)
+
+    return next_value
 
 
 def _safe_world_template_spec() -> dict:
@@ -95,10 +105,19 @@ def test_cli_start_session_outputs_json_and_writes_artifacts(tmp_path: Path, cap
     assert payload["scenario_id"] == "scenario_baseline"
     assert payload["root_node_id"] == "node_root"
     assert payload["active_node_id"] == "node_root"
+    assert payload["last_activity_at"] == payload["created_at"]
     assert payload["decision_config"]["provider"] == "openai_compatible"
     session_id = payload["session_id"]
-    assert (tmp_path / "sessions" / session_id / "session.json").exists()
+    session_path = tmp_path / "sessions" / session_id / "session.json"
+    assert session_path.exists()
     assert (tmp_path / "sessions" / session_id / "nodes" / "node_root" / "node.json").exists()
+    legacy_payload = json.loads(session_path.read_text(encoding="utf-8"))
+    legacy_payload.pop("last_activity_at")
+    session_path.write_text(json.dumps(legacy_payload, indent=2), encoding="utf-8")
+
+    assert main(["inspect-session", "--session", session_id, "--artifacts-root", str(tmp_path)]) == 0
+    inspect_payload = json.loads(capsys.readouterr().out)
+    assert inspect_payload["last_activity_at"] == inspect_payload["created_at"]
 
 
 def test_cli_create_world_writes_runtime_world_pack(tmp_path: Path, capsys, monkeypatch) -> None:
@@ -724,7 +743,20 @@ def test_cli_generate_branch_from_existing_child_node(tmp_path: Path, capsys) ->
     assert (tmp_path / second_child["decision_trace_path"]).exists()
 
 
-def test_cli_rollback_session_moves_active_pointer(tmp_path: Path, capsys) -> None:
+def test_cli_rollback_session_moves_active_pointer(tmp_path: Path, capsys, monkeypatch) -> None:
+    monkeypatch.setattr(
+        sessions_service,
+        "_created_at",
+        _fixed_clock(
+            "2026-05-18T00:00:00+00:00",
+            "2026-05-18T00:00:01+00:00",
+            "2026-05-18T00:00:02+00:00",
+            "2026-05-18T00:00:03+00:00",
+            "2026-05-18T00:00:04+00:00",
+            "2026-05-18T00:00:05+00:00",
+            "2026-05-18T00:00:06+00:00",
+        ),
+    )
     settings = get_settings()
     assert main(["ingest", str(settings.manifest_path), "--out", str(tmp_path / "ingest")]) == 0
     assert main(["build-graph", str(tmp_path / "ingest" / "chunks.jsonl"), "--out", str(tmp_path / "graph")]) == 0
@@ -747,6 +779,7 @@ def test_cli_rollback_session_moves_active_pointer(tmp_path: Path, capsys) -> No
     )
     session_payload = json.loads(capsys.readouterr().out)
     session_id = session_payload["session_id"]
+    assert session_payload["last_activity_at"] == session_payload["created_at"]
     perturbation = json.dumps(
         {
             "kind": "delay_document",
@@ -777,7 +810,16 @@ def test_cli_rollback_session_moves_active_pointer(tmp_path: Path, capsys) -> No
         == 0
     )
     generated_payload = json.loads(capsys.readouterr().out)
-    assert generated_payload["active_node_id"] != "node_root"
+    generated_child_id = generated_payload["active_node_id"]
+    assert generated_child_id != "node_root"
+    assert generated_payload["last_activity_at"] > session_payload["last_activity_at"]
+    generated_child = json.loads(
+        (tmp_path / "sessions" / session_id / "nodes" / generated_child_id / "node.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    generated_report_path = tmp_path / generated_child["report_path"]
+    generated_compare_path = tmp_path / generated_child["compare_path"]
 
     assert (
         main(
@@ -795,6 +837,66 @@ def test_cli_rollback_session_moves_active_pointer(tmp_path: Path, capsys) -> No
     )
     rollback_payload = json.loads(capsys.readouterr().out)
     assert rollback_payload["active_node_id"] == "node_root"
+    assert rollback_payload["last_activity_at"] > generated_payload["last_activity_at"]
+    assert any(node["node_id"] == generated_child_id for node in rollback_payload["nodes"])
+    assert generated_report_path.exists()
+    assert generated_compare_path.exists()
+
+    assert (
+        main(
+            [
+                "rollback-session",
+                "--session",
+                session_id,
+                "--to",
+                "node_root",
+                "--artifacts-root",
+                str(tmp_path),
+            ]
+        )
+        == 0
+    )
+    repeated_rollback_payload = json.loads(capsys.readouterr().out)
+    assert repeated_rollback_payload["active_node_id"] == "node_root"
+    assert repeated_rollback_payload["last_activity_at"] == rollback_payload["last_activity_at"]
+
+    sibling_perturbation = json.dumps(
+        {
+            "kind": "block_contact",
+            "target_id": "persona_zhao_ke",
+            "timing": "first_warning_attempt",
+            "summary": "Block the deputy-mayor escalation path after rollback to the baseline.",
+            "parameters": {
+                "actor_id": "persona_chen_yu",
+                "cause": "signal_scramble",
+            },
+        }
+    )
+    assert (
+        main(
+            [
+                "generate-branch",
+                "--session",
+                session_id,
+                "--from",
+                "node_root",
+                "--perturbation",
+                sibling_perturbation,
+                "--artifacts-root",
+                str(tmp_path),
+            ]
+        )
+        == 0
+    )
+    sibling_payload = json.loads(capsys.readouterr().out)
+    assert sibling_payload["active_node_id"] != generated_child_id
+    assert sibling_payload["last_activity_at"] > rollback_payload["last_activity_at"]
+    assert len(sibling_payload["nodes"]) == 3
+    assert {node["node_id"] for node in sibling_payload["nodes"]} >= {
+        "node_root",
+        generated_child_id,
+        sibling_payload["active_node_id"],
+    }
 
 
 def _load_fixture(name: str) -> dict:

@@ -37,8 +37,8 @@ Private-beta candidate product routes:
 - `/worlds/[worldId]/runtime/[sessionId]/explain` is the world-scoped live explain view
 - `/worlds/[worldId]/runtime/[sessionId]/report` is the world-scoped live report view
 - `/worlds/[worldId]/review` is the world-scoped review surface, with scorecard + inline branch digest + report/claims previews
-- world home, perturb, and review automatically pick up the latest session by `session.created_at` for the world when no explicit session query is present, then use that session's `active_node_id`
-- TODO[verify]: Decide whether a future Launch Hub should use latest session creation time, latest activity time, or a separate `last_activity_at` contract
+- world home, perturb, and review automatically pick up the latest session by `session.last_activity_at ?? session.created_at` for the world when no explicit session query is present, then use that session's `active_node_id`
+- `last_activity_at` is updated only after successful branch generation or rollback; older manifests fall back to `created_at`
 - canonical product metadata now supports locale-aware world names, summaries, baselines, and perturbation labels; self-serve worlds continue to display the language the user entered
 - main product-shell terms on the private-beta candidate path are being normalized alongside locale-aware world metadata, so Chinese mode no longer mixes core route labels with obvious English operator wording
 - runtime result cards now prefer world-defined outcome labels from product metadata instead of exposing raw outcome field keys directly

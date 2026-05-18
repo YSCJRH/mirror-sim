@@ -316,6 +316,12 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
   - rollback does not delete nodes
   - rollback does not rewrite run artifacts
   - rollback to baseline means setting `active_node_id` back to the root node
+- `last_activity_at` is the session ordering timestamp for product surfaces.
+  - new sessions set `last_activity_at` equal to `created_at`
+  - successful `generate-branch` updates `last_activity_at` after the child node and artifacts are materialized
+  - successful `rollback-session` updates `last_activity_at` after the active pointer changes
+  - rollback to the current active node leaves `last_activity_at` unchanged
+  - failed generation or rollback does not ratify a v1 activity update
 - V1 does not introduce task queues or a separate `task_id` contract.
   - TODO[verify]: if web-triggered generation needs long-running worker semantics, ratify `task_id` in a follow-up ADR instead of widening v1 now.
 
@@ -388,11 +394,14 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
   - `root_node_id`
   - `active_node_id`
   - `decision_config`
+  - `created_at`
+  - `last_activity_at`
   - `nodes`
 - `decision_config` must publish:
   - `provider`
   - `model_id`
 - `active_node_id` is the only rollback-sensitive field.
+- Readers of older session manifests without `last_activity_at` must fall back to `created_at`.
 - Re-perturbing from any node creates a new sibling or child node; it never overwrites prior descendants.
 
 ## Interactive Artifact Contract
