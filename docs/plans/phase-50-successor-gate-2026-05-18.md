@@ -129,8 +129,11 @@ public demo artifact layout, or the Mirror Codex MCP contract.
   `docs/plans/phase-49-transfer-assumption-inventory-2026-05-18.md`; TODO[verify]:
   re-open contract review before removing legacy `RunTrace` fields or claiming transfer
   beyond the two-world proof.
-- TODO[verify]: Measure runtime generation duration before introducing `task_id`, worker,
-  retry, status, or cleanup semantics.
+- Runtime generation duration is now recorded in
+  `docs/plans/phase-50-runtime-generation-duration-measurement-2026-05-18.md`.
+  Current local deterministic measurements support: Keep synchronous generation for v1.
+  TODO[verify]: rerun hosted/private-beta model measurements before introducing `task_id`,
+  worker, retry, status, or cleanup semantics.
 - TODO[verify]: Decide whether a future private-beta launch hub should conditionally replace
   `/`, live at a separate route, or remain a planning-only concept.
 
@@ -143,10 +146,11 @@ public demo artifact layout, or the Mirror Codex MCP contract.
      recreate them.
 
 2. Runtime orchestration measurement
-   - Measure current synchronous branch generation through the CLI-backed runtime path.
-   - Record environment, sample count, command path, observed durations, and limitations.
-   - Decide whether synchronous v1 remains adequate or whether a dedicated ADR is required
-     before implementing async orchestration.
+   - Measured current synchronous branch generation through the CLI-backed runtime path.
+   - Recorded environment, sample count, command path, observed durations, and limitations in
+     `docs/plans/phase-50-runtime-generation-duration-measurement-2026-05-18.md`.
+   - Decision: Keep synchronous generation for v1; open a dedicated ADR before implementing
+     async orchestration.
 
 3. Product boundary follow-up
    - Keep private-beta route and launch-hub language explicit.

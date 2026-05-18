@@ -38,11 +38,13 @@ def test_phase50_successor_gate_records_queue_and_boundaries() -> None:
         "Runtime orchestration measurement",
         "Product boundary follow-up",
         "TODO[verify]: Codex UI tool-card",
-        "TODO[verify]: Measure runtime generation duration before introducing `task_id`",
+        "Runtime generation duration is now recorded",
         "Every report claim must keep both `label` and `evidence_ids`",
         "Do not present Mirror as a real-world prediction machine",
         "Do not implement async workers, queues, `task_id`, retry, status, cleanup",
         "Do not recreate local Codex automations without a new explicit operator request",
+        "`docs/plans/phase-50-runtime-generation-duration-measurement-2026-05-18.md`",
+        "Keep synchronous generation for v1",
     ]
     for phrase in required_phrases:
         assert phrase in gate
