@@ -175,10 +175,10 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 52 is the active approved successor queue.
 - milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit` is open.
 - `#410` `Phase 52 exit gate` is open, blocked, and protected-core.
-- `#411` `Phase 52: sync repo truth after Phase 51 closeout and define successor gate` is the current ready work item.
-- `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract` is blocked until the repo-truth sync lands.
+- `#411` `Phase 52: sync repo truth after Phase 51 closeout and define successor gate` is closed by PR `#414`.
+- `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract` is the current ready Phase 52 Legacy Top-Level Runtime Route Audit.
 - `#413` `Phase 52: strengthen runtime mutation guard regression baseline` is blocked until the legacy route audit lands.
-- Phase 52 focuses on legacy top-level runtime routes and runtime mutation guard regression coverage without widening public/plugin/async contracts. The gate note lives in `docs/plans/phase-52-successor-gate-2026-05-18.md`.
+- Phase 52 focuses on legacy top-level runtime routes and runtime mutation guard regression coverage without widening public/plugin/async contracts. The route audit note lives in `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`, and the gate note lives in `docs/plans/phase-52-successor-gate-2026-05-18.md`.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.

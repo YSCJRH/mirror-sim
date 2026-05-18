@@ -254,10 +254,13 @@ session or node manifests that conflict with route `worldId` or `sessionId`. See
 
 Phase 52 Legacy Route Containment and Runtime Scope Audit: Phase 51 is closed after PR
 `#409`, issue `#403`, and milestone `Phase 51 - Private-Beta Route Contract and Runtime
-Readiness Gate`; private-beta route ownership and world-scoped session guards remain ratified by Phase 51. Phase 52 is the active approved successor queue. It starts with repo-truth
-sync, then audits legacy top-level runtime routes and strengthens runtime mutation guard
-regression coverage without widening public demo, plugin, Hosted GPT/BYOK, or async
-contracts. See `docs/plans/phase-52-successor-gate-2026-05-18.md`.
+Readiness Gate`; private-beta route ownership and world-scoped session guards remain ratified by Phase 51. Phase 52 is the active approved successor queue. Repo-truth sync closed
+through PR `#414`; the current work item is the Phase 52 Legacy Top-Level Runtime Route
+Audit for `#412`, recorded in
+`docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`. It audits
+legacy top-level runtime routes before runtime mutation guard regression coverage without
+widening public demo, plugin, Hosted GPT/BYOK, or async contracts. See
+`docs/plans/phase-52-successor-gate-2026-05-18.md`.
 
 ---
 
@@ -294,7 +297,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
 - Phase 50 is closed after PR `#402`, issue `#396`, and milestone `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; completed work items were `#397`, `#398`, and `#401`. Phase 50 measured before any `task_id` or worker contract is introduced and kept the private-beta launch hub planning-only for now.
 - Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`; completed work items were `#404`, `#405`, and `#406`.
-- Phase 52 is the active approved successor queue: `Phase 52 - Legacy Route Containment and Runtime Scope Audit`; `audit-github-queue` reports `ready` with `#410` as the blocked exit gate, `#411` as the current ready repo-truth sync item, and `#412`/`#413` as blocked follow-up items for legacy top-level runtime routes and runtime mutation guard regression coverage.
+- Phase 52 is the active approved successor queue: `Phase 52 - Legacy Route Containment and Runtime Scope Audit`; `audit-github-queue` reports `ready` with `#410` as the blocked exit gate, `#411` closed by PR `#414`, `#412` as the current ready Phase 52 Legacy Top-Level Runtime Route Audit, and `#413` blocked for runtime mutation guard regression coverage until the legacy route audit lands. The route audit note lives in `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`; Phase 52 does not widen public demo, plugin, Hosted GPT/BYOK, or async contracts.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
 - Fog Harbor remains the canonical demo world; `museum-night` is the minimal transfer world used to prove the pipeline is not single-world-only.
 
