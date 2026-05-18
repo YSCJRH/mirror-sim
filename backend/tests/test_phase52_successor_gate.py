@@ -12,10 +12,11 @@ def test_phase52_successor_gate_exists_with_required_sections() -> None:
     gate = PHASE52_GATE_PATH.read_text(encoding="utf-8")
     required_sections = [
         "# Phase 52 Successor Gate",
-        "Issue: `#413` `Phase 52: strengthen runtime mutation guard regression baseline`",
-        "Current work item: `#413` `Phase 52: strengthen runtime mutation guard regression baseline`",
+        "Issue: `#410` `Phase 52 exit gate`",
+        "Current work item: none; Phase 52 is closed and the queue is in the formal paused stop-state.",
         "## Phase 51 Closeout Evidence",
         "## Phase 52 Operational Queue",
+        "## Phase 52 Closeout Evidence",
         "## Protected-Core Lane Coverage",
         "## Carried Forward TODO[verify] Items",
         "## Phase 52 Work Package Map",
@@ -37,9 +38,11 @@ def test_phase52_successor_gate_records_queue_and_boundaries() -> None:
         "`#411` `Phase 52: sync repo truth after Phase 51 closeout and define successor gate`",
         "`#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract`",
         "`#413` `Phase 52: strengthen runtime mutation guard regression baseline`",
-        "Status: blocked closeout gate for Phase 52.",
+        "Status: closed after post-merge validation on `main`.",
         "Status: closed by PR",
-        "Status: current ready work item.",
+        "Status: closed by PR `#416`.",
+        "Phase 52 is closed after PR `#416`, issue `#410`, and milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit`",
+        "formal paused stop-state",
         "Phase 52 Legacy Top-Level Runtime Route Audit",
         "Phase 52 Runtime Mutation Guard Regression Baseline",
         "Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`",
@@ -76,10 +79,12 @@ def test_active_state_docs_point_to_phase52_queue() -> None:
         text = path.read_text(encoding="utf-8")
         assert "Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate" in text
         assert "Phase 52 - Legacy Route Containment and Runtime Scope Audit" in text
+        assert "Phase 52 is closed after PR `#416`, issue `#410`" in text
         assert "`#410`" in text
         assert "`#411`" in text
         assert "`#412`" in text
         assert "`#413`" in text
+        assert "closed by PR `#416`" in text
         assert "Phase 52 Legacy Top-Level Runtime Route Audit" in text
         assert "`docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`" in text
         assert "Phase 52 Runtime Mutation Guard Regression Baseline" in text
@@ -90,3 +95,30 @@ def test_active_state_docs_point_to_phase52_queue() -> None:
             "public/plugin/async" in text
             or "public demo, plugin, Hosted GPT/BYOK, or async" in text
         )
+
+
+def test_active_state_docs_do_not_keep_stale_phase52_ready_language() -> None:
+    required_docs = [
+        Path("README.md"),
+        Path("docs/plans/current-state-baseline.md"),
+        Path("docs/plans/phase-execution-queue.md"),
+        Path("docs/plans/automation-roadmap.md"),
+        Path("docs/plans/phase-51-successor-gate-2026-05-18.md"),
+        Path("docs/plans/phase-52-successor-gate-2026-05-18.md"),
+    ]
+    stale_phrases = [
+        "approved Phase 52 successor queue",
+        "Phase 52 is the active approved successor queue",
+        "active Phase 52 successor",
+        "current ready Phase 52 Runtime Mutation Guard Regression Baseline",
+        "current `status:ready` protected-core work item",
+        "`#410` `Phase 52 exit gate` is `open`, `blocked`",
+        "`#410` `Phase 52 exit gate` is open and blocked",
+        "reports `ready` with Phase 52 as the active milestone",
+        "reports `ready` with `Phase 52 - Legacy Route Containment and Runtime Scope Audit` as the active milestone",
+    ]
+
+    for path in required_docs:
+        text = path.read_text(encoding="utf-8")
+        for phrase in stale_phrases:
+            assert phrase not in text, f"{path} still contains stale Phase 52 state: {phrase}"
