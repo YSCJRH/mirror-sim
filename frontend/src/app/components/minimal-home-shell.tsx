@@ -242,6 +242,7 @@ export function MinimalHomeShell({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            worldId,
             sessionId: resolvedSessionId,
             fromNode: fromNodeId,
             perturbation: {
@@ -306,6 +307,7 @@ export function MinimalHomeShell({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            worldId,
             sessionId,
             toNode: targetNodeId,
           }),

@@ -2,9 +2,9 @@
 
 Date: 2026-05-18
 
-Issue: `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`
+Issue: `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`
 
-Current work item: `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`
+Current work item: `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`
 
 This note records the post-Phase-50 baseline and opens the Phase 51 successor queue.
 Phase 51 is a protected-core route-contract and runtime-readiness phase for the
@@ -49,17 +49,17 @@ Active GitHub objects:
   - Scope: sync tracked docs to Phase 51 after closing Phase 50.
 - `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`
   - Lane: `protected-core`.
-  - Status: current ready work item.
+  - Status: closed by PR `#408`.
   - Scope: record the Phase 51 Private-Beta Route Ownership Contract before any launch-hub implementation.
 - `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`
   - Lane: `protected-core`.
-  - Status: blocked until the route ownership contract lands.
+  - Status: current ready work item.
   - Scope: verify runtime readiness and world-scoped session guards before product-path
     runtime surfaces widen.
 
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
 with Phase 51 as the only open milestone, `#403` as the protected blocked exit gate, and
-`#405` as the current ready work item.
+`#406` as the current ready work item.
 
 ## Protected-Core Lane Coverage
 
@@ -109,11 +109,13 @@ public demo artifact layout, or the Mirror Codex MCP contract.
   item that names its route, access mode, public-demo interaction, and deployment posture.
 - TODO[verify]: verify the tracked frontend route tree before treating any private-beta path
   beyond the documented `/worlds/...` candidate routes as durable route ownership.
-- TODO[verify]: verify route/session mismatch handling before expanding private-beta runtime
-  surfaces. World-scoped session guards must reject or clearly fail any request whose route
-  `world_id` conflicts with the session's durable world id.
-- TODO[verify]: verify that private-beta composer requests pass route-derived `worldId`
-  through every world-scoped mutation before treating runtime generation as route-safe.
+- Phase 51 Runtime Readiness and World-Scoped Guard Verification is recorded in
+  `docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md`.
+  Composer and minimal-home runtime mutations now pass route-derived `worldId`, CLI mutations pass `--world`,
+  backend session services reject expected-world mismatches, and world-scoped workspace
+  loading rejects mismatched session/node `world_id` or node `session_id` values.
+  TODO[verify]: require the same route-derived world guard review before adding any new
+  world-scoped runtime mutation surface.
 - Latest-session versus latest-activity semantics are ratified as `last_activity_at`
   ordering with `created_at` fallback; TODO[verify]: re-open contract review before adding
   other activity sources or changing failed-operation activity behavior.
@@ -154,9 +156,14 @@ public demo artifact layout, or the Mirror Codex MCP contract.
    - Preserve public demo, plugin, hosted-model, and async-runtime boundaries.
 
 3. Runtime readiness and world-scoped session guards
+   - Record the guard verification note in
+     `docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md`.
    - Verify hosted/private-beta runtime thresholds against Phase 50 measurement evidence.
    - Verify route/session mismatch handling and world-scoped session guards before runtime
      product surfaces widen.
+   - Require route-derived `worldId` in private-beta composer generation and CLI-backed
+     session mutations.
+   - Reject world/session manifest mismatches while loading world-scoped runtime workspaces.
    - Preserve synchronous v1 unless an ADR approves async task semantics.
 
 ## Blueprint Boundary
@@ -176,11 +183,11 @@ Phase 51 must stay aligned with `mirror.md` and `AGENTS.md`:
 ## Non-Goals
 
 - Do not implement a private-beta launch hub, move `/`, or widen the public path inside
-  `#405`.
+  `#406`.
 - Do not implement async workers, queues, `task_id`, retry, status, cleanup, checkpoint
-  mutation/deletion, or restore semantics inside `#405`.
+  mutation/deletion, or restore semantics inside `#406`.
 - Do not change scenario DSL, claim/evidence shape, run trace shape, compare artifact shape,
-  public demo artifact layout, or plugin MCP tool/resource contract in `#405`.
+  public demo artifact layout, or plugin MCP tool/resource contract in `#406`.
 - Do not add Hosted GPT, BYOK, upload, auth, billing, database, object storage, or quota
   behavior to the public path or plugin path.
 - Do not add mutating Mirror Codex MCP tools.
@@ -216,9 +223,12 @@ git diff --check
 For `#406`, run:
 
 ```powershell
-python -m pytest backend/tests/test_phase51_successor_gate.py -q
+python -m pytest backend/tests/test_phase51_runtime_guard_note.py backend/tests/test_frontend_runtime_error_redaction.py::test_runtime_composer_generate_request_includes_world_id backend/tests/test_frontend_runtime_error_redaction.py::test_minimal_home_runtime_mutations_include_world_id backend/tests/test_frontend_runtime_error_redaction.py::test_runtime_cli_passes_expected_world_to_mutating_session_commands backend/tests/test_frontend_runtime_error_redaction.py::test_runtime_workspace_loader_rejects_route_session_world_mismatch backend/tests/test_cli.py::test_generate_branch_rejects_expected_world_mismatch backend/tests/test_cli.py::test_rollback_session_rejects_expected_world_mismatch backend/tests/test_cli.py::test_cli_generate_branch_passes_expected_world_guard backend/tests/test_phase51_successor_gate.py backend/tests/test_phase51_route_contract_note.py -q
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
-python -m backend.app.cli classify-lane --files <changed-files>
+python -m backend.app.cli classify-lane --files README.md docs/architecture/contracts.md docs/plans/current-state-baseline.md docs/plans/automation-roadmap.md docs/plans/phase-execution-queue.md docs/plans/phase-51-successor-gate-2026-05-18.md docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md backend/app/cli.py backend/app/sessions/service.py backend/tests/test_cli.py backend/tests/test_frontend_runtime_error_redaction.py backend/tests/test_phase51_runtime_guard_note.py backend/tests/test_phase51_route_contract_note.py backend/tests/test_phase51_successor_gate.py frontend/src/app/components/minimal-home-shell.tsx frontend/src/app/components/preset-perturbation-composer.tsx frontend/src/app/lib/runtime-cli.ts frontend/src/app/lib/runtime-session-data.ts
 git diff --check
+npm run build --prefix frontend
+./make.ps1 test
+./make.ps1 eval-demo
 ```

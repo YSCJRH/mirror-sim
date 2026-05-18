@@ -76,6 +76,8 @@ export async function generateRuntimeBranch(
 ) {
   const args = [
     "generate-branch",
+    "--world",
+    worldId,
     "--session",
     sessionId,
     "--from",
@@ -98,6 +100,8 @@ export async function generateRuntimeBranch(
 export async function rollbackRuntimeSession(worldId: string, sessionId: string, toNode: string) {
   return runMirrorCli([
     "rollback-session",
+    "--world",
+    worldId,
     "--session",
     sessionId,
     "--to",

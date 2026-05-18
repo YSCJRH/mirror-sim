@@ -455,6 +455,147 @@ def test_cli_generate_branch_writes_child_node_and_compare(tmp_path: Path, capsy
     assert (tmp_path / child_node["decision_trace_path"]).exists()
 
 
+def test_generate_branch_rejects_expected_world_mismatch(tmp_path: Path, capsys) -> None:
+    settings = get_settings()
+    assert main(["ingest", str(settings.manifest_path), "--out", str(tmp_path / "ingest")]) == 0
+    assert main(["build-graph", str(tmp_path / "ingest" / "chunks.jsonl"), "--out", str(tmp_path / "graph")]) == 0
+    assert main(["personas", str(tmp_path / "graph" / "graph.json"), "--out", str(tmp_path / "personas")]) == 0
+    capsys.readouterr()
+
+    assert (
+        main(
+            [
+                "start-session",
+                "--world",
+                "fog-harbor-east-gate",
+                "--scenario",
+                "scenario_baseline",
+                "--artifacts-root",
+                str(tmp_path),
+            ]
+        )
+        == 0
+    )
+    session_payload = json.loads(capsys.readouterr().out)
+    perturbation = json.dumps(
+        {
+            "kind": "delay_document",
+            "target_id": "doc_ledger_copy",
+            "timing": "before_publication",
+            "summary": "Delay the copied ledger before it reaches the public decision loop.",
+            "parameters": {
+                "actor_id": "entity_lin_lan",
+                "delay_turns": 2,
+                "cause": "courier_interruption",
+            },
+        }
+    )
+
+    with pytest.raises(ValueError, match="belongs to world"):
+        sessions_service.generate_branch(
+            session_payload["session_id"],
+            "node_root",
+            perturbation,
+            repo_root=settings.repo_root,
+            artifacts_root=tmp_path,
+            expected_world_id="museum-night",
+        )
+
+
+def test_rollback_session_rejects_expected_world_mismatch(tmp_path: Path, capsys) -> None:
+    settings = get_settings()
+    assert main(["ingest", str(settings.manifest_path), "--out", str(tmp_path / "ingest")]) == 0
+    assert main(["build-graph", str(tmp_path / "ingest" / "chunks.jsonl"), "--out", str(tmp_path / "graph")]) == 0
+    assert main(["personas", str(tmp_path / "graph" / "graph.json"), "--out", str(tmp_path / "personas")]) == 0
+    capsys.readouterr()
+
+    assert (
+        main(
+            [
+                "start-session",
+                "--world",
+                "fog-harbor-east-gate",
+                "--scenario",
+                "scenario_baseline",
+                "--artifacts-root",
+                str(tmp_path),
+            ]
+        )
+        == 0
+    )
+    session_payload = json.loads(capsys.readouterr().out)
+
+    with pytest.raises(ValueError, match="belongs to world"):
+        sessions_service.rollback_session(
+            session_payload["session_id"],
+            "node_root",
+            repo_root=settings.repo_root,
+            artifacts_root=tmp_path,
+            expected_world_id="museum-night",
+        )
+
+
+def test_cli_generate_branch_passes_expected_world_guard(
+    tmp_path: Path, capsys, monkeypatch
+) -> None:
+    captured: dict[str, str | Path | None] = {}
+
+    def fake_generate_branch(
+        session_id: str,
+        node_id: str,
+        perturbation: str,
+        *,
+        repo_root: Path | None = None,
+        artifacts_root: Path | None = None,
+        beta_user_id: str | None = None,
+        expected_world_id: str | None = None,
+    ):
+        captured.update(
+            {
+                "session_id": session_id,
+                "node_id": node_id,
+                "perturbation": perturbation,
+                "repo_root": repo_root,
+                "artifacts_root": artifacts_root,
+                "beta_user_id": beta_user_id,
+                "expected_world_id": expected_world_id,
+            }
+        )
+        return sessions_service.start_session(
+            "fog-harbor-east-gate",
+            "scenario_baseline",
+            repo_root=get_settings().repo_root,
+            artifacts_root=tmp_path,
+        )
+
+    monkeypatch.setattr(cli_module, "generate_branch", fake_generate_branch)
+
+    assert (
+        main(
+            [
+                "generate-branch",
+                "--world",
+                "fog-harbor-east-gate",
+                "--session",
+                "session_demo",
+                "--from",
+                "node_root",
+                "--perturbation",
+                "{}",
+                "--artifacts-root",
+                str(tmp_path),
+                "--beta-user-id",
+                "beta-user",
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+
+    assert captured["expected_world_id"] == "fog-harbor-east-gate"
+    assert captured["beta_user_id"] == "beta-user"
+
+
 def test_cli_generate_branch_uses_session_decision_model(tmp_path: Path, capsys) -> None:
     settings = get_settings()
     assert main(["ingest", str(settings.manifest_path), "--out", str(tmp_path / "ingest")]) == 0

@@ -245,6 +245,13 @@ remain the private-beta candidate product path. See
 contract is also recorded in `docs/architecture/contracts.md` and
 `docs/decisions/ADR-0011-private-beta-route-ownership.md`.
 
+Phase 51 Runtime Readiness and World-Scoped Guard Verification (`#406`): synchronous v1
+generation remains the current runtime contract. The private-beta composer now passes
+route-derived `worldId` into branch generation, CLI-backed mutations pass `--world`, backend
+session services reject expected-world mismatches, and world-scoped workspace loading rejects
+session or node manifests that conflict with route `worldId` or `sessionId`. See
+`docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md`.
+
 ---
 
 ## What You Can Inspect Locally | 本地能看到什么
@@ -278,7 +285,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - Phase 48 is closed after PR `#382`, issue `#375`, and milestone `Phase 48 - Successor Intake and Boundary Contract Triage`.
 - Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
 - Phase 50 is closed after PR `#402`, issue `#396`, and milestone `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; completed work items were `#397`, `#398`, and `#401`. Phase 50 measured before any `task_id` or worker contract is introduced and kept the private-beta launch hub planning-only for now.
-- Phase 51 is the active approved successor queue: `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`; `audit-github-queue` reports `ready` with `#403` as the blocked exit gate, `#404` closed by PR `#407`, `#405` as the current ready private-beta route ownership contract, and `#406` as the blocked runtime readiness and world-scoped session guards item.
+- Phase 51 is the active approved successor queue: `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`; private-beta route ownership is ratified by `#405`/PR `#408`, and `audit-github-queue` reports `ready` with `#403` as the blocked exit gate, `#404` closed by PR `#407`, `#405` closed by PR `#408`, and `#406` as the current ready runtime readiness and world-scoped session guards item.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
 - Fog Harbor remains the canonical demo world; `museum-night` is the minimal transfer world used to prove the pipeline is not single-world-only.
 

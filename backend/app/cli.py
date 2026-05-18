@@ -72,6 +72,7 @@ def build_parser() -> argparse.ArgumentParser:
     create_world.add_argument("--spec", required=True)
 
     generate_runtime = subparsers.add_parser("generate-branch", help="Generate one child branch from a session node")
+    generate_runtime.add_argument("--world")
     generate_runtime.add_argument("--session", required=True)
     generate_runtime.add_argument("--from", dest="from_node", required=True)
     generate_runtime.add_argument("--perturbation", required=True)
@@ -79,6 +80,7 @@ def build_parser() -> argparse.ArgumentParser:
     generate_runtime.add_argument("--beta-user-id")
 
     rollback_runtime = subparsers.add_parser("rollback-session", help="Move a session's active pointer back to an existing node")
+    rollback_runtime.add_argument("--world")
     rollback_runtime.add_argument("--session", required=True)
     rollback_runtime.add_argument("--to", dest="to_node", required=True)
     rollback_runtime.add_argument("--artifacts-root", required=True)
@@ -199,6 +201,7 @@ def main(argv: list[str] | None = None) -> int:
             repo_root=settings.repo_root,
             artifacts_root=Path(args.artifacts_root),
             beta_user_id=args.beta_user_id,
+            expected_world_id=args.world,
         )
         print(json.dumps(payload.model_dump(), indent=2, ensure_ascii=False))
         return 0
@@ -209,6 +212,7 @@ def main(argv: list[str] | None = None) -> int:
             args.to_node,
             repo_root=settings.repo_root,
             artifacts_root=Path(args.artifacts_root),
+            expected_world_id=args.world,
         )
         print(json.dumps(payload.model_dump(), indent=2, ensure_ascii=False))
         return 0

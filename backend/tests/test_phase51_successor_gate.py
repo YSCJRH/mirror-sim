@@ -12,8 +12,8 @@ def test_phase51_successor_gate_exists_with_required_sections() -> None:
     gate = PHASE51_GATE_PATH.read_text(encoding="utf-8")
     required_sections = [
         "# Phase 51 Successor Gate",
-        "Issue: `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`",
-        "Current work item: `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`",
+        "Issue: `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`",
+        "Current work item: `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`",
         "## Phase 50 Closeout Evidence",
         "## Phase 51 Operational Queue",
         "## Protected-Core Lane Coverage",
@@ -39,6 +39,7 @@ def test_phase51_successor_gate_records_queue_and_boundaries() -> None:
         "`#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`",
         "Private-beta route contract",
         "Phase 51 Private-Beta Route Ownership Contract",
+        "Phase 51 Runtime Readiness and World-Scoped Guard Verification",
         "Runtime readiness and world-scoped session guards",
         "TODO[verify]: Codex UI tool-card",
         "Runtime generation duration is now recorded",
@@ -51,6 +52,7 @@ def test_phase51_successor_gate_records_queue_and_boundaries() -> None:
         "Do not recreate local Codex automations without a new explicit operator request",
         "`docs/plans/phase-50-runtime-generation-duration-measurement-2026-05-18.md`",
         "`docs/plans/phase-50-product-boundary-2026-05-18.md`",
+        "`docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md`",
     ]
     for phrase in required_phrases:
         assert phrase in gate
