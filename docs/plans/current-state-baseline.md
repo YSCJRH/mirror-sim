@@ -241,8 +241,13 @@ This note records the completed Phase 49 contract-hardening closeout and the app
     - milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening` is `closed`
   - `gh issue list --milestone "Phase 50 - Runtime Orchestration Measurement and Product Boundary" --state all`
     - `#396` `Phase 50 exit gate` is `open`, `blocked`, and `lane:protected-core`
-    - `#397` `Phase 50: sync repo truth after Phase 49 closeout` is the current `status:ready` protected-core work item
-    - `#398` `Phase 50: measure runtime generation duration before task_id decision` is `blocked` until the Phase 50 baseline lands
+    - `#397` `Phase 50: sync repo truth after Phase 49 closeout` is `closed` by PR `#399`
+    - `#398` `Phase 50: measure runtime generation duration before task_id decision` is `closed` by PR `#400`
+    - `#401` `Phase 50: ratify private-beta launch hub and public-path boundary` is the current `status:ready` protected-core work item
+  - Phase 50 Product Boundary Decision:
+    - launch hub remains planning-only for now
+    - `/` remains the guided public demo
+    - `docs/plans/phase-50-product-boundary-2026-05-18.md` records the boundary note
 
 ## Trusted Source Of Truth
 
@@ -274,8 +279,10 @@ This note records the completed Phase 49 contract-hardening closeout and the app
 - The Phase 49 unlock order is resolved: `#384` closed through PR `#385`, `#386` closed through PR `#387`, `#388` closed through PR `#389`, `#390` closed through PR `#391`, `#392` closed through PR `#393`, `#394` closed through PR `#395`, and `#383` closed after the post-merge exit-gate reassessment.
 - The active successor milestone is `Phase 50 - Runtime Orchestration Measurement and Product Boundary`.
 - The Phase 50 exit gate is `#396` `Phase 50 exit gate`, which remains the open blocked closeout gate for this phase.
-- `#397` `Phase 50: sync repo truth after Phase 49 closeout` is the current ready work item.
-- `#398` `Phase 50: measure runtime generation duration before task_id decision` is blocked until the Phase 50 baseline lands.
+- `#397` `Phase 50: sync repo truth after Phase 49 closeout` is closed by PR `#399`.
+- `#398` `Phase 50: measure runtime generation duration before task_id decision` is closed by PR `#400`.
+- `#401` `Phase 50: ratify private-beta launch hub and public-path boundary` is the current ready work item.
+- Phase 50 Product Boundary Decision: launch hub remains planning-only for now; current tracked code keeps `/` as the guided public demo.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.

@@ -12,7 +12,8 @@ def test_phase50_successor_gate_exists_with_required_sections() -> None:
     gate = PHASE50_GATE_PATH.read_text(encoding="utf-8")
     required_sections = [
         "# Phase 50 Successor Gate",
-        "Issue: `#397` `Phase 50: sync repo truth after Phase 49 closeout`",
+        "Issue: `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`",
+        "Current work item: `#401` `Phase 50: ratify private-beta launch hub and public-path boundary`",
         "## Phase 49 Closeout Evidence",
         "## Phase 50 Operational Queue",
         "## Protected-Core Lane Coverage",
@@ -45,6 +46,8 @@ def test_phase50_successor_gate_records_queue_and_boundaries() -> None:
         "Do not recreate local Codex automations without a new explicit operator request",
         "`docs/plans/phase-50-runtime-generation-duration-measurement-2026-05-18.md`",
         "Keep synchronous generation for v1",
+        "`#401` `Phase 50: ratify private-beta launch hub and public-path boundary`",
+        "`docs/plans/phase-50-product-boundary-2026-05-18.md`",
     ]
     for phrase in required_phrases:
         assert phrase in gate
