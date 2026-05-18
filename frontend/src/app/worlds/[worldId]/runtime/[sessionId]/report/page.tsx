@@ -91,7 +91,7 @@ export default async function WorldRuntimeReportPage({ params, searchParams }: P
           locale={locale}
           eyebrow={locale === "zh-CN" ? "Mirror 引擎 / 私有 Beta" : "Mirror Engine / Private Beta"}
           items={[
-            { href: "/", label: locale === "zh-CN" ? "世界入口" : "Launch Hub", active: false },
+            { href: "/", label: locale === "zh-CN" ? "公开演示" : "Public Demo", active: false },
             { href: worldHref, label: locale === "zh-CN" ? "世界" : "World", active: false },
             { href: perturbHref, label: locale === "zh-CN" ? "扰动" : "Perturb", active: false },
             { href: reportHref, label: locale === "zh-CN" ? "报告" : "Report", active: true },

@@ -169,9 +169,10 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 51 is the active approved successor queue.
 - milestone `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate` is open.
 - `#403` `Phase 51 exit gate` is open, blocked, and protected-core.
-- `#404` `Phase 51: sync repo truth after Phase 50 closeout` is the current ready work item.
-- `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract` is blocked until the Phase 51 baseline lands.
+- `#404` `Phase 51: sync repo truth after Phase 50 closeout` is closed by PR `#407`.
+- `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract` is the current ready work item.
 - `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards` is blocked until the route ownership contract lands.
+- Phase 51 Private-Beta Route Ownership Contract: private-beta launch hub remains planning-only and `/worlds/<world_id>` remains the private-beta candidate product path; the route note lives in `docs/plans/phase-51-private-beta-route-contract-2026-05-18.md`, and durable route ownership lives in `docs/architecture/contracts.md` and `docs/decisions/ADR-0011-private-beta-route-ownership.md`.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.

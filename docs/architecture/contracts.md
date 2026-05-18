@@ -471,6 +471,42 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
   profile.
 - Phase 1 public demo mode does not start sessions, generate branches, upload corpus data, create worlds, enable Hosted GPT, accept BYOK, or call the OpenAI API.
 
+## Route Ownership Contract
+
+- `/` remains the guided Phase 1 public Fog Harbor demo.
+- `/review` remains the advanced read-only public-demo review surface for the same
+  precomputed artifacts.
+- `/api/health`, `/api/ready`, `/api/public-demo/manifest`, and
+  `/api/public-demo/artifacts/<artifact_id>` remain public-demo/readiness API surfaces.
+- `/worlds/<world_id>` remains the private-beta candidate world home when public-demo flags
+  are disabled in local or explicitly authorized private-beta environments.
+- `/worlds/new` remains a private-beta candidate creation route and must stay disabled in
+  public demo mode.
+- `/worlds/<world_id>/perturb` remains the main private-beta operator path.
+- `/worlds/<world_id>/runtime/<session_id>` and its `/explain` and `/report` children
+  remain world-scoped private-beta runtime surfaces.
+- `/worlds/<world_id>/review` remains the world-scoped private-beta review surface.
+- `/api/runtime/start-session`, `/api/runtime/generate-branch`,
+  `/api/runtime/rollback-session`, and `/api/worlds/create` remain private-beta mutation
+  APIs and must return `403` in public demo mode unless a reviewed private-preview override
+  explicitly applies.
+- Top-level `/changes/<branch_id>` and `/explain/<branch_id>` remain deterministic
+  public-demo support routes.
+- Top-level `/perturb`, `/runtime/<session_id>`, and child runtime routes are legacy
+  compatibility surfaces, not the canonical private-beta route owners. TODO[verify]: decide
+  whether to deprecate, redirect, or formally re-contract them before presenting them as a
+  private-beta main path.
+- The private-beta launch hub remains planning-only in Phase 51. A future launch hub must
+  not replace `/`, start sessions, generate branches, create worlds, upload corpora, enable
+  Hosted GPT, accept BYOK, or call model providers from the public path.
+- World-scoped navigation may link back to `/`, but it must label that route as the public
+  demo rather than as a launch hub until a future reviewed contract creates a real
+  launch-hub route.
+- TODO[verify]: if a launch hub becomes an implementation target, open a new reviewed work
+  item that names its route, access mode, public-demo interaction, and deployment posture.
+- TODO[verify]: verify that private-beta composer requests pass route-derived `worldId`
+  through every world-scoped mutation before expanding private-beta runtime surfaces.
+
 ## Artifact Contract
 
 ```text
