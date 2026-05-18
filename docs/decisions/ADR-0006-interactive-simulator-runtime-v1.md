@@ -97,8 +97,9 @@ This ADR adds the next layer without weakening those contracts.
   - required:
     - `session.json`
     - `nodes/<node_id>/node.json`
-  - optional:
+  - required for every successful generated non-root node:
     - `compare/<node_id>/compare.json`
+  - root nodes keep `compare_path: null` because they have no parent checkpoint.
 
 - Make node manifests the bridge between runtime generation and the existing artifact system.
   - each successful node publishes:
@@ -106,10 +107,13 @@ This ADR adds the next layer without weakening those contracts.
     - `summary_path`
     - `trace_path`
     - `snapshot_dir`
-    - `compare_path` when parent-vs-child compare is emitted
+    - `compare_path` for every generated non-root node
     - `report_path` when node-scoped report materialization is emitted
     - `claims_path` when node-scoped claims are emitted
   - this keeps run, trace, and compare drill-down compatible with the existing workbench surfaces
+  - every successful generated non-root node emits one parent-vs-child `CompareArtifact` with
+    `branch_count: 2`, the immediate parent as the reference branch, and the generated child
+    as the candidate branch.
 
 - Keep the current bounded-world and claim/evidence boundaries intact.
   - no open-ended world simulation DSL
@@ -133,6 +137,7 @@ This ADR adds the next layer without weakening those contracts.
 - Existing compare consumers do not need to be broken or migrated immediately.
   - scenario compare stays under `artifacts/<scope>/compare/<scenario_id>/compare.json`
   - interactive compare stays under `artifacts/<scope>/sessions/<session_id>/compare/<node_id>/compare.json`
+  - runtime compare emission must not create or mutate scenario-level compare artifacts.
 
 - The project gains one new long-lived contract family under `sessions/`.
 
@@ -145,5 +150,4 @@ This ADR adds the next layer without weakening those contracts.
   - ratify the LLM-bounded decision kernel contract
   - expand perturbation authoring beyond preset runtime mappings only after a reviewed contract
     maps user text to stable world-local IDs and typed parameters
-  - decide whether parent-vs-child `compare.json` should always be emitted or only when requested for every runtime path
   - generalize the runtime beyond Fog Harbor-shaped outcomes and payload assumptions
