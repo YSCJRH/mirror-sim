@@ -2,15 +2,16 @@
 
 Date: 2026-05-18
 
-Issue: `#413` `Phase 52: strengthen runtime mutation guard regression baseline`
+Issue: `#410` `Phase 52 exit gate`
 
-Current work item: `#413` `Phase 52: strengthen runtime mutation guard regression baseline`
+Current work item: none; Phase 52 is closed and the queue is in the formal paused stop-state.
 
-This note records the post-Phase-51 baseline and the Phase 52 successor queue. Phase 52
-is a protected-core route-containment and runtime-scope audit phase. It has synced repo
-truth after the Phase 51 closeout, now audits legacy top-level runtime routes through the
-Phase 52 Legacy Top-Level Runtime Route Audit, and now strengthens runtime mutation
-guard regression coverage through the Phase 52 Runtime Mutation Guard Regression Baseline. It is not a launch-hub, public-path, plugin, async-runtime, or
+This note records the post-Phase-51 baseline, the completed Phase 52 successor queue, and
+the Phase 52 closeout evidence. Phase 52 was a protected-core route-containment and
+runtime-scope audit phase. It synced repo truth after the Phase 51 closeout, audited
+legacy top-level runtime routes through the Phase 52 Legacy Top-Level Runtime Route Audit,
+and strengthened runtime mutation guard regression coverage through the Phase 52 Runtime
+Mutation Guard Regression Baseline. It is not a launch-hub, public-path, plugin, async-runtime, or
 schema-expansion phase.
 It does not widen public/plugin/async contracts.
 
@@ -29,8 +30,9 @@ Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Priv
   `docs/plans/phase-51-private-beta-route-contract-2026-05-18.md`.
 - Phase 51 Runtime Readiness and World-Scoped Guard Verification is recorded in
   `docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md`.
-- Queue audit reached the formal paused stop-state after Phase 51 closed, then returned
-  `ready` once Phase 52 was opened with one blocked exit gate and one ready work item.
+- Queue audit reached the formal paused stop-state after Phase 51 closed, returned
+  `ready` while Phase 52 had one blocked exit gate and one ready work item, and returned
+  to the formal paused stop-state after Phase 52 closed.
 
 ## Phase 52 Operational Queue
 
@@ -40,11 +42,11 @@ Phase 52 title:
 Phase 52 - Legacy Route Containment and Runtime Scope Audit
 ```
 
-Active GitHub objects:
+Completed GitHub objects:
 
 - `#410` `Phase 52 exit gate`
   - Lane: `protected-core`.
-  - Status: blocked closeout gate for Phase 52.
+  - Status: closed after post-merge validation on `main`.
 - `#411` `Phase 52: sync repo truth after Phase 51 closeout and define successor gate`
   - Lane: `protected-core`.
   - Status: closed by PR `#414`.
@@ -56,12 +58,28 @@ Active GitHub objects:
     private-beta main path.
 - `#413` `Phase 52: strengthen runtime mutation guard regression baseline`
   - Lane: `protected-core`.
-  - Status: current ready work item.
+  - Status: closed by PR `#416`.
   - Scope: strengthen regression coverage for runtime mutation guard boundaries.
 
-`python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
-with Phase 52 as the only open milestone, `#410` as the protected blocked exit gate, and
-`#413` as the current ready work item.
+`python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `paused`
+with no active milestone after Phase 52 closeout.
+
+## Phase 52 Closeout Evidence
+
+Phase 52 is closed after PR `#416`, issue `#410`, and milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit`.
+
+Post-merge validation on `main` after PR `#416`:
+
+- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` -> `paused`
+  with no active milestone.
+- `python -m pytest backend/tests/test_phase52_runtime_guard_regression_note.py backend/tests/test_phase52_legacy_route_audit_note.py backend/tests/test_phase52_successor_gate.py -q` -> 16 passed.
+- `python scripts/check_no_secrets.py` -> passed.
+- `python -m backend.app.cli classify-lane --files ...` -> `lane:protected-core`,
+  `risk:core-contract`.
+- `git diff --check` -> exit 0.
+- `npm --prefix frontend run build` -> passed.
+- `./make.ps1 test` -> 135 passed.
+- `./make.ps1 eval-demo` -> pass, 23/23 checks passed.
 
 ## Protected-Core Lane Coverage
 
@@ -129,6 +147,7 @@ public demo artifact layout, or the Mirror Codex MCP contract.
    - Preserve public-demo blocking and backend expected-world mismatch rejection.
    - Record the Phase 52 Runtime Mutation Guard Regression Baseline in
      `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`.
+   - Closed by PR `#416`.
 
 ## Blueprint Boundary
 
@@ -164,7 +183,7 @@ Phase 52 must stay aligned with `mirror.md` and `AGENTS.md`:
 
 ## Validation Commands
 
-For `#413`, run:
+For the Phase 52 closeout baseline, run:
 
 ```powershell
 python -m pytest backend/tests/test_phase52_runtime_guard_regression_note.py backend/tests/test_phase52_successor_gate.py backend/tests/test_phase52_legacy_route_audit_note.py backend/tests/test_phase51_runtime_guard_note.py backend/tests/test_frontend_runtime_error_redaction.py::test_runtime_composer_generate_request_includes_world_id backend/tests/test_frontend_runtime_error_redaction.py::test_minimal_home_runtime_mutations_include_world_id backend/tests/test_frontend_runtime_error_redaction.py::test_runtime_cli_passes_expected_world_to_mutating_session_commands backend/tests/test_cli.py::test_generate_branch_rejects_expected_world_mismatch backend/tests/test_cli.py::test_rollback_session_rejects_expected_world_mismatch backend/tests/test_cli.py::test_cli_generate_branch_passes_expected_world_guard backend/tests/test_cli.py::test_cli_rollback_session_passes_expected_world_guard -q

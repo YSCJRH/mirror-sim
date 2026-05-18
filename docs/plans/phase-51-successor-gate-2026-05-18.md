@@ -210,26 +210,26 @@ git diff --check
 
 Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`.
 
-Phase 52 is the active approved successor queue:
+Phase 52 is closed after PR `#416`, issue `#410`, and milestone
+`Phase 52 - Legacy Route Containment and Runtime Scope Audit`; `audit-github-queue`
+reports the formal paused stop-state with no active milestone:
 
 - Milestone: `Phase 52 - Legacy Route Containment and Runtime Scope Audit`.
-- `#410` `Phase 52 exit gate` is open and blocked.
+- `#410` `Phase 52 exit gate` is closed after post-merge validation on `main`.
 - `#411` `Phase 52: sync repo truth after Phase 51 closeout and define successor gate`
   is closed by PR `#414`.
 - `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract`
   is closed by PR `#415`.
-- `#413` `Phase 52: strengthen runtime mutation guard regression baseline` is the current
-  ready Phase 52 Runtime Mutation Guard Regression Baseline.
+- `#413` `Phase 52: strengthen runtime mutation guard regression baseline` is closed by PR `#416`.
 
-Phase 52 keeps legacy top-level runtime routes and runtime mutation guard regression as
+Phase 52 kept legacy top-level runtime routes and runtime mutation guard regression as
 protected-core follow-up surfaces. It does not widen public/plugin/async contracts, implement
 a launch hub, replace `/`, or change session/node/report/claim/trace/compare artifact
 contracts.
 
-The active Phase 52 successor-gate baseline lives in
+The completed Phase 52 successor-gate baseline lives in
 `docs/plans/phase-52-successor-gate-2026-05-18.md`, and the Phase 52 Legacy Top-Level Runtime Route Audit note lives in
-`docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`. The Phase 52 Runtime
-Mutation Guard Regression Baseline note lives in
+`docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`. The Phase 52 Runtime Mutation Guard Regression Baseline note lives in
 `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`.
 
 For `#405`, run:
