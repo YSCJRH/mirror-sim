@@ -41,6 +41,7 @@ def test_classify_paths_marks_bootstrap_and_automation_changes_protected() -> No
 def test_classify_paths_marks_phase49_runtime_core_paths_protected() -> None:
     phase49_core_paths = [
         "backend/app/decision_kernel/service.py",
+        "backend/app/evals/service.py",
         "backend/app/perturbations/service.py",
         "backend/app/sessions/service.py",
         "backend/app/model_access/service.py",

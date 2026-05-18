@@ -37,6 +37,7 @@ def test_phase49_successor_gate_records_work_packages_and_boundaries() -> None:
         "`#388` `Phase 49: ratify perturbation schema and resolver authoring contract`",
         "`#390` `Phase 49: ratify runtime parent-child compare emission policy`",
         "`#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope`",
+        "`#394` `Phase 49: strengthen transfer eval outcome coverage`",
         "Kernel trace and replay contract",
         "Perturbation schema and resolver contract",
         "Branch generation and compare emission policy",
@@ -49,6 +50,7 @@ def test_phase49_successor_gate_records_work_packages_and_boundaries() -> None:
         "TODO[verify]: Codex UI tool-card",
         "Latest-session versus latest-activity semantics are now ratified",
         "Checkpoint rollback remains deferred",
+        "Fog Harbor-shaped report and eval assumptions are now inventoried",
     ]
     for phrase in required_phrases:
         assert phrase in gate
@@ -73,3 +75,4 @@ def test_active_state_docs_point_to_phase49_queue() -> None:
         assert "`#388`" in text
         assert "`#390`" in text
         assert "`#392`" in text
+        assert "`#394`" in text

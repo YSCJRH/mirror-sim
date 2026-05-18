@@ -76,6 +76,33 @@ def _load_run_payloads(artifacts_root: Path) -> dict[str, dict[str, Any]]:
     return run_payloads
 
 
+def _run_has_outcome_field(summary: dict[str, Any], field: str) -> bool:
+    final_state = summary.get("final_state", {})
+    return field in summary or (isinstance(final_state, dict) and field in final_state)
+
+
+def _compare_outcome_fields(compare_payload: dict[str, Any]) -> set[str]:
+    fields: set[str] = set()
+    for delta in compare_payload.get("reference_deltas", []):
+        fields.update(delta.get("outcome_deltas", {}).keys())
+    return fields
+
+
+def _changed_compare_outcome_fields(
+    compare_payload: dict[str, Any],
+    *,
+    branch_id: str | None = None,
+) -> set[str]:
+    fields: set[str] = set()
+    for delta in compare_payload.get("reference_deltas", []):
+        if branch_id is not None and delta.get("branch_id") != branch_id:
+            continue
+        for field, outcome_delta in delta.get("outcome_deltas", {}).items():
+            if outcome_delta.get("reference") != outcome_delta.get("candidate"):
+                fields.add(field)
+    return fields
+
+
 def _redline_texts(artifacts_root: Path) -> dict[str, str]:
     graph_path = artifacts_root / "graph" / "graph.json"
     personas_path = artifacts_root / "personas" / "personas.json"
@@ -397,6 +424,39 @@ def evaluate_transfer_world(world_paths: WorldPaths) -> EvalResult:
     scenario_json_paths = sorted((artifacts_root / "scenario").glob("*.json"))
     run_summary_paths = sorted((artifacts_root / "run").glob("*/summary.json"))
     compare_json_paths = sorted(compare_root.glob("*/compare.json"))
+    plan = load_simulation_plan(world_paths.simulation_rules_path)
+    tracked_outcome_fields = [outcome.field for outcome in plan.tracked_outcomes]
+    tracked_outcome_set = set(tracked_outcome_fields)
+    run_summaries = [read_json(path) for path in run_summary_paths]
+    run_covered_fields = {
+        field
+        for field in tracked_outcome_fields
+        if run_summaries and all(_run_has_outcome_field(summary, field) for summary in run_summaries)
+    }
+    compare_payloads = [read_json(path) for path in compare_json_paths]
+    compare_covered_fields = (
+        set().union(*[_compare_outcome_fields(payload) for payload in compare_payloads])
+        if compare_payloads
+        else set()
+    )
+    changed_fields = (
+        set().union(*[_changed_compare_outcome_fields(payload) for payload in compare_payloads])
+        if compare_payloads
+        else set()
+    )
+    changed_tracked_fields = tracked_outcome_set & changed_fields
+    default_report_branch_id = f"branch_{plan.default_report_scenario}"
+    default_report_changed_fields = (
+        set().union(
+            *[
+                _changed_compare_outcome_fields(payload, branch_id=default_report_branch_id)
+                for payload in compare_payloads
+            ]
+        )
+        if compare_payloads
+        else set()
+    )
+    default_report_changed_tracked_fields = tracked_outcome_set & default_report_changed_fields
 
     failures: list[str] = []
     checks_total = 0
@@ -434,6 +494,28 @@ def evaluate_transfer_world(world_paths: WorldPaths) -> EvalResult:
     record("report_exists", report_path.exists(), f"Missing {report_path}")
     record("claims_exist", claims_path.exists(), f"Missing {claims_path}")
     record("compare_exists", len(compare_json_paths) >= 1, "Expected at least one compare artifact.")
+    missing_run_fields = sorted(tracked_outcome_set - run_covered_fields)
+    record(
+        "tracked_outcomes_in_run_summaries",
+        not missing_run_fields,
+        "Missing tracked outcome fields in run summaries: " + ", ".join(missing_run_fields),
+    )
+    missing_compare_fields = sorted(tracked_outcome_set - compare_covered_fields)
+    record(
+        "tracked_outcomes_in_compare",
+        not missing_compare_fields,
+        "Missing tracked outcome fields in compare deltas: " + ", ".join(missing_compare_fields),
+    )
+    record(
+        "tracked_outcomes_have_semantic_delta",
+        bool(changed_tracked_fields),
+        "No tracked outcome changed in compare deltas.",
+    )
+    record(
+        "default_report_scenario_has_semantic_delta",
+        bool(default_report_changed_tracked_fields),
+        f"`{plan.default_report_scenario}` did not change any tracked outcome against baseline.",
+    )
     record("claims_labeled", all(claim.get("label") for claim in claims), "Every claim must carry a label.")
     record(
         "claims_have_evidence",
@@ -471,6 +553,16 @@ def evaluate_transfer_world(world_paths: WorldPaths) -> EvalResult:
             "checks_total": checks_total,
             "checks_passed": checks_passed,
             "failed_checks": len(failures),
+            "tracked_outcome_count": len(tracked_outcome_fields),
+            "tracked_outcome_fields_covered": len(run_covered_fields),
+            "compare_outcome_fields_covered": len(tracked_outcome_set & compare_covered_fields),
+            "changed_tracked_outcome_count": len(changed_tracked_fields),
+            "default_report_changed_outcome_count": len(default_report_changed_tracked_fields),
+            "transfer_proof_world_local": (
+                len(run_covered_fields) == len(tracked_outcome_fields)
+                and len(tracked_outcome_set & compare_covered_fields) == len(tracked_outcome_fields)
+                and bool(default_report_changed_tracked_fields)
+            ),
         },
         failures=failures,
         notes=[
@@ -526,6 +618,22 @@ def run_transfer_eval(world_ids: list[str] | None = None, *, repo_root: Path | N
             "checks_total": sum(result.metrics.get("checks_total", 0) for result in world_results),
             "checks_passed": sum(result.metrics.get("checks_passed", 0) for result in world_results),
             "failed_checks": len(failures),
+            "tracked_outcome_count": sum(result.metrics.get("tracked_outcome_count", 0) for result in world_results),
+            "tracked_outcome_fields_covered": sum(
+                result.metrics.get("tracked_outcome_fields_covered", 0) for result in world_results
+            ),
+            "compare_outcome_fields_covered": sum(
+                result.metrics.get("compare_outcome_fields_covered", 0) for result in world_results
+            ),
+            "changed_tracked_outcome_count": sum(
+                result.metrics.get("changed_tracked_outcome_count", 0) for result in world_results
+            ),
+            "transfer_worlds_with_default_report_delta": sum(
+                1 for result in world_results if result.metrics.get("default_report_changed_outcome_count", 0) > 0
+            ),
+            "transfer_proof_world_local": all(
+                result.metrics.get("transfer_proof_world_local") is True for result in world_results
+            ),
         },
         failures=failures,
         notes=[f"{result.world_id}: {result.status}" for result in world_results],

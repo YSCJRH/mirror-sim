@@ -991,6 +991,11 @@ def test_cli_eval_transfer_outputs_json(capsys) -> None:
     payload = json.loads(capsys.readouterr().out)
     assert payload["world_id"] == "transfer"
     assert payload["status"] == "pass"
+    assert payload["metrics"]["tracked_outcome_count"] == 13
+    assert payload["metrics"]["tracked_outcome_fields_covered"] == 13
+    assert payload["metrics"]["compare_outcome_fields_covered"] == 13
+    assert payload["metrics"]["transfer_worlds_with_default_report_delta"] == 2
+    assert payload["metrics"]["transfer_proof_world_local"] is True
 
 
 def test_safety_blocks_redline_payload() -> None:
