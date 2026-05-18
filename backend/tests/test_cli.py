@@ -596,6 +596,59 @@ def test_cli_generate_branch_passes_expected_world_guard(
     assert captured["beta_user_id"] == "beta-user"
 
 
+def test_cli_rollback_session_passes_expected_world_guard(
+    tmp_path: Path, capsys, monkeypatch
+) -> None:
+    captured: dict[str, str | Path | None] = {}
+
+    def fake_rollback_session(
+        session_id: str,
+        node_id: str,
+        *,
+        repo_root: Path | None = None,
+        artifacts_root: Path | None = None,
+        expected_world_id: str | None = None,
+    ):
+        captured.update(
+            {
+                "session_id": session_id,
+                "node_id": node_id,
+                "repo_root": repo_root,
+                "artifacts_root": artifacts_root,
+                "expected_world_id": expected_world_id,
+            }
+        )
+        return sessions_service.start_session(
+            "fog-harbor-east-gate",
+            "scenario_baseline",
+            repo_root=get_settings().repo_root,
+            artifacts_root=tmp_path,
+        )
+
+    monkeypatch.setattr(cli_module, "rollback_session", fake_rollback_session)
+
+    assert (
+        main(
+            [
+                "rollback-session",
+                "--world",
+                "fog-harbor-east-gate",
+                "--session",
+                "session_demo",
+                "--to",
+                "node_root",
+                "--artifacts-root",
+                str(tmp_path),
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+
+    assert captured["expected_world_id"] == "fog-harbor-east-gate"
+    assert captured["node_id"] == "node_root"
+
+
 def test_cli_generate_branch_uses_session_decision_model(tmp_path: Path, capsys) -> None:
     settings = get_settings()
     assert main(["ingest", str(settings.manifest_path), "--out", str(tmp_path / "ingest")]) == 0

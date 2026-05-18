@@ -513,6 +513,9 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
 - Lineage node manifests must also match the route `worldId` and `sessionId` before the workspace can render.
 - Direct local CLI calls may omit `--world` for compatibility when the operator provides an explicit artifacts root.
 - Product and web-wrapper mutation calls must pass `--world`; when `--world` is provided, backend services must reject mismatches before branch generation or rollback.
+- Product and web-wrapper mutation calls must pass route-derived `worldId` or an equivalent reviewed scope guard.
+- Every new mutating runtime API must include public-demo blocking and a reviewed world/session scope guard before it is implemented.
+- The Phase 52 runtime mutation guard regression baseline lives in `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`.
 - TODO[verify]: require the same route-derived world guard review before adding any new
   world-scoped runtime mutation surface.
 
