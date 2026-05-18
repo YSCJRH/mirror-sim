@@ -82,8 +82,11 @@ Local phase audits currently report:
   - closed by PR `#391`
   - ratified unconditional session-scoped parent-vs-child compare emission for generated runtime nodes
 - `#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope`
-  - current protected-core runtime activity and rollback scope work item
-  - expected to close with the PR that ratifies `last_activity_at` and pointer-only rollback scope
+  - closed by PR `#393`
+  - ratified `last_activity_at` and pointer-only rollback scope
+- `#394` `Phase 49: strengthen transfer eval outcome coverage`
+  - current protected-core transfer eval outcome coverage work item
+  - expected to close with the PR that strengthens world-local tracked-outcome coverage and records Fog Harbor-shaped transfer assumptions
 - phase gate baseline
   - active Phase 49 gate note: `docs/plans/phase-49-successor-gate-2026-05-18.md`
 

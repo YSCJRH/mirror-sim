@@ -168,7 +168,8 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.
 - `#390` `Phase 49: ratify runtime parent-child compare emission policy` is closed by PR `#391`.
-- `#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope` is the current ready work item.
+- `#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope` is closed by PR `#393`.
+- `#394` `Phase 49: strengthen transfer eval outcome coverage` is the current ready work item.
 - `audit-github-queue` reports `ready` with Phase 49 as the active milestone.
 - The first formal repository release is published as `v0.1.0`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.

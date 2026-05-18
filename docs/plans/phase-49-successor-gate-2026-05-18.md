@@ -4,7 +4,7 @@ Date: 2026-05-18
 
 Issue: `#384` `Phase 49: sync repo truth and protect runtime core lanes`
 
-Current work item: `#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope`
+Current work item: `#394` `Phase 49: strengthen transfer eval outcome coverage`
 
 This note records the post-Phase-48 baseline and opens the Phase 49 successor queue.
 Phase 49 is a protected-core contract-hardening phase for the decision kernel,
@@ -78,13 +78,18 @@ Active GitHub objects:
     parent-vs-child compare artifact without changing scenario-level compare contracts.
 - `#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope`
   - Lane: `protected-core`.
-  - Status: current ready work item.
+  - Status: closed by PR `#393`.
   - Scope: ratify `last_activity_at` as the product-facing session ordering timestamp and
     preserve v1 rollback as active-pointer movement without deleting or rewriting artifacts.
+- `#394` `Phase 49: strengthen transfer eval outcome coverage`
+  - Lane: `protected-core`.
+  - Status: current ready work item.
+  - Scope: strengthen two-world transfer eval assertions by checking world-local tracked
+    outcome coverage and recording remaining Fog Harbor-shaped assumptions.
 
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
 with Phase 49 as the only open milestone, `#383` as the protected blocked exit gate, and
-`#392` as the current ready work item.
+`#394` as the current ready work item.
 
 ## Protected-Core Lane Coverage
 
@@ -92,6 +97,7 @@ Phase 49 work is protected-core by default because it can affect durable runtime
 The lane policy must treat these paths as protected before implementation work begins:
 
 - `backend/app/decision_kernel/`
+- `backend/app/evals/`
 - `backend/app/perturbations/`
 - `backend/app/sessions/`
 - `backend/app/model_access/`
@@ -124,8 +130,10 @@ public demo artifact layout, or the Mirror Codex MCP contract.
 - Checkpoint rollback remains deferred; v1 rollback only moves `active_node_id`.
   TODO[verify]: re-open contract review before adding deletion, mutation, retry, or restore
   semantics beyond pointer movement.
-- TODO[verify]: Identify which Fog Harbor-shaped report and eval assumptions still block a
-  stronger `museum-night` transfer proof.
+- Fog Harbor-shaped report and eval assumptions are now inventoried in
+  `docs/plans/phase-49-transfer-assumption-inventory-2026-05-18.md`; TODO[verify]:
+  re-open contract review before removing legacy `RunTrace` fields or claiming transfer
+  beyond the two-world proof.
 - TODO[verify]: Define what measured generation duration would justify `task_id` and worker
   semantics instead of keeping the CLI-first synchronous contract.
 
@@ -153,8 +161,8 @@ public demo artifact layout, or the Mirror Codex MCP contract.
      affordances, with fallback for older manifests that only have `created_at`.
 
 5. Fog Harbor de-specialization and transfer evals
-   - Remove or document remaining Fog Harbor-shaped assumptions before claiming broader
-     transfer strength.
+   - Inventory remaining Fog Harbor-shaped assumptions before claiming broader transfer
+     strength.
    - Extend transfer assertions from `museum-night` before adding another world.
 
 6. Runtime orchestration decision
@@ -186,8 +194,9 @@ Phase 49 must stay aligned with `mirror.md` and `AGENTS.md`:
 - Do not promote local untracked April/private-beta planning files as durable truth without a
   reviewed PR.
 - Do not implement free-form natural-language perturbation execution, async worker,
-  checkpoint mutation/deletion semantics, transfer expansion, or frontend compare UI inside
-  `#392`; `#392` only ratifies latest-activity metadata and pointer-only rollback scope.
+  checkpoint mutation/deletion semantics, third-world expansion, report rewrites, or frontend
+  compare UI inside `#394`; `#394` only strengthens transfer eval outcome coverage and records
+  the current transfer assumption inventory.
 
 ## Validation Commands
 
@@ -244,6 +253,19 @@ python -m backend.app.cli classify-lane --files docs/architecture/contracts.md d
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 git diff --check
+```
+
+For `#394`, run:
+
+```powershell
+python -m pytest backend/tests/test_worlds.py -q
+python -m pytest backend/tests/test_cli.py -k "eval_world or eval_transfer" -q
+python -m pytest backend/tests/test_phase49_successor_gate.py backend/tests/test_automation.py -q
+python -m backend.app.cli classify-lane --files .github/automation/lane-policy.json backend/app/evals/service.py backend/tests/test_worlds.py backend/tests/test_cli.py backend/tests/test_phase49_successor_gate.py backend/tests/test_automation.py docs/plans/phase-49-transfer-assumption-inventory-2026-05-18.md docs/plans/phase-49-successor-gate-2026-05-18.md README.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md
+python scripts/check_no_secrets.py
+python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
+git diff --check
+./make.ps1 eval-transfer
 ```
 
 For later Phase 49 implementation PRs, add the issue-specific checks:

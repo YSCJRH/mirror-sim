@@ -19,6 +19,7 @@
     "backend/app/automation/",
     "backend/app/decision_kernel/",
     "backend/app/domain/",
+    "backend/app/evals/",
     "backend/app/model_access/",
     "backend/app/perturbations/",
     "backend/app/scenarios/",
