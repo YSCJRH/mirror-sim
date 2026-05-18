@@ -84,7 +84,7 @@ export default async function WorldHomePage({ params, searchParams }: PageProps)
           locale={locale}
           eyebrow={locale === "zh-CN" ? "Mirror 引擎 / 世界主页" : "Mirror Engine / World Home"}
           items={[
-            { href: "/", label: locale === "zh-CN" ? "世界入口" : "Launch Hub", active: false },
+            { href: "/", label: locale === "zh-CN" ? "公开演示" : "Public Demo", active: false },
             { href: worldHref, label: locale === "zh-CN" ? "世界" : "World", active: true },
             { href: perturbHref, label: locale === "zh-CN" ? "扰动" : "Perturb", active: false },
             { href: reviewHref, label: locale === "zh-CN" ? "审阅" : "Review", active: false },

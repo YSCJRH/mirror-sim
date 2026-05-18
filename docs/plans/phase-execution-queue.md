@@ -72,16 +72,19 @@ Local phase audits currently report:
   - open and blocked
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#404` `Phase 51: sync repo truth after Phase 50 closeout`
-  - current protected-core repo-truth work item
-  - syncs durable docs to Phase 51
+  - closed by PR `#407`
+  - synced durable docs to Phase 51
 - `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`
-  - open and blocked until the repo-truth sync lands
-  - records the reviewed route contract before any launch-hub implementation
+  - current protected-core route-contract work item
+  - records the reviewed Phase 51 Private-Beta Route Ownership Contract before any launch-hub implementation
+  - Phase 51 Private-Beta Route Ownership Contract: private-beta launch hub remains planning-only
+  - durable route ownership contract: `docs/architecture/contracts.md` and `docs/decisions/ADR-0011-private-beta-route-ownership.md`
 - `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`
   - open and blocked until the route contract lands
   - verifies runtime readiness and world-scoped session guards before runtime surfaces widen
 - phase gate baseline
   - active Phase 51 gate note: `docs/plans/phase-51-successor-gate-2026-05-18.md`
+  - route contract note: `docs/plans/phase-51-private-beta-route-contract-2026-05-18.md`
 
 ## Phase 50 Closeout
 

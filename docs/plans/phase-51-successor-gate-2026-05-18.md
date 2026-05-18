@@ -2,9 +2,9 @@
 
 Date: 2026-05-18
 
-Issue: `#404` `Phase 51: sync repo truth after Phase 50 closeout`
+Issue: `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`
 
-Current work item: `#404` `Phase 51: sync repo truth after Phase 50 closeout`
+Current work item: `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`
 
 This note records the post-Phase-50 baseline and opens the Phase 51 successor queue.
 Phase 51 is a protected-core route-contract and runtime-readiness phase for the
@@ -45,12 +45,12 @@ Active GitHub objects:
   - Status: blocked closeout gate for Phase 51.
 - `#404` `Phase 51: sync repo truth after Phase 50 closeout`
   - Lane: `protected-core`.
-  - Status: current ready work item.
+  - Status: closed by PR `#407`.
   - Scope: sync tracked docs to Phase 51 after closing Phase 50.
 - `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`
   - Lane: `protected-core`.
-  - Status: blocked until the repo-truth sync lands.
-  - Scope: record the Private-beta route contract before any launch-hub implementation.
+  - Status: current ready work item.
+  - Scope: record the Phase 51 Private-Beta Route Ownership Contract before any launch-hub implementation.
 - `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`
   - Lane: `protected-core`.
   - Status: blocked until the route ownership contract lands.
@@ -59,7 +59,7 @@ Active GitHub objects:
 
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
 with Phase 51 as the only open milestone, `#403` as the protected blocked exit gate, and
-`#404` as the current ready work item.
+`#405` as the current ready work item.
 
 ## Protected-Core Lane Coverage
 
@@ -101,11 +101,19 @@ public demo artifact layout, or the Mirror Codex MCP contract.
 - Phase 50 Product Boundary Decision is recorded in
   `docs/plans/phase-50-product-boundary-2026-05-18.md`.
   The launch hub remains planning-only for now; `/` remains the guided public demo.
-  TODO[verify]: open a reviewed route contract before replacing `/` or adding a private-beta
-  launch hub route.
+- Phase 51 Private-Beta Route Ownership Contract is recorded in
+  `docs/plans/phase-51-private-beta-route-contract-2026-05-18.md`.
+  The private-beta launch hub remains planning-only; `/` and `/review` stay public-demo
+  surfaces, while `/worlds/<world_id>` remains the private-beta candidate product path.
+  TODO[verify]: if a launch hub becomes an implementation target, open a new reviewed work
+  item that names its route, access mode, public-demo interaction, and deployment posture.
+- TODO[verify]: verify the tracked frontend route tree before treating any private-beta path
+  beyond the documented `/worlds/...` candidate routes as durable route ownership.
 - TODO[verify]: verify route/session mismatch handling before expanding private-beta runtime
   surfaces. World-scoped session guards must reject or clearly fail any request whose route
   `world_id` conflicts with the session's durable world id.
+- TODO[verify]: verify that private-beta composer requests pass route-derived `worldId`
+  through every world-scoped mutation before treating runtime generation as route-safe.
 - Latest-session versus latest-activity semantics are ratified as `last_activity_at`
   ordering with `created_at` fallback; TODO[verify]: re-open contract review before adding
   other activity sources or changing failed-operation activity behavior.
@@ -136,10 +144,13 @@ public demo artifact layout, or the Mirror Codex MCP contract.
      recreate them.
 
 2. Private-beta route ownership contract
-   - Record the reviewed route contract before replacing `/` or adding a private-beta launch
-     hub route.
+   - Record the reviewed route contract in
+     `docs/plans/phase-51-private-beta-route-contract-2026-05-18.md`.
+   - Promote the durable route boundary into `docs/architecture/contracts.md` and
+     `docs/decisions/ADR-0011-private-beta-route-ownership.md`.
    - Keep `/` as the guided public demo and `/worlds/<world_id>` as the private-beta
      candidate product path unless the contract explicitly changes.
+   - Private-beta route contract: keep the private-beta launch hub planning-only in Phase 51.
    - Preserve public demo, plugin, hosted-model, and async-runtime boundaries.
 
 3. Runtime readiness and world-scoped session guards
@@ -165,11 +176,11 @@ Phase 51 must stay aligned with `mirror.md` and `AGENTS.md`:
 ## Non-Goals
 
 - Do not implement a private-beta launch hub, move `/`, or widen the public path inside
-  `#404`.
+  `#405`.
 - Do not implement async workers, queues, `task_id`, retry, status, cleanup, checkpoint
-  mutation/deletion, or restore semantics inside `#404`.
+  mutation/deletion, or restore semantics inside `#405`.
 - Do not change scenario DSL, claim/evidence shape, run trace shape, compare artifact shape,
-  public demo artifact layout, or plugin MCP tool/resource contract in `#404`.
+  public demo artifact layout, or plugin MCP tool/resource contract in `#405`.
 - Do not add Hosted GPT, BYOK, upload, auth, billing, database, object storage, or quota
   behavior to the public path or plugin path.
 - Do not add mutating Mirror Codex MCP tools.
@@ -194,11 +205,12 @@ git diff --check
 For `#405`, run:
 
 ```powershell
-python -m pytest backend/tests/test_phase51_successor_gate.py -q
+python -m pytest backend/tests/test_phase51_route_contract_note.py backend/tests/test_phase51_successor_gate.py backend/tests/test_phase50_product_boundary_note.py backend/tests/test_automation.py -q
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
-python -m backend.app.cli classify-lane --files <changed-files>
+python -m backend.app.cli classify-lane --files README.md docs/architecture/contracts.md docs/decisions/ADR-0011-private-beta-route-ownership.md docs/plans/current-state-baseline.md docs/plans/automation-roadmap.md docs/plans/phase-execution-queue.md docs/plans/phase-51-successor-gate-2026-05-18.md docs/plans/phase-51-private-beta-route-contract-2026-05-18.md backend/tests/test_phase51_route_contract_note.py backend/tests/test_phase51_successor_gate.py
 git diff --check
+./make.ps1 eval-demo
 ```
 
 For `#406`, run:

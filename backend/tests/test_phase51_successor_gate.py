@@ -12,8 +12,8 @@ def test_phase51_successor_gate_exists_with_required_sections() -> None:
     gate = PHASE51_GATE_PATH.read_text(encoding="utf-8")
     required_sections = [
         "# Phase 51 Successor Gate",
-        "Issue: `#404` `Phase 51: sync repo truth after Phase 50 closeout`",
-        "Current work item: `#404` `Phase 51: sync repo truth after Phase 50 closeout`",
+        "Issue: `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`",
+        "Current work item: `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`",
         "## Phase 50 Closeout Evidence",
         "## Phase 51 Operational Queue",
         "## Protected-Core Lane Coverage",
@@ -38,6 +38,7 @@ def test_phase51_successor_gate_records_queue_and_boundaries() -> None:
         "`#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`",
         "`#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`",
         "Private-beta route contract",
+        "Phase 51 Private-Beta Route Ownership Contract",
         "Runtime readiness and world-scoped session guards",
         "TODO[verify]: Codex UI tool-card",
         "Runtime generation duration is now recorded",

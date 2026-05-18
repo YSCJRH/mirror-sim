@@ -26,7 +26,7 @@ export default async function CreateWorldPage() {
         locale={locale}
         eyebrow={readOnlyPublicDemo ? "Mirror Public Demo" : "Mirror Engine / Private Beta"}
         items={[
-          { href: "/", label: readOnlyPublicDemo ? "Public Demo" : "Launch Hub", active: false },
+          { href: "/", label: "Public Demo", active: false },
           { href: "/review", label: "Advanced Review", active: false },
           { href: "/worlds/new", label: "Create World", active: true }
         ]}
