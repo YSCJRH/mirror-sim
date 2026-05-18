@@ -73,11 +73,13 @@ Local phase audits currently report:
   - open and blocked
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#411` `Phase 52: sync repo truth after Phase 51 closeout and define successor gate`
-  - current protected-core repo-truth work item
-  - syncs durable docs to Phase 52 after Phase 51 closeout
+  - closed by PR `#414`
+  - synced durable docs to Phase 52 after Phase 51 closeout
 - `#412` `Phase 52: audit legacy top-level runtime routes and preserve boundary contract`
-  - open and blocked until the repo-truth sync lands
+  - current protected-core route-containment work item
+  - Phase 52 Legacy Top-Level Runtime Route Audit
   - audits legacy top-level runtime routes before any route is presented as the private-beta main path
+  - route audit note: `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`
 - `#413` `Phase 52: strengthen runtime mutation guard regression baseline`
   - open and blocked until the legacy route audit lands
   - strengthens runtime mutation guard regression coverage

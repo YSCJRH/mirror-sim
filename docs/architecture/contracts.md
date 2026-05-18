@@ -482,9 +482,10 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
   are disabled in local or explicitly authorized private-beta environments.
 - `/worlds/new` remains a private-beta candidate creation route and must stay disabled in
   public demo mode.
-- `/worlds/<world_id>/perturb` remains the main private-beta operator path.
+- `/worlds/<world_id>/perturb` remains the canonical private-beta operator route.
 - `/worlds/<world_id>/runtime/<session_id>` and its `/explain` and `/report` children
   remain world-scoped private-beta runtime surfaces.
+- `/worlds/<world_id>/runtime/<session_id>` remains the canonical world-scoped runtime workspace.
 - `/worlds/<world_id>/review` remains the world-scoped private-beta review surface.
 - `/api/runtime/start-session`, `/api/runtime/generate-branch`,
   `/api/runtime/rollback-session`, and `/api/worlds/create` remain private-beta mutation
@@ -492,10 +493,11 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
   explicitly applies.
 - Top-level `/changes/<branch_id>` and `/explain/<branch_id>` remain deterministic
   public-demo support routes.
+- Top-level `/perturb`, `/runtime/<session_id>`, and child runtime routes remain Fog Harbor-defaulted legacy compatibility surfaces.
 - Top-level `/perturb`, `/runtime/<session_id>`, and child runtime routes are legacy
-  compatibility surfaces, not the canonical private-beta route owners. TODO[verify]: decide
-  whether to deprecate, redirect, or formally re-contract them before presenting them as a
-  private-beta main path.
+  compatibility surfaces, not the canonical private-beta route owners.
+- They must not be promoted or linked as canonical private-beta route owners.
+- TODO[verify]: open a separate migration work item before redirecting or deleting any legacy top-level runtime route.
 - The private-beta launch hub remains planning-only in Phase 51. A future launch hub must
   not replace `/`, start sessions, generate branches, create worlds, upload corpora, enable
   Hosted GPT, accept BYOK, or call model providers from the public path.
