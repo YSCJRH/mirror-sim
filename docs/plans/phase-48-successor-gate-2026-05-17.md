@@ -78,8 +78,9 @@ Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening
 ```
 
 The active Phase 49 queue starts with `#383` `Phase 49 exit gate` and `#384`
-`Phase 49: sync repo truth and protect runtime core lanes`; after PR `#385`, the current
-ready work item is `#386` `Phase 49: ratify kernel trace and replay contract`.
+`Phase 49: sync repo truth and protect runtime core lanes`; after PR `#385` and `#386`
+closed through PR `#387`, the current ready work item is `#388`
+`Phase 49: ratify perturbation schema and resolver authoring contract`.
 
 ## Work Item Mapping
 

@@ -232,7 +232,8 @@ This note records the completed Phase 48 successor-intake closeout and the appro
   - `gh issue list --milestone "Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening" --state all`
     - `#383` `Phase 49 exit gate` is `open`, `blocked`, and `lane:protected-core`
     - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is `closed` by PR `#385`
-    - `#386` `Phase 49: ratify kernel trace and replay contract` is the current `status:ready` protected-core work item
+    - `#386` `Phase 49: ratify kernel trace and replay contract` is `closed` by PR `#387`
+    - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is the current `status:ready` protected-core work item
 
 ## Trusted Source Of Truth
 
@@ -264,11 +265,12 @@ This note records the completed Phase 48 successor-intake closeout and the appro
 - The active successor milestone is `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`.
 - The Phase 49 exit gate is `#383` `Phase 49 exit gate`, which remains the open blocked closeout gate for this phase.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
-- `#386` `Phase 49: ratify kernel trace and replay contract` is the current ready work item.
+- `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
+- `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is the current ready work item.
 - The completed Phase 47 successor-gate baseline lives in `docs/plans/phase-47-successor-gate-2026-05-16.md`.
 - The completed Phase 48 successor-gate baseline lives in `docs/plans/phase-48-successor-gate-2026-05-17.md`.
 - The active Phase 49 successor-gate baseline lives in `docs/plans/phase-49-successor-gate-2026-05-18.md`.
 - Local untracked private-beta, kernel, and design-system planning files under `docs/plans/...` are candidate inputs only until a PR intentionally promotes them.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.
-- The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
+- The previous local queue follow-up automation and Mirror-specific cron/heartbeat automations have been revoked per operator request; do not recreate an automation without a new explicit request.

@@ -73,8 +73,11 @@ Local phase audits currently report:
   - first protected-core repo-truth and lane-policy work item
   - closed by PR `#385`
 - `#386` `Phase 49: ratify kernel trace and replay contract`
-  - current protected-core kernel trace/replay contract work item
-  - expected to close with the PR that documents the v1 trace contract and hardens trace privacy tests
+  - closed by PR `#387`
+  - documented the v1 trace contract and hardened trace privacy tests
+- `#388` `Phase 49: ratify perturbation schema and resolver authoring contract`
+  - current protected-core perturbation schema/resolver contract work item
+  - expected to close with the PR that documents the template-plus-parameters contract and hardens resolver tests
 - phase gate baseline
   - active Phase 49 gate note: `docs/plans/phase-49-successor-gate-2026-05-18.md`
 

@@ -4,7 +4,7 @@ Date: 2026-05-18
 
 Issue: `#384` `Phase 49: sync repo truth and protect runtime core lanes`
 
-Current work item: `#386` `Phase 49: ratify kernel trace and replay contract`
+Current work item: `#388` `Phase 49: ratify perturbation schema and resolver authoring contract`
 
 This note records the post-Phase-48 baseline and opens the Phase 49 successor queue.
 Phase 49 is a protected-core contract-hardening phase for the decision kernel,
@@ -63,13 +63,18 @@ Active GitHub objects:
     implementation PRs rely on automation.
 - `#386` `Phase 49: ratify kernel trace and replay contract`
   - Lane: `protected-core`.
-  - Status: current ready work item.
+  - Status: closed by PR `#387`.
   - Scope: document the v1 `decision_trace.jsonl` contract and harden replay/fallback
     trace privacy tests.
+- `#388` `Phase 49: ratify perturbation schema and resolver authoring contract`
+  - Lane: `protected-core`.
+  - Status: current ready work item.
+  - Scope: promote the world-local perturbation schema and resolver authoring contract,
+    including template-plus-parameters mapping and invalid payload rejection tests.
 
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
 with Phase 49 as the only open milestone, `#383` as the protected blocked exit gate, and
-`#386` as the current ready work item.
+`#388` as the current ready work item.
 
 ## Protected-Core Lane Coverage
 
@@ -164,8 +169,9 @@ Phase 49 must stay aligned with `mirror.md` and `AGENTS.md`:
 - Do not add mutating Mirror Codex MCP tools.
 - Do not promote local untracked April/private-beta planning files as durable truth without a
   reviewed PR.
-- Do not implement full perturbation, async worker, or checkpoint semantics inside `#386`;
-  `#386` only ratifies the v1 decision trace/replay contract and hardens trace privacy tests.
+- Do not implement free-form natural-language perturbation execution, async worker, or
+  checkpoint semantics inside `#388`; `#388` only ratifies the perturbation
+  schema/resolver authoring contract and hardens resolver tests.
 
 ## Validation Commands
 
@@ -186,6 +192,18 @@ python -m pytest backend/tests/test_decision_kernel.py -q
 python -m pytest backend/tests/test_cli.py -k "generate_branch or decision_trace" -q
 python -m backend.app.cli classify-lane --files docs/architecture/contracts.md docs/decisions/ADR-0007-rule-bounded-llm-kernel.md backend/app/decision_kernel/service.py backend/tests/test_decision_kernel.py backend/tests/test_cli.py docs/plans/phase-49-successor-gate-2026-05-18.md
 python scripts/check_no_secrets.py
+git diff --check
+```
+
+For `#388`, run:
+
+```powershell
+python -m pytest backend/tests/test_decision_kernel.py -q
+python -m pytest backend/tests/test_cli.py -k "generate_branch or perturbation" -q
+python -m pytest backend/tests/test_phase49_successor_gate.py backend/tests/test_automation.py -q
+python -m backend.app.cli classify-lane --files docs/architecture/contracts.md docs/decisions/ADR-0006-interactive-simulator-runtime-v1.md backend/app/perturbations/service.py backend/tests/test_decision_kernel.py backend/tests/test_cli.py docs/plans/phase-49-successor-gate-2026-05-18.md README.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md
+python scripts/check_no_secrets.py
+python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 git diff --check
 ```
 

@@ -77,6 +77,19 @@ This ADR adds the next layer without weakening those contracts.
     - `parameters`
     - `evidence_ids`
   - user-facing composer strings are not themselves the execution contract; they must resolve into stable world-local IDs and deterministic timing before generation.
+  - product-facing templates may provide localized labels and draft summaries, but the runtime
+    contract starts only after the template resolves to `kind`, `target_id`, `timing`,
+    `summary`, typed `parameters`, and optional `evidence_ids`.
+  - `parameters` must be checked against the selected world-local `decision_schema.yaml`
+    perturbation declaration before generation starts.
+  - `actor_id` is a special resolved parameter used only when the perturbation declaration
+    permits the actor's source class.
+  - unknown perturbation kinds, timing tokens, target sources, actor sources, parameter names,
+    and parameter type mismatches must fail before branch generation.
+  - resolver output must persist enough replay context to audit generation: normalized
+    perturbation payload, target source class, optional actor source class, resolved actor id,
+    timing token, validated parameters, schema version, notes, and deterministic
+    `resolution_hash`.
 
 - Store interactive artifacts under a session namespace.
   - canonical root:
@@ -130,6 +143,7 @@ This ADR adds the next layer without weakening those contracts.
 
 - Follow-up work is still required:
   - ratify the LLM-bounded decision kernel contract
-  - expand perturbation resolution beyond preset runtime mappings
+  - expand perturbation authoring beyond preset runtime mappings only after a reviewed contract
+    maps user text to stable world-local IDs and typed parameters
   - decide whether parent-vs-child `compare.json` should always be emitted or only when requested for every runtime path
   - generalize the runtime beyond Fog Harbor-shaped outcomes and payload assumptions
