@@ -117,6 +117,35 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
 - `decision_schema.yaml` is the source of truth for perturbation validation.
   - user-facing labels in the frontend are not the execution contract
   - world-local stable IDs and timing tokens are the execution contract
+- The stable top-level `decision_schema.yaml` fields are:
+  - `world_id`
+  - `schema_version`
+  - `allowed_action_types`
+  - `timing_tokens`
+  - `perturbations`
+  - `decision_kernel`
+- Each `perturbations[]` item must declare:
+  - `kind`
+  - `target_sources`
+  - `actor_sources`
+  - `timing_tokens`
+  - `required_parameters`
+  - `optional_parameters`
+- Parameter declarations are typed by scalar token. V1 supported parameter type tokens are
+  `int`, `float`, `bool`, and `str`; unknown parameter type tokens must fail validation.
+- Product-facing perturbation templates may carry localized labels, summaries, and draft text,
+  but executable generation must use only the template-resolved runtime payload:
+  - `kind`
+  - `target_id`
+  - `timing`
+  - `summary`
+  - `parameters`
+  - `evidence_ids`
+- `actor_id`, when needed, is carried inside `parameters` and is resolved separately against
+  the perturbation's allowed `actor_sources`; it must not be treated as a free-form parameter.
+- Resolver output must record the normalized payload, target source class, optional actor
+  source class, resolved actor id, timing token, validated parameters, schema version, notes,
+  and one deterministic `resolution_hash`.
 
 ## Run Contract
 
@@ -306,13 +335,29 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
 - `timing` must be deterministic and world-resolved.
   - it may be represented by turn index, named phase, or another bounded world-local timing token
 - `parameters` is the only extensibility bucket for world-specific perturbation detail in v1.
+- `parameters` must be a typed key/value map whose accepted keys are exactly the union of the
+  selected perturbation's required and optional parameter declarations plus the special
+  `actor_id` key.
 - Every perturbation payload must be resolved through the world-local decision schema before execution.
 - Resolution must record:
+  - normalized perturbation payload
   - target source class
   - actor source class when applicable
+  - resolved actor id when applicable
+  - timing token
   - validated parameters
   - schema version
   - resolution hash
+- Resolution must reject:
+  - unsupported perturbation kinds
+  - unsupported timing tokens
+  - targets outside the selected perturbation's allowed source classes
+  - actor ids outside the selected perturbation's allowed source classes
+  - missing required parameters
+  - unexpected parameters
+  - values that do not match declared scalar parameter types
+- `resolution_hash` is computed from the normalized resolved payload and schema context, not
+  from frontend display strings.
 - Free-form user text alone is not an execution contract.
   - it must be mapped into stable world-local IDs and deterministic timing before generation starts
 

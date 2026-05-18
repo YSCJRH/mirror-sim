@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import Field
 
@@ -24,8 +24,8 @@ class PerturbationSchema(MirrorBaseModel):
     target_sources: list[str] = Field(default_factory=list)
     actor_sources: list[str] = Field(default_factory=list)
     timing_tokens: list[str] = Field(default_factory=list)
-    required_parameters: dict[str, str] = Field(default_factory=dict)
-    optional_parameters: dict[str, str] = Field(default_factory=dict)
+    required_parameters: dict[str, Literal["int", "float", "bool", "str"]] = Field(default_factory=dict)
+    optional_parameters: dict[str, Literal["int", "float", "bool", "str"]] = Field(default_factory=dict)
 
 
 class DecisionSchema(MirrorBaseModel):
@@ -74,7 +74,7 @@ def load_world_target_catalog(world_id: str, *, repo_root: Path | None = None) -
 
 def _coerce_parameter(name: str, value: Any, expected_type: str) -> Any:
     if expected_type == "int":
-        if not isinstance(value, int):
+        if not isinstance(value, int) or isinstance(value, bool):
             raise ValueError(f"Parameter `{name}` must be an integer.")
         return value
     if expected_type == "float":

@@ -165,12 +165,13 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening` is open.
 - `#383` `Phase 49 exit gate` is open, blocked, and protected-core.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
-- `#386` `Phase 49: ratify kernel trace and replay contract` is the current ready work item.
+- `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
+- `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is the current ready work item.
 - `audit-github-queue` reports `ready` with Phase 49 as the active milestone.
 - The first formal repository release is published as `v0.1.0`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
-- The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
+- The previous local queue follow-up automation and Mirror-specific cron/heartbeat automations have been revoked per operator request; do not recreate an automation without a new explicit request.
 
 ## Day 0 Bootstrap
 

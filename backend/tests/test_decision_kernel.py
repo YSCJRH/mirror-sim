@@ -5,7 +5,7 @@ from pathlib import Path
 
 from backend.app.decision_kernel import DecisionKernel
 import backend.app.decision_kernel.service as decision_kernel_service
-from backend.app.perturbations import load_decision_schema, resolve_perturbation_payload
+from backend.app.perturbations import DecisionSchema, load_decision_schema, resolve_perturbation_payload
 from backend.app.domain.models import PerturbationPayload
 from backend.app.simulation.rules import StepAction, StepChoice
 
@@ -88,6 +88,168 @@ def test_resolve_perturbation_payload_rejects_invalid_timing() -> None:
         assert "Unsupported timing token" in str(exc)
     else:
         raise AssertionError("invalid timing did not fail resolution")
+
+
+def test_resolve_perturbation_payload_rejects_missing_required_parameter() -> None:
+    try:
+        resolve_perturbation_payload(
+            "fog-harbor-east-gate",
+            PerturbationPayload(
+                kind="delay_document",
+                target_id="doc_ledger_copy",
+                timing="before_publication",
+                summary="Missing the required delay turn count.",
+                parameters={"actor_id": "entity_lin_lan"},
+            ),
+        )
+    except ValueError as exc:
+        assert "Missing required parameter `delay_turns`" in str(exc)
+    else:
+        raise AssertionError("missing required parameter did not fail resolution")
+
+
+def test_resolve_perturbation_payload_rejects_unexpected_parameter() -> None:
+    try:
+        resolve_perturbation_payload(
+            "fog-harbor-east-gate",
+            PerturbationPayload(
+                kind="block_contact",
+                target_id="persona_zhao_ke",
+                timing="first_warning_attempt",
+                summary="Unexpected parameter should be rejected.",
+                parameters={
+                    "actor_id": "persona_chen_yu",
+                    "delay_turns": 2,
+                },
+            ),
+        )
+    except ValueError as exc:
+        assert "Unexpected parameter(s)" in str(exc)
+        assert "delay_turns" in str(exc)
+    else:
+        raise AssertionError("unexpected parameter did not fail resolution")
+
+
+def test_resolve_perturbation_payload_rejects_invalid_actor_source() -> None:
+    try:
+        resolve_perturbation_payload(
+            "fog-harbor-east-gate",
+            PerturbationPayload(
+                kind="block_contact",
+                target_id="persona_zhao_ke",
+                timing="first_warning_attempt",
+                summary="Entity actor is not valid for contact-block perturbations.",
+                parameters={"actor_id": "entity_lin_lan"},
+            ),
+        )
+    except ValueError as exc:
+        assert "does not resolve to an allowed source" in str(exc)
+    else:
+        raise AssertionError("invalid actor source did not fail resolution")
+
+
+def test_resolve_perturbation_payload_rejects_typed_parameter_failure() -> None:
+    try:
+        resolve_perturbation_payload(
+            "museum-night",
+                PerturbationPayload(
+                    kind="resource_failure",
+                    target_id="entity_west_hall_lights",
+                    timing="lighting_window",
+                    summary="Duration must remain numeric.",
+                parameters={
+                    "actor_id": "persona_mina_park",
+                    "duration_turns": "three",
+                },
+            ),
+        )
+    except ValueError as exc:
+        assert "must be an integer" in str(exc)
+    else:
+        raise AssertionError("typed parameter failure did not fail resolution")
+
+
+def test_resolve_perturbation_payload_rejects_bool_for_int_parameter() -> None:
+    try:
+        resolve_perturbation_payload(
+            "fog-harbor-east-gate",
+            PerturbationPayload(
+                kind="delay_document",
+                target_id="doc_ledger_copy",
+                timing="before_publication",
+                summary="Boolean values must not pass as integer turn counts.",
+                parameters={
+                    "actor_id": "entity_lin_lan",
+                    "delay_turns": True,
+                },
+            ),
+        )
+    except ValueError as exc:
+        assert "must be an integer" in str(exc)
+    else:
+        raise AssertionError("boolean int parameter did not fail resolution")
+
+
+def test_decision_schema_rejects_unknown_parameter_type_token() -> None:
+    try:
+        DecisionSchema.model_validate(
+            {
+                "world_id": "test-world",
+                "schema_version": "test",
+                "allowed_action_types": ["inspect"],
+                "timing_tokens": ["before_start"],
+                "perturbations": [
+                    {
+                        "kind": "delay_document",
+                        "target_sources": ["document"],
+                        "actor_sources": [],
+                        "timing_tokens": ["before_start"],
+                        "required_parameters": {"delay_turns": "integer"},
+                        "optional_parameters": {},
+                    }
+                ],
+                "decision_kernel": {
+                    "prompt_version": "rule-bounded-v1",
+                    "fallback_strategy": "first_legal_choice",
+                },
+            }
+        )
+    except ValueError as exc:
+        assert "integer" in str(exc)
+    else:
+        raise AssertionError("unknown parameter type token did not fail schema validation")
+
+
+def test_product_templates_plus_parameters_resolve_to_world_contracts() -> None:
+    product_paths = [
+        Path("data/demo/config/product.json"),
+        Path("data/worlds/museum-night/config/product.json"),
+    ]
+
+    for product_path in product_paths:
+        product = json.loads(product_path.read_text(encoding="utf-8"))
+        for option in product["perturbation_options"]:
+            runtime = option["runtime"]
+            payload = PerturbationPayload(
+                kind=runtime["kind"],
+                target_id=runtime["targetId"],
+                timing=runtime["timing"],
+                summary=option["summary"],
+                parameters={
+                    **runtime["parameters"],
+                    "actor_id": runtime["actorId"],
+                },
+            )
+
+            resolution = resolve_perturbation_payload(product["world_id"], payload)
+
+            assert resolution.schema_version == "2026-04-22"
+            assert resolution.perturbation.kind == runtime["kind"]
+            assert resolution.perturbation.target_id == runtime["targetId"]
+            assert resolution.perturbation.timing == runtime["timing"]
+            assert resolution.perturbation.parameters["actor_id"] == runtime["actorId"]
+            assert resolution.validated_parameters == runtime["parameters"]
+            assert resolution.resolution_hash
 
 
 def test_decision_kernel_replays_cached_choice(tmp_path: Path) -> None:
