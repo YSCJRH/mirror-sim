@@ -72,7 +72,7 @@ def test_architecture_and_adr_record_route_ownership_contract() -> None:
         "`/api/runtime/generate-branch`",
         "The private-beta launch hub remains planning-only in Phase 51",
         "Top-level `/perturb`, `/runtime/<session_id>`, and child runtime routes are legacy",
-        "TODO[verify]: verify that private-beta composer requests pass route-derived `worldId`",
+        "Private-beta composer requests must pass route-derived `worldId`",
     ]
     for phrase in required_contract_phrases:
         assert phrase in contract

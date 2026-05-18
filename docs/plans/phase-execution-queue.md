@@ -75,16 +75,18 @@ Local phase audits currently report:
   - closed by PR `#407`
   - synced durable docs to Phase 51
 - `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract`
-  - current protected-core route-contract work item
+  - closed by PR `#408`
   - records the reviewed Phase 51 Private-Beta Route Ownership Contract before any launch-hub implementation
   - Phase 51 Private-Beta Route Ownership Contract: private-beta launch hub remains planning-only
   - durable route ownership contract: `docs/architecture/contracts.md` and `docs/decisions/ADR-0011-private-beta-route-ownership.md`
 - `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards`
-  - open and blocked until the route contract lands
+  - current protected-core runtime-readiness work item
   - verifies runtime readiness and world-scoped session guards before runtime surfaces widen
+  - Phase 51 Runtime Readiness and World-Scoped Guard Verification: synchronous v1 generation remains the current runtime contract and route-derived `worldId` guards now protect branch generation, rollback, and world-scoped workspace loading
 - phase gate baseline
   - active Phase 51 gate note: `docs/plans/phase-51-successor-gate-2026-05-18.md`
   - route contract note: `docs/plans/phase-51-private-beta-route-contract-2026-05-18.md`
+  - runtime guard note: `docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md`
 
 ## Phase 50 Closeout
 

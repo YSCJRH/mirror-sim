@@ -253,14 +253,19 @@ This note records the completed Phase 50 runtime-boundary closeout and the appro
   - `gh issue list --milestone "Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate" --state all`
     - `#403` `Phase 51 exit gate` is `open`, `blocked`, and `lane:protected-core`
     - `#404` `Phase 51: sync repo truth after Phase 50 closeout` is `closed` by PR `#407`
-    - `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract` is the current `status:ready` protected-core work item
-    - `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards` is `open` and blocked until the route contract lands
+    - `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract` is `closed` by PR `#408`
+    - `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards` is the current `status:ready` protected-core work item
   - Phase 51 Private-Beta Route Ownership Contract:
     - private-beta launch hub remains planning-only
     - `/` and `/review` remain public-demo surfaces
     - `/worlds/<world_id>` remains the private-beta candidate product path
     - `docs/plans/phase-51-private-beta-route-contract-2026-05-18.md` records the route contract note
     - `docs/architecture/contracts.md` and `docs/decisions/ADR-0011-private-beta-route-ownership.md` record the durable route ownership contract
+  - Phase 51 Runtime Readiness and World-Scoped Guard Verification:
+    - synchronous v1 generation remains the current runtime contract
+    - private-beta runtime mutations pass route-derived world scope through composer, CLI, and backend service guards
+    - world-scoped workspace loading rejects session or node manifests whose durable world/session ids conflict with route params
+    - `docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md` records the guard verification note
 
 ## Trusted Source Of Truth
 
@@ -298,11 +303,12 @@ This note records the completed Phase 50 runtime-boundary closeout and the appro
 - `#401` `Phase 50: ratify private-beta launch hub and public-path boundary` is closed by PR `#402`.
 - Phase 50 Product Boundary Decision: launch hub remains planning-only for now; current tracked code keeps `/` as the guided public demo.
 - `#404` `Phase 51: sync repo truth after Phase 50 closeout` is closed by PR `#407`.
-- `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract` is the current ready work item.
-- `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards` is blocked until the route ownership contract lands.
+- `#405` `Phase 51: ratify private-beta route ownership and launch-hub contract` is closed by PR `#408`.
+- `#406` `Phase 51: verify runtime readiness thresholds and world-scoped session guards` is the current ready work item.
 - Phase 51 Private-Beta Route Ownership Contract: private-beta launch hub remains planning-only; `/` and `/review` stay public-demo surfaces, while `/worlds/<world_id>` remains the private-beta candidate product path.
 - The Phase 51 route contract note lives in `docs/plans/phase-51-private-beta-route-contract-2026-05-18.md`.
 - The durable route ownership contract lives in `docs/architecture/contracts.md` and `docs/decisions/ADR-0011-private-beta-route-ownership.md`.
+- Phase 51 Runtime Readiness and World-Scoped Guard Verification keeps synchronous v1 generation, records route-derived `worldId` mutation guards, and lives in `docs/plans/phase-51-runtime-readiness-guards-2026-05-18.md`.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.

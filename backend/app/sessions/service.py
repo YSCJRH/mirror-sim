@@ -395,6 +395,7 @@ def generate_branch(
     repo_root: Path | None = None,
     artifacts_root: Path | None = None,
     beta_user_id: str | None = None,
+    expected_world_id: str | None = None,
 ) -> SimulationSessionManifest:
     resolved_artifacts_root = _resolve_session_artifacts_root(
         session_id,
@@ -403,6 +404,10 @@ def generate_branch(
     )
 
     session = _load_session_manifest(session_id, resolved_artifacts_root)
+    if expected_world_id and session.world_id != expected_world_id:
+        raise ValueError(
+            f"Session `{session_id}` belongs to world `{session.world_id}`, not `{expected_world_id}`."
+        )
     quota_note = None
     if session.decision_config.provider == HOSTED_PROVIDER:
         validate_hosted_model_access(model_id=session.decision_config.model_id)
@@ -532,6 +537,7 @@ def rollback_session(
     *,
     repo_root: Path | None = None,
     artifacts_root: Path | None = None,
+    expected_world_id: str | None = None,
 ) -> SimulationSessionManifest:
     resolved_artifacts_root = _resolve_session_artifacts_root(
         session_id,
@@ -540,6 +546,10 @@ def rollback_session(
     )
 
     session = _load_session_manifest(session_id, resolved_artifacts_root)
+    if expected_world_id and session.world_id != expected_world_id:
+        raise ValueError(
+            f"Session `{session_id}` belongs to world `{session.world_id}`, not `{expected_world_id}`."
+        )
     _ = repo_root
     if not any(node.node_id == node_id for node in session.nodes):
         raise ValueError(f"Unknown rollback target `{node_id}` in session `{session_id}`.")

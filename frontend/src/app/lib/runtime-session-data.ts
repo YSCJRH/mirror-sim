@@ -390,6 +390,9 @@ export async function loadRuntimeSessionWorkspaceForWorld(
       readJson<RuntimeSessionManifest>(sessionPath),
       readJson<GraphPayload>(path.join(artifactsRoot, "graph", "graph.json")),
     ]);
+    if (session.world_id !== worldId) {
+      return null;
+    }
     const selectedNodeId = session.nodes.some((node) => node.node_id === requestedNodeId)
       ? requestedNodeId ?? session.active_node_id
       : session.active_node_id;
@@ -409,6 +412,17 @@ export async function loadRuntimeSessionWorkspaceForWorld(
       readJson<RuntimeSessionNodeManifest>(path.join(artifactsRoot, rootNodePath)),
       loadRuntimeNodeLineage(session, selectedNodeId, artifactsRoot),
     ]);
+    if (selectedNode.world_id !== worldId || rootNode.world_id !== worldId) {
+      return null;
+    }
+    if (selectedNode.session_id !== sessionId || rootNode.session_id !== sessionId) {
+      return null;
+    }
+    if (
+      lineage.some((entry) => entry.node.world_id !== worldId || entry.node.session_id !== sessionId)
+    ) {
+      return null;
+    }
     const decisionSummary = await loadRuntimeDecisionSummary(
       sessionRoot,
       selectedNode.decision_trace_path

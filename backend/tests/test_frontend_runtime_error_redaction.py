@@ -106,3 +106,51 @@ def test_runtime_cli_wrapper_does_not_rethrow_raw_exec_error_message() -> None:
     source = (REPO_ROOT / "frontend/src/app/lib/runtime-cli.ts").read_text(encoding="utf-8")
 
     assert "throw new Error(message)" not in source
+
+
+def test_runtime_composer_generate_request_includes_world_id() -> None:
+    source = (
+        REPO_ROOT / "frontend/src/app/components/preset-perturbation-composer.tsx"
+    ).read_text(encoding="utf-8")
+    generate_request = source.split('fetch("/api/runtime/generate-branch"', maxsplit=1)[1]
+    generate_body = generate_request.split("perturbation:", maxsplit=1)[0]
+
+    assert "worldId," in generate_body
+
+
+def test_minimal_home_runtime_mutations_include_world_id() -> None:
+    source = (REPO_ROOT / "frontend/src/app/components/minimal-home-shell.tsx").read_text(
+        encoding="utf-8"
+    )
+    generate_request = source.split('fetch("/api/runtime/generate-branch"', maxsplit=1)[1]
+    generate_body = generate_request.split("perturbation:", maxsplit=1)[0]
+    rollback_request = source.split('fetch("/api/runtime/rollback-session"', maxsplit=1)[1]
+    rollback_body = rollback_request.split("toNode:", maxsplit=1)[0]
+
+    assert "worldId," in generate_body
+    assert "worldId," in rollback_body
+
+
+def test_runtime_cli_passes_expected_world_to_mutating_session_commands() -> None:
+    source = (REPO_ROOT / "frontend/src/app/lib/runtime-cli.ts").read_text(encoding="utf-8")
+
+    generate_args = source.split('    "generate-branch",', maxsplit=1)[1].split("  ];", maxsplit=1)[0]
+    rollback_args = source.split('    "rollback-session",', maxsplit=1)[1].split("  ]);", maxsplit=1)[0]
+
+    for command_args in [generate_args, rollback_args]:
+        assert '"--world"' in command_args
+        assert "worldId" in command_args
+
+
+def test_runtime_workspace_loader_rejects_route_session_world_mismatch() -> None:
+    source = (REPO_ROOT / "frontend/src/app/lib/runtime-session-data.ts").read_text(
+        encoding="utf-8"
+    )
+
+    assert "session.world_id !== worldId" in source
+    assert "selectedNode.world_id !== worldId || rootNode.world_id !== worldId" in source
+    assert "selectedNode.session_id !== sessionId || rootNode.session_id !== sessionId" in source
+    assert (
+        "lineage.some((entry) => entry.node.world_id !== worldId || entry.node.session_id !== sessionId)"
+        in source
+    )

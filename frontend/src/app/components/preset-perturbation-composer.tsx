@@ -372,6 +372,7 @@ export function PresetPerturbationComposer({
         },
         body: JSON.stringify({
           locale,
+          worldId,
           sessionId: resolvedSessionId,
           fromNode: fromNodeId,
           decisionProvider: draft.provider,

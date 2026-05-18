@@ -288,8 +288,8 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
 - Canonical v1 entrypoints are:
   - `python -m backend.app.cli start-session --world <world_id> --scenario <scenario_id> [--decision-provider <provider>] [--decision-model <model_id>]`
   - `python -m backend.app.cli inspect-session --session <session_id>`
-  - `python -m backend.app.cli generate-branch --session <session_id> --from <node_id> --perturbation <json-or-file>`
-  - `python -m backend.app.cli rollback-session --session <session_id> --to <node_id>`
+  - `python -m backend.app.cli generate-branch [--world <world_id>] --session <session_id> --from <node_id> --perturbation <json-or-file>`
+  - `python -m backend.app.cli rollback-session [--world <world_id>] --session <session_id> --to <node_id>`
 - `start-session` creates one durable simulation session rooted in one bounded world plus one baseline scenario.
 - `start-session` may pin one session-local decision model.
   - when present, the pinned model overrides the default environment-driven model lookup for later branch generation inside that session
@@ -504,8 +504,15 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
   launch-hub route.
 - TODO[verify]: if a launch hub becomes an implementation target, open a new reviewed work
   item that names its route, access mode, public-demo interaction, and deployment posture.
-- TODO[verify]: verify that private-beta composer requests pass route-derived `worldId`
-  through every world-scoped mutation before expanding private-beta runtime surfaces.
+- Private-beta composer requests must pass route-derived `worldId` through world-scoped
+  session mutations before runtime branch generation or rollback can mutate session state.
+- World-scoped runtime workspace loading must reject session or node manifests whose `world_id` conflicts with the route `worldId`.
+- World-scoped runtime workspace loading must reject node manifests whose `session_id` conflicts with the route `sessionId`.
+- Lineage node manifests must also match the route `worldId` and `sessionId` before the workspace can render.
+- Direct local CLI calls may omit `--world` for compatibility when the operator provides an explicit artifacts root.
+- Product and web-wrapper mutation calls must pass `--world`; when `--world` is provided, backend services must reject mismatches before branch generation or rollback.
+- TODO[verify]: require the same route-derived world guard review before adding any new
+  world-scoped runtime mutation surface.
 
 ## Artifact Contract
 
