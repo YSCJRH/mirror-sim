@@ -4,6 +4,8 @@ Date: 2026-05-18
 
 Issue: `#384` `Phase 49: sync repo truth and protect runtime core lanes`
 
+Current work item: `#386` `Phase 49: ratify kernel trace and replay contract`
+
 This note records the post-Phase-48 baseline and opens the Phase 49 successor queue.
 Phase 49 is a protected-core contract-hardening phase for the decision kernel,
 perturbation resolver, runtime session semantics, compare emission, rollback behavior, and
@@ -56,13 +58,18 @@ Active GitHub objects:
   - Status: blocked closeout gate for Phase 49.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes`
   - Lane: `protected-core`.
-  - Status: ready first work item.
+  - Status: closed by PR `#385`.
   - Scope: sync tracked docs to Phase 49 and update lane policy before Phase 49 runtime-core
     implementation PRs rely on automation.
+- `#386` `Phase 49: ratify kernel trace and replay contract`
+  - Lane: `protected-core`.
+  - Status: current ready work item.
+  - Scope: document the v1 `decision_trace.jsonl` contract and harden replay/fallback
+    trace privacy tests.
 
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
 with Phase 49 as the only open milestone, `#383` as the protected blocked exit gate, and
-`#384` as the current ready work item.
+`#386` as the current ready work item.
 
 ## Protected-Core Lane Coverage
 
@@ -88,8 +95,13 @@ public demo artifact layout, or the Mirror Codex MCP contract.
   shows observable MCP tool or resource cards/traces for the Mirror Codex plugin.
 - TODO[verify]: Latest-session versus latest-activity semantics need a contract decision
   before more world-card or launch-hub affordances depend on activity ordering.
-- TODO[verify]: Decide which `decision_trace.jsonl` fields are stable contract versus
-  implementation detail before richer provider behavior is added.
+- The first `decision_trace.jsonl` v1 field set is now ratified in
+  `docs/architecture/contracts.md`; TODO[verify]: re-open contract review before adding new
+  trace fields, changing validation status values, or widening provider output persistence.
+- Kernel boundary action-type validation is now ratified in
+  `docs/decisions/ADR-0007-rule-bounded-llm-kernel.md` and
+  `docs/architecture/contracts.md`; TODO[verify]: re-open contract review before accepting
+  any caller-supplied action outside a world-local `allowed_action_types` list.
 - TODO[verify]: Decide whether every generated runtime node must emit parent-vs-child
   compare output.
 - TODO[verify]: Decide whether checkpoint rollback exists in Phase 49 or remains deferred.
@@ -152,8 +164,8 @@ Phase 49 must stay aligned with `mirror.md` and `AGENTS.md`:
 - Do not add mutating Mirror Codex MCP tools.
 - Do not promote local untracked April/private-beta planning files as durable truth without a
   reviewed PR.
-- Do not implement full kernel, perturbation, async worker, or checkpoint semantics inside
-  `#384`; `#384` only syncs repo truth and protects runtime-core lanes.
+- Do not implement full perturbation, async worker, or checkpoint semantics inside `#386`;
+  `#386` only ratifies the v1 decision trace/replay contract and hardens trace privacy tests.
 
 ## Validation Commands
 
@@ -164,6 +176,16 @@ python -m pytest backend/tests/test_phase49_successor_gate.py backend/tests/test
 python -m backend.app.cli classify-lane --files backend/app/decision_kernel/service.py backend/app/perturbations/service.py backend/app/sessions/service.py backend/app/model_access/service.py backend/app/safety/service.py frontend/src/app/api/runtime/start-session/route.ts frontend/src/app/api/runtime/generate-branch/route.ts frontend/src/app/api/runtime/rollback-session/route.ts frontend/src/app/api/worlds/create/route.ts frontend/src/app/lib/runtime-cli.ts
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
+git diff --check
+```
+
+For `#386`, run:
+
+```powershell
+python -m pytest backend/tests/test_decision_kernel.py -q
+python -m pytest backend/tests/test_cli.py -k "generate_branch or decision_trace" -q
+python -m backend.app.cli classify-lane --files docs/architecture/contracts.md docs/decisions/ADR-0007-rule-bounded-llm-kernel.md backend/app/decision_kernel/service.py backend/tests/test_decision_kernel.py backend/tests/test_cli.py docs/plans/phase-49-successor-gate-2026-05-18.md
+python scripts/check_no_secrets.py
 git diff --check
 ```
 

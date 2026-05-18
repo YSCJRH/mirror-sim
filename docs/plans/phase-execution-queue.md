@@ -71,7 +71,10 @@ Local phase audits currently report:
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes`
   - first protected-core repo-truth and lane-policy work item
-  - expected to close with the PR that introduces the Phase 49 baseline and runtime-core lane protection
+  - closed by PR `#385`
+- `#386` `Phase 49: ratify kernel trace and replay contract`
+  - current protected-core kernel trace/replay contract work item
+  - expected to close with the PR that documents the v1 trace contract and hardens trace privacy tests
 - phase gate baseline
   - active Phase 49 gate note: `docs/plans/phase-49-successor-gate-2026-05-18.md`
 

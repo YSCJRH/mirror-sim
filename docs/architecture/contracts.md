@@ -141,12 +141,66 @@ All IDs must be serializable, stable across files, and traceable in `artifacts/`
   - write arbitrary world state directly
   - bypass validator checks
   - bypass replay persistence
+- Kernel entry must reject any candidate `StepChoice` whose `action_type` is not listed in
+  the world-local `decision_schema.yaml` `allowed_action_types`; this is a defense-in-depth
+  guard in addition to upstream scenario and simulation rule validation.
 - Deterministic fallback is mandatory when:
   - the model is unavailable
   - the output is invalid
   - retries are exhausted
 - Replayability is mandatory.
   - the same world state plus the same legal choice set must be able to replay the same selected action through stored decision artifacts
+- `decision_trace.jsonl` is the durable v1 decision audit artifact. Each line is a
+  `DecisionTraceEntry` with these stable fields:
+  - `run_id`
+  - `turn_index`
+  - `actor_id`
+  - `provider_mode`
+  - `model_id`
+  - `prompt_version`
+  - `input_hash`
+  - `output_hash`
+  - `available_choices`
+  - `selected_choice_index`
+  - `selected_action_type`
+  - `selected_target_id`
+  - `rationale`
+  - `validation_status`
+  - `fallback_used`
+- Stable `provider_mode` values are:
+  - `openai_compatible` when a configured request-scoped compatible provider returns a
+    validated legal choice.
+  - `hosted_openai` when the hosted private-beta provider returns a validated legal choice.
+  - `deterministic_fallback` when model configuration is absent, provider execution fails,
+    model output is invalid, or retry attempts are exhausted.
+  - `single_choice` when only one legal action exists.
+  - `replay_cache` when the selection is copied from an existing trace entry for the same
+    `input_hash`.
+- Stable `validation_status` values are:
+  - `accepted_after_attempt_<n>` for validated provider output.
+  - `accepted_via_fallback` for deterministic fallback after invalid/unavailable provider
+    output or missing provider configuration.
+  - `accepted_single_choice` for a one-choice legal action set.
+  - `accepted_from_replay` for replay-cache reuse.
+- Replay uses `input_hash`, which is computed from the world id, scenario id, turn index,
+  actor id, current state, and legal choice summaries. If a cached trace entry has the same
+  hash and its `selected_choice_index` is still legal, the kernel must select that cached
+  index without re-querying a provider.
+- Decision traces are append-only audit history for a concrete run/node artifact. A replay
+  cache hit appends a new trace row with `provider_mode` set to `replay_cache` and
+  `validation_status` set to `accepted_from_replay` rather than rewriting the original row.
+- Replay-cache rows preserve the cached decision provenance for `model_id`, `prompt_version`,
+  `rationale`, and `output_hash`, while the new row's `run_id`, `turn_index`, and `actor_id`
+  describe the current replay context.
+- Fallback traces must not fail open. They must select the deterministic fallback action,
+  set `fallback_used` to `true`, set `provider_mode` to `deterministic_fallback`, and set
+  `validation_status` to `accepted_via_fallback`.
+- Trace privacy is part of the contract:
+  - `input_hash` and `output_hash` are hashes, not raw prompt or raw provider output.
+  - raw provider credentials, beta access codes, request headers, provider exception text,
+    and local filesystem paths must not be written into `decision_trace.jsonl`.
+  - `rationale` may summarize accepted model rationale or deterministic fallback reason, but
+    must not include raw provider errors.
 
 ## Compare Contract
 
