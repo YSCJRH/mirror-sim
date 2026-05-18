@@ -20,6 +20,7 @@ Phase 1 public demo routes:
 Phase 1 public demo mutation rules:
 
 - `/api/runtime/start-session`, `/api/runtime/generate-branch`, `/api/runtime/rollback-session`, and `/api/worlds/create` return 403 when `MIRROR_PUBLIC_DEMO_MODE=1` and `MIRROR_ALLOW_ANONYMOUS_RUNS` is not `1`
+- `MIRROR_ALLOW_ANONYMOUS_RUNS=1` is a private-preview/runtime override, not the Phase 1 public demo release profile
 - `/worlds/new` shows a disabled explanation in public mode
 - Hosted GPT, BYOK, corpus upload, auth, billing, object storage, database-backed worlds, and quotas are reserved for later phases
 
@@ -27,7 +28,7 @@ Artifact access uses `ArtifactSource` and logical ids such as `demo.report`, `de
 
 Private-beta candidate product routes:
 
-- `/` is the `Launch Hub`
+- `/` is not currently the private-beta Launch Hub; current tracked code keeps `/` as the guided public Fog Harbor demo
 - `/worlds/new` creates one bounded incident world under the runtime state root
 - `/worlds/new` now includes quick-start presets and a clearer data-authorization note so first-time users do not have to author every field from scratch
 - `/worlds/[worldId]` is the world home
@@ -36,9 +37,8 @@ Private-beta candidate product routes:
 - `/worlds/[worldId]/runtime/[sessionId]/explain` is the world-scoped live explain view
 - `/worlds/[worldId]/runtime/[sessionId]/report` is the world-scoped live report view
 - `/worlds/[worldId]/review` is the world-scoped review surface, with scorecard + inline branch digest + report/claims previews
-- world home, perturb, and review automatically pick up the latest live session for the world when no explicit session query is present
-- Launch Hub now also surfaces the latest live node per world and links directly into the current runtime and review entrypoints
-- Launch Hub now prioritizes fast return paths: continue the latest session when available, otherwise create a world or open perturb
+- world home, perturb, and review automatically pick up the latest session by `session.created_at` for the world when no explicit session query is present, then use that session's `active_node_id`
+- TODO[verify]: Decide whether a future Launch Hub should use latest session creation time, latest activity time, or a separate `last_activity_at` contract
 - canonical product metadata now supports locale-aware world names, summaries, baselines, and perturbation labels; self-serve worlds continue to display the language the user entered
 - main product-shell terms on the private-beta candidate path are being normalized alongside locale-aware world metadata, so Chinese mode no longer mixes core route labels with obvious English operator wording
 - runtime result cards now prefer world-defined outcome labels from product metadata instead of exposing raw outcome field keys directly
@@ -55,7 +55,9 @@ Key runtime behavior:
 - hosted generation passes a hashed beta identity into the backend so quota state can be recorded under ignored runtime `state/usage/*`
 - the perturbation workspace restores the last browser-session provider/model choice to reduce repeat setup for returning users
 - live runtime surfaces expose the active decision-model summary, including provider mode, model id, fallback count, and replay count
-- `openai_compatible` now requires a concrete model id unless `MIRROR_DECISION_MODEL` is already supplied on the server
+- web `openai_compatible` now requires request-scoped model/API-key input instead of using
+  server provider env as a client-visible fallback; use `hosted_openai` for the server-held
+  key path
 
 Legacy/demo routes kept for reference:
 

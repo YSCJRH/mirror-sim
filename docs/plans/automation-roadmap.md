@@ -163,7 +163,7 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 48 is the active approved successor queue.
 - milestone `Phase 48 - Successor Intake and Boundary Contract Triage` is open.
 - `#375` `Phase 48 exit gate` is open, blocked, and protected-core.
-- `#376` is the initial Phase 48 repo-truth sync item, `#377` records public/private/plugin boundary acceptance, and `#378` through `#379` are ready follow-up work items.
+- `#376` is the initial Phase 48 repo-truth sync item, `#377` records public/private/plugin boundary acceptance, `#378` records the private-beta runtime contract audit, and `#379` is the remaining ready follow-up work item.
 - `audit-github-queue` reports `ready` with Phase 48 as the active milestone.
 - The first formal repository release is published as `v0.1.0`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
