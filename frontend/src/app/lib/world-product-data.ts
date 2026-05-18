@@ -65,6 +65,7 @@ export type ProductWorldSummary = {
     runtimeHref: string;
     reviewHref: string;
     createdAt: string;
+    lastActivityAt: string;
   } | null;
 };
 
@@ -254,14 +255,15 @@ export async function listProductWorlds(locale: AppLocale = "en"): Promise<Produ
               runtimeHref: `/worlds/${worldId}/runtime/${latestSession.sessionId}?node=${encodeURIComponent(latestWorkspace.selectedNode.node_id)}`,
               reviewHref: `/worlds/${worldId}/review?session=${encodeURIComponent(latestSession.sessionId)}&node=${encodeURIComponent(latestWorkspace.selectedNode.node_id)}`,
               createdAt: latestSession.createdAt,
+              lastActivityAt: latestSession.lastActivityAt,
             }
           : null,
       };
     })
   );
   return summaries.sort((left, right) => {
-    const leftTime = left.latestSession ? new Date(left.latestSession.createdAt).getTime() : 0;
-    const rightTime = right.latestSession ? new Date(right.latestSession.createdAt).getTime() : 0;
+    const leftTime = left.latestSession ? new Date(left.latestSession.lastActivityAt).getTime() : 0;
+    const rightTime = right.latestSession ? new Date(right.latestSession.lastActivityAt).getTime() : 0;
     return rightTime - leftTime;
   });
 }

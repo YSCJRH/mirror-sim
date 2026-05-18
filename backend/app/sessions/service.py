@@ -137,9 +137,10 @@ def _write_root_node(
     world_id: str,
     scenario_id: str,
     artifacts_root: Path,
+    created_at: str | None = None,
 ) -> tuple[str, SessionNodeManifest, SessionNodeRecord]:
     node_id = "node_root"
-    created_at = _created_at()
+    created_at = created_at or _created_at()
     node_path = _session_root(session_id, artifacts_root) / "nodes" / node_id / "node.json"
     node_manifest = SessionNodeManifest(
         node_id=node_id,
@@ -342,11 +343,13 @@ def start_session(
         )
     if resolved_provider == "deterministic_only":
         resolved_decision_model = None
+    created_at = _created_at()
     root_node_id, _, root_record = _write_root_node(
         session_id=session_id,
         world_id=world_id,
         scenario_id=scenario_id,
         artifacts_root=resolved_artifacts_root,
+        created_at=created_at,
     )
     session_manifest = SimulationSessionManifest(
         session_id=session_id,
@@ -358,7 +361,8 @@ def start_session(
             provider=resolved_provider,
             model_id=resolved_decision_model,
         ),
-        created_at=_created_at(),
+        created_at=created_at,
+        last_activity_at=created_at,
         nodes=[root_record],
     )
     payload = session_manifest.model_dump()
@@ -517,6 +521,7 @@ def generate_branch(
 
     session.active_node_id = child_node.node_id
     session.nodes.append(_record_for_node(child_node, resolved_artifacts_root))
+    session.last_activity_at = _created_at()
     _write_session_manifest(session, resolved_artifacts_root)
     return session
 
@@ -538,6 +543,8 @@ def rollback_session(
     _ = repo_root
     if not any(node.node_id == node_id for node in session.nodes):
         raise ValueError(f"Unknown rollback target `{node_id}` in session `{session_id}`.")
-    session.active_node_id = node_id
+    if session.active_node_id != node_id:
+        session.active_node_id = node_id
+        session.last_activity_at = _created_at()
     _write_session_manifest(session, resolved_artifacts_root)
     return session

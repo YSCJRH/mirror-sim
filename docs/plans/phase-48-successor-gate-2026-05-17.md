@@ -79,8 +79,9 @@ Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening
 
 The active Phase 49 queue starts with `#383` `Phase 49 exit gate` and `#384`
 `Phase 49: sync repo truth and protect runtime core lanes`; after PR `#385`, `#386`
-closed through PR `#387`, and `#388` closed through PR `#389`, the current ready work
-item is `#390` `Phase 49: ratify runtime parent-child compare emission policy`.
+closed through PR `#387`, `#388` closed through PR `#389`, and `#390` closed
+through PR `#391`, the current ready work item is `#392`
+`Phase 49: ratify runtime latest-activity metadata and rollback scope`.
 
 ## Work Item Mapping
 

@@ -79,8 +79,11 @@ Local phase audits currently report:
   - closed by PR `#389`
   - documented the template-plus-parameters contract and hardened resolver tests
 - `#390` `Phase 49: ratify runtime parent-child compare emission policy`
-  - current protected-core runtime compare emission work item
-  - expected to close with the PR that ratifies unconditional session-scoped parent-vs-child compare emission for generated runtime nodes
+  - closed by PR `#391`
+  - ratified unconditional session-scoped parent-vs-child compare emission for generated runtime nodes
+- `#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope`
+  - current protected-core runtime activity and rollback scope work item
+  - expected to close with the PR that ratifies `last_activity_at` and pointer-only rollback scope
 - phase gate baseline
   - active Phase 49 gate note: `docs/plans/phase-49-successor-gate-2026-05-18.md`
 

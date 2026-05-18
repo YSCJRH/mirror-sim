@@ -4,7 +4,7 @@ Date: 2026-05-18
 
 Issue: `#384` `Phase 49: sync repo truth and protect runtime core lanes`
 
-Current work item: `#390` `Phase 49: ratify runtime parent-child compare emission policy`
+Current work item: `#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope`
 
 This note records the post-Phase-48 baseline and opens the Phase 49 successor queue.
 Phase 49 is a protected-core contract-hardening phase for the decision kernel,
@@ -73,13 +73,18 @@ Active GitHub objects:
     including template-plus-parameters mapping and invalid payload rejection tests.
 - `#390` `Phase 49: ratify runtime parent-child compare emission policy`
   - Lane: `protected-core`.
-  - Status: current ready work item.
+  - Status: closed by PR `#391`.
   - Scope: ratify that every successful generated runtime child node emits a session-scoped
     parent-vs-child compare artifact without changing scenario-level compare contracts.
+- `#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope`
+  - Lane: `protected-core`.
+  - Status: current ready work item.
+  - Scope: ratify `last_activity_at` as the product-facing session ordering timestamp and
+    preserve v1 rollback as active-pointer movement without deleting or rewriting artifacts.
 
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
 with Phase 49 as the only open milestone, `#383` as the protected blocked exit gate, and
-`#390` as the current ready work item.
+`#392` as the current ready work item.
 
 ## Protected-Core Lane Coverage
 
@@ -103,8 +108,9 @@ public demo artifact layout, or the Mirror Codex MCP contract.
 
 - TODO[verify]: Codex UI tool-card evidence remains open until a clean Codex app session
   shows observable MCP tool or resource cards/traces for the Mirror Codex plugin.
-- TODO[verify]: Latest-session versus latest-activity semantics need a contract decision
-  before more world-card or launch-hub affordances depend on activity ordering.
+- Latest-session versus latest-activity semantics are now ratified as `last_activity_at`
+  ordering with `created_at` fallback; TODO[verify]: re-open contract review before adding
+  other activity sources or changing failed-operation activity behavior.
 - The first `decision_trace.jsonl` v1 field set is now ratified in
   `docs/architecture/contracts.md`; TODO[verify]: re-open contract review before adding new
   trace fields, changing validation status values, or widening provider output persistence.
@@ -115,7 +121,9 @@ public demo artifact layout, or the Mirror Codex MCP contract.
 - Every successful generated non-root runtime node now emits a session-scoped parent-vs-child
   compare output; TODO[verify]: re-open contract review before making runtime compare
   emission optional or changing reference-branch selection away from the immediate parent.
-- TODO[verify]: Decide whether checkpoint rollback exists in Phase 49 or remains deferred.
+- Checkpoint rollback remains deferred; v1 rollback only moves `active_node_id`.
+  TODO[verify]: re-open contract review before adding deletion, mutation, retry, or restore
+  semantics beyond pointer movement.
 - TODO[verify]: Identify which Fog Harbor-shaped report and eval assumptions still block a
   stronger `museum-night` transfer proof.
 - TODO[verify]: Define what measured generation duration would justify `task_id` and worker
@@ -141,7 +149,8 @@ public demo artifact layout, or the Mirror Codex MCP contract.
 4. Rollback, checkpoint, and latest-activity semantics
    - Keep v1 rollback as `active_node_id` pointer movement until a new contract says
      otherwise.
-   - Decide whether a `last_activity_at` field or equivalent runtime metadata is required.
+   - Ratify `last_activity_at` as the runtime metadata used to order product session
+     affordances, with fallback for older manifests that only have `created_at`.
 
 5. Fog Harbor de-specialization and transfer evals
    - Remove or document remaining Fog Harbor-shaped assumptions before claiming broader
@@ -177,8 +186,8 @@ Phase 49 must stay aligned with `mirror.md` and `AGENTS.md`:
 - Do not promote local untracked April/private-beta planning files as durable truth without a
   reviewed PR.
 - Do not implement free-form natural-language perturbation execution, async worker,
-  checkpoint semantics, or frontend compare UI inside `#390`; `#390` only ratifies runtime
-  compare emission policy and hardens CLI/session artifact tests.
+  checkpoint mutation/deletion semantics, transfer expansion, or frontend compare UI inside
+  `#392`; `#392` only ratifies latest-activity metadata and pointer-only rollback scope.
 
 ## Validation Commands
 
@@ -220,6 +229,18 @@ For `#390`, run:
 python -m pytest backend/tests/test_cli.py -k "generate_branch or compare" -q
 python -m pytest backend/tests/test_phase49_successor_gate.py backend/tests/test_automation.py -q
 python -m backend.app.cli classify-lane --files docs/architecture/contracts.md docs/decisions/ADR-0006-interactive-simulator-runtime-v1.md backend/app/sessions/service.py backend/tests/test_cli.py docs/plans/phase-49-successor-gate-2026-05-18.md README.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md
+python scripts/check_no_secrets.py
+python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
+git diff --check
+```
+
+For `#392`, run:
+
+```powershell
+python -m pytest backend/tests/test_cli.py -k "start_session or generate_branch or rollback_session" -q
+python -m pytest backend/tests/test_frontend_runtime_activity.py -q
+python -m pytest backend/tests/test_phase49_successor_gate.py backend/tests/test_automation.py -q
+python -m backend.app.cli classify-lane --files docs/architecture/contracts.md docs/decisions/ADR-0006-interactive-simulator-runtime-v1.md backend/app/domain/models.py backend/app/sessions/service.py backend/tests/test_cli.py backend/tests/test_frontend_runtime_activity.py frontend/src/app/lib/runtime-session-data.ts frontend/src/app/lib/world-product-data.ts docs/plans/phase-49-successor-gate-2026-05-18.md README.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 git diff --check

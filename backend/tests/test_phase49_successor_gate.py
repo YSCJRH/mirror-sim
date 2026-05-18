@@ -36,6 +36,7 @@ def test_phase49_successor_gate_records_work_packages_and_boundaries() -> None:
         "`#386` `Phase 49: ratify kernel trace and replay contract`",
         "`#388` `Phase 49: ratify perturbation schema and resolver authoring contract`",
         "`#390` `Phase 49: ratify runtime parent-child compare emission policy`",
+        "`#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope`",
         "Kernel trace and replay contract",
         "Perturbation schema and resolver contract",
         "Branch generation and compare emission policy",
@@ -46,7 +47,8 @@ def test_phase49_successor_gate_records_work_packages_and_boundaries() -> None:
         "Do not present Mirror as a real-world prediction machine",
         "Do not build real-person personas or digital doubles",
         "TODO[verify]: Codex UI tool-card",
-        "TODO[verify]: Latest-session versus latest-activity",
+        "Latest-session versus latest-activity semantics are now ratified",
+        "Checkpoint rollback remains deferred",
     ]
     for phrase in required_phrases:
         assert phrase in gate
@@ -70,3 +72,4 @@ def test_active_state_docs_point_to_phase49_queue() -> None:
         assert "`#386`" in text
         assert "`#388`" in text
         assert "`#390`" in text
+        assert "`#392`" in text
