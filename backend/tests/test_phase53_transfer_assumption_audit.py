@@ -104,6 +104,7 @@ def test_active_docs_point_to_current_phase53_assumption_audit() -> None:
         assert "`#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`" in text
         assert "closed by PR `#423`" in text
         assert "`#421` `Phase 53: add bounded third-world transfer readiness evidence`" in text
-        assert "current ready" in text or "Status: current ready work item." in text
+        assert "closed by PR `#424`" in text
+        assert "formal paused stop-state" in text
         for phrase in stale_phrases:
             assert phrase not in text, f"{path} still treats #420 as blocked: {phrase}"
