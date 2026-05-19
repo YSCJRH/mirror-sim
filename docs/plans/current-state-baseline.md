@@ -285,12 +285,13 @@ This note records the active Phase 53 transfer-generalization successor queue af
     - `docs/plans/phase-52-successor-gate-2026-05-18.md` records the completed gate note
   - `gh issue list --milestone "Phase 53 - Transfer Generalization and Third-World Readiness" --state all`
     - `#418` `Phase 53 exit gate` is `open`, `blocked`, and `lane:protected-core`
-    - `#419` `Phase 53: sync repo truth after Phase 52 closeout and define transfer gate` is the current ready Phase 53 protected-core work item
-    - `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints` is `open` and `blocked`
+    - `#419` `Phase 53: sync repo truth after Phase 52 closeout and define transfer gate` is `closed` by PR `#422`
+    - `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints` is the current ready Phase 53 protected-core work item
     - `#421` `Phase 53: add bounded third-world transfer readiness evidence` is `open` and `blocked`
   - Phase 53 Successor Gate:
     - Phase 53 - Transfer Generalization and Third-World Readiness is the active approved successor queue
     - `docs/plans/phase-53-successor-gate-2026-05-19.md` records the active gate note
+    - `docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md` records the current transfer assumption audit
     - Phase 53 focuses on bounded transfer generalization and third-world readiness
     - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged
 
@@ -345,11 +346,12 @@ This note records the active Phase 53 transfer-generalization successor queue af
 - Phase 52 focused on legacy top-level runtime routes and runtime mutation guard regression coverage without widening public/plugin/async contracts.
 - The Phase 52 Legacy Top-Level Runtime Route Audit note lives in `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`.
 - The Phase 52 Runtime Mutation Guard Regression Baseline note lives in `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md` and keeps route-derived `worldId` guard coverage in scope.
-- `#419` `Phase 53: sync repo truth after Phase 52 closeout and define transfer gate` is the current ready Phase 53: sync repo truth after Phase 52 closeout and define transfer gate.
-- `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints` is blocked until `#419` closes.
+- `#419` `Phase 53: sync repo truth after Phase 52 closeout and define transfer gate` is closed by PR `#422`.
+- `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints` is the current ready Phase 53 transfer-assumption audit.
 - `#421` `Phase 53: add bounded third-world transfer readiness evidence` is blocked until `#420` closes.
 - Phase 53 focuses on bounded transfer generalization and third-world readiness without widening public demo, plugin, Hosted GPT/BYOK, launch hub, async, or runtime mutation boundaries.
 - The active Phase 53 Successor Gate lives in `docs/plans/phase-53-successor-gate-2026-05-19.md`.
+- The current Phase 53 Transfer Assumption Audit lives in `docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md`.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.
@@ -363,6 +365,7 @@ This note records the active Phase 53 transfer-generalization successor queue af
 - The completed Phase 51 successor-gate baseline lives in `docs/plans/phase-51-successor-gate-2026-05-18.md`.
 - The completed Phase 52 successor-gate baseline lives in `docs/plans/phase-52-successor-gate-2026-05-18.md`.
 - The active Phase 53 successor-gate baseline lives in `docs/plans/phase-53-successor-gate-2026-05-19.md`.
+- The current Phase 53 transfer-assumption audit baseline lives in `docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md`.
 - Local untracked private-beta, kernel, and design-system planning files under `docs/plans/...` are candidate inputs only until a PR intentionally promotes them.
 - Protected-core changes still require explicit review even when safe-lane automation is available.
 - `docs/plans/long-running-loop-runbook.md` is the operational handoff note for authenticated queue audit, worktree pickup, and post-merge checkpointing.

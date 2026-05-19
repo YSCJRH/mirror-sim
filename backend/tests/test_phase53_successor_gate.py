@@ -13,7 +13,7 @@ def test_phase53_successor_gate_exists_with_required_sections() -> None:
     required_sections = [
         "# Phase 53 Successor Gate",
         "Issue: `#419` `Phase 53: sync repo truth after Phase 52 closeout and define transfer gate`",
-        "Current work item: `#419` `Phase 53: sync repo truth after Phase 52 closeout and define transfer gate`",
+        "Current work item: `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`",
         "## Phase 52 Closeout Evidence",
         "## Phase 53 Operational Queue",
         "## Transfer-Generalization Scope",
@@ -40,7 +40,8 @@ def test_phase53_successor_gate_records_queue_and_boundaries() -> None:
         "`#421` `Phase 53: add bounded third-world transfer readiness evidence`",
         "Status: blocked closeout gate for Phase 53.",
         "Status: current ready work item.",
-        "Status: blocked until `#419` closes.",
+        "Status: closed by PR `#422`.",
+        "Status: blocked until `#420` closes.",
         "Phase 52 is closed after PR `#416`, issue `#410`, and milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit`",
         "bounded transfer generalization",
         "third-world readiness",
@@ -76,7 +77,7 @@ def test_active_state_docs_point_to_phase53_queue() -> None:
         assert "`#421`" in text
         assert "Phase 53 Successor Gate" in text
         assert "`docs/plans/phase-53-successor-gate-2026-05-19.md`" in text
-        assert "Phase 53: sync repo truth after Phase 52 closeout and define transfer gate" in text
+        assert "Phase 53: audit transfer assumptions and third-world readiness constraints" in text
         assert "current ready" in text
         assert "bounded transfer generalization" in text
         assert "third-world readiness" in text

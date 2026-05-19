@@ -4,7 +4,7 @@ Date: 2026-05-19
 
 Issue: `#419` `Phase 53: sync repo truth after Phase 52 closeout and define transfer gate`
 
-Current work item: `#419` `Phase 53: sync repo truth after Phase 52 closeout and define transfer gate`
+Current work item: `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`
 
 This note records the post-Phase-52 baseline and the Phase 53 successor queue. Phase 53
 is a protected-core transfer-generalization and third-world readiness phase. It opens a
@@ -43,12 +43,13 @@ Active GitHub objects:
   - Status: blocked closeout gate for Phase 53.
 - `#419` `Phase 53: sync repo truth after Phase 52 closeout and define transfer gate`
   - Lane: `protected-core`.
-  - Status: current ready work item.
+  - Status: closed by PR `#422`.
   - Scope: sync durable docs and tests to the active Phase 53 queue.
 - `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`
   - Lane: `protected-core`.
-  - Status: blocked until `#419` closes.
+  - Status: current ready work item.
   - Scope: define allowed and blocked transfer-readiness claims before adding evidence.
+  - Audit note: `docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md`.
 - `#421` `Phase 53: add bounded third-world transfer readiness evidence`
   - Lane: `protected-core`.
   - Status: blocked until `#420` closes.
@@ -56,7 +57,7 @@ Active GitHub objects:
 
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
 with Phase 53 as the only open milestone, `#418` as the protected blocked exit gate, and
-`#419` as the current ready work item.
+`#420` as the current ready work item.
 
 ## Transfer-Generalization Scope
 
@@ -118,6 +119,7 @@ public demo artifact layout, or the Mirror Codex MCP contract.
    - Audit `eval-transfer` and existing transfer assumption language.
    - Record allowed transfer-readiness claims, blocked claims, and evidence gaps.
    - Keep transfer language evidence-bounded and world-bounded.
+   - Current audit note: `docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md`.
 
 3. Bounded third-world transfer readiness evidence
    - Add a small original/fictional third-world readiness slice or document a reviewed
@@ -161,13 +163,13 @@ Phase 53 must stay aligned with `mirror.md` and `AGENTS.md`:
 
 ## Validation Commands
 
-For `#419`, run:
+For `#420`, run:
 
 ```powershell
-python -m pytest backend/tests/test_phase53_successor_gate.py backend/tests/test_phase52_successor_gate.py -q
+python -m pytest backend/tests/test_phase53_transfer_assumption_audit.py backend/tests/test_phase53_successor_gate.py -q
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
-python -m backend.app.cli classify-lane --files README.md docs/plans/current-state-baseline.md docs/plans/automation-roadmap.md docs/plans/phase-execution-queue.md docs/plans/phase-53-successor-gate-2026-05-19.md backend/tests/test_phase53_successor_gate.py
+python -m backend.app.cli classify-lane --files README.md docs/plans/current-state-baseline.md docs/plans/automation-roadmap.md docs/plans/phase-execution-queue.md docs/plans/phase-53-successor-gate-2026-05-19.md docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md backend/tests/test_phase53_successor_gate.py backend/tests/test_phase53_transfer_assumption_audit.py
 git diff --check
 ./make.ps1 test
 ./make.ps1 eval-demo
