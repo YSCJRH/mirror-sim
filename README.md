@@ -254,7 +254,7 @@ session or node manifests that conflict with route `worldId` or `sessionId`. See
 
 Phase 52 Legacy Route Containment and Runtime Scope Audit: Phase 51 is closed after PR
 `#409`, issue `#403`, and milestone `Phase 51 - Private-Beta Route Contract and Runtime
-Readiness Gate`; private-beta route ownership and world-scoped session guards remain ratified by Phase 51. Phase 52 is closed after PR `#416`, issue `#410`, and milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit`; `audit-github-queue` now reports the formal paused stop-state with no active milestone. Repo-truth sync closed
+Readiness Gate`; private-beta route ownership and world-scoped session guards remain ratified by Phase 51. Phase 52 is closed after PR `#416`, issue `#410`, and milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit`; before Phase 53 was opened, `audit-github-queue` reported the formal paused stop-state with no active milestone. Repo-truth sync closed
 through PR `#414`; the Phase 52 Legacy Top-Level Runtime Route Audit for `#412` closed
 through PR `#415` and is recorded in
 `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`. The Phase 52 Runtime Mutation Guard Regression Baseline for `#413` is closed by PR `#416` and is recorded in
@@ -263,6 +263,16 @@ runtime mutation guard regression coverage for route-derived `worldId` and publi
 blocking after the legacy top-level runtime routes audit, without widening public demo,
 plugin, Hosted GPT/BYOK, or async contracts. See
 `docs/plans/phase-52-successor-gate-2026-05-18.md`.
+
+Phase 53 Transfer Generalization and Third-World Readiness: Phase 53 is the active
+approved successor queue after the Phase 52 closeout. `audit-github-queue` reports
+`ready` with milestone `Phase 53 - Transfer Generalization and Third-World Readiness`,
+blocked exit gate `#418`, and current ready work item `#419` `Phase 53: sync repo truth
+after Phase 52 closeout and define transfer gate`. Follow-up work items `#420` and `#421`
+remain blocked until the transfer gate is synced. Phase 53 focuses on bounded transfer
+generalization and third-world readiness, without widening public demo, plugin, Hosted
+GPT/BYOK, launch hub, async, or runtime mutation boundaries. See
+`docs/plans/phase-53-successor-gate-2026-05-19.md`.
 
 ---
 
@@ -295,11 +305,13 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - The completed Phase 50 successor gate lives in [docs/plans/phase-50-successor-gate-2026-05-18.md](docs/plans/phase-50-successor-gate-2026-05-18.md).
 - The completed Phase 51 successor gate lives in [docs/plans/phase-51-successor-gate-2026-05-18.md](docs/plans/phase-51-successor-gate-2026-05-18.md).
 - The completed Phase 52 successor gate lives in [docs/plans/phase-52-successor-gate-2026-05-18.md](docs/plans/phase-52-successor-gate-2026-05-18.md).
+- The active Phase 53 Successor Gate lives in [docs/plans/phase-53-successor-gate-2026-05-19.md](docs/plans/phase-53-successor-gate-2026-05-19.md).
 - Phase 48 is closed after PR `#382`, issue `#375`, and milestone `Phase 48 - Successor Intake and Boundary Contract Triage`.
 - Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
 - Phase 50 is closed after PR `#402`, issue `#396`, and milestone `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; completed work items were `#397`, `#398`, and `#401`. Phase 50 measured before any `task_id` or worker contract is introduced and kept the private-beta launch hub planning-only for now.
 - Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`; completed work items were `#404`, `#405`, and `#406`.
-- Phase 52 is closed after PR `#416`, issue `#410`, and milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit`; completed work items were `#411`, `#412`, and `#413`. `audit-github-queue` now reports the formal paused stop-state with no active milestone. The legacy top-level runtime routes audit note lives in `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`; the runtime guard note lives in `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`; Phase 52 did not widen public demo, plugin, Hosted GPT/BYOK, or async contracts and keeps route-derived `worldId` guard coverage in scope.
+- Phase 52 is closed after PR `#416`, issue `#410`, and milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit`; completed work items were `#411`, `#412`, and `#413`. Before Phase 53 was opened, `audit-github-queue` reported the formal paused stop-state with no active milestone. The legacy top-level runtime routes audit note lives in `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`; the runtime guard note lives in `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`; Phase 52 did not widen public demo, plugin, Hosted GPT/BYOK, or async contracts and keeps route-derived `worldId` guard coverage in scope.
+- Phase 53 is the active approved successor queue: `Phase 53 - Transfer Generalization and Third-World Readiness`; `audit-github-queue` reports `ready` with `#418` as the blocked exit gate, `#419` as the current ready Phase 53: sync repo truth after Phase 52 closeout and define transfer gate, and `#420`/`#421` blocked. Phase 53 focuses on bounded transfer generalization and third-world readiness without widening public demo, plugin, Hosted GPT/BYOK, launch hub, async, or runtime mutation boundaries.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
 - Fog Harbor remains the canonical demo world; `museum-night` is the minimal transfer world used to prove the pipeline is not single-world-only.
 
