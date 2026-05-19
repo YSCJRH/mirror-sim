@@ -66,7 +66,7 @@ def test_phase53_successor_gate_records_queue_and_boundaries() -> None:
         assert phrase in gate
 
 
-def test_active_state_docs_point_to_phase53_queue() -> None:
+def test_active_state_docs_preserve_phase53_closeout_history() -> None:
     required_docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -86,7 +86,6 @@ def test_active_state_docs_point_to_phase53_queue() -> None:
         assert "Phase 53: audit transfer assumptions and third-world readiness constraints" in text
         assert "Phase 53: add bounded third-world transfer readiness evidence" in text
         assert "closed by PR `#424`" in text
-        assert "formal paused stop-state" in text
         assert "`library-rain`" in text
         assert "bounded transfer generalization" in text
         assert "third-world readiness" in text

@@ -29,7 +29,7 @@ def test_phase53_third_world_evidence_note_records_library_rain() -> None:
         assert phrase in text
 
 
-def test_active_docs_point_to_phase53_third_world_evidence() -> None:
+def test_active_docs_preserve_phase53_third_world_evidence_history() -> None:
     required_docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -44,7 +44,6 @@ def test_active_docs_point_to_phase53_third_world_evidence() -> None:
         assert "`#421` `Phase 53: add bounded third-world transfer readiness evidence`" in text
         assert "`library-rain`" in text
         assert "closed by PR `#424`" in text
-        assert "formal paused stop-state" in text
 
 
 def test_phase53_third_world_contract_and_adr_record_reviewed_world_set() -> None:
