@@ -297,14 +297,16 @@ This note records the active Phase 54 runtime-orchestration successor queue afte
     - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged
   - `gh issue list --milestone "Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate" --state all`
     - `#426` `Phase 54 exit gate` is `open` and `status:blocked`
-    - `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate` is `open` and `status:ready`
-    - `#428` `Phase 54: refresh runtime measurement and decide async contract boundary` is `open`, `status:ready`, and `status:needs-adr`
+    - `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate` is `closed` by PR `#429`
+    - `#428` `Phase 54: refresh runtime measurement and decide async contract boundary` records the Phase 54 Runtime Measurement and Async Contract Decision and carries `status:needs-adr`
   - `gh api repos/YSCJRH/mirror-sim/milestones/54`
     - milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate` is `open`
   - Phase 54 Successor Gate:
     - `docs/plans/phase-54-successor-gate-2026-05-19.md` records the active gate note
+    - `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md` records the Phase 54 Runtime Measurement and Async Contract Decision
     - `audit-github-queue` reports `ready`
     - Phase 54 covers runtime measurement and async contract decision work
+    - Keep synchronous generation for v1. Defer async task contract ratification.
     - public demo, plugin, Hosted GPT/BYOK, launch hub, async implementation, and runtime mutation boundaries remain unchanged
 
 ## Trusted Source Of Truth
@@ -327,7 +329,7 @@ This note records the active Phase 54 runtime-orchestration successor queue afte
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
 - The default workbench path now consumes the canonical compare artifact directly and keeps focused divergent trace surfaces ahead of heavier packet-driven review flows.
 - The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, decision-template snippets, role preset cards, response-packaging shortcuts, apply-and-copy preset actions, grouped response-pack export, active preset session summary strips, route-filtered response kit choosers, route-kit comparison cards, preset session handoff packets, send-readiness cue strips, compact-versus-full handoff packet variants, destination-specific sender notes, compact-versus-full handoff packet diff previews, final send summary cards, destination-aware packet recommendation banners, delivery-bundle exports, receiver follow-up packs, delivery checkpoint boards, receiver response packets, reply outcome trackers, resolution handoff packs, resolution status boards, next-step routing packs, action readiness boards, escalation handoff packets, execution kickoff boards, execution progress trackers, execution outcome boards, execution correction boards, execution recovery boards, execution recovery checkpoint boards, execution recovery clearance boards, execution recovery release boards, escalation decision guides, escalation trigger packets, escalation dispatch packets, escalation delivery packets, escalation confirmation packets, escalation receipt packets, escalation acknowledgment packets, and escalation closure packets without introducing backend API expansion.
-- The active repository state has Phase 53 transfer-generalization closeout complete, Phase 54 runtime-orchestration successor work open, `v0.1.0` preserved as the latest published release baseline, and public demo, plugin, Hosted GPT/BYOK, launch hub, async implementation, and runtime mutation boundaries unchanged.
+- The active repository state has Phase 53 transfer-generalization closeout complete, Phase 54 Runtime Measurement and Async Contract Decision recorded, `v0.1.0` preserved as the latest published release baseline, and public demo, plugin, Hosted GPT/BYOK, launch hub, async implementation, and runtime mutation boundaries unchanged.
 
 ## Next Entry Point
 
@@ -343,8 +345,9 @@ This note records the active Phase 54 runtime-orchestration successor queue afte
 - The Phase 52 exit gate is `#410` `Phase 52 exit gate`, which closed after post-merge validation on `main`.
 - The Phase 53 exit gate is `#418` `Phase 53 exit gate`, which closed after post-merge validation on `main`.
 - The Phase 54 exit gate is `#426` `Phase 54 exit gate`, which is open and blocked.
-- `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate` is open and ready.
-- `#428` `Phase 54: refresh runtime measurement and decide async contract boundary` is open and ready with `status:needs-adr`.
+- `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate` is closed by PR `#429`.
+- `#428` `Phase 54: refresh runtime measurement and decide async contract boundary` records the Phase 54 Runtime Measurement and Async Contract Decision with `status:needs-adr`.
+- Keep synchronous generation for v1. Defer async task contract ratification.
 - `#397` `Phase 50: sync repo truth after Phase 49 closeout` is closed by PR `#399`.
 - `#398` `Phase 50: measure runtime generation duration before task_id decision` is closed by PR `#400`.
 - `#401` `Phase 50: ratify private-beta launch hub and public-path boundary` is closed by PR `#402`.
@@ -370,7 +373,9 @@ This note records the active Phase 54 runtime-orchestration successor queue afte
 - The completed Phase 53 Transfer Assumption Audit lives in `docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md`.
 - The completed Phase 53 Third-World Transfer Evidence note lives in `docs/plans/phase-53-third-world-transfer-evidence-2026-05-19.md` and records `library-rain`.
 - The active Phase 54 Successor Gate lives in `docs/plans/phase-54-successor-gate-2026-05-19.md`.
+- The Phase 54 Runtime Measurement and Async Contract Decision lives in `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`.
 - Phase 54 covers runtime measurement and async contract decision work without implementing async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion.
+- Phase 54 decision posture: public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.

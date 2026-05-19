@@ -13,7 +13,7 @@ def test_phase54_successor_gate_exists_with_required_sections() -> None:
     required_sections = [
         "# Phase 54 Successor Gate",
         "Issue: `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate`",
-        "Current state: Phase 54 is active; `audit-github-queue` reports `ready`.",
+        "Current state: Phase 54 is active after PR `#429`; `#428` records the runtime",
         "## Phase 53 Closeout Evidence",
         "## Phase 54 Operational Queue",
         "## Runtime-Orchestration Scope",
@@ -38,14 +38,19 @@ def test_phase54_successor_gate_records_queue_and_boundaries() -> None:
         "`#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate`",
         "`#428` `Phase 54: refresh runtime measurement and decide async contract boundary`",
         "Status: open and blocked.",
-        "Status: open and ready.",
-        "Status: open and ready; needs ADR or contract decision before merge.",
+        "Status: closed by PR `#429`.",
+        "Status: active decision work item with `status:needs-adr`.",
         "Exactly one open milestone exists with a protected blocked exit gate and ready work items",
         "Phase 53 is closed after PR `#424`, issue `#418`, and milestone `Phase 53 - Transfer Generalization and Third-World Readiness`",
         "runtime measurement",
         "async contract decision",
         "ADR-0006",
         "V1 does not introduce task queues or a separate `task_id` contract",
+        "`docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`",
+        "refresh local deterministic runtime measurement evidence",
+        "hosted/private-beta measurement verification as TODO[verify]",
+        "Keep synchronous generation for v1",
+        "Defer async task contract ratification",
         "do not implement async workers, task queues, `task_id`, heartbeat, retry, cleanup",
         "Do not replace `/` or widen the public path",
         "Do not implement a launch hub",
@@ -57,6 +62,13 @@ def test_phase54_successor_gate_records_queue_and_boundaries() -> None:
     ]
     for phrase in required_phrases:
         assert phrase in gate
+
+    stale_phrases = [
+        "refresh hosted/private-beta runtime measurement evidence",
+        "Refresh hosted/private-beta runtime measurement evidence",
+    ]
+    for phrase in stale_phrases:
+        assert phrase not in gate
 
 
 def test_active_state_docs_point_to_phase54_queue() -> None:
