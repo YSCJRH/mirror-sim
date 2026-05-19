@@ -80,12 +80,13 @@ Phase 53 - Transfer Generalization and Third-World Readiness
   - open and blocked
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#419` `Phase 53: sync repo truth after Phase 52 closeout and define transfer gate`
-  - current ready protected-core work item
+  - closed by PR `#422`
   - Phase 53: sync repo truth after Phase 52 closeout and define transfer gate
   - syncs durable docs and tests to the active Phase 53 queue
 - `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`
-  - blocked until `#419` closes
+  - current ready protected-core work item
   - defines bounded transfer generalization claims and third-world readiness criteria
+  - records `docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md`
 - `#421` `Phase 53: add bounded third-world transfer readiness evidence`
   - blocked until `#420` closes
   - adds bounded third-world readiness evidence or a reviewed compatibility-contract alternative
@@ -93,6 +94,7 @@ Phase 53 - Transfer Generalization and Third-World Readiness
   - Phase 53 does not widen public demo, plugin, Hosted GPT/BYOK, launch hub, async, or runtime mutation boundaries.
 - phase gate baseline
   - active Phase 53 Successor Gate: `docs/plans/phase-53-successor-gate-2026-05-19.md`
+  - current Phase 53 Transfer Assumption Audit: `docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md`
 
 ## Phase 52 Closeout
 
