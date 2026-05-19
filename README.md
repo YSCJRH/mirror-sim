@@ -173,6 +173,7 @@ Extra transfer proof:
 
 ```bash
 python -m backend.app.cli eval-world --world museum-night
+python -m backend.app.cli eval-world --world library-rain
 ```
 
 ## Optional Private-Beta Model Path
@@ -267,14 +268,16 @@ plugin, Hosted GPT/BYOK, or async contracts. See
 Phase 53 Transfer Generalization and Third-World Readiness: Phase 53 is the active
 approved successor queue after the Phase 52 closeout. `audit-github-queue` reports
 `ready` with milestone `Phase 53 - Transfer Generalization and Third-World Readiness`,
-blocked exit gate `#418`, and current ready work item `#420` `Phase 53: audit transfer
-assumptions and third-world readiness constraints`. `#419` closed the initial transfer
-gate sync, and `#421` remains blocked until the transfer-assumption audit closes.
-Phase 53 focuses on bounded transfer
-generalization and third-world readiness, without widening public demo, plugin, Hosted
-GPT/BYOK, launch hub, async, or runtime mutation boundaries. See
-`docs/plans/phase-53-successor-gate-2026-05-19.md` and
-`docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md`.
+blocked exit gate `#418`, and current ready work item `#421` `Phase 53: add bounded
+third-world transfer readiness evidence`. `#419` closed the initial transfer gate sync,
+and `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`
+closed the transfer-assumption audit by PR `#423`. `#421` adds `library-rain`
+as the third original fictional bounded world in the reviewed transfer set. Phase 53
+focuses on bounded transfer generalization and third-world readiness, without widening
+public demo, plugin, Hosted GPT/BYOK, launch hub, async, or runtime mutation boundaries.
+See `docs/plans/phase-53-successor-gate-2026-05-19.md`,
+`docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md`, and
+`docs/plans/phase-53-third-world-transfer-evidence-2026-05-19.md`.
 
 ---
 
@@ -282,6 +285,7 @@ GPT/BYOK, launch hub, async, or runtime mutation boundaries. See
 
 - Canonical Fog Harbor artifacts under `artifacts/demo/`
 - Second-world transfer artifacts under `artifacts/worlds/museum-night/`
+- Third-world transfer artifacts under `artifacts/worlds/library-rain/`
 - Transfer summary under `artifacts/transfer/summary.json`
 - Review workbench reading from the canonical compare/evidence/eval path
 
@@ -292,6 +296,7 @@ Useful artifact checkpoints:
 - `artifacts/demo/report/claims.json`
 - `artifacts/demo/eval/summary.json`
 - `artifacts/worlds/museum-night/eval/summary.json`
+- `artifacts/worlds/library-rain/eval/summary.json`
 
 For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-walkthrough.md](docs/demo/fog-harbor-walkthrough.md).
 
@@ -309,14 +314,15 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - The completed Phase 52 successor gate lives in [docs/plans/phase-52-successor-gate-2026-05-18.md](docs/plans/phase-52-successor-gate-2026-05-18.md).
 - The active Phase 53 Successor Gate lives in [docs/plans/phase-53-successor-gate-2026-05-19.md](docs/plans/phase-53-successor-gate-2026-05-19.md).
 - The current Phase 53 Transfer Assumption Audit lives in [docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md](docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md).
+- The current Phase 53 Third-World Transfer Evidence note lives in [docs/plans/phase-53-third-world-transfer-evidence-2026-05-19.md](docs/plans/phase-53-third-world-transfer-evidence-2026-05-19.md).
 - Phase 48 is closed after PR `#382`, issue `#375`, and milestone `Phase 48 - Successor Intake and Boundary Contract Triage`.
 - Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
 - Phase 50 is closed after PR `#402`, issue `#396`, and milestone `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; completed work items were `#397`, `#398`, and `#401`. Phase 50 measured before any `task_id` or worker contract is introduced and kept the private-beta launch hub planning-only for now.
 - Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`; completed work items were `#404`, `#405`, and `#406`.
 - Phase 52 is closed after PR `#416`, issue `#410`, and milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit`; completed work items were `#411`, `#412`, and `#413`. Before Phase 53 was opened, `audit-github-queue` reported the formal paused stop-state with no active milestone. The legacy top-level runtime routes audit note lives in `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`; the runtime guard note lives in `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`; Phase 52 did not widen public demo, plugin, Hosted GPT/BYOK, or async contracts and keeps route-derived `worldId` guard coverage in scope.
-- Phase 53 is the active approved successor queue: `Phase 53 - Transfer Generalization and Third-World Readiness`; `audit-github-queue` reports `ready` with `#418` as the blocked exit gate, `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints` as the current ready work item, `#419` closed by PR `#422`, and `#421` blocked. Phase 53 focuses on bounded transfer generalization and third-world readiness without widening public demo, plugin, Hosted GPT/BYOK, launch hub, async, or runtime mutation boundaries.
+- Phase 53 is the active approved successor queue: `Phase 53 - Transfer Generalization and Third-World Readiness`; `audit-github-queue` reports `ready` with `#418` as the blocked exit gate, `#421` `Phase 53: add bounded third-world transfer readiness evidence` as the current ready work item, `#419` closed by PR `#422`, and `#420` closed by PR `#423`. Phase 53 focuses on bounded transfer generalization and third-world readiness without widening public demo, plugin, Hosted GPT/BYOK, launch hub, async, or runtime mutation boundaries, and `library-rain` is the current third-world evidence slice.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
-- Fog Harbor remains the canonical demo world; `museum-night` is the minimal transfer world used to prove the pipeline is not single-world-only.
+- Fog Harbor remains the canonical demo world; `museum-night` and `library-rain` are the selected bounded transfer worlds used to prove the pipeline has passed across three selected bounded fictional worlds.
 
 ---
 
@@ -327,7 +333,7 @@ mirror-sim
 ├── backend/          # CLI, pipeline, eval, and automation services
 ├── frontend/         # world-scoped web product plus legacy review/demo surfaces
 ├── data/demo/        # canonical Fog Harbor demo
-├── data/worlds/      # additional bounded worlds such as museum-night
+├── data/worlds/      # additional bounded worlds such as museum-night and library-rain
 ├── docs/             # plans, ADRs, contracts, walkthroughs, release notes
 ├── evals/            # assertions and eval assets
 └── scripts/          # bootstrap and utility scripts

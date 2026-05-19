@@ -1,0 +1,419 @@
+world_id: library-rain
+entities:
+  - entity_id: entity_mara_vale
+    name: Mara Vale
+    type: person
+    aliases:
+      - mara vale
+      - archive coordinator
+  - entity_id: entity_theo_finch
+    name: Theo Finch
+    type: person
+    aliases:
+      - theo finch
+      - roof steward
+  - entity_id: entity_lina_quill
+    name: Lina Quill
+    type: person
+    aliases:
+      - lina quill
+      - catalog clerk
+  - entity_id: entity_arun_slate
+    name: Arun Slate
+    type: person
+    aliases:
+      - arun slate
+      - visitor marshal
+      - front desk
+  - entity_id: entity_north_roof
+    name: North Roof
+    type: infrastructure
+    aliases:
+      - north roof
+      - roof leak
+      - drip line
+  - entity_id: entity_catalog_cards
+    name: Catalog Cards
+    type: document
+    aliases:
+      - catalog cards
+      - card index
+      - sorting tray
+  - entity_id: entity_reading_room
+    name: Public Reading Room
+    type: location
+    aliases:
+      - public reading room
+      - reading room
+      - dry annex
+  - entity_id: entity_visitor_line
+    name: Visitor Line
+    type: event
+    aliases:
+      - visitor line
+      - route board
+      - north aisle
+
+relations:
+  - relation_id: relation_theo_inspects_roof
+    source_entity_id: entity_theo_finch
+    relation_type: inspects
+    target_entity_id: entity_north_roof
+    match:
+      all:
+        - theo finch
+        - north roof
+      any:
+        - roof leak
+        - drip line
+        - inspected
+  - relation_id: relation_lina_controls_catalog
+    source_entity_id: entity_lina_quill
+    relation_type: controls
+    target_entity_id: entity_catalog_cards
+    match:
+      all:
+        - lina quill
+        - catalog cards
+      any:
+        - sorting tray
+        - card index
+        - publish
+  - relation_id: relation_mara_protects_room
+    source_entity_id: entity_mara_vale
+    relation_type: protects
+    target_entity_id: entity_reading_room
+    match:
+      all:
+        - mara vale
+      any:
+        - public reading room
+        - reading night
+        - stay open
+  - relation_id: relation_arun_manages_line
+    source_entity_id: entity_arun_slate
+    relation_type: manages
+    target_entity_id: entity_visitor_line
+    match:
+      all:
+        - arun slate
+        - visitor line
+      any:
+        - front desk
+        - route board
+        - dry annex
+
+events:
+  - event_id: event_roof_leak
+    name: North Roof Leak Narrows The Reading-Room Window
+    kind: facilities_risk
+    participant_entity_ids:
+      - entity_theo_finch
+      - entity_north_roof
+      - entity_reading_room
+    match:
+      any:
+        - north roof leak
+        - roof leak
+        - drip line
+        - rainwater
+  - event_id: event_catalog_delay
+    name: Catalog Card Delay Slows Visitor Routing
+    kind: document_delay
+    participant_entity_ids:
+      - entity_lina_quill
+      - entity_catalog_cards
+      - entity_reading_room
+    match:
+      any:
+        - catalog cards
+        - sorting tray
+        - card index
+        - arrive late
+  - event_id: event_reading_room_pressure
+    name: Reading Night Pressure Keeps The Room Scheduled
+    kind: schedule_pressure
+    participant_entity_ids:
+      - entity_mara_vale
+      - entity_reading_room
+      - entity_visitor_line
+    match:
+      any:
+        - rain archive reading
+        - reading night
+        - public reading room
+        - stay open
+  - event_id: event_route_bottleneck
+    name: Visitor Line Bottleneck Raises A Relocation Decision
+    kind: route_pressure
+    participant_entity_ids:
+      - entity_arun_slate
+      - entity_visitor_line
+      - entity_reading_room
+      - entity_north_roof
+    match:
+      any:
+        - visitor line
+        - route board
+        - north aisle
+        - dry annex
+
+personas:
+  - persona_id: persona_mara_vale
+    entity_id: entity_mara_vale
+    public_role:
+      text: Archive coordinator responsible for the rain archive reading.
+      evidence:
+        entity_ids:
+          - entity_mara_vale
+          - entity_reading_room
+        relation_ids:
+          - relation_mara_protects_room
+    goals:
+      - text: Keep the reading night credible without routing visitors under avoidable roof risk.
+        evidence:
+          event_ids:
+            - event_reading_room_pressure
+            - event_route_bottleneck
+      - text: Get a clear signal about whether the roof leak and catalog delay justify relocation.
+        evidence:
+          event_ids:
+            - event_roof_leak
+            - event_catalog_delay
+    constraints:
+      - text: Depends on Theo Finch, Lina Quill, and Arun Slate for operational truth.
+        evidence:
+          relation_ids:
+            - relation_theo_inspects_roof
+            - relation_lina_controls_catalog
+            - relation_arun_manages_line
+      - text: Faces pressure to keep the public reading room scheduled.
+        evidence:
+          event_ids:
+            - event_reading_room_pressure
+    known_facts:
+      - text: The reading night memo assumes the public reading room can open on time.
+        evidence:
+          event_ids:
+            - event_reading_room_pressure
+      - text: A visitor-line reroute would visibly change the reading-room plan.
+        evidence:
+          event_ids:
+            - event_route_bottleneck
+    private_info:
+      - text: Mara Vale will accept relocation if catalog and roof evidence line up clearly enough.
+        evidence:
+          event_ids:
+            - event_roof_leak
+            - event_catalog_delay
+    relationships:
+      - target_id: persona_arun_slate
+        kind: relies_on
+        evidence:
+          relation_ids:
+            - relation_arun_manages_line
+          event_ids:
+            - event_route_bottleneck
+      - target_id: persona_theo_finch
+        kind: trusts
+        evidence:
+          relation_ids:
+            - relation_theo_inspects_roof
+          event_ids:
+            - event_roof_leak
+
+  - persona_id: persona_theo_finch
+    entity_id: entity_theo_finch
+    public_role:
+      text: Roof steward watching the north roof before the public reading begins.
+      evidence:
+        entity_ids:
+          - entity_theo_finch
+          - entity_north_roof
+        relation_ids:
+          - relation_theo_inspects_roof
+    goals:
+      - text: Keep visitors out from under the roof leak before the rain archive reading fills.
+        evidence:
+          event_ids:
+            - event_roof_leak
+            - event_route_bottleneck
+      - text: Make the roof warning visible before the route board locks in.
+        evidence:
+          event_ids:
+            - event_roof_leak
+            - event_reading_room_pressure
+    constraints:
+      - text: Can inspect the roof leak but cannot relocate the reading room alone.
+        evidence:
+          relation_ids:
+            - relation_theo_inspects_roof
+          event_ids:
+            - event_roof_leak
+      - text: Needs catalog and route evidence before the relocation becomes credible.
+        evidence:
+          event_ids:
+            - event_catalog_delay
+            - event_route_bottleneck
+    known_facts:
+      - text: The north roof drip line is crossing the north aisle.
+        evidence:
+          event_ids:
+            - event_roof_leak
+      - text: A delayed catalog handoff would keep visitors near the damp route longer.
+        evidence:
+          event_ids:
+            - event_catalog_delay
+            - event_route_bottleneck
+    private_info:
+      - text: Theo Finch believes the leak can stay bounded if visitors move before the long queue forms.
+        evidence:
+          event_ids:
+            - event_roof_leak
+            - event_route_bottleneck
+    relationships:
+      - target_id: persona_mara_vale
+        kind: warns
+        evidence:
+          relation_ids:
+            - relation_mara_protects_room
+          event_ids:
+            - event_reading_room_pressure
+      - target_id: persona_arun_slate
+        kind: coordinates_with
+        evidence:
+          relation_ids:
+            - relation_arun_manages_line
+          event_ids:
+            - event_route_bottleneck
+
+  - persona_id: persona_lina_quill
+    entity_id: entity_lina_quill
+    public_role:
+      text: Catalog clerk carrying the card index into the reading-room handoff.
+      evidence:
+        entity_ids:
+          - entity_lina_quill
+          - entity_catalog_cards
+        relation_ids:
+          - relation_lina_controls_catalog
+    goals:
+      - text: Publish the catalog cards before visitors need a route explanation.
+        evidence:
+          event_ids:
+            - event_catalog_delay
+            - event_route_bottleneck
+      - text: Keep the catalog sequence useful if the reading room moves to the dry annex.
+        evidence:
+          event_ids:
+            - event_catalog_delay
+            - event_reading_room_pressure
+    constraints:
+      - text: Depends on the sorting tray before she can publish the card index.
+        evidence:
+          relation_ids:
+            - relation_lina_controls_catalog
+          event_ids:
+            - event_catalog_delay
+      - text: Has no authority to move the visitor route without Mara Vale.
+        evidence:
+          event_ids:
+            - event_reading_room_pressure
+            - event_route_bottleneck
+    known_facts:
+      - text: The catalog cards explain which boxes can move to the dry annex.
+        evidence:
+          event_ids:
+            - event_catalog_delay
+      - text: The front desk needs the card index before the route board changes.
+        evidence:
+          event_ids:
+            - event_catalog_delay
+            - event_route_bottleneck
+    private_info:
+      - text: Lina Quill has a backup card order if the sorting tray clears late.
+        evidence:
+          relation_ids:
+            - relation_lina_controls_catalog
+          event_ids:
+            - event_catalog_delay
+    relationships:
+      - target_id: persona_mara_vale
+        kind: briefs
+        evidence:
+          relation_ids:
+            - relation_mara_protects_room
+            - relation_lina_controls_catalog
+          event_ids:
+            - event_reading_room_pressure
+      - target_id: persona_arun_slate
+        kind: coordinates_with
+        evidence:
+          relation_ids:
+            - relation_arun_manages_line
+          event_ids:
+            - event_route_bottleneck
+
+  - persona_id: persona_arun_slate
+    entity_id: entity_arun_slate
+    public_role:
+      text: Visitor marshal managing the route board and front-desk line.
+      evidence:
+        entity_ids:
+          - entity_arun_slate
+          - entity_visitor_line
+        relation_ids:
+          - relation_arun_manages_line
+    goals:
+      - text: Move the visitor line before the north aisle becomes crowded.
+        evidence:
+          event_ids:
+            - event_route_bottleneck
+            - event_roof_leak
+      - text: Surface the route change without overruling the archive coordinator.
+        evidence:
+          event_ids:
+            - event_route_bottleneck
+            - event_reading_room_pressure
+    constraints:
+      - text: Needs a credible reason before changing the public route board.
+        evidence:
+          event_ids:
+            - event_route_bottleneck
+            - event_reading_room_pressure
+      - text: Can move the route but cannot publish catalog evidence.
+        evidence:
+          relation_ids:
+            - relation_lina_controls_catalog
+            - relation_arun_manages_line
+    known_facts:
+      - text: The visitor line will pause under the north aisle if the board stays unchanged.
+        evidence:
+          event_ids:
+            - event_route_bottleneck
+      - text: The dry annex route becomes easier to explain once catalog cards are public.
+        evidence:
+          event_ids:
+            - event_catalog_delay
+            - event_route_bottleneck
+    private_info:
+      - text: Arun Slate prepared a quiet annex route in case the roof warning becomes public.
+        evidence:
+          event_ids:
+            - event_route_bottleneck
+            - event_roof_leak
+    relationships:
+      - target_id: persona_mara_vale
+        kind: reports_to
+        evidence:
+          relation_ids:
+            - relation_mara_protects_room
+          event_ids:
+            - event_reading_room_pressure
+      - target_id: persona_lina_quill
+        kind: coordinates_with
+        evidence:
+          relation_ids:
+            - relation_lina_controls_catalog
+          event_ids:
+            - event_catalog_delay

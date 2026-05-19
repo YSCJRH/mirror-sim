@@ -1,0 +1,24 @@
+scenario_id: scenario_library_rain_catalog_delayed
+world_id: library-rain
+title: Catalog Delay Pushes The Reading-Room Move Back
+description: >
+  The catalog-card tray slips behind the front-desk handoff, so Lina Quill cannot
+  publish the catalog evidence on the baseline turn and the relocation decision arrives later.
+seed: 17
+turn_budget: 8
+branch_count: 1
+evaluation_questions:
+  - How much later do the catalog cards surface?
+  - Does the delayed catalog postpone the reading-room relocation?
+  - Which action chain keeps the public reading path scheduled longest?
+injections:
+  - injection_id: inj_catalog_delayed
+    kind: delay_document
+    target_id: doc_catalog_cards
+    actor_id: persona_lina_quill
+    params:
+      delay_turns: 2
+      cause: sorting_tray_backlog
+    rationale: >
+      The catalog-card tray arrives two turns late, so the catalog clerk cannot put
+      the visitor route evidence into circulation on the baseline turn.

@@ -1,0 +1,43 @@
+world_id: library-rain
+title: Library Rain Reading Room Review
+docs:
+  - document_id: doc_program_memo
+    title: Program Memo For The Rain Archive Reading
+    kind: memo
+    path: docs/program_memo.md
+    created_at: "1913-03-18T15:10:00Z"
+    metadata:
+      author: mara_vale
+      channel: archive_office
+  - document_id: doc_roof_watch
+    title: North Roof Watch Log
+    kind: facilities_log
+    path: docs/roof_watch.md
+    created_at: "1913-03-18T16:05:00Z"
+    metadata:
+      author: theo_finch
+      channel: roof_desk
+  - document_id: doc_catalog_cards
+    title: Catalog Card Sorting Note
+    kind: catalog_note
+    path: docs/catalog_cards.md
+    created_at: "1913-03-18T16:35:00Z"
+    metadata:
+      author: lina_quill
+      channel: catalog_table
+  - document_id: doc_visitor_route
+    title: Visitor Route Desk Note
+    kind: route_note
+    path: docs/visitor_route.md
+    created_at: "1913-03-18T17:00:00Z"
+    metadata:
+      author: arun_slate
+      channel: front_desk
+  - document_id: doc_operations_board
+    title: Archive Operations Board Summary
+    kind: operations_note
+    path: docs/operations_board.md
+    created_at: "1913-03-18T17:20:00Z"
+    metadata:
+      author: evening_manager
+      channel: operations_board

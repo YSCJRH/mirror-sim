@@ -564,7 +564,9 @@ artifacts/worlds/<world_id>/
 
 - `python -m backend.app.cli eval-demo` remains the canonical Fog Harbor regression command.
 - `python -m backend.app.cli eval-world --world <world_id>` runs the bounded world pipeline plus transfer eval for one world.
-- `python -m backend.app.cli eval-transfer` runs the dual-world transfer proof across the canonical demo and the current second world.
+- `python -m backend.app.cli eval-transfer` runs the reviewed transfer-world proof across the canonical demo and current bounded transfer worlds.
+  The current default reviewed set is `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
+  This proves the pipeline has passed across three selected bounded fictional worlds; it does not claim future-world readiness.
 - Transfer eval summaries must include:
   - `world_id`
   - `scenario_count`

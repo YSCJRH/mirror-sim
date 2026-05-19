@@ -25,7 +25,7 @@ from backend.app.world_query import inspect_world
 from backend.app.worlds import CANONICAL_DEMO_WORLD_ID, WorldPaths, resolve_world_paths
 
 
-DEFAULT_TRANSFER_WORLD_IDS = [CANONICAL_DEMO_WORLD_ID, "museum-night"]
+DEFAULT_TRANSFER_WORLD_IDS = [CANONICAL_DEMO_WORLD_ID, "museum-night", "library-rain"]
 
 
 def _compare(op: str, left: Any, right: Any) -> bool:

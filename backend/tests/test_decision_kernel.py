@@ -224,6 +224,7 @@ def test_product_templates_plus_parameters_resolve_to_world_contracts() -> None:
     product_paths = [
         Path("data/demo/config/product.json"),
         Path("data/worlds/museum-night/config/product.json"),
+        Path("data/worlds/library-rain/config/product.json"),
     ]
 
     for product_path in product_paths:

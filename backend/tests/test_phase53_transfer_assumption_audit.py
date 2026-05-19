@@ -15,14 +15,17 @@ def test_phase53_transfer_assumption_audit_records_supported_and_blocked_claims(
     required_phrases = [
         "# Phase 53 Transfer Assumption Audit",
         "Issue: `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`",
-        "Current work item: `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`",
+        "Audit slice: `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`",
+        "Current follow-up: `#421` `Phase 53: add bounded third-world transfer readiness evidence`",
         "## Supported Claims",
-        "Mirror has a two-world transfer proof across `fog-harbor-east-gate` and `museum-night`.",
+        "At `#420` completion, Mirror had a two-world transfer proof across `fog-harbor-east-gate` and `museum-night`.",
         "`eval-transfer` proves Mirror is not single-world-only.",
         "## Blocked Claims",
-        "Do not claim broad transfer readiness beyond the current two-world proof.",
-        "Do not claim third-world readiness before `#421` adds evidence or a reviewed compatibility contract.",
+        "Do not claim broad transfer readiness beyond the reviewed transfer world set.",
+        "Do not claim future-world readiness from `#421`'s `library-rain` evidence.",
         "Do not claim every future world will work without additional contracts.",
+        "## #421 Update",
+        "`library-rain`",
         "## Third-World Readiness Criteria",
         "original, fictional, or explicitly authorized",
         "world-local `config/simulation_rules.yaml`",
@@ -35,13 +38,14 @@ def test_phase53_transfer_assumption_audit_records_supported_and_blocked_claims(
 
 
 def test_transfer_assumption_audit_stays_aligned_with_eval_transfer_defaults() -> None:
-    assert DEFAULT_TRANSFER_WORLD_IDS == [CANONICAL_DEMO_WORLD_ID, "museum-night"]
+    assert DEFAULT_TRANSFER_WORLD_IDS == [CANONICAL_DEMO_WORLD_ID, "museum-night", "library-rain"]
 
     text = AUDIT_NOTE.read_text(encoding="utf-8")
     for world_id in DEFAULT_TRANSFER_WORLD_IDS:
         assert f"`{world_id}`" in text
     assert "DEFAULT_TRANSFER_WORLD_IDS" in text
     assert "two-world proof" in text
+    assert "three selected bounded worlds" in text
     assert "third-world readiness" in text
 
 
@@ -91,12 +95,15 @@ def test_active_docs_point_to_current_phase53_assumption_audit() -> None:
         "`#420` `Phase 53: audit transfer assumptions and third-world readiness constraints` is blocked until `#419` closes.",
         "Status: blocked until `#419` closes.",
         "`#420`/`#421` blocked",
+        "`#421` `Phase 53: add bounded third-world transfer readiness evidence` is blocked until `#420` closes.",
     ]
 
     for path in required_docs:
         text = path.read_text(encoding="utf-8")
         assert "docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md" in text
         assert "`#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`" in text
+        assert "closed by PR `#423`" in text
+        assert "`#421` `Phase 53: add bounded third-world transfer readiness evidence`" in text
         assert "current ready" in text or "Status: current ready work item." in text
         for phrase in stale_phrases:
             assert phrase not in text, f"{path} still treats #420 as blocked: {phrase}"

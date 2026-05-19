@@ -4,7 +4,7 @@ import json
 from dataclasses import replace
 from pathlib import Path
 
-from backend.app.evals.service import evaluate_transfer_world, run_world_eval
+from backend.app.evals.service import DEFAULT_TRANSFER_WORLD_IDS, evaluate_transfer_world, run_world_eval
 from backend.app.simulation.rules import load_simulation_plan
 from backend.app.worlds import CANONICAL_DEMO_WORLD_ID, resolve_world_paths
 
@@ -13,15 +13,31 @@ def _museum_world_paths(artifacts_root: Path):
     return replace(resolve_world_paths("museum-night"), artifacts_root=artifacts_root)
 
 
+def _library_world_paths(artifacts_root: Path):
+    return replace(resolve_world_paths("library-rain"), artifacts_root=artifacts_root)
+
+
+def test_default_transfer_world_set_includes_third_bounded_world() -> None:
+    assert DEFAULT_TRANSFER_WORLD_IDS == [
+        CANONICAL_DEMO_WORLD_ID,
+        "museum-night",
+        "library-rain",
+    ]
+
+
 def test_resolve_world_paths_supports_canonical_and_transfer_world() -> None:
     demo_paths = resolve_world_paths(CANONICAL_DEMO_WORLD_ID)
     museum_paths = resolve_world_paths("museum-night")
+    library_paths = resolve_world_paths("library-rain")
 
     assert demo_paths.data_root.name == "demo"
     assert demo_paths.artifacts_root.name == "demo"
     assert museum_paths.data_root.name == "museum-night"
     assert museum_paths.artifacts_root.name == "museum-night"
     assert museum_paths.simulation_rules_path.name == "simulation_rules.yaml"
+    assert library_paths.data_root.name == "library-rain"
+    assert library_paths.artifacts_root.name == "library-rain"
+    assert library_paths.simulation_rules_path.name == "simulation_rules.yaml"
 
 
 def test_transfer_world_simulation_rules_load() -> None:
@@ -31,11 +47,32 @@ def test_transfer_world_simulation_rules_load() -> None:
     assert plan.default_report_scenario == "checklist_delayed"
     assert len(plan.turn_sequence) == 8
 
+    library_plan = load_simulation_plan(resolve_world_paths("library-rain").simulation_rules_path)
+    assert library_plan.world_id == "library-rain"
+    assert library_plan.compare_id == "scenario_library_rain_matrix"
+    assert library_plan.default_report_scenario == "catalog_delayed"
+    assert len(library_plan.turn_sequence) == 8
+
 
 def test_museum_night_world_eval_passes(tmp_path: Path) -> None:
     result = run_world_eval("museum-night", artifacts_root=tmp_path / "museum-night")
     assert result.status == "pass"
     assert result.world_id == "museum-night"
+    assert result.metrics["scenario_count"] == 2
+    assert result.metrics["tracked_outcome_count"] == 5
+    assert result.metrics["tracked_outcome_fields_covered"] == 5
+    assert result.metrics["compare_outcome_fields_covered"] == 5
+    assert result.metrics["changed_tracked_outcome_count"] >= 1
+    assert result.metrics["default_report_changed_outcome_count"] >= 1
+    assert result.metrics["transfer_proof_world_local"] is True
+    assert Path(result.artifact_paths["report"]).exists()
+    assert Path(result.artifact_paths["eval"]).exists()
+
+
+def test_library_rain_world_eval_passes(tmp_path: Path) -> None:
+    result = run_world_eval("library-rain", artifacts_root=tmp_path / "library-rain")
+    assert result.status == "pass"
+    assert result.world_id == "library-rain"
     assert result.metrics["scenario_count"] == 2
     assert result.metrics["tracked_outcome_count"] == 5
     assert result.metrics["tracked_outcome_fields_covered"] == 5
