@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 53 transfer-generalization closeout, and the active Phase 54 runtime-orchestration successor queue.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 53 transfer-generalization closeout, and the completed Phase 54 runtime-orchestration successor queue.
 
 ## Current Gate State
 
@@ -57,7 +57,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 51 exit gate: closed
 - Phase 52 exit gate: closed
 - Phase 53 exit gate: closed
-- Phase 54 exit gate: open and blocked
+- Phase 54 exit gate: closed
 
 Local phase audits currently report:
 
@@ -65,7 +65,7 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 54 Active Queue
+## Phase 54 Closeout
 
 Phase 54 title:
 
@@ -74,26 +74,26 @@ Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate
 ```
 
 - `audit-github-queue`
-  - reports `ready`
-  - confirms exactly one open milestone with a protected blocked exit gate and ready work items
+  - reports `paused`
+  - confirms the formal paused stop-state with no active successor milestone open
 - milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate`
-  - open
+  - closed
 - `#426` `Phase 54 exit gate`
-  - open and blocked
-  - labeled `lane:protected-core` because it is the protected closeout gate
+  - closed after post-merge validation
+  - was labeled `lane:protected-core` because it was the protected closeout gate
 - `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate`
   - closed by PR `#429`
-  - syncs durable docs and tests to the active Phase 54 queue
+  - synced durable docs and tests to the Phase 54 queue
 - `#428` `Phase 54: refresh runtime measurement and decide async contract boundary`
+  - closed by PR `#430`
   - records the Phase 54 Runtime Measurement and Async Contract Decision
-  - labeled `status:needs-adr`
   - decision note: `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`
 - boundary posture
   - Keep synchronous generation for v1. Defer async task contract ratification.
-  - Phase 54 covers runtime measurement and async contract decision work without implementing async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion.
+  - Phase 54 covered runtime measurement and async contract decision work without implementing async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion.
   - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged unless separately ratified.
 - phase gate baseline
-  - active Phase 54 Successor Gate: `docs/plans/phase-54-successor-gate-2026-05-19.md`
+  - completed Phase 54 Successor Gate: `docs/plans/phase-54-successor-gate-2026-05-19.md`
 
 ## Phase 53 Closeout
 
@@ -767,7 +767,7 @@ Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Priv
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 54 is the active successor queue; do not open a parallel execution queue while `audit-github-queue` reports `ready` for `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate`.
+- Phase 54 is closed; do not open a parallel execution queue while `audit-github-queue` reports `paused` with no active successor milestone.
 - The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
 
 ## Historical Branch Status
