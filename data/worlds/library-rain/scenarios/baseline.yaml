@@ -1,0 +1,14 @@
+scenario_id: scenario_library_rain_baseline
+world_id: library-rain
+title: Baseline Rain Archive Reading Room
+description: >
+  The baseline branch assumes the catalog cards reach Lina Quill on time and the
+  archive team can choose a dry reading-room route without extra injected disruption.
+seed: 17
+turn_budget: 8
+branch_count: 1
+evaluation_questions:
+  - Who gathers enough roof-risk evidence to justify relocating the reading room?
+  - Do the catalog cards surface before Arun Slate commits to the visitor route?
+  - Is the reading room relocated before the visitor line reaches the damp north aisle?
+injections: []

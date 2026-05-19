@@ -13,7 +13,7 @@ def test_phase53_successor_gate_exists_with_required_sections() -> None:
     required_sections = [
         "# Phase 53 Successor Gate",
         "Issue: `#419` `Phase 53: sync repo truth after Phase 52 closeout and define transfer gate`",
-        "Current work item: `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`",
+        "Current work item: `#421` `Phase 53: add bounded third-world transfer readiness evidence`",
         "## Phase 52 Closeout Evidence",
         "## Phase 53 Operational Queue",
         "## Transfer-Generalization Scope",
@@ -41,10 +41,12 @@ def test_phase53_successor_gate_records_queue_and_boundaries() -> None:
         "Status: blocked closeout gate for Phase 53.",
         "Status: current ready work item.",
         "Status: closed by PR `#422`.",
-        "Status: blocked until `#420` closes.",
+        "Status: closed by PR `#423`.",
         "Phase 52 is closed after PR `#416`, issue `#410`, and milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit`",
         "bounded transfer generalization",
         "third-world readiness",
+        "`library-rain`",
+        "`docs/plans/phase-53-third-world-transfer-evidence-2026-05-19.md`",
         "Do not claim transfer generalization beyond the evidence that has actually passed",
         "Do not use real-world data, real-person personas, or digital doubles",
         "Do not implement a launch hub",
@@ -78,7 +80,9 @@ def test_active_state_docs_point_to_phase53_queue() -> None:
         assert "Phase 53 Successor Gate" in text
         assert "`docs/plans/phase-53-successor-gate-2026-05-19.md`" in text
         assert "Phase 53: audit transfer assumptions and third-world readiness constraints" in text
+        assert "Phase 53: add bounded third-world transfer readiness evidence" in text
         assert "current ready" in text
+        assert "`library-rain`" in text
         assert "bounded transfer generalization" in text
         assert "third-world readiness" in text
         assert "public demo, plugin, Hosted GPT/BYOK, launch hub, async" in text

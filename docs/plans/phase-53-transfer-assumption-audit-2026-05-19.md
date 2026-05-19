@@ -4,15 +4,16 @@ Date: 2026-05-19
 
 Issue: `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`
 
-Current work item: `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`
+Audit slice: `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints`
 
-This note records the evidence-bounded transfer posture before Phase 53 adds any third-world
-readiness evidence. It audits the current `eval-transfer` proof, identifies what Mirror may
-and may not claim, and defines the criteria that `#421` or a reviewed compatibility-contract
-alternative must satisfy. It does not add the third world, change schema, change scenario DSL,
-change claim labels, change run trace shape, change compare artifact shape, change session/node manifest shape,
-change public demo artifact layout, change plugin MCP contract, change
-public/private routes, add an async runtime, or widen runtime mutation behavior.
+Current follow-up: `#421` `Phase 53: add bounded third-world transfer readiness evidence`
+
+This note records the evidence-bounded transfer posture established by `#420`, then records
+the `#421` update that adds third-world evidence through `library-rain`. It audits what
+Mirror may and may not claim from the reviewed transfer proof. It does not change schema,
+scenario DSL, claim labels, run trace shape, compare artifact shape, session/node manifest
+shape, public demo artifact layout, plugin MCP contract, public/private routes, add an async
+runtime, or widen runtime mutation behavior. The session/node manifest shape remains unchanged.
 
 ## Evidence Inputs
 
@@ -20,33 +21,36 @@ public/private routes, add an async runtime, or widen runtime mutation behavior.
   Fog Harbor-shaped assumptions and says `eval-transfer` is a two-world proof.
 - `docs/decisions/ADR-0005-two-world-transfer-contracts.md` ratifies the current two-world
   transfer contract and keeps `eval-transfer` as the minimum portability proof.
-- `docs/architecture/contracts.md` defines `eval-transfer` as the dual-world transfer proof
-  across the canonical demo and the current second world.
-- `backend/app/evals/service.py` defines
+- At `#420` completion, `docs/architecture/contracts.md` defined `eval-transfer` as the
+  dual-world transfer proof across the canonical demo and the current second world.
+- At `#420` completion, `backend/app/evals/service.py` defined
   `DEFAULT_TRANSFER_WORLD_IDS = [CANONICAL_DEMO_WORLD_ID, "museum-night"]`.
+- After `#421`, `backend/app/evals/service.py` defines
+  `DEFAULT_TRANSFER_WORLD_IDS = [CANONICAL_DEMO_WORLD_ID, "museum-night", "library-rain"]`.
 - `backend/app/evals/service.py` evaluates transfer worlds through world-local tracked outcomes
   and records `transfer_proof_world_local` only when each selected world covers its configured
   outcomes in run summaries and compare deltas.
 - `data/demo/` remains the canonical Fog Harbor fixture.
 - `data/worlds/museum-night/` remains the second bounded fictional transfer fixture.
+- `data/worlds/library-rain/` is the third original fictional bounded transfer fixture.
 
 ## Supported Claims
 
-- Mirror has a two-world transfer proof across `fog-harbor-east-gate` and `museum-night`.
+- At `#420` completion, Mirror had a two-world transfer proof across `fog-harbor-east-gate` and `museum-night`.
 - `eval-transfer` proves Mirror is not single-world-only.
-- The current transfer proof covers the canonical demo and the current second bounded world
-  selected by `DEFAULT_TRANSFER_WORLD_IDS`.
+- After `#421`, the current transfer proof covers the three selected bounded worlds
+  selected by `DEFAULT_TRANSFER_WORLD_IDS`: `fog-harbor-east-gate`, `museum-night`, and
+  `library-rain`.
 - Current transfer eval checks are world-local: tracked outcomes come from each world's
   `config/simulation_rules.yaml`, and report claims are checked for both `label` and
   `evidence_ids`.
-- The current two-world proof supports saying that the constrained deterministic ingest,
-  graph, persona, scenario, run, compare, report, and eval pipeline has passed across the
-  two selected fictional or explicitly authorized bounded worlds.
+- The current proof supports saying that the constrained deterministic ingest, graph, persona,
+  scenario, run, compare, report, and eval pipeline has passed across three selected bounded worlds.
 
 ## Blocked Claims
 
-- Do not claim broad transfer readiness beyond the current two-world proof.
-- Do not claim third-world readiness before `#421` adds evidence or a reviewed compatibility contract.
+- Do not claim broad transfer readiness beyond the reviewed transfer world set.
+- Do not claim future-world readiness from `#421`'s `library-rain` evidence.
 - Do not claim every future world will work without additional contracts.
 - Do not claim unbounded world coverage, real-world forecasts, or readiness for real-person
   personas.
@@ -79,28 +83,35 @@ Before Mirror can claim third-world readiness, the next evidence slice must sati
   manifest shape, public demo artifact layout, and plugin MCP contract unless a separate ADR
   ratifies the change.
 
+## #421 Update
+
+`#421` chooses the evidence path rather than the defer-and-ratify path. It adds `library-rain`
+as an original fictional bounded world, extends the reviewed transfer set to three selected
+bounded worlds, and records the durable transfer contract update in
+`docs/architecture/contracts.md` and
+`docs/decisions/ADR-0012-third-world-transfer-evidence.md`.
+
+The `#421` evidence note is
+`docs/plans/phase-53-third-world-transfer-evidence-2026-05-19.md`.
+
 ## Current Evidence Gaps
 
-- Phase 53 has not yet added a third bounded world.
-- `eval-transfer` currently reports `world_count: 2`; that is enough to show Mirror is not
-  single-world-only, but not enough to claim broad transfer readiness.
-- The current transfer proof relies on `fog-harbor-east-gate` and `museum-night`; it does not
-  show that all future world schemas, evidence corpora, tracked outcomes, or scenario choices
-  are compatible without additional review.
+- Phase 53 now has a third bounded world, `library-rain`, but this still does not support a
+  broad future-world readiness claim.
+- `eval-transfer` now targets `world_count: 3`; that is enough to show Mirror has passed
+  across three selected bounded fictional worlds, but not enough to claim broad transfer readiness.
+- The current transfer proof relies on `fog-harbor-east-gate`, `museum-night`, and `library-rain`;
+  it does not show that all future world schemas, evidence corpora, tracked outcomes, or scenario
+  choices are compatible without additional review.
 - No hosted/private-beta runtime timing evidence is created by this audit.
 - No public demo, plugin, launch hub, async runtime, or runtime mutation contract changes are
   created by this audit.
 
 ## Required Follow-Up For `#421`
 
-`#421` should choose exactly one path before claiming third-world readiness:
-
-1. Add a small original/fictional third bounded world and extend the reviewed transfer set.
-2. Ratify a stronger compatibility contract that explains why the current two-world proof is
-   sufficient for the next product decision without claiming third-world readiness.
-
-Either path must keep transfer language evidence-bounded, preserve claim/evidence integrity,
-and avoid real-world forecasts or real-person persona claims.
+`#421` chose path 1: add a small original/fictional third bounded world and extend the reviewed
+transfer set. Future phases must still keep transfer language evidence-bounded, preserve
+claim/evidence integrity, and avoid real-world forecasts or real-person persona claims.
 
 ## Validation Commands
 

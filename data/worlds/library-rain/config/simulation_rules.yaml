@@ -1,0 +1,225 @@
+world_id: library-rain
+compare_id: scenario_library_rain_matrix
+default_report_scenario: catalog_delayed
+communications_down_field: communications_down_until
+blocked_contacts_field: blocked_contacts
+turn_sequence:
+  - persona_theo_finch
+  - persona_arun_slate
+  - persona_lina_quill
+  - persona_mara_vale
+  - persona_arun_slate
+  - persona_lina_quill
+  - persona_mara_vale
+  - persona_arun_slate
+initial_state:
+  reading_room_status: scheduled
+  catalog_available_turn: 3
+  catalog_public: false
+  catalog_public_turn: null
+  relocation_requested: false
+  relocation_triggered: false
+  relocation_turn: null
+  roof_status: leaking
+  risk_known_by: []
+  communications_status: stable
+  communications_down_until: 0
+  blocked_contacts: []
+tracked_outcomes:
+  - field: catalog_public_turn
+    label: Catalog publication turn
+    action_types:
+      - publish
+  - field: relocation_turn
+    label: Reading-room relocation turn
+    action_types:
+      - move
+  - field: reading_room_status
+    label: Reading-room status
+    action_types:
+      - hide
+      - move
+  - field: relocation_triggered
+    label: Relocation trigger state
+    action_types:
+      - move
+  - field: risk_known_by
+    label: Roof-risk knowledge spread
+    action_types:
+      - inspect
+      - inform
+injection_rules:
+  - kind: delay_document
+    operation: add_int
+    field: catalog_available_turn
+    param: delay_turns
+    note_template: "{injection_id}: catalog cards availability delayed by {delay_turns} turn(s)."
+  - kind: resource_failure
+    operation: max_int
+    field: communications_down_until
+    param: duration_turns
+    note_template: "{injection_id}: archive communications degraded for {duration_turns} turn(s)."
+  - kind: block_contact
+    operation: append_contact
+    field: blocked_contacts
+    note_template: "{injection_id}: contact blocked between {actor_id} and {target_id}."
+steps:
+  - turn_index: 1
+    choices:
+      - action:
+          action_type: inspect
+          target_id: entity_north_roof
+          rationale: Theo Finch inspects the north roof before visitors gather under the reading-room skylight.
+          updates:
+            - kind: union_actor_entity
+              field: risk_known_by
+  - turn_index: 2
+    choices:
+      - when:
+          - kind: communication_available
+            target_id: persona_mara_vale
+        action:
+          action_type: inform
+          target_id: persona_mara_vale
+          rationale: Arun Slate sends the first route warning toward the archive coordinator.
+          updates:
+            - kind: union_actor_entity
+              field: risk_known_by
+      - action:
+          action_type: delay
+          target_id: persona_mara_vale
+          rationale: The visitor-route warning is delayed by a desk communication problem.
+          updates:
+            - kind: set
+              field: communications_status
+              value: degraded
+  - turn_index: 3
+    choices:
+      - when:
+          - kind: turn_gte_state
+            field: catalog_available_turn
+        action:
+          action_type: publish
+          target_id: entity_catalog_cards
+          rationale: Lina Quill publishes the catalog cards into the reading-room handoff.
+          updates:
+            - kind: set
+              field: catalog_public
+              value: true
+            - kind: set_current_turn
+              field: catalog_public_turn
+      - action:
+          action_type: delay
+          target_id: entity_catalog_cards
+          rationale: Lina Quill cannot surface the catalog cards yet and holds the sorting tray.
+  - turn_index: 4
+    choices:
+      - when:
+          - kind: state_truthy
+            field: catalog_public
+        action:
+          action_type: request
+          target_id: entity_reading_room
+          rationale: Mara Vale requests a reading-room relocation once catalog and roof evidence align.
+          updates:
+            - kind: set
+              field: relocation_requested
+              value: true
+      - action:
+          action_type: request
+          target_id: entity_catalog_cards
+          rationale: Mara Vale asks for the missing catalog evidence before moving the public route.
+  - turn_index: 5
+    choices:
+      - when:
+          - kind: state_truthy
+            field: relocation_requested
+        action:
+          action_type: move
+          target_id: entity_reading_room
+          rationale: Arun Slate moves the visitor line into the dry annex route.
+          updates:
+            - kind: set
+              field: relocation_triggered
+              value: true
+            - kind: set_current_turn
+              field: relocation_turn
+            - kind: set
+              field: reading_room_status
+              value: relocated
+      - action:
+          action_type: hide
+          target_id: entity_reading_room
+          rationale: Arun Slate keeps the public reading room scheduled while waiting for firmer evidence.
+          updates:
+            - kind: set
+              field: reading_room_status
+              value: scheduled
+  - turn_index: 6
+    choices:
+      - when:
+          - kind: state_falsy
+            field: catalog_public
+          - kind: turn_gte_state
+            field: catalog_available_turn
+        action:
+          action_type: publish
+          target_id: entity_catalog_cards
+          rationale: Lina Quill surfaces the backup catalog cards after the delay clears.
+          updates:
+            - kind: set
+              field: catalog_public
+              value: true
+            - kind: set_current_turn
+              field: catalog_public_turn
+      - action:
+          action_type: inform
+          target_id: persona_mara_vale
+          rationale: Lina Quill keeps the reading-room team aligned while the cards remain late.
+  - turn_index: 7
+    choices:
+      - when:
+          - kind: state_truthy
+            field: catalog_public
+          - kind: state_falsy
+            field: relocation_requested
+        action:
+          action_type: request
+          target_id: entity_reading_room
+          rationale: Mara Vale renews the relocation request once the catalog cards become visible.
+          updates:
+            - kind: set
+              field: relocation_requested
+              value: true
+      - action:
+          action_type: inspect
+          target_id: entity_north_roof
+          rationale: Mara Vale keeps checking the roof-risk evidence while the public route remains open.
+  - turn_index: 8
+    choices:
+      - when:
+          - kind: state_truthy
+            field: relocation_requested
+          - kind: state_falsy
+            field: relocation_triggered
+        action:
+          action_type: move
+          target_id: entity_reading_room
+          rationale: Arun Slate relocates the reading room at the last dry routing point.
+          updates:
+            - kind: set
+              field: relocation_triggered
+              value: true
+            - kind: set_current_turn
+              field: relocation_turn
+            - kind: set
+              field: reading_room_status
+              value: relocated
+      - action:
+          action_type: hide
+          target_id: entity_reading_room
+          rationale: Arun Slate keeps the scheduled reading-room path after the roof window stabilizes.
+          updates:
+            - kind: set
+              field: reading_room_status
+              value: scheduled

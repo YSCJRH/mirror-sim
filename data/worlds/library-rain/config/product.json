@@ -1,0 +1,152 @@
+{
+  "world_id": "library-rain",
+  "world_name": "Library Rain",
+  "world_name_i18n": {
+    "zh-CN": "雨中图书馆"
+  },
+  "world_summary": "A bounded archive reading-room world where roof-risk evidence, catalog-card timing, and visitor routing compete during a fixed rain archive event.",
+  "world_summary_i18n": {
+    "zh-CN": "一个受约束的档案阅览室世界：屋顶风险证据、目录卡时机和访客动线在固定雨档案活动中相互牵制。"
+  },
+  "baseline_scenario_id": "scenario_library_rain_baseline",
+  "baseline_title": "Baseline Rain Archive Reading Room",
+  "baseline_title_i18n": {
+    "zh-CN": "雨档案阅览室基线"
+  },
+  "baseline_description": "The baseline assumes the catalog cards arrive on time and the archive team can choose a dry reading-room route without extra injected disruption.",
+  "baseline_description_i18n": {
+    "zh-CN": "基线假设目录卡按时到达，档案团队可以在没有额外扰动的情况下选择干燥的阅览室动线。"
+  },
+  "decision_defaults": {
+    "provider": "openai_compatible",
+    "model": ""
+  },
+  "outcome_labels": {
+    "catalog_public_turn": "Catalog publication",
+    "relocation_turn": "Reading-room relocation",
+    "reading_room_status": "Reading-room status",
+    "relocation_triggered": "Relocation trigger",
+    "risk_known_by": "Roof-risk knowledge spread"
+  },
+  "outcome_labels_i18n": {
+    "zh-CN": {
+      "catalog_public_turn": "目录公开",
+      "relocation_turn": "阅览室改道",
+      "reading_room_status": "阅览室状态",
+      "relocation_triggered": "改道触发",
+      "risk_known_by": "屋顶风险知情范围"
+    }
+  },
+  "perturbation_options": [
+    {
+      "key": "catalog_delayed",
+      "title": "Delay the catalog cards",
+      "title_i18n": {
+        "zh-CN": "延迟目录卡"
+      },
+      "description": "Delay the catalog-card tray before it reaches the reading-room handoff.",
+      "description_i18n": {
+        "zh-CN": "让目录卡托盘在进入阅览室交接之前延迟。"
+      },
+      "kind": "Document delay",
+      "kind_i18n": {
+        "zh-CN": "文档延迟"
+      },
+      "target": "Catalog cards",
+      "target_i18n": {
+        "zh-CN": "目录卡"
+      },
+      "timing": "Before catalog publication",
+      "timing_i18n": {
+        "zh-CN": "目录公开之前"
+      },
+      "summary": "Delay the catalog-card tray before it reaches the reading-room handoff.",
+      "summary_i18n": {
+        "zh-CN": "让目录卡托盘晚一点进入阅览室交接。"
+      },
+      "runtime": {
+        "kind": "delay_document",
+        "targetId": "doc_catalog_cards",
+        "actorId": "persona_lina_quill",
+        "timing": "before_catalog_publication",
+        "parameters": {
+          "delay_turns": 2,
+          "cause": "sorting_tray_backlog"
+        }
+      }
+    },
+    {
+      "key": "route_warning_blocked",
+      "title": "Block the first route warning",
+      "title_i18n": {
+        "zh-CN": "阻断第一次动线预警"
+      },
+      "description": "Block the first warning path from the visitor desk to the archive coordinator.",
+      "description_i18n": {
+        "zh-CN": "阻断访客台发往档案协调人的第一条预警路径。"
+      },
+      "kind": "Contact block",
+      "kind_i18n": {
+        "zh-CN": "联系阻断"
+      },
+      "target": "Archive coordinator warning path",
+      "target_i18n": {
+        "zh-CN": "档案协调人预警路径"
+      },
+      "timing": "First route warning",
+      "timing_i18n": {
+        "zh-CN": "第一次动线预警"
+      },
+      "summary": "Block the first route warning toward the archive coordinator.",
+      "summary_i18n": {
+        "zh-CN": "阻断发往档案协调人的第一条动线预警。"
+      },
+      "runtime": {
+        "kind": "block_contact",
+        "targetId": "persona_mara_vale",
+        "actorId": "persona_arun_slate",
+        "timing": "first_route_warning",
+        "parameters": {
+          "cause": "front_desk_signal_gap"
+        }
+      }
+    },
+    {
+      "key": "roof_watch_failure",
+      "title": "Degrade the roof-watch window",
+      "title_i18n": {
+        "zh-CN": "削弱屋顶巡查窗口"
+      },
+      "description": "Create a short communication/resource failure while the north-roof risk is being assessed.",
+      "description_i18n": {
+        "zh-CN": "在北侧屋顶风险评估期间制造一次短暂的通信/资源故障。"
+      },
+      "kind": "Resource failure",
+      "kind_i18n": {
+        "zh-CN": "资源故障"
+      },
+      "target": "North roof",
+      "target_i18n": {
+        "zh-CN": "北侧屋顶"
+      },
+      "timing": "Roof-watch window",
+      "timing_i18n": {
+        "zh-CN": "屋顶巡查窗口"
+      },
+      "summary": "Degrade the north-roof warning window.",
+      "summary_i18n": {
+        "zh-CN": "让北侧屋顶预警窗口变得更脆弱。"
+      },
+      "runtime": {
+        "kind": "resource_failure",
+        "targetId": "entity_north_roof",
+        "actorId": "persona_theo_finch",
+        "timing": "roof_watch_window",
+        "parameters": {
+          "duration_turns": 2,
+          "cause": "rain_line_static"
+        }
+      }
+    }
+  ]
+}
