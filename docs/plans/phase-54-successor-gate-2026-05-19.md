@@ -4,7 +4,8 @@ Date: 2026-05-19
 
 Issue: `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate`
 
-Current state: Phase 54 is active; `audit-github-queue` reports `ready`.
+Current state: Phase 54 is active after PR `#429`; `#428` records the runtime
+measurement and async contract decision.
 
 This note records the post-Phase-53 baseline and the Phase 54 successor queue. Phase 54
 is a protected-core runtime-orchestration measurement and async contract decision gate.
@@ -13,6 +14,8 @@ It refreshes the evidence needed before Mirror decides whether to ratify asynchr
 public-path, plugin, Hosted GPT/BYOK, schema-expansion, or runtime-mutation phase.
 
 This gate is recorded at `docs/plans/phase-54-successor-gate-2026-05-19.md`.
+The Phase 54 Runtime Measurement and Async Contract Decision lives in
+`docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`.
 
 ## Phase 53 Closeout Evidence
 
@@ -42,13 +45,16 @@ Current GitHub objects:
   - Status: open and blocked.
 - `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate`
   - Lane: `protected-core`.
-  - Status: open and ready.
+  - Status: closed by PR `#429`.
   - Scope: sync durable docs and tests to the active Phase 54 queue.
 - `#428` `Phase 54: refresh runtime measurement and decide async contract boundary`
   - Lane: `protected-core`.
-  - Status: open and ready; needs ADR or contract decision before merge.
-  - Scope: refresh hosted/private-beta runtime measurement evidence and decide whether
-    a future async `task_id` / worker queue contract should be ratified.
+  - Status: active decision work item with `status:needs-adr`.
+  - Scope: refresh local deterministic runtime measurement evidence, keep
+    hosted/private-beta measurement verification as TODO[verify], and decide whether a
+    future async `task_id` / worker queue contract should be ratified.
+  - Decision note:
+    `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`.
 
 `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
 with the note: "Exactly one open milestone exists with a protected blocked exit gate and ready work items."
@@ -60,6 +66,11 @@ the current v1 runtime synchronous: V1 does not introduce task queues or a separ
 review whether long-running worker semantics are justified, and write a decision note
 that either keeps synchronous v1, ratifies a future async contract, or defers pending
 stronger evidence.
+
+`docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md` records
+the Phase 54 decision: Keep synchronous generation for v1. Defer async task contract ratification.
+The refreshed evidence is local deterministic evidence only; hosted/private-beta model
+duration remains TODO[verify].
 
 Phase 54 must not implement async workers, task queues, `task_id`, heartbeat, retry,
 cleanup, checkpoint mutation/deletion, restore semantics, or background job APIs before
@@ -109,9 +120,13 @@ public demo artifact layout, or the Mirror Codex MCP contract.
    - Keep public demo, plugin, Hosted GPT/BYOK, launch hub, async implementation, and runtime mutation boundaries unchanged.
 
 2. Runtime measurement and async contract decision
-   - Refresh hosted/private-beta runtime measurement evidence.
+   - Refresh local deterministic runtime measurement evidence and defer
+     hosted/private-beta measurement verification.
    - Record allowed claims, blocked claims, and decision criteria for `task_id` / worker queue semantics.
    - Decide whether synchronous v1 remains the contract, a future async contract should be ratified, or the decision should be deferred.
+   - Phase 54 Runtime Measurement and Async Contract Decision:
+     `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`.
+   - Keep synchronous generation for v1; Defer async task contract ratification.
    - Do not implement async workers in this issue.
 
 ## Blueprint Boundary
@@ -148,13 +163,13 @@ Phase 54 must stay aligned with `mirror.md` and `AGENTS.md`:
 
 ## Validation Commands
 
-For Phase 54 repo-truth sync, run:
+For Phase 54 runtime measurement and async contract decision, run:
 
 ```powershell
-python -m pytest backend/tests/test_phase54_successor_gate.py backend/tests/test_phase53_successor_gate.py -q
+python -m pytest backend/tests/test_phase54_runtime_measurement_async_contract_note.py backend/tests/test_phase54_successor_gate.py -q
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
-python -m backend.app.cli classify-lane --files README.md docs/plans/current-state-baseline.md docs/plans/automation-roadmap.md docs/plans/phase-execution-queue.md docs/plans/phase-54-successor-gate-2026-05-19.md backend/tests/test_phase54_successor_gate.py
+python -m backend.app.cli classify-lane --files README.md docs/plans/current-state-baseline.md docs/plans/automation-roadmap.md docs/plans/phase-execution-queue.md docs/plans/phase-54-successor-gate-2026-05-19.md docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md backend/tests/test_phase54_successor_gate.py backend/tests/test_phase54_runtime_measurement_async_contract_note.py
 git diff --check
 ./make.ps1 test
 ./make.ps1 eval-demo

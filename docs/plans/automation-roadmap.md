@@ -188,9 +188,11 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Phase 53 strengthened bounded transfer generalization and third-world readiness evidence without widening public demo, plugin, Hosted GPT/BYOK, launch hub, async, or runtime mutation boundaries. The completed Phase 53 Successor Gate lives in `docs/plans/phase-53-successor-gate-2026-05-19.md`; the transfer-assumption audit lives in `docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md`; the third-world evidence note lives in `docs/plans/phase-53-third-world-transfer-evidence-2026-05-19.md`.
 - Phase 54 is active after opening milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate`.
 - `#426` `Phase 54 exit gate` is open and blocked.
-- `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate` is open and ready.
-- `#428` `Phase 54: refresh runtime measurement and decide async contract boundary` is open and ready with `status:needs-adr`.
-- Phase 54 covers runtime measurement and async contract decision work without implementing async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion. The active Phase 54 Successor Gate lives in `docs/plans/phase-54-successor-gate-2026-05-19.md`.
+- `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate` is closed by PR `#429`.
+- `#428` `Phase 54: refresh runtime measurement and decide async contract boundary` records the Phase 54 Runtime Measurement and Async Contract Decision with `status:needs-adr`.
+- Keep synchronous generation for v1. Defer async task contract ratification.
+- Phase 54 decision posture: public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged.
+- Phase 54 covers runtime measurement and async contract decision work without implementing async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion. The active Phase 54 Successor Gate lives in `docs/plans/phase-54-successor-gate-2026-05-19.md`; the decision note lives in `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.

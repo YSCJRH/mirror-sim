@@ -82,13 +82,14 @@ Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate
   - open and blocked
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate`
-  - open and ready
+  - closed by PR `#429`
   - syncs durable docs and tests to the active Phase 54 queue
 - `#428` `Phase 54: refresh runtime measurement and decide async contract boundary`
-  - open and ready
-  - records the runtime measurement and async contract decision work item
+  - records the Phase 54 Runtime Measurement and Async Contract Decision
   - labeled `status:needs-adr`
+  - decision note: `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`
 - boundary posture
+  - Keep synchronous generation for v1. Defer async task contract ratification.
   - Phase 54 covers runtime measurement and async contract decision work without implementing async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion.
   - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged unless separately ratified.
 - phase gate baseline
