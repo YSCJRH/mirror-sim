@@ -83,7 +83,7 @@ def test_transfer_assumption_audit_preserves_protected_contract_boundaries() -> 
         assert boundary in text
 
 
-def test_active_docs_point_to_current_phase53_assumption_audit() -> None:
+def test_active_docs_preserve_phase53_assumption_audit_history() -> None:
     required_docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -105,6 +105,5 @@ def test_active_docs_point_to_current_phase53_assumption_audit() -> None:
         assert "closed by PR `#423`" in text
         assert "`#421` `Phase 53: add bounded third-world transfer readiness evidence`" in text
         assert "closed by PR `#424`" in text
-        assert "formal paused stop-state" in text
         for phrase in stale_phrases:
             assert phrase not in text, f"{path} still treats #420 as blocked: {phrase}"
