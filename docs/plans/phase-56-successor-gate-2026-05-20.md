@@ -4,10 +4,10 @@ Date: 2026-05-20
 
 Issue: `#441` `Phase 56: sync repo truth after Phase 55 closeout and define source-verified gate`
 
-Current state: Phase 56 is the active successor queue after the completed Phase 55 closeout.
+Current state: Phase 56 is in closeout; the active milestone has no ready work items.
 
-This note records the active Phase 56 successor queue. Phase 56 is a
-source-verified candidate-promotion and review-continuity phase. It may sync repo
+This note records the Phase 56 closeout queue while the exit gate remains
+pending close by this PR. Phase 56 was a source-verified candidate-promotion and review-continuity phase. It may sync repo
 truth, verify narrow candidate planning signals against current source, and add
 focused guardrails for analysis-first public and world-scoped review continuity.
 It is not an async-worker, launch-hub, public-path, plugin, Hosted GPT/BYOK,
@@ -39,30 +39,39 @@ Phase 56 title:
 Phase 56 - Source-Verified Candidate Promotion and Review Continuity
 ```
 
-Open GitHub objects:
+Phase 56 GitHub objects:
 
 - `#440` `Phase 56 exit gate`
   - Lane: `protected-core`.
-  - Status: open and blocked.
+  - Status: pending close by this closeout PR after post-merge validation.
   - Scope: close Phase 56 only after all work items merge and post-merge validation passes.
 - `#441` `Phase 56: sync repo truth after Phase 55 closeout and define source-verified gate`
   - Lane: `protected-core`.
-  - Status: ready.
-  - Scope: sync durable docs and tests to the active Phase 56 queue.
+  - Status: closed by PR `#444`.
+  - Scope: sync durable docs and tests to the Phase 56 queue.
 - `#442` `Phase 56: source-verify candidate planning signals against current frontend`
   - Lane: `protected-core`.
-  - Status: ready.
+  - Status: closed by PR `#445`.
   - Scope: verify narrow candidate planning signals against current source before any
     signal becomes durable Phase 56 truth.
 - `#443` `Phase 56: add world-scoped review continuity guardrail`
   - Lane: `protected-core`.
-  - Status: ready.
+  - Status: closed by PR `#446`.
   - Scope: add a focused guardrail for world-scoped private-beta review continuity.
 
-After the Phase 56 queue opened,
-`python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports
-`ready` with exactly one open milestone, a protected blocked exit gate, and ready
-work items.
+After PR `#446` merged and before the exit gate closes, `python -m backend.app.cli
+audit-github-queue --repo YSCJRH/mirror-sim` reports `paused` because the active milestone has no ready work items. After this closeout PR merges, `#440` can close and milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity` can close.
+
+## Phase 56 Closeout Evidence
+
+- PR `#444` closed `#441` `Phase 56: sync repo truth after Phase 55 closeout and define source-verified gate`.
+- PR `#445` closed `#442` `Phase 56: source-verify candidate planning signals against current frontend`.
+- PR `#446` closed `#443` `Phase 56: add world-scoped review continuity guardrail`.
+- `#440` is pending close by this closeout PR after post-merge validation on `main`.
+- Milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity` is pending close after the exit gate merges.
+- `audit-github-queue` reports `paused` while the active Phase 56 milestone has no ready work items.
+- Phase 56 kept public demo, plugin, Hosted GPT/BYOK, launch hub, async, and
+  runtime mutation boundaries unchanged.
 
 ## Source-Verified Candidate Promotion Scope
 
@@ -141,11 +150,13 @@ compare artifacts, public demo artifact layout, or the Mirror Codex MCP contract
    - Define the source-verified candidate-promotion and review-continuity gate.
    - Keep public demo, plugin, Hosted GPT/BYOK, launch hub, async implementation,
      and runtime mutation boundaries unchanged.
+   - Closed by PR `#444`.
 
 2. Source-verify candidate planning signals against current frontend
    - Inspect current `/`, `/review`, and world-scoped review routes/components.
    - Classify candidate signals as promote, reject, or defer with current source evidence.
    - Do not promote candidate-only claims as durable truth without reviewed PR evidence.
+   - Closed by PR `#445`.
 
 3. World-scoped review continuity guardrail
    - Add a focused guardrail that keeps `/worlds/<world_id>/review` world-scoped and
@@ -153,6 +164,7 @@ compare artifacts, public demo artifact layout, or the Mirror Codex MCP contract
    - Keep `/` and `/review` as public-demo surfaces.
    - Do not change backend APIs, compare artifacts, claim/evidence contracts,
      scenario DSL, trace shape, plugin MCP contract, or runtime mutation semantics.
+   - Closed by PR `#446`.
 
 4. Closeout baseline
    - Close the Phase 56 exit gate after post-merge validation.
@@ -196,13 +208,18 @@ Phase 56 must stay aligned with `mirror.md` and `AGENTS.md`:
 
 ## Validation Commands
 
-For the Phase 56 repo-truth sync, run:
+For Phase 56 closeout, run:
 
 ```powershell
-python -m pytest backend/tests/test_phase56_successor_gate.py -q
+python -m pytest backend/tests/test_phase56_successor_gate.py backend/tests/test_phase56_candidate_source_verification.py backend/tests/test_phase56_world_review_continuity_guardrail.py backend/tests/test_phase55_successor_gate.py backend/tests/test_phase55_candidate_plan_audit.py backend/tests/test_phase55_review_surface_guardrail.py -q
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
-python -m backend.app.cli classify-lane --files README.md docs/plans/current-state-baseline.md docs/plans/automation-roadmap.md docs/plans/phase-execution-queue.md docs/plans/phase-56-successor-gate-2026-05-20.md backend/tests/test_phase56_successor_gate.py
+python -m backend.app.cli audit-phase phase1
+python -m backend.app.cli audit-phase phase2
+python -m backend.app.cli audit-phase phase3
+python -m backend.app.cli classify-lane --files README.md docs/plans/current-state-baseline.md docs/plans/automation-roadmap.md docs/plans/phase-execution-queue.md docs/plans/phase-56-successor-gate-2026-05-20.md docs/plans/phase-56-candidate-source-verification-2026-05-20.md docs/plans/phase-56-world-review-continuity-guardrail-2026-05-20.md backend/tests/test_phase56_successor_gate.py backend/tests/test_phase56_candidate_source_verification.py backend/tests/test_phase56_world_review_continuity_guardrail.py
 git diff --check
+./make.ps1 smoke
 ./make.ps1 test
+./make.ps1 eval-demo
 ```

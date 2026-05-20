@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 55 analysis-first main-path successor queue, and the active Phase 56 source-verified candidate-promotion successor queue.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 55 analysis-first main-path successor queue, and the Phase 56 source-verified candidate-promotion closeout queue.
 
 ## Current Gate State
 
@@ -59,7 +59,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 53 exit gate: closed
 - Phase 54 exit gate: closed
 - Phase 55 exit gate: closed
-- Phase 56 exit gate: open and blocked
+- Phase 56 exit gate: pending closeout
 
 Local phase audits currently report:
 
@@ -67,7 +67,7 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 56 Active Queue
+## Phase 56 Closeout Queue
 
 Phase 56 title:
 
@@ -76,29 +76,31 @@ Phase 56 - Source-Verified Candidate Promotion and Review Continuity
 ```
 
 - `audit-github-queue`
-  - reports `ready`
-  - confirms exactly one open successor milestone with a protected blocked exit gate and ready work items
+  - reports `paused`
+  - confirms the active Phase 56 milestone has no ready work items before exit-gate closeout
+  - `audit-github-queue` reports `paused` while the active Phase 56 milestone has no ready work items
 - milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity`
-  - open
+  - pending close after the exit gate merges
 - `#440` `Phase 56 exit gate`
-  - open and blocked
+  - pending close by this closeout PR after post-merge validation
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#441` `Phase 56: sync repo truth after Phase 55 closeout and define source-verified gate`
-  - ready
-  - syncs durable docs and tests to the active Phase 56 queue
+  - closed by PR `#444`
+  - synced durable docs and tests to the Phase 56 queue
 - `#442` `Phase 56: source-verify candidate planning signals against current frontend`
-  - ready
+  - closed by PR `#445`
   - source-verifies candidate planning signals before any promotion to durable truth
 - `#443` `Phase 56: add world-scoped review continuity guardrail`
-  - ready
-  - adds a focused contract-safe guardrail for world-scoped private-beta review continuity
+  - closed by PR `#446`
+  - added a focused contract-safe guardrail for world-scoped private-beta review continuity
+- closeout shorthand: `#441` closed by PR `#444`, `#442` closed by PR `#445`, and `#443` closed by PR `#446`
 - boundary posture
   - Keep synchronous generation for v1. Defer async task contract ratification.
   - Phase 56 does not implement async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion.
   - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged unless separately ratified.
   - untracked April/private-beta/kernel/design-system planning notes remain candidate inputs only until a reviewed PR promotes a specific source-verified signal.
 - phase gate baseline
-  - active Phase 56 Successor Gate: `docs/plans/phase-56-successor-gate-2026-05-20.md`
+  - Phase 56 Successor Gate closeout note: `docs/plans/phase-56-successor-gate-2026-05-20.md`
 
 ## Phase 55 Closeout
 
@@ -842,7 +844,7 @@ Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Priv
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 56 is active; do not open a parallel execution queue while `audit-github-queue` reports `ready` for the Phase 56 milestone.
+- Phase 56 is in closeout after PR `#446`; `#440` is pending close by this closeout PR, and milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity` is pending close after the exit gate merges. `#441` closed by PR `#444`, `#442` closed by PR `#445`, and `#443` closed by PR `#446`.
 - The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
 
 ## Historical Branch Status

@@ -299,14 +299,14 @@ planning notes remain candidate inputs until a reviewed PR intentionally promote
 `docs/plans/phase-55-successor-gate-2026-05-20.md`.
 
 Phase 56 Source-Verified Candidate Promotion and Review Continuity: Phase 56 is
-the active successor queue after the Phase 55 closeout. `#440` is the blocked
-Phase 56 exit gate, `#441` syncs repo truth and defines the source-verified gate,
-`#442` verifies candidate planning signals against current frontend source, and
-`#443` adds a world-scoped review-continuity guardrail. `audit-github-queue`
-reports `ready` for the Phase 56 queue. Phase 56 keeps public demo, plugin,
-Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries unchanged,
-and candidate inputs only become durable truth after a reviewed PR promotes a
-specific source-verified signal. See
+in closeout after PR `#446`; `#440` is pending close by this closeout PR, and
+milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity`
+is pending close after the exit gate merges. `#441` closed by PR `#444`, `#442`
+closed by PR `#445`, and `#443` closed by PR `#446`. `audit-github-queue`
+reports `paused` while the active Phase 56 milestone has no ready work items.
+Phase 56 kept public demo, plugin, Hosted GPT/BYOK, launch hub, async, and
+runtime mutation boundaries unchanged, and candidate inputs only become durable
+truth after a reviewed PR promotes a specific source-verified signal. See
 `docs/plans/phase-56-successor-gate-2026-05-20.md`.
 
 ---
@@ -348,7 +348,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - The completed Phase 54 Successor Gate lives in [docs/plans/phase-54-successor-gate-2026-05-19.md](docs/plans/phase-54-successor-gate-2026-05-19.md).
 - The Phase 54 Runtime Measurement and Async Contract Decision lives in [docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md](docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md).
 - The completed Phase 55 Successor Gate lives in [docs/plans/phase-55-successor-gate-2026-05-20.md](docs/plans/phase-55-successor-gate-2026-05-20.md).
-- The active Phase 56 Successor Gate lives in [docs/plans/phase-56-successor-gate-2026-05-20.md](docs/plans/phase-56-successor-gate-2026-05-20.md).
+- The Phase 56 Successor Gate closeout note lives in [docs/plans/phase-56-successor-gate-2026-05-20.md](docs/plans/phase-56-successor-gate-2026-05-20.md).
 - Phase 48 is closed after PR `#382`, issue `#375`, and milestone `Phase 48 - Successor Intake and Boundary Contract Triage`.
 - Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
 - Phase 50 is closed after PR `#402`, issue `#396`, and milestone `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; completed work items were `#397`, `#398`, and `#401`. Phase 50 measured before any `task_id` or worker contract is introduced and kept the private-beta launch hub planning-only for now.
@@ -358,7 +358,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - Phase 54 is closed after PR `#430`, issue `#426`, and milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate`; after closeout, `audit-github-queue` reported `paused` in the formal paused stop-state until Phase 55 opened. `#427` closed by PR `#429`, and `#428` closed by PR `#430`. Keep synchronous generation for v1. Defer async task contract ratification. Phase 54 covered runtime measurement and async contract decision work without implementing async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion. The Phase 54 Successor Gate lives in `docs/plans/phase-54-successor-gate-2026-05-19.md`; the decision note lives in `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`.
 - Phase 54 decision posture: public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged.
 - Phase 55 is closed after PR `#438`, issue `#432`, and milestone `Phase 55 - Analysis-First Main Path and Review Surface Guardrails`; `#433` closed by PR `#436`, `#434` closed by PR `#437`, and `#435` closed by PR `#438`. Immediately after closeout and before Phase 56 opened, `audit-github-queue` reported `paused` in the formal paused stop-state. The Phase 55 Successor Gate lives in `docs/plans/phase-55-successor-gate-2026-05-20.md`.
-- Phase 56 is active under milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity`; `#440` is the blocked exit gate, `#441`, `#442`, and `#443` are ready work items, and `audit-github-queue` reports `ready`. The Phase 56 Successor Gate lives in `docs/plans/phase-56-successor-gate-2026-05-20.md`.
+- Phase 56 is in closeout after PR `#446`; `#440` is pending close by this closeout PR, and milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity` is pending close after the exit gate merges. `#441` closed by PR `#444`, `#442` closed by PR `#445`, and `#443` closed by PR `#446`. `audit-github-queue` reports `paused` while the active Phase 56 milestone has no ready work items. The Phase 56 Successor Gate lives in `docs/plans/phase-56-successor-gate-2026-05-20.md`.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
 - Fog Harbor remains the canonical demo world; `museum-night` and `library-rain` are the selected bounded transfer worlds used to prove the pipeline has passed across three selected bounded fictional worlds.
 
