@@ -6,11 +6,11 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, Phase 36 closeout is complete, Phase 37 closeout is complete, Phase 38 closeout is complete, Phase 39 closeout is complete, Phase 40 closeout is complete, Phase 41 closeout is complete, Phase 42 closeout is complete, Phase 43 closeout is complete, Phase 44 closeout is complete, Phase 45 execution work is complete, Phase 46 closeout is complete, Phase 47 closeout is complete, Phase 48 closeout is complete, Phase 49 closeout is complete, Phase 50 closeout is complete, Phase 51 closeout is complete, Phase 52 closeout is complete, Phase 53 closeout is complete, Phase 54 closeout is complete, Phase 55 closeout is complete, Phase 56 closeout is closed, Phase 57 is in closeout after PR `#450`, and the first formal release remains published as `v0.1.0`.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, Phase 36 closeout is complete, Phase 37 closeout is complete, Phase 38 closeout is complete, Phase 39 closeout is complete, Phase 40 closeout is complete, Phase 41 closeout is complete, Phase 42 closeout is complete, Phase 43 closeout is complete, Phase 44 closeout is complete, Phase 45 execution work is complete, Phase 46 closeout is complete, Phase 47 closeout is complete, Phase 48 closeout is complete, Phase 49 closeout is complete, Phase 50 closeout is complete, Phase 51 closeout is complete, Phase 52 closeout is complete, Phase 53 closeout is complete, Phase 54 closeout is complete, Phase 55 closeout is complete, Phase 56 closeout is closed, Phase 57 closeout is closed, and the first formal release remains published as `v0.1.0`.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
-- Repository auto-merge is enabled for safe-lane use.
+- Repository auto-merge is enabled for safe-lane and protected-core use after subagent review passes.
 - Phase 1 and Phase 2 gates are closed.
 - Phase 3 is closed locally and in GitHub.
 - Phase 3 exit issue `#4` is closed and milestone `Phase 3 - Eval/UI/Demo` is closed.
@@ -213,7 +213,7 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - `#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope` is closed by PR `#393`.
 - `#394` `Phase 49: strengthen transfer eval outcome coverage` is closed by PR `#395`.
 - After milestone 56 closed, `audit-github-queue` reported `paused` with `active_milestone: null`.
-- Phase 57 is in closeout after PR `#450`; `#448` is pending close by this closeout PR, `#449` closed by PR `#450`, and `audit-github-queue` reports `paused` while the active Phase 57 milestone has no ready work items.
+- Phase 57 is closed after PR `#451`; `#448` closed by PR `#451`, `#449` closed by PR `#450`, milestone `Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary` is closed, and `audit-github-queue` reports `paused` with no active milestone.
 - Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary uses the Phase 57 Successor Boundary in `docs/plans/phase-57-successor-boundary-2026-05-20.md`.
 - The first formal repository release is published as `v0.1.0`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
@@ -266,10 +266,11 @@ Before builder automation is allowed to write code or auto-merge:
 
 - Protected-core files are defined in `.github/automation/lane-policy.json`.
 - Path hits under that policy force `lane:protected-core`.
-- Protected-core PRs may be automated, but they must not auto-merge.
-- Any open `status:needs-adr` or `risk:safety` label blocks auto-merge.
+- Protected-core PRs may auto-merge after required checks pass, local validation passes, and read-only subagent review reports no blocking findings.
+- `risk:core-contract` records protected-core scope but is not an auto-merge blocker by itself.
+- Any open `status:needs-adr` or unresolved `risk:safety` label blocks auto-merge until the ADR or safety review is resolved.
 - Long-running execution must run from isolated worktrees rather than the current `main` checkout.
 - Queue pickup order, one-writer ownership, and branch hygiene should follow `docs/plans/long-running-loop-runbook.md`.
 - When the active milestone exists and the queue reports `ready`, the builder may resume against that milestone only.
-- Phase 57 is in closeout after PR `#450`; do not open a parallel execution queue until `#448` and the Phase 57 milestone close and a reviewed successor milestone is defined.
+- Phase 57 is closed after PR `#451`; do not open a parallel execution queue until a reviewed successor milestone is defined.
 - When no open milestone exists and `audit-github-queue` reports `paused`, treat that state as an intentional released stop-state rather than a broken queue.

@@ -60,7 +60,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 54 exit gate: closed
 - Phase 55 exit gate: closed
 - Phase 56 exit gate: closed
-- Phase 57 exit gate: pending closeout
+- Phase 57 exit gate: closed
 
 Local phase audits currently report:
 
@@ -76,11 +76,11 @@ Phase 57 title:
 Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary
 ```
 
-- `audit-github-queue` reports `paused` while the active Phase 57 milestone has no ready work items
+- `audit-github-queue` reports `paused` with no active milestone
 - milestone `Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary`
-  - open
+  - closed
 - `#448` `Phase 57 exit gate`
-  - `#448` is pending close by this closeout PR
+  - `#448` closed by PR `#451`
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#449` `Phase 57: sync repo truth after Phase 56 closeout and define successor boundary`
   - `#449` closed by PR `#450`
@@ -864,11 +864,12 @@ Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Priv
 
 - Builder should prefer the earliest unfinished open milestone once a valid queue exists.
 - Closed exit-gate issues and milestones should remain archived history, not be reused as active work trackers.
-- Safe-lane PRs may auto-merge once checks are green and no blocking labels are present.
-- Protected-core changes still require explicit review and must not auto-merge.
+- Safe-lane PRs may auto-merge once checks are green, no blocking labels are present, and read-only subagent review reports no blocking findings.
+- Protected-core changes may auto-merge after required checks pass, local validation passes, and read-only subagent review reports no blocking findings; no separate human approval is required solely because `lane:protected-core` or `risk:core-contract` is present.
+- `status:needs-adr` and unresolved `risk:safety` remain auto-merge blockers until the ADR or safety review is resolved.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 57 is in closeout after PR `#450`; `#448` is pending close by this closeout PR, `#449` closed by PR `#450`, and `audit-github-queue` reports `paused` while the active Phase 57 milestone has no ready work items.
+- Phase 57 is closed after PR `#451`; `#448` closed by PR `#451`, `#449` closed by PR `#450`, and `audit-github-queue` reports `paused` with no active milestone.
 - The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
 
 ## Historical Branch Status

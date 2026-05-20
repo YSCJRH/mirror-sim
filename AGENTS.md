@@ -52,6 +52,8 @@ Windows entrypoints:
 - If a change touches more than 3 files, share a brief plan first.
 - Before changing schema, scenario DSL, claim labels, run trace shape, or artifact layout, confirm the contract boundary.
 - If a task changes a core contract, update `docs/architecture/contracts.md` and add an ADR when the contract is long-lived.
+- Before merging any PR, request a read-only subagent review. If that review reports no blocking findings and required validation/checks pass, Codex may merge automatically; protected-core/core-contract labels do not require a separate human approval by themselves.
+- `status:needs-adr` and unresolved `risk:safety` findings remain merge blockers until the needed ADR or safety review is resolved.
 - Every task should end with at least one concrete validation command or test.
 - Every report claim must keep both `label` and `evidence_ids`.
 - Write uncertainty explicitly as `TODO[verify]: ...`; do not invent facts.
