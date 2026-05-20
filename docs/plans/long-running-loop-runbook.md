@@ -36,13 +36,16 @@ Interpret `paused` in one of two ways:
 
 `lane:auto-safe`
 - Open a PR once checks are ready.
-- Allow auto-merge only when required checks are green and no blocking labels are present.
+- Request a read-only subagent review before merge.
+- Allow auto-merge only when required checks are green, the subagent review reports no blocking findings, and no blocking labels are present.
 - Re-run local smoke, test, and eval checks if the change touched the workbench or demo artifact readers.
 
 `lane:protected-core`
 - Open a PR with explicit protected-core framing.
-- Do not auto-merge.
-- Require an explicit review pass on queue governance, templates, contracts, or operating docs before merge.
+- Request a read-only subagent review focused on queue governance, templates, contracts, operating docs, safety, and release risk before merge.
+- Allow auto-merge when required checks are green, local validation passes, and the subagent review reports no blocking findings.
+- Do not require a separate human approval solely because `lane:protected-core` or `risk:core-contract` is present.
+- Treat `status:needs-adr` and unresolved `risk:safety` as blocking labels until the ADR or safety review is resolved.
 - Re-run local phase audits in addition to smoke, test, and eval checks when the change touches queue governance, CI, or runbook logic.
 
 ## Post-Merge Checkpoint

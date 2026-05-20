@@ -6,7 +6,6 @@
     "risk:core-contract"
   ],
   "automerge_blocking_labels": [
-    "risk:core-contract",
     "status:needs-adr",
     "risk:safety"
   ],

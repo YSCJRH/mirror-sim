@@ -11,7 +11,20 @@ def test_classify_paths_marks_protected_core_changes() -> None:
     decision = classify_paths(["backend/app/simulation/service.py", "README.md"])
     assert decision.lane == "lane:protected-core"
     assert "risk:core-contract" in decision.labels
+    assert "risk:core-contract" not in decision.blocking_labels
+    assert decision.blocking_labels == ["status:needs-adr", "risk:safety"]
     assert "backend/app/simulation/service.py" in decision.protected_hits
+
+
+def test_review_scorecard_protected_core_route_matches_auto_merge_policy() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    config_text = (repo_root / "frontend/src/app/review-scorecard/config.ts").read_text()
+
+    assert "cannot rely on auto-merge" not in config_text
+    assert "do not auto-merge" not in config_text
+    assert "read-only subagent review" in config_text
+    assert "local validation" in config_text
+    assert "no blocking labels" in config_text
 
 
 def test_classify_paths_marks_safe_lane_changes() -> None:

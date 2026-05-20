@@ -31,7 +31,7 @@ export const postMergeCheckpointCommands = [
 ] as const;
 export const laneRoutes: Record<PickupLane, LaneRoute> = {
   "lane:auto-safe": {
-    summary: "Use the safe-lane route when the change stays outside protected-core files and can merge after standard checks with no blocking labels.",
+    summary: "Use the safe-lane route when the change stays outside protected-core files and can merge after required checks, read-only subagent review, and no blocking labels.",
     checklist: [
       "Run audit-github-queue and confirm exactly one active milestone still reports ready.",
       "Pick the earliest open status:ready issue and keep a single writer on it.",
@@ -41,12 +41,13 @@ export const laneRoutes: Record<PickupLane, LaneRoute> = {
     ],
     reviewPath: [
       "Open the PR once checks are ready and the issue handoff copy is prepared.",
-      "Allow merge only after required checks are green and no blocking labels remain.",
+      "Request read-only subagent review before merge.",
+      "Allow merge only after required checks are green, the subagent review reports no blocking findings, and no blocking labels remain.",
       "Do not widen the diff into queue governance, templates, contracts, or other protected-core paths mid-flight."
     ]
   },
   "lane:protected-core": {
-    summary: "Use the protected-core route when queue governance, templates, contracts, CI, or operating docs are touched and the work cannot rely on auto-merge.",
+    summary: "Use the protected-core route when queue governance, templates, contracts, CI, or operating docs are touched and merge needs required checks, local validation, read-only subagent review, and no blocking labels.",
     checklist: [
       "Run audit-github-queue and confirm the active milestone still reports ready before pickup.",
       "Create one dedicated worktree for the issue and avoid multi-writer overlap on the same core surface.",
@@ -55,8 +56,9 @@ export const laneRoutes: Record<PickupLane, LaneRoute> = {
       "Keep the issue or closeout packet attached so review context stays visible during protected-core review."
     ],
     reviewPath: [
-      "Open the PR with explicit protected-core framing and do not auto-merge.",
-      "Require an explicit review pass before merge when templates, contracts, queue rules, or operating docs are involved.",
+      "Open the PR with explicit protected-core framing and request read-only subagent review.",
+      "Allow merge only after required checks are green, local validation passes, the subagent review reports no blocking findings, and no blocking labels remain.",
+      "Do not require separate human approval solely because lane:protected-core or risk:core-contract is present.",
       "If the queue becomes paused or fail after merge, stop pickup and repair the milestone, exit gate, or label structure before continuing."
     ]
   }

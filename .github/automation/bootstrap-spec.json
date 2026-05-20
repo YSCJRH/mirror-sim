@@ -434,7 +434,7 @@
     {
       "name": "risk:core-contract",
       "color": "b60205",
-      "description": "Touches protected-core contracts and cannot auto-merge."
+      "description": "Touches protected-core contracts and requires subagent review before auto-merge."
     },
     {
       "name": "risk:safety",
@@ -454,7 +454,7 @@
     {
       "name": "lane:protected-core",
       "color": "b60205",
-      "description": "Protected-core lane; may be automated but must not auto-merge."
+      "description": "Protected-core lane; may auto-merge after passing subagent review and required checks."
     },
     {
       "name": "status:ready",
