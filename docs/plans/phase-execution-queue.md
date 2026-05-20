@@ -60,7 +60,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 54 exit gate: closed
 - Phase 55 exit gate: closed
 - Phase 56 exit gate: closed
-- Phase 57 exit gate: open and blocked
+- Phase 57 exit gate: pending closeout
 
 Local phase audits currently report:
 
@@ -68,7 +68,7 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 57 Active Queue
+## Phase 57 Closeout Queue
 
 Phase 57 title:
 
@@ -76,16 +76,14 @@ Phase 57 title:
 Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary
 ```
 
-- `audit-github-queue`
-  - reports `ready`
-  - confirms exactly one open successor milestone with a protected blocked exit gate and ready work item
+- `audit-github-queue` reports `paused` while the active Phase 57 milestone has no ready work items
 - milestone `Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary`
   - open
 - `#448` `Phase 57 exit gate`
-  - open and blocked
+  - `#448` is pending close by this closeout PR
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#449` `Phase 57: sync repo truth after Phase 56 closeout and define successor boundary`
-  - ready
+  - `#449` closed by PR `#450`
   - syncs durable docs and tests after Phase 56 closeout
 - boundary posture
   - Keep synchronous generation for v1. Defer async task contract ratification.
@@ -870,7 +868,7 @@ Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Priv
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 57 is active under milestone `Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary`; consume only that milestone while `audit-github-queue` reports `ready`.
+- Phase 57 is in closeout after PR `#450`; `#448` is pending close by this closeout PR, `#449` closed by PR `#450`, and `audit-github-queue` reports `paused` while the active Phase 57 milestone has no ready work items.
 - The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
 
 ## Historical Branch Status

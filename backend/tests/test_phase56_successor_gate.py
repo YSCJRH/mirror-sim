@@ -119,7 +119,7 @@ def test_active_state_docs_do_not_treat_phase56_as_active_or_expanded() -> None:
         "`audit-github-queue` reports `ready` with `#440` as the blocked exit gate",
         "Phase 56 is in closeout",
         "`#440` is pending close",
-        "pending close by this closeout PR",
+        "`#440` is pending close by this closeout PR",
         "active Phase 56 milestone",
         "Phase 56 exit gate: pending closeout",
         "Phase 56 Closeout Queue",
