@@ -90,6 +90,7 @@ Phase 58 - Private-Beta Route Readiness Evidence Gate
 - `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage`
   - ready evidence work item
   - reproduces deferred private-beta route-readiness candidate snapshots with tracked tests or checked-in verification artifacts
+  - tracked route-readiness snapshot evidence lives in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`
 - boundary posture
   - Phase 58 may promote only narrow source-verified route-readiness evidence, or record blockers.
   - Phase 58 does not promote broad private-beta readiness.
@@ -98,6 +99,7 @@ Phase 58 - Private-Beta Route Readiness Evidence Gate
   - untracked April/private-beta/kernel/design-system planning notes remain candidate inputs only until a reviewed PR promotes a specific source-verified signal.
 - phase gate baseline
   - Phase 58 Route Readiness Evidence Gate: `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`
+  - Phase 58 Route Readiness Snapshot Evidence: `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`
 
 ## Phase 57 Closeout Queue
 
@@ -901,7 +903,7 @@ Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Priv
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
 - Phase 57 is closed after PR `#451`; `#448` closed by PR `#451`, `#449` closed by PR `#450`, and `audit-github-queue` reports `paused` with no active milestone.
-- Phase 58 is active after PR `#452`; `#453` `Phase 58 exit gate` is blocked, `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` is ready, `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` is ready, and `audit-github-queue` reports `ready` for the active Phase 58 queue.
+- Phase 58 is active after PR `#452`; `#453` `Phase 58 exit gate` is blocked, `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` is ready, `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` is ready, and `audit-github-queue` reports `ready` for the active Phase 58 queue. The Phase 58 Route Readiness Snapshot Evidence lives in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
 - The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
 
 ## Historical Branch Status

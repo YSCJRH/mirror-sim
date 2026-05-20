@@ -328,7 +328,8 @@ snapshots with tracked smoke coverage` is open and ready. `audit-github-queue`
 reports `ready` for the active Phase 58 queue. Phase 58 may reproduce narrow
 private-beta route-readiness candidate evidence with tracked validation, but it
 does not promote broad private-beta readiness or open product/runtime expansion.
-See `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`.
+See `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md` and
+`docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
 
 ---
 
@@ -372,6 +373,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - The Phase 56 Successor Gate closeout note lives in [docs/plans/phase-56-successor-gate-2026-05-20.md](docs/plans/phase-56-successor-gate-2026-05-20.md).
 - The Phase 57 Successor Boundary lives in [docs/plans/phase-57-successor-boundary-2026-05-20.md](docs/plans/phase-57-successor-boundary-2026-05-20.md).
 - The Phase 58 Route Readiness Evidence Gate lives in [docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md](docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md).
+- The Phase 58 Route Readiness Snapshot Evidence lives in [docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md](docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md).
 - Phase 48 is closed after PR `#382`, issue `#375`, and milestone `Phase 48 - Successor Intake and Boundary Contract Triage`.
 - Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
 - Phase 50 is closed after PR `#402`, issue `#396`, and milestone `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; completed work items were `#397`, `#398`, and `#401`. Phase 50 measured before any `task_id` or worker contract is introduced and kept the private-beta launch hub planning-only for now.
@@ -383,7 +385,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - Phase 55 is closed after PR `#438`, issue `#432`, and milestone `Phase 55 - Analysis-First Main Path and Review Surface Guardrails`; `#433` closed by PR `#436`, `#434` closed by PR `#437`, and `#435` closed by PR `#438`. Immediately after closeout and before Phase 56 opened, `audit-github-queue` reported `paused` in the formal paused stop-state. The Phase 55 Successor Gate lives in `docs/plans/phase-55-successor-gate-2026-05-20.md`.
 - Phase 56 is closed after PR `#447`; `#440` closed by PR `#447` after post-merge validation, and milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity` is closed. `#441` closed by PR `#444`, `#442` closed by PR `#445`, and `#443` closed by PR `#446`. After milestone 56 closed, `audit-github-queue` reports `paused` with `active_milestone: null`. The Phase 56 Successor Gate lives in `docs/plans/phase-56-successor-gate-2026-05-20.md`.
 - Phase 57 is closed after PR `#451`; `#448` closed by PR `#451`, `#449` closed by PR `#450`, milestone `Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary` is closed, and `audit-github-queue` reports `paused` with no active milestone. The Phase 57 Successor Boundary lives in `docs/plans/phase-57-successor-boundary-2026-05-20.md`.
-- Phase 58 is active after PR `#452`; milestone `Phase 58 - Private-Beta Route Readiness Evidence Gate` is open, `#453` `Phase 58 exit gate` is blocked, `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` is ready, `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` is ready, and `audit-github-queue` reports `ready` for the active Phase 58 queue. The Phase 58 Route Readiness Evidence Gate lives in `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`.
+- Phase 58 is active after PR `#452`; milestone `Phase 58 - Private-Beta Route Readiness Evidence Gate` is open, `#453` `Phase 58 exit gate` is blocked, `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` is ready, `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` is ready, and `audit-github-queue` reports `ready` for the active Phase 58 queue. The Phase 58 Route Readiness Evidence Gate lives in `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`, and the tracked snapshot evidence lives in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
 - Fog Harbor remains the canonical demo world; `museum-night` and `library-rain` are the selected bounded transfer worlds used to prove the pipeline has passed across three selected bounded fictional worlds.
 
