@@ -183,6 +183,10 @@
     {
       "title": "Phase 46 - Workbench Focus and Modularity",
       "description": "Turn the expanded compare-capable workbench into a more focused and maintainable operator surface by modularizing review-scorecard code, centering the default path on compare/evidence/eval, and moving secondary packet-heavy surfaces behind advanced navigation."
+    },
+    {
+      "title": "Phase 58 - Private-Beta Route Readiness Evidence Gate",
+      "description": "Reproduce narrow private-beta route-readiness candidate evidence with tracked validation while preserving public-demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries."
     }
   ],
   "labels": [
@@ -415,6 +419,11 @@
       "name": "phase:46",
       "color": "FFD1A6",
       "description": "Phase 46 workbench focus and modularity work."
+    },
+    {
+      "name": "phase:58",
+      "color": "C8E6C9",
+      "description": "Phase 58 private-beta route readiness evidence gate work."
     },
     {
       "name": "area:backend",
@@ -2503,6 +2512,41 @@
         "lane:auto-safe"
       ],
       "body": "## Summary\nMove the secondary packet-heavy surfaces behind an explicitly advanced navigation path so the default workbench entry stays focused.\n\n## Scope\n- group or gate secondary packet/export surfaces behind clearly secondary navigation\n- keep the existing packet-heavy surfaces reachable for established workflows\n- preserve artifact compatibility and current copy/export behavior while reducing default-path clutter\n\n## Constraints\n- no backend API changes\n- no packet schema changes\n- do not delete legacy packet surfaces in this phase"
+    },
+    {
+      "title": "Phase 58 exit gate",
+      "milestone": "Phase 58 - Private-Beta Route Readiness Evidence Gate",
+      "labels": [
+        "phase:58",
+        "area:docs-evals",
+        "status:blocked",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nClose Phase 58 only after the route-readiness evidence gate is synced, reproduced with tracked validation, and post-merge checks pass.\n\n## input\n- Phase 57 closed baseline\n- PR #452 subagent-reviewed auto-merge policy baseline\n- Phase 56 source verification note\n- Phase 57 successor boundary\n- current GitHub issue and milestone state\n\n## output\n- explicit Phase 58 closeout decision\n- documented stop condition for the Phase 58 queue\n- narrow route-readiness evidence outcome, or recorded blockers if evidence cannot be reproduced\n\n## out-of-scope\n- launch hub implementation or replacement of `/`\n- async/task_id behavior or worker queues\n- Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, or public/plugin path expansion\n- new mutating runtime APIs\n- scenario DSL, claim label, trace, compare artifact, session/node manifest, public demo artifact, or plugin MCP contract changes\n- broad private-beta readiness claims\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `python -m backend.app.cli audit-phase phase1`\n- `python -m backend.app.cli audit-phase phase2`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 58"
+    },
+    {
+      "title": "Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate",
+      "milestone": "Phase 58 - Private-Beta Route Readiness Evidence Gate",
+      "labels": [
+        "phase:58",
+        "area:docs-evals",
+        "risk:ci",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nSync repo truth after PR #452 and define the active Phase 58 route-readiness evidence gate.\n\n## input\n- `mirror.md`\n- `AGENTS.md`\n- `README.md`\n- `.github/automation/bootstrap-spec.json`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/phase-57-successor-boundary-2026-05-20.md`\n- current GitHub issue and milestone state\n\n## output\n- Phase 58 milestone, label, and issues recorded in tracked repo truth\n- Phase 57 and PR #452 recorded as the prior baseline\n- Phase 58 scope recorded as a narrow evidence gate, not product/runtime expansion\n- focused tests that guard the Phase 58 baseline note and prevent broad private-beta/launch/async promotion\n\n## out-of-scope\n- reproducing route-readiness smoke evidence directly in this issue\n- changing frontend or backend runtime behavior\n- changing contracts or ADRs\n- promoting untracked planning notes wholesale\n\n## minimal test\n- `python -m pytest backend/tests/test_phase58_route_readiness_gate.py -q`\n- `python scripts/check_no_secrets.py`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n- `git diff --check`\n- `./make.ps1 test`\n\n## touches contract\nNo. Repo governance and baseline sync only; protected-core lane because queue governance is touched.\n\n## phase\nPhase 58"
+    },
+    {
+      "title": "Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage",
+      "milestone": "Phase 58 - Private-Beta Route Readiness Evidence Gate",
+      "labels": [
+        "phase:58",
+        "area:docs-evals",
+        "area:frontend",
+        "status:ready",
+        "lane:protected-core"
+      ],
+      "body": "## goal\nReproduce the deferred private-beta route-readiness candidate snapshots with tracked smoke coverage or record specific blockers.\n\n## input\n- Phase 58 route-readiness evidence gate note from #454\n- `docs/plans/phase-56-candidate-source-verification-2026-05-20.md`\n- current frontend route source for `/`, `/review`, `/worlds/<world_id>`, and `/worlds/<world_id>/review`\n- current public-demo flags and runtime guard tests\n\n## output\n- tracked validation evidence for the narrow route-readiness signal, or a blocker note explaining what cannot be promoted\n- tests or checked-in verification artifacts that reproduce the candidate signal without relying on untracked screenshots or stale April notes\n- unchanged public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries\n\n## out-of-scope\n- broad private-beta readiness claims\n- launch hub implementation or replacement of `/`\n- Hosted GPT/BYOK, auth, upload, billing, database, object storage, quota, or deployment expansion\n- async/task_id behavior\n- new mutating runtime APIs\n- scenario DSL, claim label, trace, compare artifact, session/node manifest, public demo artifact, or plugin MCP contract changes\n\n## minimal test\n- `python -m pytest <focused route-readiness tests> -q`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n\n## touches contract\nNo, unless implementation discovers a missing guard or boundary gap. If that happens, stop and open a protected-core contract or guardrail item instead of widening this issue.\n\n## phase\nPhase 58"
     }
   ]
 }
