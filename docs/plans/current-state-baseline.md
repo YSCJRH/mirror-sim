@@ -340,7 +340,7 @@ This note records the active Phase 58 route-readiness evidence gate after PR `#4
   - `gh issue list --milestone "Phase 58 - Private-Beta Route Readiness Evidence Gate" --state all`
     - `#453` `Phase 58 exit gate` is open and blocked
     - `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` is open and ready
-    - `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` is open and ready
+    - `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` is open and ready; tracked snapshot evidence lives in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
     - `audit-github-queue` reports `ready` for the active Phase 58 queue
 
@@ -379,7 +379,7 @@ This note records the active Phase 58 route-readiness evidence gate after PR `#4
 - The Phase 49 unlock order is resolved: `#384` closed through PR `#385`, `#386` closed through PR `#387`, `#388` closed through PR `#389`, `#390` closed through PR `#391`, `#392` closed through PR `#393`, `#394` closed through PR `#395`, and `#383` closed after the post-merge exit-gate reassessment.
 - The Phase 50 unlock order is resolved: `#397` closed through PR `#399`, `#398` closed through PR `#400`, `#401` closed through PR `#402`, and `#396` closed after the post-merge exit-gate reassessment.
 - Phase 57 is closed after PR `#451`; `#448` closed by PR `#451`, `#449` closed by PR `#450`, milestone `Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary` is closed, and `audit-github-queue` reports `paused` with no active milestone.
-- Phase 58 is active after PR `#452`; milestone `Phase 58 - Private-Beta Route Readiness Evidence Gate` is open, `#453` `Phase 58 exit gate` is blocked, `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` is ready, `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` is ready, and `audit-github-queue` reports `ready` for the active Phase 58 queue. The Phase 58 Route Readiness Evidence Gate lives in `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`.
+- Phase 58 is active after PR `#452`; milestone `Phase 58 - Private-Beta Route Readiness Evidence Gate` is open, `#453` `Phase 58 exit gate` is blocked, `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` is ready, `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` is ready, and `audit-github-queue` reports `ready` for the active Phase 58 queue. The Phase 58 Route Readiness Evidence Gate lives in `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`; the Phase 58 Route Readiness Snapshot Evidence lives in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
 - The Phase 52 exit gate is `#410` `Phase 52 exit gate`, which closed after post-merge validation on `main`.
 - The Phase 53 exit gate is `#418` `Phase 53 exit gate`, which closed after post-merge validation on `main`.
 - The Phase 54 exit gate is `#426` `Phase 54 exit gate`, which closed after post-merge validation on `main`.
@@ -423,6 +423,7 @@ This note records the active Phase 58 route-readiness evidence gate after PR `#4
 - The Phase 57 Successor Boundary lives in `docs/plans/phase-57-successor-boundary-2026-05-20.md`.
 - Phase 57 is closed after PR `#451`; `#448` closed by PR `#451`, `#449` closed by PR `#450`, milestone `Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary` is closed, and `audit-github-queue` reports `paused` with no active milestone.
 - The Phase 58 Route Readiness Evidence Gate lives in `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`.
+- The Phase 58 Route Readiness Snapshot Evidence lives in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
 - Phase 58 is active after PR `#452`; milestone `Phase 58 - Private-Beta Route Readiness Evidence Gate` is open, `#453` `Phase 58 exit gate` is blocked, `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` is ready, `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` is ready, and `audit-github-queue` reports `ready` for the active Phase 58 queue.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.

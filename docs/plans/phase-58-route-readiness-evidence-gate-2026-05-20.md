@@ -40,12 +40,14 @@ Phase 58 - Private-Beta Route Readiness Evidence Gate
   - Lane: `protected-core`.
   - Status: open and ready.
   - Scope: reproduce the deferred private-beta route-readiness candidate snapshots with tracked tests or checked-in verification artifacts.
+  - Evidence note: `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
 
 `audit-github-queue` reports `ready` for the active Phase 58 queue.
 
 ## Route-Readiness Evidence Gate Scope
 
 - Reproduce the deferred private-beta route-readiness candidate snapshots with tracked tests or checked-in verification artifacts.
+- Record reproduced route-readiness evidence in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
 - Promote only narrow source-verified route-readiness evidence, or record blockers.
 - Keep `/` owned by the guided public demo.
 - Keep `/review` as the advanced read-only public-demo review surface.
@@ -77,9 +79,12 @@ Phase 58 - Private-Beta Route Readiness Evidence Gate
 
 ```powershell
 python -m pytest backend/tests/test_phase58_route_readiness_gate.py -q
+python -m pytest backend/tests/test_phase58_route_readiness_snapshots.py -q
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
-python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md backend/tests/test_phase58_route_readiness_gate.py
+python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md backend/tests/test_phase58_route_readiness_gate.py backend/tests/test_phase58_route_readiness_snapshots.py scripts/smoke_phase58_route_readiness_web.py
+npm run build --prefix frontend
+python scripts/smoke_phase58_route_readiness_web.py --timeout 60
 git diff --check
 ./make.ps1 smoke
 ./make.ps1 test
