@@ -51,6 +51,7 @@ export function LegacyOperationsPanel({
   return (
     <details
       className="editorialDrawer"
+      data-legacy-review-surface="deferred-compatibility"
       onToggle={(event) => {
         if ((event.currentTarget as HTMLDetailsElement).open) {
           setShouldRenderScorecard(true);
