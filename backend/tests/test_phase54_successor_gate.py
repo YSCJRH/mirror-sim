@@ -92,7 +92,7 @@ def test_active_state_docs_preserve_phase54_closeout_history() -> None:
         assert "Phase 54: refresh runtime measurement and decide async contract boundary" in text
         assert "closed by PR `#430`" in text
         assert "formal paused stop-state" in text
-        assert "`audit-github-queue` reports `paused`" in text
+        assert "`audit-github-queue` reports `paused`" in text or "reported `paused`" in text
         assert "runtime measurement" in text
         assert "async contract decision" in text
         assert "public demo, plugin, Hosted GPT/BYOK, launch hub, async" in text

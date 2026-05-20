@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 53 transfer-generalization closeout, and the completed Phase 54 runtime-orchestration successor queue.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 54 runtime-orchestration successor queue, and the active Phase 55 analysis-first main-path successor queue.
 
 ## Current Gate State
 
@@ -58,12 +58,46 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 52 exit gate: closed
 - Phase 53 exit gate: closed
 - Phase 54 exit gate: closed
+- Phase 55 exit gate: open and blocked
 
 Local phase audits currently report:
 
 - `phase1`: pass
 - `phase2`: pass
 - `phase3`: pass
+
+## Phase 55 Active Queue
+
+Phase 55 title:
+
+```text
+Phase 55 - Analysis-First Main Path and Review Surface Guardrails
+```
+
+- `audit-github-queue`
+  - reports `ready`
+  - confirms exactly one open successor milestone with a protected blocked exit gate and ready work items
+- milestone `Phase 55 - Analysis-First Main Path and Review Surface Guardrails`
+  - open
+- `#432` `Phase 55 exit gate`
+  - open and blocked
+  - labeled `lane:protected-core` because it is the protected closeout gate
+- `#433` `Phase 55: sync repo truth after Phase 54 closeout and define main-path gate`
+  - ready
+  - syncs durable docs and tests to the active Phase 55 queue
+- `#434` `Phase 55: audit candidate product-reframe plans and freeze contract-safe scope`
+  - ready
+  - audits untracked candidate planning notes before any promotion to durable truth
+- `#435` `Phase 55: add analysis-first review-surface regression guardrail`
+  - ready
+  - adds a focused contract-safe frontend/docs-eval guardrail for the analysis-first main path
+- boundary posture
+  - Keep synchronous generation for v1. Defer async task contract ratification.
+  - Phase 55 does not implement async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion.
+  - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged unless separately ratified.
+  - untracked April/private-beta/kernel/design-system planning notes remain candidate inputs until a reviewed PR intentionally promotes them.
+- phase gate baseline
+  - active Phase 55 Successor Gate: `docs/plans/phase-55-successor-gate-2026-05-20.md`
 
 ## Phase 54 Closeout
 
@@ -73,9 +107,12 @@ Phase 54 title:
 Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate
 ```
 
+Phase 54 is closed after PR `#430`, issue `#426`, and milestone
+`Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate`.
+
 - `audit-github-queue`
-  - reports `paused`
-  - confirms the formal paused stop-state with no active successor milestone open
+  - reported `paused` after Phase 54 closeout until Phase 55 opened
+  - now reports `ready` for the active Phase 55 successor queue
 - milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate`
   - closed
 - `#426` `Phase 54 exit gate`
@@ -767,7 +804,7 @@ Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Priv
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 54 is closed; do not open a parallel execution queue while `audit-github-queue` reports `paused` with no active successor milestone.
+- Phase 55 is active; do not open a parallel execution queue while `audit-github-queue` reports `ready` for the Phase 55 milestone.
 - The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
 
 ## Historical Branch Status
