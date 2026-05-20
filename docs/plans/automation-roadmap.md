@@ -6,7 +6,7 @@ Turn Mirror into a long-running, repo-native automation loop that uses GitHub as
 
 ## Current State
 
-Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, Phase 36 closeout is complete, Phase 37 closeout is complete, Phase 38 closeout is complete, Phase 39 closeout is complete, Phase 40 closeout is complete, Phase 41 closeout is complete, Phase 42 closeout is complete, Phase 43 closeout is complete, Phase 44 closeout is complete, Phase 45 execution work is complete, Phase 46 closeout is complete, Phase 47 closeout is complete, Phase 48 closeout is complete, Phase 49 closeout is complete, Phase 50 closeout is complete, Phase 51 closeout is complete, Phase 52 closeout is complete, Phase 53 closeout is complete, Phase 54 closeout is complete, and the first formal release remains published as `v0.1.0`.
+Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is complete, Phase 7 closeout is complete, Phase 8 closeout is complete, Phase 9 closeout is complete, Phase 10 closeout is complete, Phase 11 closeout is complete, Phase 12 closeout is complete, Phase 13 closeout is complete, Phase 14 closeout is complete, Phase 15 closeout is complete, Phase 16 closeout is complete, Phase 17 closeout is complete, Phase 18 closeout is complete, Phase 19 closeout is complete, Phase 20 closeout is complete, Phase 21 closeout is complete, Phase 22 closeout is complete, Phase 23 closeout is complete, Phase 24 closeout is complete, Phase 25 closeout is complete, Phase 26 closeout is complete, Phase 27 closeout is complete, Phase 28 closeout is complete, Phase 29 closeout is complete, Phase 30 closeout is complete, Phase 31 closeout is complete, Phase 32 closeout is complete, Phase 33 closeout is complete, Phase 34 closeout is complete, Phase 35 closeout is complete, Phase 36 closeout is complete, Phase 37 closeout is complete, Phase 38 closeout is complete, Phase 39 closeout is complete, Phase 40 closeout is complete, Phase 41 closeout is complete, Phase 42 closeout is complete, Phase 43 closeout is complete, Phase 44 closeout is complete, Phase 45 execution work is complete, Phase 46 closeout is complete, Phase 47 closeout is complete, Phase 48 closeout is complete, Phase 49 closeout is complete, Phase 50 closeout is complete, Phase 51 closeout is complete, Phase 52 closeout is complete, Phase 53 closeout is complete, Phase 54 closeout is complete, Phase 55 is active, and the first formal release remains published as `v0.1.0`.
 
 - GitHub milestones, labels, and phase issues exist.
 - `main` is protected by the required Linux and Windows quality gates.
@@ -186,7 +186,7 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints` is closed by PR `#423`.
 - `#421` `Phase 53: add bounded third-world transfer readiness evidence` is closed by PR `#424` and records `library-rain`.
 - Phase 53 strengthened bounded transfer generalization and third-world readiness evidence without widening public demo, plugin, Hosted GPT/BYOK, launch hub, async, or runtime mutation boundaries. The completed Phase 53 Successor Gate lives in `docs/plans/phase-53-successor-gate-2026-05-19.md`; the transfer-assumption audit lives in `docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md`; the third-world evidence note lives in `docs/plans/phase-53-third-world-transfer-evidence-2026-05-19.md`.
-- Phase 54 is closed after post-merge validation.
+- Phase 54 is closed after PR `#430`, issue `#426`, and milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate`.
 - milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate` is closed.
 - `#426` `Phase 54 exit gate` is closed after post-merge validation.
 - `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate` is closed by PR `#429`.
@@ -194,13 +194,20 @@ Day 0 bootstrap is complete, Phase 5 closeout is complete, Phase 6 closeout is c
 - Keep synchronous generation for v1. Defer async task contract ratification.
 - Phase 54 decision posture: public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged.
 - Phase 54 covered runtime measurement and async contract decision work without implementing async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion. The completed Phase 54 Successor Gate lives in `docs/plans/phase-54-successor-gate-2026-05-19.md`; the decision note lives in `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`.
+- After Phase 54 closeout, `audit-github-queue` reported `paused` in the formal paused stop-state until Phase 55 opened.
+- Phase 55 is active after opening milestone `Phase 55 - Analysis-First Main Path and Review Surface Guardrails`.
+- `#432` `Phase 55 exit gate` is open and blocked.
+- `#433` `Phase 55: sync repo truth after Phase 54 closeout and define main-path gate` is ready.
+- `#434` `Phase 55: audit candidate product-reframe plans and freeze contract-safe scope` is ready.
+- `#435` `Phase 55: add analysis-first review-surface regression guardrail` is ready.
+- Phase 55 covers candidate planning audit and analysis-first review-surface guardrails without widening public demo, plugin, Hosted GPT/BYOK, launch hub, async, or runtime mutation boundaries. The active Phase 55 Successor Gate lives in `docs/plans/phase-55-successor-gate-2026-05-20.md`. Local untracked April/private-beta/kernel/design-system planning files remain candidate inputs until a reviewed PR intentionally promotes them.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.
 - `#390` `Phase 49: ratify runtime parent-child compare emission policy` is closed by PR `#391`.
 - `#392` `Phase 49: ratify runtime latest-activity metadata and rollback scope` is closed by PR `#393`.
 - `#394` `Phase 49: strengthen transfer eval outcome coverage` is closed by PR `#395`.
-- `audit-github-queue` reports `paused` in the formal paused stop-state after Phase 54 closeout; no active successor milestone is open.
+- `audit-github-queue` reports `ready` for the active Phase 55 successor queue after the Phase 54 closeout.
 - The first formal repository release is published as `v0.1.0`.
 - Builder state should continue to be derived from `audit-github-queue`, not from doc-only convention.
 - The worktree pickup and handoff sequence is documented in `docs/plans/long-running-loop-runbook.md`.
@@ -257,5 +264,5 @@ Before builder automation is allowed to write code or auto-merge:
 - Long-running execution must run from isolated worktrees rather than the current `main` checkout.
 - Queue pickup order, one-writer ownership, and branch hygiene should follow `docs/plans/long-running-loop-runbook.md`.
 - When the active milestone exists and the queue reports `ready`, the builder may resume against that milestone only.
-- Phase 54 is closed; do not open a parallel execution queue while `audit-github-queue` reports `paused` with no active successor milestone.
+- Phase 55 is active; do not open a parallel execution queue while `audit-github-queue` reports `ready` for the Phase 55 milestone.
 - When no open milestone exists and `audit-github-queue` reports `paused`, treat that state as an intentional released stop-state rather than a broken queue.
