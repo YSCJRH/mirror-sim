@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 54 runtime-orchestration successor queue, and the completed Phase 55 analysis-first main-path successor queue.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 55 analysis-first main-path successor queue, and the active Phase 56 source-verified candidate-promotion successor queue.
 
 ## Current Gate State
 
@@ -59,12 +59,46 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 53 exit gate: closed
 - Phase 54 exit gate: closed
 - Phase 55 exit gate: closed
+- Phase 56 exit gate: open and blocked
 
 Local phase audits currently report:
 
 - `phase1`: pass
 - `phase2`: pass
 - `phase3`: pass
+
+## Phase 56 Active Queue
+
+Phase 56 title:
+
+```text
+Phase 56 - Source-Verified Candidate Promotion and Review Continuity
+```
+
+- `audit-github-queue`
+  - reports `ready`
+  - confirms exactly one open successor milestone with a protected blocked exit gate and ready work items
+- milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity`
+  - open
+- `#440` `Phase 56 exit gate`
+  - open and blocked
+  - labeled `lane:protected-core` because it is the protected closeout gate
+- `#441` `Phase 56: sync repo truth after Phase 55 closeout and define source-verified gate`
+  - ready
+  - syncs durable docs and tests to the active Phase 56 queue
+- `#442` `Phase 56: source-verify candidate planning signals against current frontend`
+  - ready
+  - source-verifies candidate planning signals before any promotion to durable truth
+- `#443` `Phase 56: add world-scoped review continuity guardrail`
+  - ready
+  - adds a focused contract-safe guardrail for world-scoped private-beta review continuity
+- boundary posture
+  - Keep synchronous generation for v1. Defer async task contract ratification.
+  - Phase 56 does not implement async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion.
+  - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged unless separately ratified.
+  - untracked April/private-beta/kernel/design-system planning notes remain candidate inputs only until a reviewed PR promotes a specific source-verified signal.
+- phase gate baseline
+  - active Phase 56 Successor Gate: `docs/plans/phase-56-successor-gate-2026-05-20.md`
 
 ## Phase 55 Closeout
 
@@ -808,7 +842,7 @@ Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Priv
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 55 is closed; do not open a parallel execution queue without a new reviewed successor milestone.
+- Phase 56 is active; do not open a parallel execution queue while `audit-github-queue` reports `ready` for the Phase 56 milestone.
 - The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
 
 ## Historical Branch Status
