@@ -277,12 +277,12 @@ See `docs/plans/phase-53-successor-gate-2026-05-19.md`,
 `docs/plans/phase-53-third-world-transfer-evidence-2026-05-19.md`.
 
 Phase 54 Runtime Orchestration Measurement and Async Contract Decision Gate: Phase 54 is
-the active successor queue after Phase 53 closeout. `audit-github-queue` reports `ready`
-for milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision
-Gate` with `#426` `Phase 54 exit gate` blocked, `#427` `Phase 54: sync repo truth after
-Phase 53 closeout and define runtime gate` closed by PR `#429`, and `#428` `Phase 54: refresh runtime measurement and decide async contract boundary` recording the Phase 54 Runtime Measurement and Async Contract Decision. Phase 54 is a protected-core
+closed after PR `#430`, issue `#426`, and milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate`. After closeout,
+`audit-github-queue` reports `paused` in the formal paused stop-state with no active successor milestone open. `#427`
+`Phase 54: sync repo truth after Phase 53 closeout and define runtime gate` closed by
+PR `#429`, and `#428` `Phase 54: refresh runtime measurement and decide async contract boundary` closed by PR `#430`. Phase 54 was a protected-core
 runtime measurement and async contract decision gate; it keeps synchronous generation for v1,
-defers async task contract ratification, and does not implement async workers, `task_id`,
+defers async task contract ratification, and did not implement async workers, `task_id`,
 launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion.
 See `docs/plans/phase-54-successor-gate-2026-05-19.md` and
 `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`.
@@ -323,7 +323,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - The completed Phase 53 Successor Gate lives in [docs/plans/phase-53-successor-gate-2026-05-19.md](docs/plans/phase-53-successor-gate-2026-05-19.md).
 - The completed Phase 53 Transfer Assumption Audit lives in [docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md](docs/plans/phase-53-transfer-assumption-audit-2026-05-19.md).
 - The completed Phase 53 Third-World Transfer Evidence note lives in [docs/plans/phase-53-third-world-transfer-evidence-2026-05-19.md](docs/plans/phase-53-third-world-transfer-evidence-2026-05-19.md).
-- The active Phase 54 Successor Gate lives in [docs/plans/phase-54-successor-gate-2026-05-19.md](docs/plans/phase-54-successor-gate-2026-05-19.md).
+- The completed Phase 54 Successor Gate lives in [docs/plans/phase-54-successor-gate-2026-05-19.md](docs/plans/phase-54-successor-gate-2026-05-19.md).
 - The Phase 54 Runtime Measurement and Async Contract Decision lives in [docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md](docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md).
 - Phase 48 is closed after PR `#382`, issue `#375`, and milestone `Phase 48 - Successor Intake and Boundary Contract Triage`.
 - Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
@@ -331,7 +331,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Private-Beta Route Contract and Runtime Readiness Gate`; completed work items were `#404`, `#405`, and `#406`.
 - Phase 52 is closed after PR `#416`, issue `#410`, and milestone `Phase 52 - Legacy Route Containment and Runtime Scope Audit`; completed work items were `#411`, `#412`, and `#413`. Before Phase 53 was opened, `audit-github-queue` reported the formal paused stop-state with no active milestone. The legacy top-level runtime routes audit note lives in `docs/plans/phase-52-legacy-runtime-route-audit-2026-05-18.md`; the runtime guard note lives in `docs/plans/phase-52-runtime-mutation-guard-regression-2026-05-18.md`; Phase 52 did not widen public demo, plugin, Hosted GPT/BYOK, or async contracts and keeps route-derived `worldId` guard coverage in scope.
 - Phase 53 is closed after PR `#424`, issue `#418`, and milestone `Phase 53 - Transfer Generalization and Third-World Readiness`; after closeout, the queue returned to the formal paused stop-state until Phase 54 was opened. `#419` closed by PR `#422`, `#420` `Phase 53: audit transfer assumptions and third-world readiness constraints` closed by PR `#423`, and `#421` `Phase 53: add bounded third-world transfer readiness evidence` closed by PR `#424`. Phase 53 strengthened bounded transfer generalization evidence without widening public demo, plugin, Hosted GPT/BYOK, launch hub, async, or runtime mutation boundaries, and `library-rain` is the third-world evidence slice.
-- Phase 54 is active after opening milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate`; `#426` remains the blocked exit gate, `#427` is closed by PR `#429`, and `#428` records the Phase 54 Runtime Measurement and Async Contract Decision. Keep synchronous generation for v1. Defer async task contract ratification. Phase 54 covers runtime measurement and async contract decision work without implementing async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion. The Phase 54 Successor Gate lives in `docs/plans/phase-54-successor-gate-2026-05-19.md`; the decision note lives in `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`.
+- Phase 54 is closed after PR `#430`, issue `#426`, and milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate`; after closeout, `audit-github-queue` reports `paused` in the formal paused stop-state with no active successor milestone open. `#427` closed by PR `#429`, and `#428` closed by PR `#430`. Keep synchronous generation for v1. Defer async task contract ratification. Phase 54 covered runtime measurement and async contract decision work without implementing async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion. The Phase 54 Successor Gate lives in `docs/plans/phase-54-successor-gate-2026-05-19.md`; the decision note lives in `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`.
 - Phase 54 decision posture: public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
 - Fog Harbor remains the canonical demo world; `museum-night` and `library-rain` are the selected bounded transfer worlds used to prove the pipeline has passed across three selected bounded fictional worlds.

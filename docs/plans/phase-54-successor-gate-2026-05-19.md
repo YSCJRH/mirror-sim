@@ -4,14 +4,15 @@ Date: 2026-05-19
 
 Issue: `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate`
 
-Current state: Phase 54 is active after PR `#429`; `#428` records the runtime
-measurement and async contract decision.
+Current state: Phase 54 is closed; no active successor milestone is open.
 
-This note records the post-Phase-53 baseline and the Phase 54 successor queue. Phase 54
-is a protected-core runtime-orchestration measurement and async contract decision gate.
-It refreshes the evidence needed before Mirror decides whether to ratify asynchronous
-`task_id`, worker queue, or heartbeat semantics. It is not an async-worker, launch-hub,
-public-path, plugin, Hosted GPT/BYOK, schema-expansion, or runtime-mutation phase.
+This note records the completed Phase 54 successor queue and the formal paused
+stop-state reached after runtime measurement and async contract decision work. Phase 54
+was a protected-core runtime-orchestration measurement and async contract decision gate.
+It refreshed the local deterministic evidence needed before Mirror decides whether to
+ratify asynchronous `task_id`, worker queue, or heartbeat semantics. It was not an
+async-worker, launch-hub, public-path, plugin, Hosted GPT/BYOK, schema-expansion, or
+runtime-mutation phase.
 
 This gate is recorded at `docs/plans/phase-54-successor-gate-2026-05-19.md`.
 The Phase 54 Runtime Measurement and Async Contract Decision lives in
@@ -28,7 +29,7 @@ Phase 53 is closed after PR `#424`, issue `#418`, and milestone `Phase 53 - Tran
 - Milestone `Phase 53 - Transfer Generalization and Third-World Readiness` is closed.
 - `./make.ps1 eval-transfer` passes with `world_count: 3` and `transfer_proof_world_local: true`.
 - Queue audit reached the formal release stop-state after Phase 53 closed, then returned
-  `ready` once Phase 54 was opened with one blocked exit gate and ready work items.
+  `ready` during Phase 54 execution after the successor milestone opened.
 
 ## Phase 54 Operational Queue
 
@@ -38,46 +39,56 @@ Phase 54 title:
 Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate
 ```
 
-Current GitHub objects:
+Closed GitHub objects:
 
 - `#426` `Phase 54 exit gate`
   - Lane: `protected-core`.
-  - Status: open and blocked.
+  - Status: closed after post-merge validation.
 - `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate`
   - Lane: `protected-core`.
   - Status: closed by PR `#429`.
-  - Scope: sync durable docs and tests to the active Phase 54 queue.
+  - Scope: sync durable docs and tests to the Phase 54 queue.
 - `#428` `Phase 54: refresh runtime measurement and decide async contract boundary`
   - Lane: `protected-core`.
-  - Status: active decision work item with `status:needs-adr`.
+  - Status: closed by PR `#430`.
   - Scope: refresh local deterministic runtime measurement evidence, keep
     hosted/private-beta measurement verification as TODO[verify], and decide whether a
     future async `task_id` / worker queue contract should be ratified.
   - Decision note:
     `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md`.
 
-`python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `ready`
-with the note: "Exactly one open milestone exists with a protected blocked exit gate and ready work items."
+After Phase 54 closeout, `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim` reports `paused`
+because no active successor milestone is open.
+
+## Phase 54 Closeout Evidence
+
+- PR `#429` closed `#427` `Phase 54: sync repo truth after Phase 53 closeout and define runtime gate`.
+- PR `#430` closed `#428` `Phase 54: refresh runtime measurement and decide async contract boundary`.
+- Issue `#426` `Phase 54 exit gate` is closed after post-merge validation on `main`.
+- Milestone `Phase 54 - Runtime Orchestration Measurement and Async Contract Decision Gate` is closed.
+- The queue has returned to the formal paused stop-state; no active successor milestone is open.
+- `./make.ps1 test` passes with 158 tests.
+- `./make.ps1 eval-demo` passes with 23/23 checks.
+- `./make.ps1 eval-transfer` passes with `world_count: 3`, `checks_passed: 60`, and `transfer_proof_world_local: true`.
 
 ## Runtime-Orchestration Scope
 
-Phase 54 moves Mirror toward a reviewed runtime orchestration decision. ADR-0006 keeps
-the current v1 runtime synchronous: V1 does not introduce task queues or a separate `task_id` contract. Phase 54 may measure current hosted/private-beta runtime behavior,
-review whether long-running worker semantics are justified, and write a decision note
-that either keeps synchronous v1, ratifies a future async contract, or defers pending
-stronger evidence.
+Phase 54 moved Mirror toward a reviewed runtime orchestration decision. ADR-0006 keeps
+the current v1 runtime synchronous: V1 does not introduce task queues or a separate `task_id` contract. Phase 54 refreshed local deterministic runtime evidence and deferred
+hosted/private-beta measurement verification before any long-running worker semantics are
+ratified.
 
 `docs/plans/phase-54-runtime-measurement-async-contract-decision-2026-05-19.md` records
 the Phase 54 decision: Keep synchronous generation for v1. Defer async task contract ratification.
 The refreshed evidence is local deterministic evidence only; hosted/private-beta model
 duration remains TODO[verify].
 
-Phase 54 must not implement async workers, task queues, `task_id`, heartbeat, retry,
+Phase 54 did not implement async workers, task queues, `task_id`, heartbeat, retry,
 cleanup, checkpoint mutation/deletion, restore semantics, or background job APIs before
 a reviewed contract exists. If Phase 54 ratifies any long-lived async/task contract,
 the follow-up must update `docs/architecture/contracts.md` and add an ADR before
 implementation.
-Phase 54 work items do not implement async workers, task queues, `task_id`, heartbeat, retry, cleanup before that reviewed contract exists.
+Phase 54 work items did not implement async workers, task queues, `task_id`, heartbeat, retry, cleanup before that reviewed contract exists.
 The public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged.
 
 ## Protected-Core Lane Coverage
@@ -129,6 +140,11 @@ public demo artifact layout, or the Mirror Codex MCP contract.
    - Keep synchronous generation for v1; Defer async task contract ratification.
    - Do not implement async workers in this issue.
 
+3. Closeout baseline
+   - Close the Phase 54 exit gate after post-merge validation.
+   - Close the Phase 54 milestone.
+   - Return the queue to the formal paused stop-state until an approved successor phase is opened.
+
 ## Blueprint Boundary
 
 Phase 54 must stay aligned with `mirror.md` and `AGENTS.md`:
@@ -163,7 +179,7 @@ Phase 54 must stay aligned with `mirror.md` and `AGENTS.md`:
 
 ## Validation Commands
 
-For Phase 54 runtime measurement and async contract decision, run:
+For Phase 54 closeout, run:
 
 ```powershell
 python -m pytest backend/tests/test_phase54_runtime_measurement_async_contract_note.py backend/tests/test_phase54_successor_gate.py -q
