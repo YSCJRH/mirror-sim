@@ -13,9 +13,10 @@ def test_phase57_successor_boundary_exists_with_required_sections() -> None:
     required_sections = [
         "# Phase 57 Successor Boundary",
         "Issue: `#449` `Phase 57: sync repo truth after Phase 56 closeout and define successor boundary`",
-        "Current state: Phase 57 is the active minimal successor-boundary queue.",
+        "Current state: Phase 57 is in closeout; the active milestone has no ready work items.",
         "## Phase 56 Closeout Evidence",
         "## Phase 57 Operational Queue",
+        "## Phase 57 Closeout Evidence",
         "## Successor Boundary",
         "## Candidate-Only Guardrails",
         "## Carried Forward TODO[verify] Items",
@@ -34,11 +35,12 @@ def test_phase57_successor_boundary_records_queue_and_closed_phase56() -> None:
         "Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary",
         "`#448` `Phase 57 exit gate`",
         "`#449` `Phase 57: sync repo truth after Phase 56 closeout and define successor boundary`",
-        "Status: open and blocked.",
-        "Status: ready.",
+        "Status: pending close by this closeout PR after post-merge validation.",
+        "Status: closed by PR `#450`.",
         "Phase 56 is closed after PR `#447`, issue `#440`, and milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity`.",
         "`audit-github-queue` returned `paused` with `active_milestone: null` after milestone 56 closed.",
-        "`audit-github-queue` now reports `ready` for the active Phase 57 queue.",
+        "`audit-github-queue` now reports `paused` because the active Phase 57 milestone has no ready work items.",
+        "PR `#450` closed `#449` `Phase 57: sync repo truth after Phase 56 closeout and define successor boundary`.",
         "No product or runtime implementation scope is opened by Phase 57 unless a later reviewed PR adds specific source-backed evidence.",
         "candidate inputs only until a reviewed PR promotes a specific source-verified signal",
         "Do not implement launch hub behavior",
@@ -48,6 +50,30 @@ def test_phase57_successor_boundary_records_queue_and_closed_phase56() -> None:
     ]
     for phrase in required_phrases:
         assert phrase in gate
+
+
+def test_active_state_docs_record_phase57_closeout_queue() -> None:
+    docs = [
+        Path("README.md"),
+        Path("docs/plans/current-state-baseline.md"),
+        Path("docs/plans/phase-execution-queue.md"),
+        Path("docs/plans/automation-roadmap.md"),
+        PHASE57_GATE_PATH,
+    ]
+    required_phrases = [
+        "Phase 57 is in closeout after PR `#450`",
+        "`#448` is pending close by this closeout PR",
+        "`#449` closed by PR `#450`",
+        "`audit-github-queue` reports `paused` while the active Phase 57 milestone has no ready work items",
+        "Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary",
+        "Phase 57 Successor Boundary",
+        "`docs/plans/phase-57-successor-boundary-2026-05-20.md`",
+    ]
+
+    for path in docs:
+        text = path.read_text(encoding="utf-8")
+        for phrase in required_phrases:
+            assert phrase in text, f"{path} is missing Phase 57 closeout wording: {phrase}"
 
 
 def test_phase57_boundary_docs_do_not_promote_candidate_or_runtime_scope() -> None:
@@ -76,6 +102,12 @@ def test_phase57_boundary_docs_do_not_promote_candidate_or_runtime_scope() -> No
         "Phase 57 changes plugin MCP contract",
         "Phase 57 promotes private-beta readiness",
         "Phase 57 promotes untracked planning notes",
+        "`#449` is the ready repo-truth sync issue",
+        "`#449` is the ready repo-truth sync work item",
+        "`#449` `Phase 57: sync repo truth after Phase 56 closeout and define successor boundary` is ready",
+        "`audit-github-queue` reports `ready` for milestone `Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary`",
+        "`audit-github-queue` reports `ready` for the active Phase 57 queue",
+        "Phase 57 is the active minimal successor-boundary queue",
     ]
 
     for path in docs:
