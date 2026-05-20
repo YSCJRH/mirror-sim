@@ -13,7 +13,7 @@ def test_phase56_successor_gate_exists_with_required_sections() -> None:
     required_sections = [
         "# Phase 56 Successor Gate",
         "Issue: `#441` `Phase 56: sync repo truth after Phase 55 closeout and define source-verified gate`",
-        "Current state: Phase 56 is in closeout; the active milestone has no ready work items.",
+        "Current state: Phase 56 is closed; the repo has advanced to the minimal Phase 57 successor-boundary queue.",
         "## Phase 55 Closeout Evidence",
         "## Phase 56 Operational Queue",
         "## Phase 56 Closeout Evidence",
@@ -40,11 +40,12 @@ def test_phase56_successor_gate_records_queue_and_boundaries() -> None:
         "`#441` `Phase 56: sync repo truth after Phase 55 closeout and define source-verified gate`",
         "`#442` `Phase 56: source-verify candidate planning signals against current frontend`",
         "`#443` `Phase 56: add world-scoped review continuity guardrail`",
-        "Status: pending close by this closeout PR after post-merge validation.",
+        "Status: closed by PR `#447` after post-merge validation.",
         "Status: closed by PR `#444`.",
         "Status: closed by PR `#445`.",
         "Status: closed by PR `#446`.",
-        "`paused` because the active milestone has no ready work items",
+        "`paused` with `active_milestone: null` after the Phase 56 milestone closed",
+        "Milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity` is closed.",
         "source-verified candidate-promotion and review-continuity phase",
         "candidate inputs only until a reviewed PR promotes a specific source-verified signal",
         "Do not import April/private-beta/kernel/design-system planning notes wholesale",
@@ -65,7 +66,7 @@ def test_phase56_successor_gate_records_queue_and_boundaries() -> None:
         assert phrase in gate
 
 
-def test_active_state_docs_record_phase56_closeout_queue() -> None:
+def test_active_state_docs_record_phase56_closed_state() -> None:
     required_docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -87,11 +88,14 @@ def test_active_state_docs_record_phase56_closeout_queue() -> None:
         assert "Keep synchronous generation for v1. Defer async task contract ratification." in text
         assert "candidate inputs only" in text
         assert "source-verified" in text
-        assert "Phase 56 is in closeout after PR `#446`" in text
-        assert "`#440` is pending close by this closeout PR" in text
+        assert "Phase 56 is closed after PR `#447`" in text
+        assert "`#440` closed by PR `#447`" in text
         assert "`#441` closed by PR `#444`" in text
         assert "`#442` closed by PR `#445`" in text
         assert "`#443` closed by PR `#446`" in text
+        assert "milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity` is closed" in text
+        assert "`active_milestone: null`" in text
+        assert "Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary" in text
 
 
 def test_active_state_docs_do_not_treat_phase56_as_active_or_expanded() -> None:
@@ -113,6 +117,12 @@ def test_active_state_docs_do_not_treat_phase56_as_active_or_expanded() -> None:
         "`#443` `Phase 56: add world-scoped review continuity guardrail` is ready",
         "`audit-github-queue` reports `ready` for the active Phase 56 queue",
         "`audit-github-queue` reports `ready` with `#440` as the blocked exit gate",
+        "Phase 56 is in closeout",
+        "`#440` is pending close",
+        "pending close by this closeout PR",
+        "active Phase 56 milestone",
+        "Phase 56 exit gate: pending closeout",
+        "Phase 56 Closeout Queue",
         "Phase 56 closeout is complete",
         "Phase 56 closeout complete",
         "Phase 56 closeout is completed",
@@ -123,12 +133,6 @@ def test_active_state_docs_do_not_treat_phase56_as_active_or_expanded() -> None:
         "active Phase 56 source-verified candidate-promotion successor queue",
         "active Phase 56 successor queue",
         "active successor milestone is `Phase 56 - Source-Verified Candidate Promotion and Review Continuity`",
-        "Phase 56 is closed after PR `#446`",
-        "no active successor milestone remains",
-        "no active successor milestone is open",
-        "milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity` is closed",
-        "Phase 56 exit gate: closed",
-        "`#440` `Phase 56 exit gate` is closed",
         "Phase 56 implements async",
         "Phase 56 implements a launch hub",
         "Phase 56 replaces `/`",

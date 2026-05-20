@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 55 analysis-first main-path successor queue, and the Phase 56 source-verified candidate-promotion closeout queue.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 55 analysis-first main-path successor queue, and the closed Phase 56 source-verified candidate-promotion closeout queue.
 
 ## Current Gate State
 
@@ -59,7 +59,8 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 53 exit gate: closed
 - Phase 54 exit gate: closed
 - Phase 55 exit gate: closed
-- Phase 56 exit gate: pending closeout
+- Phase 56 exit gate: closed
+- Phase 57 exit gate: open and blocked
 
 Local phase audits currently report:
 
@@ -67,7 +68,34 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 56 Closeout Queue
+## Phase 57 Active Queue
+
+Phase 57 title:
+
+```text
+Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary
+```
+
+- `audit-github-queue`
+  - reports `ready`
+  - confirms exactly one open successor milestone with a protected blocked exit gate and ready work item
+- milestone `Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary`
+  - open
+- `#448` `Phase 57 exit gate`
+  - open and blocked
+  - labeled `lane:protected-core` because it is the protected closeout gate
+- `#449` `Phase 57: sync repo truth after Phase 56 closeout and define successor boundary`
+  - ready
+  - syncs durable docs and tests after Phase 56 closeout
+- boundary posture
+  - Keep synchronous generation for v1. Defer async task contract ratification.
+  - Phase 57 does not implement async workers, `task_id`, launch hub, public path, plugin, Hosted GPT/BYOK, or runtime mutation expansion.
+  - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged unless separately ratified.
+  - untracked April/private-beta/kernel/design-system planning notes remain candidate inputs only until a reviewed PR promotes a specific source-verified signal.
+- phase gate baseline
+  - Phase 57 Successor Boundary: `docs/plans/phase-57-successor-boundary-2026-05-20.md`
+
+## Phase 56 Archived Queue
 
 Phase 56 title:
 
@@ -75,14 +103,12 @@ Phase 56 title:
 Phase 56 - Source-Verified Candidate Promotion and Review Continuity
 ```
 
-- `audit-github-queue`
-  - reports `paused`
-  - confirms the active Phase 56 milestone has no ready work items before exit-gate closeout
-  - `audit-github-queue` reports `paused` while the active Phase 56 milestone has no ready work items
+- Phase 56 is closed after PR `#447`; `#440` closed by PR `#447` after post-merge validation, and milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity` is closed.
+- `audit-github-queue` reports `paused` with `active_milestone: null` after milestone 56 closed
 - milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity`
-  - pending close after the exit gate merges
+  - closed
 - `#440` `Phase 56 exit gate`
-  - pending close by this closeout PR after post-merge validation
+  - `#440` closed by PR `#447` after post-merge validation
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#441` `Phase 56: sync repo truth after Phase 55 closeout and define source-verified gate`
   - closed by PR `#444`
@@ -844,7 +870,7 @@ Phase 51 is closed after PR `#409`, issue `#403`, and milestone `Phase 51 - Priv
 - Protected-core changes still require explicit review and must not auto-merge.
 - Long-running execution should assign exactly one writer worktree per issue.
 - When `audit-github-queue` reports `ready`, consume only the currently active milestone and do not parallel-open another execution queue.
-- Phase 56 is in closeout after PR `#446`; `#440` is pending close by this closeout PR, and milestone `Phase 56 - Source-Verified Candidate Promotion and Review Continuity` is pending close after the exit gate merges. `#441` closed by PR `#444`, `#442` closed by PR `#445`, and `#443` closed by PR `#446`.
+- Phase 57 is active under milestone `Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary`; consume only that milestone while `audit-github-queue` reports `ready`.
 - The previous local queue follow-up automation has been revoked or left paused per operator request; do not recreate an automation without a new explicit request.
 
 ## Historical Branch Status
