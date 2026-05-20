@@ -96,7 +96,11 @@ export default async function ReviewPage() {
   ];
 
   return (
-    <main className="workbenchPage reviewPage">
+    <main
+      className="workbenchPage reviewPage"
+      data-main-path-story="world>baseline>perturbation>change>explain"
+      data-review-surface="advanced-analyst-mode"
+    >
       <WorkbenchTopBar locale={locale} eyebrow="Mirror Public Demo / Advanced" items={navigationItems} />
 
       <PageHero

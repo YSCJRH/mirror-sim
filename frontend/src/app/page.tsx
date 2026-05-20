@@ -26,7 +26,7 @@ export default async function Page() {
   const checksTotal = data.evalSummary.metrics.checks_total ?? data.evalSummary.metrics.assertions_total ?? null;
 
   return (
-    <main className="workbenchPage">
+    <main className="workbenchPage" data-main-path-story="world>baseline>perturbation>change>explain">
       <WorkbenchTopBar
         locale={locale}
         eyebrow="Mirror Public Demo"
