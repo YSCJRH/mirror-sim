@@ -2,11 +2,11 @@
 
 Date: 2026-05-20
 
-Issue: `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate`
+Issue: `#453` `Phase 58 exit gate`
 
-Current state: Phase 58 is active; the queue has one open milestone and ready work items.
+Current state: Phase 58 is closed; no active milestone is open.
 
-This note records the active Phase 58 queue after PR `#452` merged the subagent-reviewed auto-merge policy baseline and the Phase 58 GitHub milestone opened. Phase 58 is a narrow evidence gate for deferred private-beta route-readiness candidate snapshots. It does not promote broad private-beta readiness, and it does not open product or runtime implementation scope.
+This note records the Phase 58 closeout gate after PR `#458` merged and closed the exit gate. PR `#452` merged the subagent-reviewed auto-merge policy baseline, PR `#456` synced the route-readiness gate, and PR `#457` reproduced the tracked route-readiness smoke evidence. Phase 58 is a narrow evidence gate for deferred private-beta route-readiness candidate snapshots. It does not promote broad private-beta readiness, and it does not open product or runtime implementation scope.
 
 This Phase 58 Route Readiness Evidence Gate lives in `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`.
 
@@ -16,9 +16,12 @@ This Phase 58 Route Readiness Evidence Gate lives in `docs/plans/phase-58-route-
 - PR `#450` closed `#449` `Phase 57: sync repo truth after Phase 56 closeout and define successor boundary`.
 - PR `#451` closed `#448` `Phase 57 exit gate`.
 - PR `#452` merged the subagent-reviewed auto-merge policy baseline.
+- PR `#456` closed `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate`.
+- PR `#457` closed `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage`.
+- PR `#458` closed `#453` `Phase 58 exit gate`.
 - Phase 57 did not open product or runtime implementation scope.
 - Phase 56 promoted only narrow source-backed signals: analysis-first `/review` ordering and the existing `/worlds/<world_id>/review` world-scoped private-beta review surface.
-- Candidate private-beta route-readiness snapshots remain candidate-only until reproduced by tracked tests or checked-in verification artifacts.
+- The reproduced Phase 58 evidence is narrow route-readiness evidence for the tracked Fog Harbor route set; broader private-beta snapshots remain candidate-only.
 
 ## Phase 58 Operational Queue
 
@@ -30,30 +33,40 @@ Phase 58 - Private-Beta Route Readiness Evidence Gate
 
 - `#453` `Phase 58 exit gate`
   - Lane: `protected-core`.
-  - Status: open and blocked until all Phase 58 work merges and post-merge validation passes.
-  - Scope: close Phase 58 only after the route-readiness gate is synced and the evidence issue either promotes narrow source-verified evidence or records blockers.
+  - Status: closed by PR `#458` after post-merge validation.
+  - Scope: close Phase 58 only after the route-readiness gate is synced, narrow route-readiness evidence is reproduced, required validation passes, and the Phase 58 milestone can return to the released stop-state.
 - `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate`
   - Lane: `protected-core`.
-  - Status: open and ready.
+  - Status: closed by PR `#456`.
   - Scope: update tracked repo truth, bootstrap metadata, and focused tests to the active Phase 58 queue.
 - `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage`
   - Lane: `protected-core`.
-  - Status: open and ready.
+  - Status: closed by PR `#457`.
   - Scope: reproduce the deferred private-beta route-readiness candidate snapshots with tracked tests or checked-in verification artifacts.
   - Evidence note: `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
 
-`audit-github-queue` reports `ready` for the active Phase 58 queue.
+`audit-github-queue` now reports `paused` with no active milestone.
 
 ## Route-Readiness Evidence Gate Scope
 
 - Reproduce the deferred private-beta route-readiness candidate snapshots with tracked tests or checked-in verification artifacts.
 - Record reproduced route-readiness evidence in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
 - Promote only narrow source-verified route-readiness evidence, or record blockers.
+- The reproduced evidence is narrow route-readiness evidence for the tracked Fog Harbor route set.
 - Keep `/` owned by the guided public demo.
 - Keep `/review` as the advanced read-only public-demo review surface.
 - Keep `/worlds/<world_id>/review` as the existing world-scoped private-beta review surface with no-session limits.
 - Preserve public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries unchanged.
 - Keep synchronous generation for v1. Defer async task contract ratification.
+
+## Closeout Decision
+
+- `#454` closed by PR `#456` after syncing the Phase 58 gate, docs, bootstrap metadata, and focused tests.
+- `#455` closed by PR `#457` after adding the tracked GET-only route-readiness smoke and snapshot evidence note.
+- `#453` closed by PR `#458` after required checks, local validation, and read-only subagent review.
+- milestone `Phase 58 - Private-Beta Route Readiness Evidence Gate` is closed.
+- `audit-github-queue` reports `paused` with no active milestone.
+- Phase 58 is closed after PR `#458`.
 
 ## Candidate Inputs
 

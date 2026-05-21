@@ -13,11 +13,12 @@ def test_phase58_route_readiness_gate_exists_with_required_sections() -> None:
     gate = PHASE58_GATE_PATH.read_text(encoding="utf-8")
     required_sections = [
         "# Phase 58 Route Readiness Evidence Gate",
-        "Issue: `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate`",
-        "Current state: Phase 58 is active; the queue has one open milestone and ready work items.",
+        "Issue: `#453` `Phase 58 exit gate`",
+        "Current state: Phase 58 is closed; no active milestone is open.",
         "## Post-Phase-57 Baseline",
         "## Phase 58 Operational Queue",
         "## Route-Readiness Evidence Gate Scope",
+        "## Closeout Decision",
         "## Candidate Inputs",
         "## Non-Goals",
         "## Validation Commands",
@@ -37,10 +38,12 @@ def test_phase58_route_readiness_gate_records_queue_and_boundaries() -> None:
         "`#453` `Phase 58 exit gate`",
         "`#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate`",
         "`#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage`",
-        "Status: open and blocked until all Phase 58 work merges and post-merge validation passes.",
-        "Status: open and ready.",
-        "`audit-github-queue` reports `ready` for the active Phase 58 queue.",
+        "Status: closed by PR `#458` after post-merge validation.",
+        "Status: closed by PR `#456`.",
+        "Status: closed by PR `#457`.",
+        "`audit-github-queue` now reports `paused` with no active milestone.",
         "reproduce the deferred private-beta route-readiness candidate snapshots with tracked tests or checked-in verification artifacts",
+        "The reproduced evidence is narrow route-readiness evidence for the tracked Fog Harbor route set.",
         "Promote only narrow source-verified route-readiness evidence, or record blockers.",
         "Do not promote broad private-beta readiness.",
         "Do not implement launch hub behavior.",
@@ -52,7 +55,7 @@ def test_phase58_route_readiness_gate_records_queue_and_boundaries() -> None:
         assert phrase in gate
 
 
-def test_active_state_docs_record_phase58_active_queue() -> None:
+def test_active_state_docs_record_phase58_closeout_queue() -> None:
     docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -61,12 +64,15 @@ def test_active_state_docs_record_phase58_active_queue() -> None:
         PHASE58_GATE_PATH,
     ]
     required_phrases = [
-        "Phase 58 is active",
+        "Phase 58 is closed after PR `#458`",
         "Phase 58 - Private-Beta Route Readiness Evidence Gate",
         "`#453` `Phase 58 exit gate`",
         "`#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate`",
         "`#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage`",
-        "`audit-github-queue` reports `ready` for the active Phase 58 queue",
+        "closed by PR `#458`",
+        "closed by PR `#456`",
+        "closed by PR `#457`",
+        "`audit-github-queue` reports `paused` with no active milestone",
         "`docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`",
     ]
 
@@ -102,6 +108,11 @@ def test_phase58_docs_do_not_promote_blocked_scope() -> None:
         "Phase 58 changes plugin MCP contract",
         "Phase 58 promotes broad private-beta readiness",
         "Phase 58 promotes untracked planning notes",
+        "Phase 58 is ready for closeout",
+        "`audit-github-queue` reports `paused` with the Phase 58 milestone active and no ready work items",
+        "`#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` is ready",
+        "`#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` is ready",
+        "`audit-github-queue` reports `ready` for the active Phase 58 queue",
     ]
 
     for path in docs:
