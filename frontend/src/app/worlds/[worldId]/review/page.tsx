@@ -8,6 +8,7 @@ import { RuntimeDecisionContextCard } from "../../../components/runtime-decision
 import { RuntimeLineagePanel } from "../../../components/runtime-lineage-panel";
 import { RuntimeReviewBrief } from "../../../components/runtime-review-brief";
 import { SectionHeading } from "../../../components/section-heading";
+import { StatusPill } from "../../../components/status-pill";
 import { SurfaceCard } from "../../../components/surface-card";
 import { WorkbenchTopBar } from "../../../components/workbench-top-bar";
 import { getAppLocale } from "../../../lib/locale";
@@ -15,6 +16,10 @@ import {
   findLatestRuntimeSessionForWorld,
   loadRuntimeSessionWorkspaceForWorld,
 } from "../../../lib/runtime-session-data";
+import {
+  loadSelectedWorldReviewEvidenceBinding,
+  type SelectedWorldReviewEvidenceBinding,
+} from "../../../lib/selected-world-review-evidence";
 import {
   loadProductWorldConfig,
   localizeRuntimeNodeLabel,
@@ -85,6 +90,99 @@ function getAlphaRubricRows(locale: "en" | "zh-CN"): RubricRow[] {
   ];
 }
 
+function formatBindingFlag(locale: "en" | "zh-CN", passed: boolean) {
+  if (locale === "zh-CN") {
+    return passed ? "通过" : "缺口";
+  }
+  return passed ? "ready" : "gap";
+}
+
+function SelectedWorldReviewEvidencePanel({
+  locale,
+  evidence,
+}: {
+  locale: "en" | "zh-CN";
+  evidence: SelectedWorldReviewEvidenceBinding;
+}) {
+  const bindingReady =
+    evidence.evalStatus === "pass" &&
+    evidence.claimsLabeled &&
+    evidence.claimsHaveEvidenceIds &&
+    evidence.claimEvidenceResolves;
+
+  return (
+    <section
+      className="dashboardSection"
+      data-review-evidence-binding="selected-world-review-surface"
+    >
+      <SectionHeading
+        eyebrow={locale === "zh-CN" ? "证据绑定" : "Evidence binding"}
+        title={
+          locale === "zh-CN"
+            ? "Selected-world evidence binding"
+            : "Selected-world evidence binding"
+        }
+        description={
+          locale === "zh-CN"
+            ? "这块只读信号把当前审阅页的 route worldId 绑定到仓库里的 artifact root、评估摘要、报告 claim 和证据 chunk。"
+            : "This read-only signal binds the current review route worldId to the repo artifact root, eval summary, report claims, and evidence chunks."
+        }
+      />
+      <div className="contextCardGrid">
+        <ContextCard
+          label={locale === "zh-CN" ? "世界 ID" : "World id"}
+          value={evidence.worldId}
+          code
+          tone="accent"
+        />
+        <ContextCard
+          label={locale === "zh-CN" ? "Artifact root" : "Artifact root"}
+          value={evidence.artifactRoot}
+          code
+        />
+        <ContextCard
+          label={locale === "zh-CN" ? "Eval status" : "Eval status"}
+          value={evidence.evalStatus}
+          tone={evidence.evalStatus === "pass" ? "strong" : "accent"}
+        />
+        <ContextCard
+          label={locale === "zh-CN" ? "Report claims" : "Report claims"}
+          value={String(evidence.claimCount)}
+          summary={
+            locale === "zh-CN"
+              ? "这些 claim 必须同时保留 label 和 evidence_ids。"
+              : "These claims must keep both label and evidence_ids."
+          }
+        />
+      </div>
+      <SurfaceCard className="dashboardCallout" tone={bindingReady ? "strong" : "accent"} as="article">
+        <div className="interventionCardMeta">
+          <StatusPill tone={bindingReady ? "accent" : "subtle"}>
+            {locale === "zh-CN" ? "证据 ID 解析" : "Evidence ids resolve"}
+          </StatusPill>
+          <StatusPill tone={evidence.status === "ready" ? "strong" : "subtle"}>
+            {formatBindingFlag(locale, evidence.status === "ready")}
+          </StatusPill>
+        </div>
+        <p className="subtle">
+          {locale === "zh-CN"
+            ? evidence.status === "ready"
+              ? `当前世界的评估摘要来自 ${evidence.evalSummaryPath}，报告 claim 来自 ${evidence.claimsPath}，证据 chunk 来自 ${evidence.chunksPath}。`
+              : `当前世界的证据绑定暂不可用：${evidence.unavailableReason}`
+            : evidence.status === "ready"
+              ? `The eval summary comes from ${evidence.evalSummaryPath}; report claims come from ${evidence.claimsPath}; evidence chunks come from ${evidence.chunksPath}.`
+              : `Evidence binding is unavailable for this world: ${evidence.unavailableReason}`}
+        </p>
+        <p className="subtle">
+          {locale === "zh-CN"
+            ? `Claims keep labels and evidence ids: ${formatBindingFlag(locale, evidence.claimsLabeled && evidence.claimsHaveEvidenceIds)}. Evidence ids resolve against chunks: ${formatBindingFlag(locale, evidence.claimEvidenceResolves)}.`
+            : `Claims keep labels and evidence ids: ${formatBindingFlag(locale, evidence.claimsLabeled && evidence.claimsHaveEvidenceIds)}. Evidence ids resolve against chunks: ${formatBindingFlag(locale, evidence.claimEvidenceResolves)}.`}
+        </p>
+      </SurfaceCard>
+    </section>
+  );
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -112,8 +210,9 @@ export default async function WorldReviewPage({ params, searchParams }: PageProp
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
 
   try {
-    const [{ product }, latestSession] = await Promise.all([
+    const [{ product }, reviewEvidence, latestSession] = await Promise.all([
       loadProductWorldConfig(worldId, locale),
+      loadSelectedWorldReviewEvidenceBinding(worldId),
       resolvedSearchParams?.session ? Promise.resolve(null) : findLatestRuntimeSessionForWorld(worldId),
     ]);
     const sessionId = resolvedSearchParams?.session ?? latestSession?.sessionId;
@@ -227,6 +326,8 @@ export default async function WorldReviewPage({ params, searchParams }: PageProp
             ) : null}
           </div>
         </section>
+
+        <SelectedWorldReviewEvidencePanel locale={locale} evidence={reviewEvidence} />
 
         {runtimeWorkspace ? (
           <>

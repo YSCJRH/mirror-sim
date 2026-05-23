@@ -29,6 +29,8 @@ Phase 61 - Selected-World Review Surface Evidence Binding Gate
   - Scope: sync tracked docs, bootstrap metadata, and tests to this active Phase 61 gate.
 - `#473` `Phase 61: add selected-world review surface evidence binding smoke`
   - Scope: add tracked review-surface evidence binding smoke for selected worlds, or record specific blockers.
+  - Evidence note: `docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md`.
+  - Smoke: `scripts/smoke_phase61_selected_world_review_surface_binding.py`.
 
 ## Selected-World Review Surface Evidence Binding Scope
 
@@ -39,6 +41,10 @@ Selected worlds remain:
 - `library-rain`
 
 Phase 61 covers selected-world review surface evidence binding only. It should prove that selected-world review surfaces bind to the same stable world ids and artifact/evidence signals validated by Phase 60 before any broader product readiness claim is made.
+
+The tracked #473 evidence note is
+`docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md`.
+It is reproduced by `scripts/smoke_phase61_selected_world_review_surface_binding.py`.
 
 ## Candidate Input Policy
 
@@ -61,7 +67,11 @@ The stale launch-hub and broad private-beta wording in untracked candidate notes
 
 ```powershell
 python -m pytest backend\tests\test_phase61_selected_world_review_surface_gate.py -q
+python -m pytest backend\tests\test_phase61_selected_world_review_surface_binding.py -q
+python scripts\smoke_phase61_selected_world_review_surface_binding.py --source-only
 python scripts\check_no_secrets.py
+npm run build --prefix frontend
+python scripts\smoke_phase61_selected_world_review_surface_binding.py --timeout 60
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 git diff --check
 .\make.ps1 test
