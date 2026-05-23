@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, and the completed Phase 60 selected-world review artifact integrity gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, and the active Phase 61 selected-world review surface evidence binding gate.
 
 ## Current Gate State
 
@@ -64,12 +64,38 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 58 exit gate: closed
 - Phase 59 exit gate: closed
 - Phase 60 exit gate: closed
+- Phase 61 exit gate: active
 
 Local phase audits currently report:
 
 - `phase1`: pass
 - `phase2`: pass
 - `phase3`: pass
+
+## Phase 61 Operational Queue
+
+Phase 61 title:
+
+```text
+Phase 61 - Selected-World Review Surface Evidence Binding Gate
+```
+
+- Phase 61 is active
+- Phase 60 selected-world review artifact integrity evidence remains historical baseline
+- `#471` `Phase 61 exit gate`
+  - labeled `lane:protected-core` because it is the protected closeout gate
+- `#472` `Phase 61: sync repo truth after Phase 60 closeout and define review surface evidence gate`
+  - syncs the active Phase 61 queue and gate into tracked docs, bootstrap metadata, and tests
+- `#473` `Phase 61: add selected-world review surface evidence binding smoke`
+  - adds tracked selected-world review surface evidence binding smoke, or records blockers
+- boundary posture
+  - Phase 61 may promote only narrow selected-world review surface evidence binding for selected bounded fictional worlds, or record blockers.
+  - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
+  - untracked private-alpha, private-beta, kernel, and design-system planning notes remain candidate inputs only.
+  - Phase 61 does not promote broad private-beta readiness, future-world readiness, launch hub behavior, async/task_id behavior, public/plugin path expansion, runtime mutation expansion, or contract expansion.
+  - `status:needs-adr` and unresolved `risk:safety` remain blockers.
+- phase gate baseline
+  - Phase 61 Selected-World Review Surface Evidence Binding Gate: `docs/plans/phase-61-selected-world-review-surface-evidence-binding-gate-2026-05-23.md`
 
 ## Phase 60 Closed Queue
 
