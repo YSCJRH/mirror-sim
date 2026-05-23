@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, and the completed Phase 59 selected-world route continuity evidence gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, and the active Phase 60 selected-world review artifact integrity gate.
 
 ## Current Gate State
 
@@ -63,12 +63,44 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 57 exit gate: closed
 - Phase 58 exit gate: closed
 - Phase 59 exit gate: closed
+- Phase 60 exit gate: open and blocked
 
 Local phase audits currently report:
 
 - `phase1`: pass
 - `phase2`: pass
 - `phase3`: pass
+
+## Phase 60 Active Queue
+
+Phase 60 title:
+
+```text
+Phase 60 - Selected-World Review Artifact Integrity Gate
+```
+
+- Phase 60 is active
+- `audit-github-queue` reports `ready` for the active Phase 60 queue
+- The milestone `Phase 60 - Selected-World Review Artifact Integrity Gate` is open
+- milestone `Phase 60 - Selected-World Review Artifact Integrity Gate`
+  - open
+- `#465` `Phase 60 exit gate`
+  - open and blocked
+  - labeled `lane:protected-core` because it is the protected closeout gate
+- `#466` `Phase 60: sync repo truth after Phase 59 closeout and define artifact integrity gate`
+  - ready
+  - syncs the active Phase 60 queue and gate into tracked docs, bootstrap metadata, and tests
+- `#467` `Phase 60: add selected-world review artifact integrity smoke`
+  - ready
+  - will add tracked selected-world review artifact integrity smoke or record blockers
+- boundary posture
+  - Phase 60 may promote only narrow selected-world review artifact integrity evidence for selected bounded fictional worlds, or record blockers.
+  - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
+  - Phase 60 does not promote broad private-beta readiness, future-world readiness, launch hub behavior, async/task_id behavior, public/plugin path expansion, runtime mutation expansion, or contract expansion.
+  - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged unless separately ratified.
+- phase gate baseline
+  - Phase 60 Selected-World Review Artifact Integrity Gate: `docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md`
+  - planned Phase 60 Selected-World Review Artifact Integrity Evidence: `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`
 
 ## Phase 59 Closed Queue
 
