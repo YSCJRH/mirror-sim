@@ -91,6 +91,7 @@ Phase 59 - Selected-World Route Continuity Evidence Gate
 - `#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain`
   - ready
   - will reproduce narrow GET-only route-readiness evidence for selected bounded fictional worlds
+  - tracked route evidence lives in `docs/plans/phase-59-selected-world-route-evidence-2026-05-23.md`
 - boundary posture
   - Phase 59 may promote only narrow GET-only route-readiness evidence for selected bounded fictional worlds, or record blockers.
   - selected worlds are `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
@@ -98,6 +99,7 @@ Phase 59 - Selected-World Route Continuity Evidence Gate
   - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged unless separately ratified.
 - phase gate baseline
   - Phase 59 Selected-World Route Continuity Gate: `docs/plans/phase-59-selected-world-route-continuity-gate-2026-05-23.md`
+  - Phase 59 Selected-World Route Evidence: `docs/plans/phase-59-selected-world-route-evidence-2026-05-23.md`
 
 ## Phase 58 Closed Queue
 
