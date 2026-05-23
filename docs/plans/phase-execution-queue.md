@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, and the active Phase 60 selected-world review artifact integrity gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, and the completed Phase 60 selected-world review artifact integrity gate.
 
 ## Current Gate State
 
@@ -63,7 +63,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 57 exit gate: closed
 - Phase 58 exit gate: closed
 - Phase 59 exit gate: closed
-- Phase 60 exit gate: open and blocked
+- Phase 60 exit gate: closed
 
 Local phase audits currently report:
 
@@ -71,7 +71,7 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 60 Active Queue
+## Phase 60 Closed Queue
 
 Phase 60 title:
 
@@ -79,20 +79,20 @@ Phase 60 title:
 Phase 60 - Selected-World Review Artifact Integrity Gate
 ```
 
-- Phase 60 is active
-- `audit-github-queue` reports `ready` for the active Phase 60 queue
-- The milestone `Phase 60 - Selected-World Review Artifact Integrity Gate` is open
+- Phase 60 is closed
+- `audit-github-queue` reports `paused` with no active milestone
+- The milestone `Phase 60 - Selected-World Review Artifact Integrity Gate` is closed
 - milestone `Phase 60 - Selected-World Review Artifact Integrity Gate`
-  - open
+  - closed
 - `#465` `Phase 60 exit gate`
-  - open and blocked
+  - closed by PR `#470`
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#466` `Phase 60: sync repo truth after Phase 59 closeout and define artifact integrity gate`
-  - ready
-  - syncs the active Phase 60 queue and gate into tracked docs, bootstrap metadata, and tests
+  - closed by PR `#468`
+  - synced the then-active Phase 60 queue and gate into tracked docs, bootstrap metadata, and tests
 - `#467` `Phase 60: add selected-world review artifact integrity smoke`
-  - ready
-  - will add tracked selected-world review artifact integrity smoke or record blockers
+  - closed by PR `#469`
+  - added tracked selected-world review artifact integrity smoke evidence
 - boundary posture
   - Phase 60 may promote only narrow selected-world review artifact integrity evidence for selected bounded fictional worlds, or record blockers.
   - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
@@ -102,6 +102,7 @@ Phase 60 - Selected-World Review Artifact Integrity Gate
   - Phase 60 Selected-World Review Artifact Integrity Gate: `docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md`
   - Phase 60 Selected-World Review Artifact Integrity Evidence: `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`
   - selected-world review artifact integrity evidence smoke: `scripts/smoke_phase60_selected_world_artifact_integrity.py`
+  - Closeout shorthand: `#465` closed by PR `#470`; `#466` closed by PR `#468`; `#467` closed by PR `#469`.
 
 ## Phase 59 Closed Queue
 
