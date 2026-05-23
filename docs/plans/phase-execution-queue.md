@@ -100,7 +100,8 @@ Phase 60 - Selected-World Review Artifact Integrity Gate
   - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged unless separately ratified.
 - phase gate baseline
   - Phase 60 Selected-World Review Artifact Integrity Gate: `docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md`
-  - planned Phase 60 Selected-World Review Artifact Integrity Evidence: `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`
+  - Phase 60 Selected-World Review Artifact Integrity Evidence: `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`
+  - selected-world review artifact integrity evidence smoke: `scripts/smoke_phase60_selected_world_artifact_integrity.py`
 
 ## Phase 59 Closed Queue
 

@@ -363,8 +363,9 @@ Hosted GPT/BYOK, upload, auth, billing, database, object storage, quota,
 public/plugin path expansion, runtime mutation expansion, or schema/artifact/
 claim contract changes. The gate note lives in
 `docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md`.
-The planned evidence note path is
-`docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`.
+The selected-world review artifact integrity evidence lives in
+`docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`
+and is reproduced by `scripts/smoke_phase60_selected_world_artifact_integrity.py`.
 
 ---
 
@@ -412,7 +413,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - The Phase 59 Selected-World Route Continuity Gate lives in [docs/plans/phase-59-selected-world-route-continuity-gate-2026-05-23.md](docs/plans/phase-59-selected-world-route-continuity-gate-2026-05-23.md).
 - The Phase 59 Selected-World Route Evidence lives in [docs/plans/phase-59-selected-world-route-evidence-2026-05-23.md](docs/plans/phase-59-selected-world-route-evidence-2026-05-23.md).
 - The Phase 60 Selected-World Review Artifact Integrity Gate lives in [docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md](docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md).
-- The planned Phase 60 Selected-World Review Artifact Integrity Evidence path is `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`.
+- The Phase 60 Selected-World Review Artifact Integrity Evidence lives in `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md` and is reproduced by `scripts/smoke_phase60_selected_world_artifact_integrity.py`.
 - Phase 48 is closed after PR `#382`, issue `#375`, and milestone `Phase 48 - Successor Intake and Boundary Contract Triage`.
 - Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
 - Phase 50 is closed after PR `#402`, issue `#396`, and milestone `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; completed work items were `#397`, `#398`, and `#401`. Phase 50 measured before any `task_id` or worker contract is introduced and kept the private-beta launch hub planning-only for now.
@@ -427,7 +428,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - Phase 58 is closed after PR `#458`; `#453` `Phase 58 exit gate` closed by PR `#458`, `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` closed by PR `#456`, `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` closed by PR `#457`, milestone `Phase 58 - Private-Beta Route Readiness Evidence Gate` is closed, and `audit-github-queue` reports `paused` with no active milestone. The Phase 58 Route Readiness Evidence Gate lives in `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`, and the tracked snapshot evidence lives in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
 - Phase 59 is closed; `#459` `Phase 59 exit gate` closed by PR `#464`, `#460` `Phase 59: sync repo truth after Phase 58 closeout and define selected-world route gate` closed by PR `#462`, `#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain` closed by PR `#463`, milestone `Phase 59 - Selected-World Route Continuity Evidence Gate` is closed, and `audit-github-queue` reports `paused` with no active milestone. The Phase 59 Selected-World Route Continuity Gate lives in `docs/plans/phase-59-selected-world-route-continuity-gate-2026-05-23.md`.
 - The Phase 59 Selected-World Route Evidence lives in `docs/plans/phase-59-selected-world-route-evidence-2026-05-23.md`.
-- Phase 60 is active; milestone `Phase 60 - Selected-World Review Artifact Integrity Gate` is open, `#465` `Phase 60 exit gate` is blocked, `#466` `Phase 60: sync repo truth after Phase 59 closeout and define artifact integrity gate` is ready, `#467` `Phase 60: add selected-world review artifact integrity smoke` is ready, and `audit-github-queue` reports `ready` for the active Phase 60 queue. The Phase 60 gate lives in `docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md`; the planned evidence note path is `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`.
+- Phase 60 is active; milestone `Phase 60 - Selected-World Review Artifact Integrity Gate` is open, `#465` `Phase 60 exit gate` is blocked, `#466` `Phase 60: sync repo truth after Phase 59 closeout and define artifact integrity gate` is ready, `#467` `Phase 60: add selected-world review artifact integrity smoke` is ready, and `audit-github-queue` reports `ready` for the active Phase 60 queue. The Phase 60 gate lives in `docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md`; the selected-world review artifact integrity evidence lives in `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md` and is reproduced by `scripts/smoke_phase60_selected_world_artifact_integrity.py`.
 - Closeout shorthand: `#459` closed by PR `#464`; `#460` closed by PR `#462`; `#461` closed by PR `#463`.
 - Private-beta planning material remains candidate input until it is promoted through a reviewed PR.
 - Fog Harbor remains the canonical demo world; `museum-night` and `library-rain` are the selected bounded transfer worlds used to prove the pipeline has passed across three selected bounded fictional worlds.
