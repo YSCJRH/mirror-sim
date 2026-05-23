@@ -62,7 +62,7 @@ Phase 59 - Selected-World Route Continuity Evidence Gate
 - Keep the Phase 59 route smoke separate from the Phase 58 smoke so each evidence boundary remains easy to inspect.
 - Check only route availability and route-ownership body markers.
 - Do not start sessions, generate branches, roll back sessions, create worlds, call model/provider paths, or post to runtime APIs.
-- Record reproduced evidence in a separate Phase 59 evidence note when `#461` is implemented.
+- Record reproduced evidence in `docs/plans/phase-59-selected-world-route-evidence-2026-05-23.md` when `#461` is implemented.
 
 ## Non-Goals
 
