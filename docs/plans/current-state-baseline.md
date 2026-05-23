@@ -1,6 +1,6 @@
 # Current State Baseline
 
-This note records the closed Phase 58 route-readiness evidence gate after PR `#458` closed the exit gate. PR `#452` merged the subagent-reviewed auto-merge policy baseline, PR `#456` synced the gate, and PR `#457` reproduced tracked route-readiness smoke evidence.
+This note records the active Phase 59 selected-world route continuity evidence gate after Phase 58 closed. PR `#452` merged the subagent-reviewed auto-merge policy baseline, PR `#456` synced the Phase 58 gate, PR `#457` reproduced tracked route-readiness smoke evidence, and PR `#458` closed Phase 58. Phase 59 is active with `#459`, `#460`, and `#461` open under the selected-world route continuity gate.
 
 ## Snapshot
 
@@ -342,7 +342,13 @@ This note records the closed Phase 58 route-readiness evidence gate after PR `#4
     - `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` closed by PR `#456`
     - `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` closed by PR `#457`; tracked snapshot evidence lives in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`
   - `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`
-    - `audit-github-queue` reports `paused` with no active milestone
+    - `audit-github-queue` reports `ready` for the active Phase 59 queue
+  - `gh issue list --milestone "Phase 59 - Selected-World Route Continuity Evidence Gate" --state all`
+    - `#459` `Phase 59 exit gate` is open and blocked
+    - `#460` `Phase 59: sync repo truth after Phase 58 closeout and define selected-world route gate` is open and ready
+    - `#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain` is open and ready
+  - `gh api repos/YSCJRH/mirror-sim/milestones/59`
+    - milestone `Phase 59 - Selected-World Route Continuity Evidence Gate` is open
 
 ## Trusted Source Of Truth
 
@@ -364,7 +370,7 @@ This note records the closed Phase 58 route-readiness evidence gate after PR `#4
 - The frontend workbench renders report, claims, eval summary, rubric, corpus, graph, and scenario artifacts directly from the repo artifact tree.
 - The default workbench path now consumes the canonical compare artifact directly and keeps focused divergent trace surfaces ahead of heavier packet-driven review flows.
 - The workbench now also supports claim -> evidence drill-down, baseline/intervention trace review, reviewer scorecards, shareable review packet export, issue-comment handoff copy, operator decision briefs, exit-gate closeout packets, lane-aware pickup routing, export destination guidance, delivery-readiness warnings, destination-aware recommendations, packet coverage previews, delivery presets, preset comparison cards, carry-forward chips, quick-export shortcuts, payload previews, tradeoff-guidance cards, diff highlights, copy-preflight checklists, override-rationale cues, copy-sidecar summaries, composed handoff-bundle previews, destination-specific attachment-order guidance, recipient-facing cover sheets, one-step final bundle copies with package manifests, compact-versus-full bundle variants, receiver follow-through cues, receiver-role modes, routing-strip follow-through guidance, role-specific bundle emphasis, decision-template snippets, role preset cards, response-packaging shortcuts, apply-and-copy preset actions, grouped response-pack export, active preset session summary strips, route-filtered response kit choosers, route-kit comparison cards, preset session handoff packets, send-readiness cue strips, compact-versus-full handoff packet variants, destination-specific sender notes, compact-versus-full handoff packet diff previews, final send summary cards, destination-aware packet recommendation banners, delivery-bundle exports, receiver follow-up packs, delivery checkpoint boards, receiver response packets, reply outcome trackers, resolution handoff packs, resolution status boards, next-step routing packs, action readiness boards, escalation handoff packets, execution kickoff boards, execution progress trackers, execution outcome boards, execution correction boards, execution recovery boards, execution recovery checkpoint boards, execution recovery clearance boards, execution recovery release boards, escalation decision guides, escalation trigger packets, escalation dispatch packets, escalation delivery packets, escalation confirmation packets, escalation receipt packets, escalation acknowledgment packets, and escalation closure packets without introducing backend API expansion.
-- The active repository state has Phase 53 transfer-generalization closeout complete, Phase 54 closeout complete, Phase 55 closeout complete, Phase 56 closed, Phase 57 closed after PR `#451`, Phase 58 closed after PR `#458`, `v0.1.0` preserved as the latest published release baseline, and public demo, plugin, Hosted GPT/BYOK, launch hub, async implementation, and runtime mutation boundaries unchanged.
+- The active repository state has Phase 53 transfer-generalization closeout complete, Phase 54 closeout complete, Phase 55 closeout complete, Phase 56 closed, Phase 57 closed after PR `#451`, Phase 58 closed after PR `#458`, Phase 59 active for selected-world route continuity evidence, `v0.1.0` preserved as the latest published release baseline, and public demo, plugin, Hosted GPT/BYOK, launch hub, async implementation, and runtime mutation boundaries unchanged.
 
 ## Next Entry Point
 
@@ -380,6 +386,7 @@ This note records the closed Phase 58 route-readiness evidence gate after PR `#4
 - The Phase 50 unlock order is resolved: `#397` closed through PR `#399`, `#398` closed through PR `#400`, `#401` closed through PR `#402`, and `#396` closed after the post-merge exit-gate reassessment.
 - Phase 57 is closed after PR `#451`; `#448` closed by PR `#451`, `#449` closed by PR `#450`, milestone `Phase 57 - Post-Phase-56 Repo Truth Sync and Successor Boundary` is closed, and `audit-github-queue` reports `paused` with no active milestone.
 - Phase 58 is closed after PR `#458`; `#453` `Phase 58 exit gate` closed by PR `#458`, `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` closed by PR `#456`, `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` closed by PR `#457`, milestone `Phase 58 - Private-Beta Route Readiness Evidence Gate` is closed, and `audit-github-queue` reports `paused` with no active milestone. The Phase 58 Route Readiness Evidence Gate lives in `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`; the Phase 58 Route Readiness Snapshot Evidence lives in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
+- Phase 59 is active; `#459` `Phase 59 exit gate` is blocked, `#460` `Phase 59: sync repo truth after Phase 58 closeout and define selected-world route gate` is ready, `#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain` is ready, milestone `Phase 59 - Selected-World Route Continuity Evidence Gate` is open, and `audit-github-queue` reports `ready` for the active Phase 59 queue. The Phase 59 Selected-World Route Continuity Gate lives in `docs/plans/phase-59-selected-world-route-continuity-gate-2026-05-23.md`.
 - The Phase 52 exit gate is `#410` `Phase 52 exit gate`, which closed after post-merge validation on `main`.
 - The Phase 53 exit gate is `#418` `Phase 53 exit gate`, which closed after post-merge validation on `main`.
 - The Phase 54 exit gate is `#426` `Phase 54 exit gate`, which closed after post-merge validation on `main`.
@@ -425,6 +432,8 @@ This note records the closed Phase 58 route-readiness evidence gate after PR `#4
 - The Phase 58 Route Readiness Evidence Gate lives in `docs/plans/phase-58-route-readiness-evidence-gate-2026-05-20.md`.
 - The Phase 58 Route Readiness Snapshot Evidence lives in `docs/plans/phase-58-route-readiness-snapshot-evidence-2026-05-20.md`.
 - Phase 58 is closed after PR `#458`; `#453` `Phase 58 exit gate` closed by PR `#458`, `#454` `Phase 58: sync repo truth after PR #452 and define route-readiness evidence gate` closed by PR `#456`, `#455` `Phase 58: reproduce private-beta route-readiness snapshots with tracked smoke coverage` closed by PR `#457`, milestone `Phase 58 - Private-Beta Route Readiness Evidence Gate` is closed, and `audit-github-queue` reports `paused` with no active milestone.
+- The Phase 59 Selected-World Route Continuity Gate lives in `docs/plans/phase-59-selected-world-route-continuity-gate-2026-05-23.md`.
+- Phase 59 is active; `#459` `Phase 59 exit gate` is blocked, `#460` `Phase 59: sync repo truth after Phase 58 closeout and define selected-world route gate` is ready, `#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain` is ready, milestone `Phase 59 - Selected-World Route Continuity Evidence Gate` is open, and `audit-github-queue` reports `ready` for the active Phase 59 queue.
 - `#384` `Phase 49: sync repo truth and protect runtime core lanes` is closed by PR `#385`.
 - `#386` `Phase 49: ratify kernel trace and replay contract` is closed by PR `#387`.
 - `#388` `Phase 49: ratify perturbation schema and resolver authoring contract` is closed by PR `#389`.
