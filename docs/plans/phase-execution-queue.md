@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut and the completed Phase 58 route-readiness evidence gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, and the active Phase 59 selected-world route continuity evidence gate.
 
 ## Current Gate State
 
@@ -62,12 +62,42 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 56 exit gate: closed
 - Phase 57 exit gate: closed
 - Phase 58 exit gate: closed
+- Phase 59 exit gate: open and blocked
 
 Local phase audits currently report:
 
 - `phase1`: pass
 - `phase2`: pass
 - `phase3`: pass
+
+## Phase 59 Active Queue
+
+Phase 59 title:
+
+```text
+Phase 59 - Selected-World Route Continuity Evidence Gate
+```
+
+- Phase 59 is active
+- `audit-github-queue` reports `ready` for the active Phase 59 queue
+- milestone `Phase 59 - Selected-World Route Continuity Evidence Gate`
+  - open
+- `#459` `Phase 59 exit gate`
+  - open and blocked
+  - labeled `lane:protected-core` because it is the protected closeout gate
+- `#460` `Phase 59: sync repo truth after Phase 58 closeout and define selected-world route gate`
+  - ready
+  - syncs the active Phase 59 queue and gate into tracked docs, bootstrap metadata, and tests
+- `#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain`
+  - ready
+  - will reproduce narrow GET-only route-readiness evidence for selected bounded fictional worlds
+- boundary posture
+  - Phase 59 may promote only narrow GET-only route-readiness evidence for selected bounded fictional worlds, or record blockers.
+  - selected worlds are `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
+  - Phase 59 does not promote broad private-beta readiness, future-world readiness, launch hub behavior, async/task_id behavior, public/plugin path expansion, or runtime mutation expansion.
+  - public demo, plugin, Hosted GPT/BYOK, launch hub, async, and runtime mutation boundaries remain unchanged unless separately ratified.
+- phase gate baseline
+  - Phase 59 Selected-World Route Continuity Gate: `docs/plans/phase-59-selected-world-route-continuity-gate-2026-05-23.md`
 
 ## Phase 58 Closed Queue
 
