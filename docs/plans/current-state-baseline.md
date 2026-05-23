@@ -2,7 +2,7 @@
 
 This note records the active Phase 61 selected-world review surface evidence binding gate after Phase 60 closed. PR `#452` merged the subagent-reviewed auto-merge policy baseline, PR `#456` synced the Phase 58 gate, PR `#457` reproduced tracked route-readiness smoke evidence, and PR `#458` closed Phase 58. Phase 59 is closed after `#459` closed by PR `#464`, `#460` closed by PR `#462`, and `#461` closed by PR `#463`. Phase 60 is closed after `#465` closed by PR `#470`, `#466` closed by PR `#468`, and `#467` closed by PR `#469`; milestone `Phase 60 - Selected-World Review Artifact Integrity Gate` is closed, and Phase 60 selected-world review artifact integrity evidence remains historical baseline.
 
-Phase 61 is active as `Phase 61 - Selected-World Review Surface Evidence Binding Gate`. The active queue contains `#471` `Phase 61 exit gate`, `#472` `Phase 61: sync repo truth after Phase 60 closeout and define review surface evidence gate`, and `#473` `Phase 61: add selected-world review surface evidence binding smoke`. The Phase 61 gate lives in `docs/plans/phase-61-selected-world-review-surface-evidence-binding-gate-2026-05-23.md` and covers selected-world review surface evidence binding only.
+Phase 61 is active as `Phase 61 - Selected-World Review Surface Evidence Binding Gate`. The active queue contains `#471` `Phase 61 exit gate`, `#472` `Phase 61: sync repo truth after Phase 60 closeout and define review surface evidence gate`, and `#473` `Phase 61: add selected-world review surface evidence binding smoke`. The Phase 61 gate lives in `docs/plans/phase-61-selected-world-review-surface-evidence-binding-gate-2026-05-23.md` and covers selected-world review surface evidence binding only. The #473 selected-world review surface evidence binding note lives in `docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md` and is reproduced by `scripts/smoke_phase61_selected_world_review_surface_binding.py`.
 
 ## Snapshot
 
@@ -389,6 +389,7 @@ Phase 61 is active as `Phase 61 - Selected-World Review Surface Evidence Binding
 - The active repository state has Phase 53 transfer-generalization closeout complete, Phase 54 closeout complete, Phase 55 closeout complete, Phase 56 closed, Phase 57 closed after PR `#451`, Phase 58 closed after PR `#458`, Phase 59 closed after selected-world route continuity evidence, Phase 60 closed after selected-world review artifact integrity evidence, `v0.1.0` preserved as the latest published release baseline, and public demo, plugin, Hosted GPT/BYOK, launch hub, async implementation, and runtime mutation boundaries unchanged.
 - The Phase 60 Selected-World Review Artifact Integrity Gate lives in `docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md`.
 - The Phase 60 Selected-World Review Artifact Integrity Evidence lives in `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md` and is reproduced by `scripts/smoke_phase60_selected_world_artifact_integrity.py`.
+- The Phase 61 selected-world review surface evidence binding note lives in `docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md` and is reproduced by `scripts/smoke_phase61_selected_world_review_surface_binding.py`.
 
 ## Next Entry Point
 

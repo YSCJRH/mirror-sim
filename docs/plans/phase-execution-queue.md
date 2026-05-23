@@ -88,6 +88,8 @@ Phase 61 - Selected-World Review Surface Evidence Binding Gate
   - syncs the active Phase 61 queue and gate into tracked docs, bootstrap metadata, and tests
 - `#473` `Phase 61: add selected-world review surface evidence binding smoke`
   - adds tracked selected-world review surface evidence binding smoke, or records blockers
+  - records `docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md`
+  - is reproduced by `scripts/smoke_phase61_selected_world_review_surface_binding.py`
 - boundary posture
   - Phase 61 may promote only narrow selected-world review surface evidence binding for selected bounded fictional worlds, or record blockers.
   - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
@@ -96,6 +98,8 @@ Phase 61 - Selected-World Review Surface Evidence Binding Gate
   - `status:needs-adr` and unresolved `risk:safety` remain blockers.
 - phase gate baseline
   - Phase 61 Selected-World Review Surface Evidence Binding Gate: `docs/plans/phase-61-selected-world-review-surface-evidence-binding-gate-2026-05-23.md`
+  - Phase 61 Selected-World Review Surface Evidence Binding: `docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md`
+  - selected-world review surface evidence binding smoke: `scripts/smoke_phase61_selected_world_review_surface_binding.py`
 
 ## Phase 60 Closed Queue
 
