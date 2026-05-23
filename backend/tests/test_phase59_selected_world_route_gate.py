@@ -17,11 +17,11 @@ def test_phase59_selected_world_route_gate_exists_with_required_sections() -> No
     required_sections = [
         "# Phase 59 Selected-World Route Continuity Gate",
         "Issue: `#459` `Phase 59 exit gate`",
-        "Current state: Phase 59 is active; the GitHub queue is ready.",
+        "Current state: Phase 59 is closed; no active milestone is open.",
         "## Post-Phase-58 Baseline",
-        "## Phase 59 Operational Queue",
+        "## Phase 59 Closed Queue",
         "## Selected-World Route Continuity Scope",
-        "## Candidate Evidence Plan",
+        "## Reproduced Evidence Outcome",
         "## Non-Goals",
         "## Validation Commands",
     ]
@@ -35,9 +35,12 @@ def test_phase59_selected_world_route_gate_records_queue_and_boundaries() -> Non
         "Phase 58 is closed after PR `#458`.",
         "Phase 59 - Selected-World Route Continuity Evidence Gate",
         "`#459` `Phase 59 exit gate`",
+        "`#459` closed by PR `#464`.",
         "`#460` `Phase 59: sync repo truth after Phase 58 closeout and define selected-world route gate`",
         "`#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain`",
-        "`audit-github-queue` reports `ready` for the active Phase 59 queue.",
+        "`#460` closed by PR `#462`.",
+        "`#461` closed by PR `#463`.",
+        "`audit-github-queue` reports `paused` with no active milestone.",
         "`fog-harbor-east-gate`",
         "`museum-night`",
         "`library-rain`",
@@ -53,7 +56,7 @@ def test_phase59_selected_world_route_gate_records_queue_and_boundaries() -> Non
         assert phrase in gate
 
 
-def test_active_state_docs_record_phase59_ready_queue() -> None:
+def test_closed_state_docs_record_phase59_paused_queue() -> None:
     docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -62,19 +65,24 @@ def test_active_state_docs_record_phase59_ready_queue() -> None:
         PHASE59_GATE_PATH,
     ]
     required_phrases = [
-        "Phase 59 is active",
+        "Phase 59 is closed",
         "Phase 59 - Selected-World Route Continuity Evidence Gate",
+        "milestone `Phase 59 - Selected-World Route Continuity Evidence Gate` is closed",
         "`#459` `Phase 59 exit gate`",
+        "`#459` closed by PR `#464`",
         "`#460` `Phase 59: sync repo truth after Phase 58 closeout and define selected-world route gate`",
         "`#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain`",
-        "`audit-github-queue` reports `ready` for the active Phase 59 queue",
+        "`#460` closed by PR `#462`",
+        "`#461` closed by PR `#463`",
+        "`audit-github-queue` reports `paused` with no active milestone",
         "`docs/plans/phase-59-selected-world-route-continuity-gate-2026-05-23.md`",
+        "`docs/plans/phase-59-selected-world-route-evidence-2026-05-23.md`",
     ]
 
     for path in docs:
         text = _read(path)
         for phrase in required_phrases:
-            assert phrase in text, f"{path} is missing Phase 59 active queue wording: {phrase}"
+            assert phrase in text, f"{path} is missing Phase 59 closed queue wording: {phrase}"
 
 
 def test_phase59_docs_do_not_promote_blocked_scope() -> None:
@@ -105,8 +113,10 @@ def test_phase59_docs_do_not_promote_blocked_scope() -> None:
         "Phase 59 promotes future-world readiness",
         "Phase 59 promotes untracked planning notes",
         "Phase 59 is ready for closeout",
-        "`#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain` is closed",
-        "Phase 59 is paused with no active milestone",
+        "Phase 59 is active",
+        "`audit-github-queue` reports `ready` for the active Phase 59 queue",
+        "`#460` `Phase 59: sync repo truth after Phase 58 closeout and define selected-world route gate` is ready",
+        "`#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain` is ready",
     ]
 
     for path in docs:

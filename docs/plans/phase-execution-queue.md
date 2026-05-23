@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, and the active Phase 59 selected-world route continuity evidence gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, and the completed Phase 59 selected-world route continuity evidence gate.
 
 ## Current Gate State
 
@@ -62,7 +62,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 56 exit gate: closed
 - Phase 57 exit gate: closed
 - Phase 58 exit gate: closed
-- Phase 59 exit gate: open and blocked
+- Phase 59 exit gate: closed
 
 Local phase audits currently report:
 
@@ -70,7 +70,7 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 59 Active Queue
+## Phase 59 Closed Queue
 
 Phase 59 title:
 
@@ -78,19 +78,20 @@ Phase 59 title:
 Phase 59 - Selected-World Route Continuity Evidence Gate
 ```
 
-- Phase 59 is active
-- `audit-github-queue` reports `ready` for the active Phase 59 queue
+- Phase 59 is closed
+- `audit-github-queue` reports `paused` with no active milestone
+- The milestone `Phase 59 - Selected-World Route Continuity Evidence Gate` is closed
 - milestone `Phase 59 - Selected-World Route Continuity Evidence Gate`
-  - open
+  - closed
 - `#459` `Phase 59 exit gate`
-  - open and blocked
+  - closed by PR `#464`
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#460` `Phase 59: sync repo truth after Phase 58 closeout and define selected-world route gate`
-  - ready
-  - syncs the active Phase 59 queue and gate into tracked docs, bootstrap metadata, and tests
+  - closed by PR `#462`
+  - synced the then-active Phase 59 queue and gate into tracked docs, bootstrap metadata, and tests
 - `#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain`
-  - ready
-  - will reproduce narrow GET-only route-readiness evidence for selected bounded fictional worlds
+  - closed by PR `#463`
+  - reproduced narrow GET-only route-readiness evidence for selected bounded fictional worlds
   - tracked route evidence lives in `docs/plans/phase-59-selected-world-route-evidence-2026-05-23.md`
 - boundary posture
   - Phase 59 may promote only narrow GET-only route-readiness evidence for selected bounded fictional worlds, or record blockers.
@@ -100,6 +101,10 @@ Phase 59 - Selected-World Route Continuity Evidence Gate
 - phase gate baseline
   - Phase 59 Selected-World Route Continuity Gate: `docs/plans/phase-59-selected-world-route-continuity-gate-2026-05-23.md`
   - Phase 59 Selected-World Route Evidence: `docs/plans/phase-59-selected-world-route-evidence-2026-05-23.md`
+- closeout shorthand
+  - `#459` closed by PR `#464`
+  - `#460` closed by PR `#462`
+  - `#461` closed by PR `#463`
 
 ## Phase 58 Closed Queue
 

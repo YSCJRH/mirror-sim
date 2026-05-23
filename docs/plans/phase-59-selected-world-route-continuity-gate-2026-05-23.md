@@ -4,9 +4,9 @@ Date: 2026-05-23
 
 Issue: `#459` `Phase 59 exit gate`
 
-Current state: Phase 59 is active; the GitHub queue is ready.
+Current state: Phase 59 is closed; no active milestone is open.
 
-This note records the active Phase 59 gate after Phase 58 closed the Fog Harbor route-readiness evidence gate. Phase 59 extends only narrow GET-only route-readiness evidence for selected bounded fictional worlds. It does not promote broad private-beta readiness, future-world readiness, a launch hub, async runtime work, or any product/runtime contract expansion.
+This note records the Phase 59 closeout gate after selected-world route continuity evidence was reproduced and reviewed. Phase 59 extended only narrow GET-only route-readiness evidence for selected bounded fictional worlds. It does not promote broad private-beta readiness, future-world readiness, a launch hub, async runtime work, or any product/runtime contract expansion.
 
 This Phase 59 Selected-World Route Continuity Gate lives in `docs/plans/phase-59-selected-world-route-continuity-gate-2026-05-23.md`.
 
@@ -21,7 +21,7 @@ This Phase 59 Selected-World Route Continuity Gate lives in `docs/plans/phase-59
 - Phase 58 reproduced the Fog Harbor GET-only route set: `/`, `/review`, `/worlds/fog-harbor-east-gate`, and `/worlds/fog-harbor-east-gate/review`.
 - Phase 53 recorded the selected transfer set as `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
 
-## Phase 59 Operational Queue
+## Phase 59 Closed Queue
 
 Phase 59 title:
 
@@ -31,18 +31,22 @@ Phase 59 - Selected-World Route Continuity Evidence Gate
 
 - `#459` `Phase 59 exit gate`
   - Lane: `protected-core`.
-  - Status: blocked until the Phase 59 queue-sync and selected-world route evidence issues are complete and post-merge validation passes.
+  - Status: closed by PR `#464` after post-merge validation.
   - Scope: close Phase 59 only after the selected-world route continuity gate is synced, GET-only route evidence is reproduced across the selected bounded-world set, required validation passes, and the milestone can return to the released stop-state.
 - `#460` `Phase 59: sync repo truth after Phase 58 closeout and define selected-world route gate`
   - Lane: `protected-core`.
-  - Status: ready.
-  - Scope: update tracked repo truth, bootstrap metadata, and focused tests to the active Phase 59 queue.
+  - Status: closed by PR `#462`.
+  - Scope: update tracked repo truth, bootstrap metadata, and focused tests to the then-active Phase 59 queue.
 - `#461` `Phase 59: add GET-only selected-world route smoke for Fog Harbor, Museum Night, and Library Rain`
   - Lane: `protected-core`.
-  - Status: ready.
+  - Status: closed by PR `#463`.
   - Scope: reproduce selected-world GET-only route continuity with tracked smoke evidence or record specific blockers.
 
-`audit-github-queue` reports `ready` for the active Phase 59 queue.
+`audit-github-queue` reports `paused` with no active milestone.
+
+The milestone `Phase 59 - Selected-World Route Continuity Evidence Gate` is closed.
+
+Closeout shorthand: `#459` closed by PR `#464`. `#460` closed by PR `#462`. `#461` closed by PR `#463`.
 
 ## Selected-World Route Continuity Scope
 
@@ -56,13 +60,14 @@ Phase 59 - Selected-World Route Continuity Evidence Gate
   - `library-rain`
 - Promote only narrow GET-only route-readiness evidence for selected bounded fictional worlds, or record blockers.
 
-## Candidate Evidence Plan
+## Reproduced Evidence Outcome
 
-- Add a Phase 59 GET-only route smoke that covers `/`, `/review`, and the world home/review route pair for `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
-- Keep the Phase 59 route smoke separate from the Phase 58 smoke so each evidence boundary remains easy to inspect.
-- Check only route availability and route-ownership body markers.
-- Do not start sessions, generate branches, roll back sessions, create worlds, call model/provider paths, or post to runtime APIs.
-- Record reproduced evidence in `docs/plans/phase-59-selected-world-route-evidence-2026-05-23.md` when `#461` is implemented.
+- PR `#462` synced the then-active Phase 59 queue and gate into tracked repo truth.
+- PR `#463` added `scripts/smoke_phase59_selected_world_routes_web.py` and `backend/tests/test_phase59_selected_world_route_readiness.py`.
+- The tracked evidence lives in `docs/plans/phase-59-selected-world-route-evidence-2026-05-23.md`.
+- The Phase 59 GET-only route smoke covers `/`, `/review`, and deterministic empty-session selected-world home/review routes for `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
+- The smoke checks only route availability and route-ownership body markers.
+- The smoke does not start sessions, generate branches, roll back sessions, create worlds, call model/provider paths, or post to runtime APIs.
 
 ## Non-Goals
 
