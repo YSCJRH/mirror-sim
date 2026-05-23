@@ -59,7 +59,8 @@ The milestone `Phase 60 - Selected-World Review Artifact Integrity Gate` is open
 ## Expected Evidence Path
 
 - `#467` should add the selected-world artifact integrity smoke and evidence note.
-- The planned evidence note path is `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`.
+- The evidence note path is `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`.
+- The selected-world review artifact integrity evidence is reproduced by `scripts/smoke_phase60_selected_world_artifact_integrity.py`.
 - The evidence should check stable world ids, expected artifact roots, passing eval summaries, and claim labels plus `evidence_ids` for the selected bounded-world set.
 
 ## Non-Goals
@@ -81,6 +82,8 @@ The milestone `Phase 60 - Selected-World Review Artifact Integrity Gate` is open
 
 ```powershell
 python -m pytest backend/tests/test_phase60_selected_world_artifact_gate.py -q
+python -m pytest backend/tests/test_phase60_selected_world_artifact_integrity.py -q
+python scripts/smoke_phase60_selected_world_artifact_integrity.py
 python scripts/check_no_secrets.py
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
 python -m backend.app.cli classify-lane --files .github/automation/bootstrap-spec.json README.md docs/plans/automation-roadmap.md docs/plans/current-state-baseline.md docs/plans/phase-execution-queue.md docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md backend/tests/test_phase60_selected_world_artifact_gate.py
