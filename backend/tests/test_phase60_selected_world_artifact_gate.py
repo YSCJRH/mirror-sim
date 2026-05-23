@@ -19,11 +19,11 @@ def test_phase60_selected_world_artifact_gate_exists_with_required_sections() ->
     required_sections = [
         "# Phase 60 Selected-World Review Artifact Integrity Gate",
         "Issue: `#465` `Phase 60 exit gate`",
-        "Current state: Phase 60 is active and `audit-github-queue` reports `ready`.",
+        "Current state: Phase 60 is closed; no active milestone is open.",
         "## Post-Phase-59 Baseline",
-        "## Phase 60 Active Queue",
+        "## Phase 60 Closed Queue",
         "## Selected-World Review Artifact Integrity Scope",
-        "## Expected Evidence Path",
+        "## Reproduced Evidence Outcome",
         "## Non-Goals",
         "## Validation Commands",
     ]
@@ -37,13 +37,18 @@ def test_phase60_gate_records_active_queue_and_boundaries() -> None:
         "Phase 59 is closed after PR `#464`.",
         "Phase 60 - Selected-World Review Artifact Integrity Gate",
         "`#465` `Phase 60 exit gate`",
+        "`#465` closed by PR `#470`.",
         "`#466` `Phase 60: sync repo truth after Phase 59 closeout and define artifact integrity gate`",
         "`#467` `Phase 60: add selected-world review artifact integrity smoke`",
-        "`audit-github-queue` reports `ready` for the active Phase 60 queue.",
+        "`#466` closed by PR `#468`.",
+        "`#467` closed by PR `#469`.",
+        "`audit-github-queue` reports `paused` with no active milestone.",
+        "milestone `Phase 60 - Selected-World Review Artifact Integrity Gate` is closed",
         "`fog-harbor-east-gate`",
         "`museum-night`",
         "`library-rain`",
         "narrow selected-world review artifact integrity evidence",
+        "`scripts/smoke_phase60_selected_world_artifact_integrity.py`",
         "`docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md`",
         "`docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`",
         "Do not promote broad private-beta readiness.",
@@ -59,7 +64,7 @@ def test_phase60_gate_records_active_queue_and_boundaries() -> None:
         assert phrase in gate
 
 
-def test_active_state_docs_record_phase60_ready_queue() -> None:
+def test_closed_state_docs_record_phase60_paused_queue() -> None:
     docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -68,21 +73,25 @@ def test_active_state_docs_record_phase60_ready_queue() -> None:
         PHASE60_GATE_PATH,
     ]
     required_phrases = [
-        "Phase 60 is active",
+        "Phase 60 is closed",
         "Phase 60 - Selected-World Review Artifact Integrity Gate",
-        "milestone `Phase 60 - Selected-World Review Artifact Integrity Gate` is open",
+        "milestone `Phase 60 - Selected-World Review Artifact Integrity Gate` is closed",
         "`#465` `Phase 60 exit gate`",
+        "`#465` closed by PR `#470`",
         "`#466` `Phase 60: sync repo truth after Phase 59 closeout and define artifact integrity gate`",
+        "`#466` closed by PR `#468`",
         "`#467` `Phase 60: add selected-world review artifact integrity smoke`",
-        "`audit-github-queue` reports `ready` for the active Phase 60 queue",
+        "`#467` closed by PR `#469`",
+        "`audit-github-queue` reports `paused` with no active milestone",
         "`docs/plans/phase-60-selected-world-artifact-integrity-gate-2026-05-23.md`",
         "`docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`",
+        "`scripts/smoke_phase60_selected_world_artifact_integrity.py`",
     ]
 
     for path in docs:
         text = _read(path)
         for phrase in required_phrases:
-            assert phrase in text, f"{path} is missing Phase 60 active queue wording: {phrase}"
+            assert phrase in text, f"{path} is missing Phase 60 closed queue wording: {phrase}"
 
 
 def test_phase60_docs_do_not_promote_blocked_scope() -> None:
@@ -115,9 +124,10 @@ def test_phase60_docs_do_not_promote_blocked_scope() -> None:
         "Phase 60 promotes broad private-beta readiness",
         "Phase 60 promotes future-world readiness",
         "Phase 60 promotes untracked planning notes",
-        "Phase 60 closes the artifact integrity gate",
-        "Phase 60 is closed",
-        "`audit-github-queue` reports `paused` for Phase 60",
+        "Phase 60 is active",
+        "`audit-github-queue` reports `ready` for the active Phase 60 queue",
+        "`#466` `Phase 60: sync repo truth after Phase 59 closeout and define artifact integrity gate` is ready",
+        "`#467` `Phase 60: add selected-world review artifact integrity smoke` is ready",
     ]
 
     for path in docs:
