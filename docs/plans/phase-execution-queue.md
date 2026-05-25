@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, and the active Phase 61 selected-world review surface evidence binding gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, and the completed Phase 61 selected-world review surface evidence binding gate.
 
 ## Current Gate State
 
@@ -64,7 +64,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 58 exit gate: closed
 - Phase 59 exit gate: closed
 - Phase 60 exit gate: closed
-- Phase 61 exit gate: active
+- Phase 61 exit gate: closed
 
 Local phase audits currently report:
 
@@ -72,7 +72,7 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 61 Operational Queue
+## Phase 61 Closed Queue
 
 Phase 61 title:
 
@@ -80,14 +80,18 @@ Phase 61 title:
 Phase 61 - Selected-World Review Surface Evidence Binding Gate
 ```
 
-- Phase 61 is active
+- Phase 61 is closed
 - Phase 60 selected-world review artifact integrity evidence remains historical baseline
-- `#471` `Phase 61 exit gate`
+- `audit-github-queue` reports `paused` with no active milestone
+- The milestone `Phase 61 - Selected-World Review Surface Evidence Binding Gate` is closed
+- `#471` `Phase 61 exit gate` closed by the Phase 61 closeout PR
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#472` `Phase 61: sync repo truth after Phase 60 closeout and define review surface evidence gate`
-  - syncs the active Phase 61 queue and gate into tracked docs, bootstrap metadata, and tests
+  - closed by PR `#474`
+  - synced the then-active Phase 61 queue and gate into tracked docs, bootstrap metadata, and tests
 - `#473` `Phase 61: add selected-world review surface evidence binding smoke`
-  - adds tracked selected-world review surface evidence binding smoke, or records blockers
+  - closed by PR `#475`
+  - added tracked selected-world review surface evidence binding smoke
   - records `docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md`
   - is reproduced by `scripts/smoke_phase61_selected_world_review_surface_binding.py`
 - boundary posture
@@ -100,6 +104,7 @@ Phase 61 - Selected-World Review Surface Evidence Binding Gate
   - Phase 61 Selected-World Review Surface Evidence Binding Gate: `docs/plans/phase-61-selected-world-review-surface-evidence-binding-gate-2026-05-23.md`
   - Phase 61 Selected-World Review Surface Evidence Binding: `docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md`
   - selected-world review surface evidence binding smoke: `scripts/smoke_phase61_selected_world_review_surface_binding.py`
+  - Closeout shorthand: `#471` closed by the Phase 61 closeout PR; `#472` closed by PR `#474`; `#473` closed by PR `#475`.
 
 ## Phase 60 Closed Queue
 

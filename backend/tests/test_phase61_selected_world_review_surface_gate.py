@@ -27,9 +27,9 @@ def test_phase61_selected_world_review_surface_gate_exists_with_required_section
     required_sections = [
         "# Phase 61 Selected-World Review Surface Evidence Binding Gate",
         f"Issue: `{PHASE61_EXIT_ISSUE}` `Phase 61 exit gate`",
-        "Current state: Phase 61 is active; Phase 60 is closed.",
+        "Current state: Phase 61 is closed; Phase 60 is closed.",
         "## Post-Phase-60 Baseline",
-        "## Phase 61 Operational Queue",
+        "## Phase 61 Closed Queue",
         "## Selected-World Review Surface Evidence Binding Scope",
         "## Candidate Input Policy",
         "## Non-Goals",
@@ -45,7 +45,7 @@ def test_phase61_gate_records_queue_scope_and_boundaries() -> None:
     required_phrases = [
         "Phase 60 is closed after PR `#470`.",
         PHASE61_TITLE,
-        "`Phase 61 exit gate`",
+        "`Phase 61 exit gate` closed by the Phase 61 closeout PR",
         f"`{PHASE61_EXIT_ISSUE}` `Phase 61 exit gate`",
         f"`{PHASE61_SYNC_ISSUE_NUMBER}` `{PHASE61_SYNC_ISSUE}`",
         f"`{PHASE61_SMOKE_ISSUE_NUMBER}` `{PHASE61_SMOKE_ISSUE}`",
@@ -72,7 +72,7 @@ def test_phase61_gate_records_queue_scope_and_boundaries() -> None:
         assert phrase in gate
 
 
-def test_active_state_docs_record_phase61_queue_without_scope_expansion() -> None:
+def test_closed_state_docs_record_phase61_queue_without_scope_expansion() -> None:
     docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -81,10 +81,9 @@ def test_active_state_docs_record_phase61_queue_without_scope_expansion() -> Non
         PHASE61_GATE_PATH,
     ]
     required_phrases = [
-        "Phase 61 is active",
+        "Phase 61 is closed",
         PHASE61_TITLE,
-        "`Phase 61 exit gate`",
-        f"`{PHASE61_EXIT_ISSUE}` `Phase 61 exit gate`",
+        "`Phase 61 exit gate` closed by the Phase 61 closeout PR",
         f"`{PHASE61_SYNC_ISSUE_NUMBER}` `{PHASE61_SYNC_ISSUE}`",
         f"`{PHASE61_SMOKE_ISSUE_NUMBER}` `{PHASE61_SMOKE_ISSUE}`",
         f"`{PHASE61_SYNC_ISSUE}`",
@@ -92,6 +91,7 @@ def test_active_state_docs_record_phase61_queue_without_scope_expansion() -> Non
         "`docs/plans/phase-61-selected-world-review-surface-evidence-binding-gate-2026-05-23.md`",
         "selected-world review surface evidence binding",
         "Phase 60 selected-world review artifact integrity evidence remains historical baseline",
+        "`audit-github-queue` reports `paused` with no active milestone",
     ]
     forbidden_phrases = [
         "Phase 61 implements async",
