@@ -31,6 +31,8 @@ Phase 62 - Selected-World Review Evidence Actionability Gate
 - `#479` `Phase 62: add selected-world review evidence actionability smoke`
   - Status: ready.
   - Scope: add tracked selected-world review evidence actionability smoke for selected worlds.
+  - Evidence note: `docs/plans/phase-62-selected-world-review-evidence-actionability-2026-05-25.md`.
+  - Reproduction script: `scripts/smoke_phase62_selected_world_review_actionability.py`.
 
 `audit-github-queue` reports `ready` with active milestone `Phase 62 - Selected-World Review Evidence Actionability Gate`.
 

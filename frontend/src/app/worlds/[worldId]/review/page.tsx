@@ -109,6 +109,8 @@ function SelectedWorldReviewEvidencePanel({
     evidence.claimsLabeled &&
     evidence.claimsHaveEvidenceIds &&
     evidence.claimEvidenceResolves;
+  const readinessSignals = evidence.readinessSignals;
+  const reviewReady = evidence.reviewReadiness === "ready";
 
   return (
     <section
@@ -179,6 +181,45 @@ function SelectedWorldReviewEvidencePanel({
             : `Claims keep labels and evidence ids: ${formatBindingFlag(locale, evidence.claimsLabeled && evidence.claimsHaveEvidenceIds)}. Evidence ids resolve against chunks: ${formatBindingFlag(locale, evidence.claimEvidenceResolves)}.`}
         </p>
       </SurfaceCard>
+      <section
+        className="dashboardCallout"
+        data-review-evidence-actionability="selected-world-review-readiness"
+      >
+        <div className="interventionCardMeta">
+          <StatusPill tone={reviewReady ? "strong" : "subtle"}>
+            {locale === "zh-CN" ? "Review readiness" : "Review readiness"}
+          </StatusPill>
+          <StatusPill tone={reviewReady ? "accent" : "subtle"}>{evidence.reviewReadiness}</StatusPill>
+        </div>
+        <p className="subtle">
+          {locale === "zh-CN"
+            ? `Next action: ${evidence.nextAction}. ${evidence.nextActionReason}`
+            : `Next action: ${evidence.nextAction}. ${evidence.nextActionReason}`}
+        </p>
+        <p className="subtle">
+          {locale === "zh-CN"
+            ? "This read-only review readiness signal is derived only from artifact root, eval status, report claims, claim labels, evidence ids, and evidence chunk resolution."
+            : "This read-only review readiness signal is derived only from artifact root, eval status, report claims, claim labels, evidence ids, and evidence chunk resolution."}
+        </p>
+        <div className="contextCardGrid">
+          <ContextCard
+            label={locale === "zh-CN" ? "Eval" : "Eval"}
+            value={formatBindingFlag(locale, readinessSignals.evalPassed)}
+          />
+          <ContextCard
+            label={locale === "zh-CN" ? "Claims" : "Claims"}
+            value={formatBindingFlag(locale, readinessSignals.reportClaimsPresent)}
+          />
+          <ContextCard
+            label={locale === "zh-CN" ? "Labels" : "Labels"}
+            value={formatBindingFlag(locale, readinessSignals.claimsLabeled)}
+          />
+          <ContextCard
+            label={locale === "zh-CN" ? "Evidence" : "Evidence"}
+            value={formatBindingFlag(locale, readinessSignals.evidenceIdsResolve)}
+          />
+        </div>
+      </section>
     </section>
   );
 }
