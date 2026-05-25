@@ -11,6 +11,8 @@ PHASE62_TITLE = "Phase 62 - Selected-World Review Evidence Actionability Gate"
 PHASE62_EXIT_ISSUE = "#477"
 PHASE62_SYNC_ISSUE_NUMBER = "#478"
 PHASE62_SMOKE_ISSUE_NUMBER = "#479"
+PHASE62_SYNC_PR = "#480"
+PHASE62_SMOKE_PR = "#481"
 PHASE62_SYNC_ISSUE = (
     "Phase 62: sync repo truth after Phase 61 closeout and define review evidence actionability gate"
 )
@@ -27,9 +29,9 @@ def test_phase62_selected_world_review_actionability_gate_exists_with_required_s
     required_sections = [
         "# Phase 62 Selected-World Review Evidence Actionability Gate",
         f"Issue: `{PHASE62_EXIT_ISSUE}` `Phase 62 exit gate`",
-        "Current state: Phase 62 is active; Phase 61 is closed.",
+        "Current state: Phase 62 is closed; Phase 61 is closed.",
         "## Post-Phase-61 Baseline",
-        "## Phase 62 Active Queue",
+        "## Phase 62 Closed Queue",
         "## Selected-World Review Evidence Actionability Scope",
         "## Candidate Input Policy",
         "## Non-Goals",
@@ -47,9 +49,11 @@ def test_phase62_gate_records_queue_scope_and_boundaries() -> None:
         f"`{PHASE62_EXIT_ISSUE}` `Phase 62 exit gate`",
         f"`{PHASE62_SYNC_ISSUE_NUMBER}` `{PHASE62_SYNC_ISSUE}`",
         f"`{PHASE62_SMOKE_ISSUE_NUMBER}` `{PHASE62_SMOKE_ISSUE}`",
-        f"`{PHASE62_SYNC_ISSUE}`",
-        f"`{PHASE62_SMOKE_ISSUE}`",
-        "`audit-github-queue` reports `ready` with active milestone `Phase 62 - Selected-World Review Evidence Actionability Gate`",
+        f"`{PHASE62_SYNC_ISSUE_NUMBER}` closed by PR `{PHASE62_SYNC_PR}`",
+        f"`{PHASE62_SMOKE_ISSUE_NUMBER}` closed by PR `{PHASE62_SMOKE_PR}`",
+        f"`{PHASE62_EXIT_ISSUE}` closed by the Phase 62 closeout PR",
+        f"milestone `{PHASE62_TITLE}` is closed",
+        "`audit-github-queue` reports `paused` with no active milestone after closeout",
         "`fog-harbor-east-gate`",
         "`museum-night`",
         "`library-rain`",
@@ -72,7 +76,7 @@ def test_phase62_gate_records_queue_scope_and_boundaries() -> None:
         assert phrase in gate
 
 
-def test_active_state_docs_record_phase62_queue_without_scope_expansion() -> None:
+def test_closeout_state_docs_record_phase62_queue_without_scope_expansion() -> None:
     docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -81,17 +85,21 @@ def test_active_state_docs_record_phase62_queue_without_scope_expansion() -> Non
         PHASE62_GATE_PATH,
     ]
     required_phrases = [
-        "Phase 62 is active",
+        "Phase 62 is closed",
         PHASE62_TITLE,
         f"`{PHASE62_EXIT_ISSUE}` `Phase 62 exit gate`",
         f"`{PHASE62_SYNC_ISSUE_NUMBER}` `{PHASE62_SYNC_ISSUE}`",
         f"`{PHASE62_SMOKE_ISSUE_NUMBER}` `{PHASE62_SMOKE_ISSUE}`",
-        f"`{PHASE62_SYNC_ISSUE}`",
-        f"`{PHASE62_SMOKE_ISSUE}`",
+        f"`{PHASE62_SYNC_ISSUE_NUMBER}` closed by PR `{PHASE62_SYNC_PR}`",
+        f"`{PHASE62_SMOKE_ISSUE_NUMBER}` closed by PR `{PHASE62_SMOKE_PR}`",
+        f"`{PHASE62_EXIT_ISSUE}` closed by the Phase 62 closeout PR",
+        f"milestone `{PHASE62_TITLE}` is closed",
         "`docs/plans/phase-62-selected-world-review-evidence-actionability-gate-2026-05-25.md`",
+        "`docs/plans/phase-62-selected-world-review-evidence-actionability-2026-05-25.md`",
+        "`scripts/smoke_phase62_selected_world_review_actionability.py`",
         "selected-world review evidence actionability",
         "Phase 61 selected-world review surface evidence binding is the historical baseline",
-        "`audit-github-queue` reports `ready` with active milestone",
+        "`audit-github-queue` reports `paused` with no active milestone after closeout",
     ]
     forbidden_phrases = [
         "Phase 62 implements async",
@@ -105,6 +113,11 @@ def test_active_state_docs_record_phase62_queue_without_scope_expansion() -> Non
         "Phase 62 adds database",
         "Phase 62 adds object storage",
         "Phase 62 ratifies task_id",
+        "Phase 62 is active",
+        "Phase 62 active",
+        "Phase 62 Active Queue",
+        "Phase 62 exit gate: open / blocked",
+        "`audit-github-queue` reports `ready` with active milestone",
         "Phase 62 changes scenario DSL",
         "Phase 62 changes claim labels",
         "Phase 62 changes report claim `evidence_ids`",
@@ -120,7 +133,7 @@ def test_active_state_docs_record_phase62_queue_without_scope_expansion() -> Non
     for path in docs:
         text = _read(path)
         for phrase in required_phrases:
-            assert phrase in text, f"{path} is missing Phase 62 active queue wording: {phrase}"
+            assert phrase in text, f"{path} is missing Phase 62 closeout wording: {phrase}"
         for phrase in forbidden_phrases:
             assert phrase not in text, f"{path} expands blocked Phase 62 scope: {phrase}"
 

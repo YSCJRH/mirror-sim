@@ -2,9 +2,9 @@
 
 Issue: `#477` `Phase 62 exit gate`
 
-Current state: Phase 62 is active; Phase 61 is closed.
+Current state: Phase 62 is closed; Phase 61 is closed.
 
-This note records the active Phase 62 gate for selected-world review evidence actionability. This gate lives in `docs/plans/phase-62-selected-world-review-evidence-actionability-gate-2026-05-25.md`. Phase 61 selected-world review surface evidence binding is the historical baseline. Phase 62 may promote only narrow read-only review readiness and next-action signals derived from the artifact, eval, claim, and evidence binding already validated for the selected bounded fictional worlds.
+This note records the closed Phase 62 gate for selected-world review evidence actionability. This gate lives in `docs/plans/phase-62-selected-world-review-evidence-actionability-gate-2026-05-25.md`. Phase 61 selected-world review surface evidence binding is the historical baseline. Phase 62 promoted only narrow read-only review readiness and next-action signals derived from the artifact, eval, claim, and evidence binding already validated for the selected bounded fictional worlds.
 
 ## Post-Phase-61 Baseline
 
@@ -15,7 +15,7 @@ This note records the active Phase 62 gate for selected-world review evidence ac
 - The Phase 61 selected-world review surface evidence binding note lives in `docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md`.
 - The Phase 61 selected-world review surface evidence binding smoke is `scripts/smoke_phase61_selected_world_review_surface_binding.py`.
 
-## Phase 62 Active Queue
+## Phase 62 Closed Queue
 
 Phase 62 title:
 
@@ -24,17 +24,17 @@ Phase 62 - Selected-World Review Evidence Actionability Gate
 ```
 
 - `#477` `Phase 62 exit gate`
-  - Status: blocked until the Phase 62 work items land, validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue.
+  - Status: `#477` closed by the Phase 62 closeout PR after the Phase 62 work items landed, validation passed, read-only subagent review reported no blockers, and the milestone could return to a released stop-state.
 - `#478` `Phase 62: sync repo truth after Phase 61 closeout and define review evidence actionability gate`
-  - Status: ready.
-  - Scope: sync tracked docs, bootstrap metadata, and tests to the active Phase 62 gate.
+  - Status: `#478` closed by PR `#480`.
+  - Scope: synced tracked docs, bootstrap metadata, and tests to the then-active Phase 62 gate.
 - `#479` `Phase 62: add selected-world review evidence actionability smoke`
-  - Status: ready.
-  - Scope: add tracked selected-world review evidence actionability smoke for selected worlds.
+  - Status: `#479` closed by PR `#481`.
+  - Scope: added tracked selected-world review evidence actionability smoke for selected worlds.
   - Evidence note: `docs/plans/phase-62-selected-world-review-evidence-actionability-2026-05-25.md`.
   - Reproduction script: `scripts/smoke_phase62_selected_world_review_actionability.py`.
 
-`audit-github-queue` reports `ready` with active milestone `Phase 62 - Selected-World Review Evidence Actionability Gate`.
+The milestone `Phase 62 - Selected-World Review Evidence Actionability Gate` is closed. `audit-github-queue` reports `paused` with no active milestone after closeout.
 
 ## Selected-World Review Evidence Actionability Scope
 
@@ -44,7 +44,7 @@ Selected worlds remain:
 - `museum-night`
 - `library-rain`
 
-Phase 62 covers selected-world review evidence actionability only. It may turn existing artifact root, eval status, report claim count, label/evidence integrity, and evidence resolution signals into read-only review readiness and next-action signals. It does not make a broad product-readiness claim.
+Phase 62 covered selected-world review evidence actionability only. It turned existing artifact root, eval status, report claim count, label/evidence integrity, and evidence resolution signals into read-only review readiness and next-action signals. It does not make a broad product-readiness claim.
 
 ## Candidate Input Policy
 
