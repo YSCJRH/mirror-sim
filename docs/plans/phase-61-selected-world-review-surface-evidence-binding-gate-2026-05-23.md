@@ -2,9 +2,9 @@
 
 Issue: `#471` `Phase 61 exit gate`
 
-Current state: Phase 61 is active; Phase 60 is closed.
+Current state: Phase 61 is closed; Phase 60 is closed.
 
-This note records the Phase 61 gate for binding selected-world review surfaces to tracked artifact and evidence signals. This gate lives in `docs/plans/phase-61-selected-world-review-surface-evidence-binding-gate-2026-05-23.md`. Phase 60 selected-world review artifact integrity evidence is the historical baseline, and Phase 60 selected-world review artifact integrity evidence remains historical baseline for this queue. Phase 61 may only promote narrow selected-world review surface evidence binding for the selected bounded fictional worlds, or record blockers.
+This note records the completed Phase 61 gate for binding selected-world review surfaces to tracked artifact and evidence signals. This gate lives in `docs/plans/phase-61-selected-world-review-surface-evidence-binding-gate-2026-05-23.md`. Phase 60 selected-world review artifact integrity evidence is the historical baseline, and Phase 60 selected-world review artifact integrity evidence remains historical baseline for this queue. Phase 61 promoted only narrow selected-world review surface evidence binding for the selected bounded fictional worlds, and `audit-github-queue` reports `paused` with no active milestone after closeout.
 
 ## Post-Phase-60 Baseline
 
@@ -15,7 +15,7 @@ This note records the Phase 61 gate for binding selected-world review surfaces t
 - The Phase 60 selected-world review artifact integrity evidence lives in `docs/plans/phase-60-selected-world-artifact-integrity-evidence-2026-05-23.md`.
 - The Phase 60 selected-world review artifact integrity smoke is `scripts/smoke_phase60_selected_world_artifact_integrity.py`.
 
-## Phase 61 Operational Queue
+## Phase 61 Closed Queue
 
 Phase 61 title:
 
@@ -23,12 +23,14 @@ Phase 61 title:
 Phase 61 - Selected-World Review Surface Evidence Binding Gate
 ```
 
-- `#471` `Phase 61 exit gate`
-  - Scope: close Phase 61 only after selected-world review surface evidence binding is synced, reproduced, reviewed, and the milestone can return to a released stop-state or hand off to a reviewed successor queue.
+- `#471` `Phase 61 exit gate` closed by the Phase 61 closeout PR
+  - Scope: closed Phase 61 after selected-world review surface evidence binding was synced, reproduced, reviewed, and the milestone could return to a released stop-state.
 - `#472` `Phase 61: sync repo truth after Phase 60 closeout and define review surface evidence gate`
-  - Scope: sync tracked docs, bootstrap metadata, and tests to this active Phase 61 gate.
+  - closed by PR `#474`
+  - Scope: synced tracked docs, bootstrap metadata, and tests to the then-active Phase 61 gate.
 - `#473` `Phase 61: add selected-world review surface evidence binding smoke`
-  - Scope: add tracked review-surface evidence binding smoke for selected worlds, or record specific blockers.
+  - closed by PR `#475`
+  - Scope: added tracked review-surface evidence binding smoke for selected worlds.
   - Evidence note: `docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md`.
   - Smoke: `scripts/smoke_phase61_selected_world_review_surface_binding.py`.
 
@@ -40,7 +42,7 @@ Selected worlds remain:
 - `museum-night`
 - `library-rain`
 
-Phase 61 covers selected-world review surface evidence binding only. It should prove that selected-world review surfaces bind to the same stable world ids and artifact/evidence signals validated by Phase 60 before any broader product readiness claim is made.
+Phase 61 covered selected-world review surface evidence binding only. It proved that selected-world review surfaces bind to the same stable world ids and artifact/evidence signals validated by Phase 60 before any broader product readiness claim is made.
 
 The tracked #473 evidence note is
 `docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md`.
