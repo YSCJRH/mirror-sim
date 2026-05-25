@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, and the completed Phase 61 selected-world review surface evidence binding gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, and the active Phase 62 selected-world review evidence actionability gate.
 
 ## Current Gate State
 
@@ -65,12 +65,42 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 59 exit gate: closed
 - Phase 60 exit gate: closed
 - Phase 61 exit gate: closed
+- Phase 62 exit gate: open / blocked
 
 Local phase audits currently report:
 
 - `phase1`: pass
 - `phase2`: pass
 - `phase3`: pass
+
+## Phase 62 Active Queue
+
+Phase 62 title:
+
+```text
+Phase 62 - Selected-World Review Evidence Actionability Gate
+```
+
+- Phase 62 is active
+- Phase 61 selected-world review surface evidence binding is the historical baseline
+- `audit-github-queue` reports `ready` with active milestone `Phase 62 - Selected-World Review Evidence Actionability Gate`
+- `#477` `Phase 62 exit gate`
+  - blocked until selected-world review evidence actionability is synced, reproduced, reviewed, and the milestone can return to a released stop-state or reviewed successor queue
+  - labeled `lane:protected-core` because it is the protected closeout gate
+- `#478` `Phase 62: sync repo truth after Phase 61 closeout and define review evidence actionability gate`
+  - ready
+  - syncs the active Phase 62 queue and gate into tracked docs, bootstrap metadata, and tests
+- `#479` `Phase 62: add selected-world review evidence actionability smoke`
+  - ready
+  - will add tracked selected-world review evidence actionability smoke
+- boundary posture
+  - Phase 62 may promote only narrow selected-world review evidence actionability for selected bounded fictional worlds, or record blockers.
+  - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
+  - untracked private-alpha, private-beta, kernel, and design-system planning notes remain candidate inputs only.
+  - Phase 62 does not promote broad private-beta readiness, future-world readiness, launch hub behavior, async/task_id behavior, public/plugin path expansion, runtime mutation expansion, or contract expansion.
+  - `status:needs-adr` and unresolved `risk:safety` remain blockers.
+- phase gate baseline
+  - Phase 62 Selected-World Review Evidence Actionability Gate: `docs/plans/phase-62-selected-world-review-evidence-actionability-gate-2026-05-25.md`
 
 ## Phase 61 Closed Queue
 

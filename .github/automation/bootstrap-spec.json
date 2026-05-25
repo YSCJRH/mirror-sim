@@ -199,6 +199,10 @@
     {
       "title": "Phase 61 - Selected-World Review Surface Evidence Binding Gate",
       "description": "Bind selected bounded-world review surfaces to tracked artifact and evidence signals without widening private-beta, launch hub, async, Hosted GPT/BYOK, runtime mutation, public/plugin, storage, auth, or contract boundaries."
+    },
+    {
+      "title": "Phase 62 - Selected-World Review Evidence Actionability Gate",
+      "description": "Make selected bounded-world review surfaces more actionable by turning existing artifact, eval, claim, and evidence binding into read-only review readiness and next-action signals while preserving public demo, plugin, async, Hosted GPT/BYOK, launch hub, runtime mutation, storage/auth, and contract boundaries."
     }
   ],
   "labels": [
@@ -451,6 +455,11 @@
       "name": "phase:61",
       "color": "C8E6C9",
       "description": "Phase 61 selected-world review surface evidence binding work."
+    },
+    {
+      "name": "phase:62",
+      "color": "C8E6C9",
+      "description": "Phase 62 selected-world review evidence actionability work."
     },
     {
       "name": "area:backend",
@@ -2680,6 +2689,42 @@
         "status:ready"
       ],
       "body": "## goal\nAdd tracked selected-world review surface evidence binding smoke for Fog Harbor East Gate, Museum Night, and Library Rain.\n\n## input\n- Phase 61 selected-world review surface evidence binding gate note from the repo-truth sync issue\n- Phase 60 selected-world review artifact integrity evidence\n- current GET-only selected-world route smoke\n- current world-scoped review route source for `fog-harbor-east-gate`, `museum-night`, and `library-rain`\n\n## output\n- tests or checked-in verification artifacts that prove selected-world review surfaces bind to stable world ids and the artifact/evidence signals validated by Phase 60\n- tracked evidence note for narrow selected-world review surface evidence binding, or a blocker note explaining what cannot be promoted\n- unchanged public demo, plugin, Hosted GPT/BYOK, launch hub, async, runtime mutation, and contract boundaries\n\n## out-of-scope\n- starting sessions, generating branches, rolling back sessions, creating worlds, calling model/provider paths, or posting to runtime APIs\n- broad private-beta readiness claims\n- launch hub implementation or replacement of `/`\n- Hosted GPT/BYOK, auth, upload, billing, database, object storage, quota, or deployment expansion\n- async/task_id behavior\n- new mutating runtime APIs\n- scenario DSL, claim label, trace, compare artifact, session/node manifest, public demo artifact, or plugin MCP contract changes\n- future-world readiness claims\n- wholesale promotion of untracked planning notes\n\n## minimal test\n- `python -m pytest <focused review-surface evidence tests> -q`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n- `<focused review-surface smoke command>`\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `./make.ps1 eval-transfer`\n\n## touches contract\nNo, unless implementation discovers a missing guard or boundary gap. If that happens, stop and open a protected-core contract or guardrail item instead of widening this issue.\n\n## phase\nPhase 61"
+    },
+    {
+      "title": "Phase 62 exit gate",
+      "milestone": "Phase 62 - Selected-World Review Evidence Actionability Gate",
+      "labels": [
+        "phase:62",
+        "area:docs-evals",
+        "lane:protected-core",
+        "status:blocked"
+      ],
+      "body": "## goal\nClose Phase 62 only after the selected-world review evidence actionability gate is synced, the actionability smoke is reproduced across the selected bounded-world set, required validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue.\n\n## input\n- Phase 61 closed baseline\n- Phase 61 selected-world review surface evidence binding gate and evidence\n- selected bounded-world review routes for `fog-harbor-east-gate`, `museum-night`, and `library-rain`\n- current GitHub issue and milestone state\n\n## output\n- explicit Phase 62 closeout decision\n- documented stop condition for the Phase 62 queue\n- narrow selected-world review evidence actionability outcome, or recorded blockers if evidence cannot be reproduced\n\n## out-of-scope\n- broad private-beta readiness claims\n- launch hub implementation or replacement of `/`\n- async/task_id behavior or worker queues\n- Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, or public/plugin path expansion\n- new mutating runtime APIs\n- scenario DSL, claim label, trace, compare artifact, session/node manifest, public demo artifact, or plugin MCP contract changes\n- future-world readiness claims\n- wholesale promotion of untracked planning notes\n\n## minimal test\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `./make.ps1 eval-transfer`\n- `python -m backend.app.cli audit-phase phase1`\n- `python -m backend.app.cli audit-phase phase2`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nYes. Exit gating controls whether the automation queue may advance.\n\n## phase\nPhase 62"
+    },
+    {
+      "title": "Phase 62: sync repo truth after Phase 61 closeout and define review evidence actionability gate",
+      "milestone": "Phase 62 - Selected-World Review Evidence Actionability Gate",
+      "labels": [
+        "phase:62",
+        "area:docs-evals",
+        "risk:ci",
+        "lane:protected-core",
+        "status:ready"
+      ],
+      "body": "## goal\nSync repo truth after Phase 61 closeout and define the active Phase 62 selected-world review evidence actionability gate.\n\n## input\n- `mirror.md`\n- `AGENTS.md`\n- `README.md`\n- `.github/automation/bootstrap-spec.json`\n- `docs/plans/current-state-baseline.md`\n- `docs/plans/phase-execution-queue.md`\n- `docs/plans/automation-roadmap.md`\n- `docs/plans/phase-61-selected-world-review-surface-evidence-binding-gate-2026-05-23.md`\n- `docs/plans/phase-61-selected-world-review-surface-evidence-binding-2026-05-23.md`\n- current GitHub issue and milestone state\n\n## output\n- Phase 62 milestone, label, and issues recorded in tracked repo truth\n- Phase 61 closeout recorded as the prior baseline\n- Phase 62 scope recorded as a narrow selected-world review evidence actionability gate\n- focused tests that guard the Phase 62 baseline note and prevent broad private-beta, launch, future-world, async, runtime mutation, untracked-note promotion, or contract-expansion claims\n\n## out-of-scope\n- adding the selected-world review actionability smoke directly in this issue\n- changing frontend or backend runtime behavior\n- changing contracts or ADRs\n- promoting untracked planning notes wholesale\n- broad private-beta readiness claims\n\n## minimal test\n- `python -m pytest backend/tests/test_phase62_selected_world_review_actionability_gate.py -q`\n- `python scripts/check_no_secrets.py`\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n- `git diff --check`\n- `./make.ps1 test`\n\n## touches contract\nNo. Repo governance and baseline sync only; protected-core lane because queue governance is touched.\n\n## phase\nPhase 62"
+    },
+    {
+      "title": "Phase 62: add selected-world review evidence actionability smoke",
+      "milestone": "Phase 62 - Selected-World Review Evidence Actionability Gate",
+      "labels": [
+        "phase:62",
+        "area:docs-evals",
+        "area:frontend",
+        "risk:ci",
+        "lane:protected-core",
+        "status:ready"
+      ],
+      "body": "## goal\nAdd tracked selected-world review evidence actionability smoke for Fog Harbor East Gate, Museum Night, and Library Rain.\n\n## input\n- Phase 62 selected-world review evidence actionability gate note from the repo-truth sync issue\n- Phase 61 selected-world review surface evidence binding evidence\n- current GET-only selected-world review route smoke\n- current world-scoped review route source for `fog-harbor-east-gate`, `museum-night`, and `library-rain`\n\n## output\n- tests or checked-in verification artifacts that prove selected-world review surfaces expose read-only readiness and next-action signals derived from artifact, eval, claim, and evidence binding\n- tracked evidence note for narrow selected-world review evidence actionability, or a blocker note explaining what cannot be promoted\n- unchanged public demo, plugin, Hosted GPT/BYOK, launch hub, async, runtime mutation, and contract boundaries\n\n## out-of-scope\n- starting sessions, generating branches, rolling back sessions, creating worlds, calling model/provider paths, or posting to runtime APIs\n- broad private-beta readiness claims\n- launch hub implementation or replacement of `/`\n- Hosted GPT/BYOK, auth, upload, billing, database, object storage, quota, or deployment expansion\n- async/task_id behavior\n- new mutating runtime APIs\n- scenario DSL, claim label, trace, compare artifact, session/node manifest, public demo artifact layout, or plugin MCP contract changes\n- future-world readiness claims\n- wholesale promotion of untracked planning notes\n\n## minimal test\n- `python -m pytest <focused review-actionability tests> -q`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n- `<focused review-actionability smoke command>`\n- `python scripts/smoke_phase61_selected_world_review_surface_binding.py --source-only`\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `./make.ps1 eval-transfer`\n\n## touches contract\nNo, unless implementation discovers a missing guard or boundary gap. If that happens, stop and open a protected-core contract or guardrail item instead of widening this issue.\n\n## phase\nPhase 62"
     }
   ]
 }
