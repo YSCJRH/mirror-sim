@@ -92,7 +92,9 @@ Phase 62 - Selected-World Review Evidence Actionability Gate
   - syncs the active Phase 62 queue and gate into tracked docs, bootstrap metadata, and tests
 - `#479` `Phase 62: add selected-world review evidence actionability smoke`
   - ready
-  - will add tracked selected-world review evidence actionability smoke
+  - adds tracked selected-world review evidence actionability smoke for read-only review readiness and next-action signals
+  - evidence note: `docs/plans/phase-62-selected-world-review-evidence-actionability-2026-05-25.md`
+  - reproduction script: `scripts/smoke_phase62_selected_world_review_actionability.py`
 - boundary posture
   - Phase 62 may promote only narrow selected-world review evidence actionability for selected bounded fictional worlds, or record blockers.
   - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.

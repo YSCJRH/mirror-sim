@@ -17,6 +17,23 @@ type EvalSummary = {
   status?: string;
 };
 
+type ReviewReadiness = "ready" | "blocked";
+type ReviewNextAction = "select-or-generate-runtime-branch" | "repair-selected-world-evidence";
+type ReviewReadinessSignals = {
+  artifactRootAvailable: boolean;
+  evalPassed: boolean;
+  reportClaimsPresent: boolean;
+  claimsLabeled: boolean;
+  claimsHaveEvidenceIds: boolean;
+  evidenceIdsResolve: boolean;
+};
+type ReviewEvidenceActionability = {
+  reviewReadiness: ReviewReadiness;
+  nextAction: ReviewNextAction;
+  nextActionReason: string;
+  readinessSignals: ReviewReadinessSignals;
+};
+
 export type SelectedWorldReviewEvidenceBinding = {
   worldId: string;
   artifactRoot: string;
@@ -31,6 +48,10 @@ export type SelectedWorldReviewEvidenceBinding = {
   invalidEvidenceIds: string[];
   status: "ready" | "unavailable";
   unavailableReason: string | null;
+  reviewReadiness: ReviewReadiness;
+  nextAction: ReviewNextAction;
+  nextActionReason: string;
+  readinessSignals: ReviewReadinessSignals;
 };
 
 const repoRoot = path.resolve(process.cwd(), "..");
@@ -52,6 +73,45 @@ async function readJsonl<T>(absolutePath: string) {
     .split("\n")
     .filter(Boolean)
     .map((line) => JSON.parse(line) as T);
+}
+
+function buildReviewEvidenceActionability({
+  status,
+  evalStatus,
+  claimCount,
+  claimsLabeled,
+  claimsHaveEvidenceIds,
+  claimEvidenceResolves,
+}: {
+  status: "ready" | "unavailable";
+  evalStatus: string;
+  claimCount: number;
+  claimsLabeled: boolean;
+  claimsHaveEvidenceIds: boolean;
+  claimEvidenceResolves: boolean;
+}): ReviewEvidenceActionability {
+  const readinessSignals = {
+    artifactRootAvailable: status === "ready",
+    evalPassed: evalStatus === "pass",
+    reportClaimsPresent: claimCount > 0,
+    claimsLabeled,
+    claimsHaveEvidenceIds,
+    evidenceIdsResolve: claimEvidenceResolves,
+  };
+  const reviewReadiness = Object.values(readinessSignals).every(Boolean) ? "ready" : "blocked";
+  const nextAction =
+    reviewReadiness === "ready" ? "select-or-generate-runtime-branch" : "repair-selected-world-evidence";
+  const nextActionReason =
+    reviewReadiness === "ready"
+      ? "Evidence binding is ready; select an existing runtime branch or generate one live branch before deeper review."
+      : "Repair selected-world evidence artifacts before relying on the review surface.";
+
+  return {
+    reviewReadiness,
+    nextAction,
+    nextActionReason,
+    readinessSignals,
+  };
 }
 
 function unavailableBinding(
@@ -78,6 +138,14 @@ function unavailableBinding(
     invalidEvidenceIds: [],
     status: "unavailable",
     unavailableReason: reason,
+    ...buildReviewEvidenceActionability({
+      status: "unavailable",
+      evalStatus: "missing",
+      claimCount: 0,
+      claimsLabeled: false,
+      claimsHaveEvidenceIds: false,
+      claimEvidenceResolves: false,
+    }),
   };
 }
 
@@ -112,6 +180,14 @@ export async function loadSelectedWorldReviewEvidenceBinding(
     const claimsLabeled = claims.every((claim) => Boolean(claim.label));
     const claimsHaveEvidenceIds = claims.every((claim) => Boolean(claim.evidence_ids?.length));
     const claimEvidenceResolves = claimsHaveEvidenceIds && invalidEvidenceIds.length === 0;
+    const actionability = buildReviewEvidenceActionability({
+      status: "ready",
+      evalStatus: evalSummary.status ?? "missing",
+      claimCount: claims.length,
+      claimsLabeled,
+      claimsHaveEvidenceIds,
+      claimEvidenceResolves,
+    });
 
     return {
       worldId,
@@ -127,6 +203,7 @@ export async function loadSelectedWorldReviewEvidenceBinding(
       invalidEvidenceIds,
       status: "ready",
       unavailableReason: null,
+      ...actionability,
     };
   } catch (error) {
     return unavailableBinding(
