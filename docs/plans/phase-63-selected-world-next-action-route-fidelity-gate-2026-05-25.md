@@ -2,9 +2,9 @@
 
 Issue: `#483` `Phase 63 exit gate`
 
-Current state: Phase 63 closeout decision is recorded; Phase 62 is closed.
+Current state: Phase 63 is closed; Phase 62 is closed.
 
-This note records the Phase 63 closeout decision for selected-world review next-action route fidelity. This gate lives in `docs/plans/phase-63-selected-world-next-action-route-fidelity-gate-2026-05-25.md`. Phase 62 selected-world review evidence actionability is the historical baseline. Phase 63 proved only that Phase 62 read-only `nextAction` cues map only to existing world-scoped follow-up paths for the selected bounded fictional worlds.
+This note records the closed Phase 63 gate for selected-world review next-action route fidelity. This gate lives in `docs/plans/phase-63-selected-world-next-action-route-fidelity-gate-2026-05-25.md`. Phase 62 selected-world review evidence actionability is the historical baseline. Phase 63 proved only that Phase 62 read-only `nextAction` cues map only to existing world-scoped follow-up paths for the selected bounded fictional worlds.
 
 ## Post-Phase-62 Baseline
 
@@ -17,7 +17,7 @@ This note records the Phase 63 closeout decision for selected-world review next-
 - The Phase 62 selected-world review evidence actionability smoke is `scripts/smoke_phase62_selected_world_review_actionability.py`.
 - Phase 56 world review continuity guardrail is a source anchor.
 
-## Phase 63 Closeout Decision
+## Phase 63 Closed Queue
 
 Phase 63 title:
 
@@ -26,7 +26,7 @@ Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate
 ```
 
 - `#483` `Phase 63 exit gate`
-  - Closeout path: This Phase 63 closeout PR is the closing path for `#483` `Phase 63 exit gate`.
+  - Status: `#483` `Phase 63 exit gate` closed by PR `#488`.
   - Exit criteria: the Phase 63 work items landed, validation passed, and read-only subagent review reported no blockers.
 - `#484` `Phase 63: sync repo truth after Phase 62 closeout and define selected-world review next-action route-fidelity gate`
   - Status: `#484` closed by PR `#486`.
@@ -38,9 +38,7 @@ Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate
   - Reproduction script: `scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py`.
   - The smoke proves read-only `nextAction` cues map only to existing world-scoped follow-up paths.
 
-## Post-Merge Stop Condition
-
-Post-merge stop condition: after the Phase 63 closeout PR lands and the Phase 63 milestone is closed, `audit-github-queue` must report `paused` with no active milestone.
+The milestone `Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate` is closed. `audit-github-queue` reports `paused` with no active milestone after Phase 63 closeout.
 
 ## Selected-World Next-Action Route-Fidelity Scope
 

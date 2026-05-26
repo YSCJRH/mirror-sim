@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, and the recorded Phase 63 selected-world review next-action route-fidelity closeout decision.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, and the active Phase 64 selected-world perturb follow-up readiness gate.
 
 ## Current Gate State
 
@@ -66,7 +66,8 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 60 exit gate: closed
 - Phase 61 exit gate: closed
 - Phase 62 exit gate: closed
-- Phase 63 exit gate: closeout decision recorded
+- Phase 63 exit gate: closed
+- Phase 64 exit gate `#489`: open / blocked
 
 Local phase audits currently report:
 
@@ -74,7 +75,39 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 63 Closeout Decision
+## Phase 64 Active Queue
+
+Phase 64 title:
+
+```text
+Phase 64 - Selected-World Perturb Follow-Up Readiness Gate
+```
+
+- Phase 64 is active
+- Phase 63 is closed after PR `#488`
+- Phase 63 selected-world review next-action route fidelity is the historical baseline
+- `#489` `Phase 64 exit gate`
+  - blocked until the Phase 64 sync and smoke work items land, validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue
+  - labeled `lane:protected-core` because it is the protected closeout gate
+- `#490` `Phase 64: sync repo truth after Phase 63 closeout and define selected-world perturb follow-up gate`
+  - status: ready
+  - syncs the active Phase 64 queue and gate into tracked docs, bootstrap metadata, and tests
+- `#491` `Phase 64: add selected-world perturb follow-up readiness smoke`
+  - ready
+  - should add tracked selected-world perturb follow-up readiness smoke for existing world-scoped perturb routes
+- boundary posture
+  - Phase 64 may promote only narrow selected-world perturb follow-up readiness for selected bounded fictional worlds, or record blockers.
+  - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
+  - Phase 64 does not start runtime sessions, generate branches, call POST/runtime APIs, call provider or model paths, change perturbation payload schema, change decision schema, or change route ownership.
+  - untracked private-alpha, private-beta, kernel, and design-system planning notes remain candidate inputs only.
+  - Phase 64 does not promote broad private-beta readiness, future-world readiness, launch hub behavior, async/task_id behavior, public/plugin path expansion, runtime mutation expansion, or contract expansion.
+  - `status:needs-adr` and unresolved `risk:safety` remain blockers.
+- phase gate baseline
+  - Phase 64 Selected-World Perturb Follow-Up Readiness Gate: `docs/plans/phase-64-selected-world-perturb-followup-readiness-gate-2026-05-26.md`
+  - Follow-up readiness anchors: `frontend/src/app/worlds/[worldId]/perturb/page.tsx`; `frontend/src/app/components/preset-perturbation-composer.tsx`.
+  - Phase 64 evidence target: selected-world perturb routes stay reachable, world-scoped, bound to world-local perturbation presets, and backed by decision schema defaults.
+
+## Phase 63 Closed Queue
 
 Phase 63 title:
 
@@ -82,11 +115,12 @@ Phase 63 title:
 Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate
 ```
 
-- Phase 63 closeout decision is recorded
+- Phase 63 is closed
 - Phase 62 selected-world review evidence actionability is the historical baseline
-- Post-merge stop condition: after the Phase 63 closeout PR lands and the Phase 63 milestone is closed, `audit-github-queue` must report `paused` with no active milestone.
+- milestone `Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate` is closed
+- `audit-github-queue` reports `paused` with no active milestone after Phase 63 closeout
 - `#483` `Phase 63 exit gate`
-  - This Phase 63 closeout PR is the closing path for `#483` `Phase 63 exit gate`.
+  - `#483` `Phase 63 exit gate` closed by PR `#488`
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#484` `Phase 63: sync repo truth after Phase 62 closeout and define selected-world review next-action route-fidelity gate`
   - `#484` closed by PR `#486`
@@ -106,7 +140,7 @@ Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate
   - `status:needs-adr` and unresolved `risk:safety` remain blockers.
 - phase gate baseline
   - Phase 63 Selected-World Review Next-Action Route-Fidelity Gate: `docs/plans/phase-63-selected-world-next-action-route-fidelity-gate-2026-05-25.md`
-  - Closeout shorthand: `#484` closed by PR `#486`; `#485` closed by PR `#487`; this Phase 63 closeout PR is the closing path for `#483` `Phase 63 exit gate`.
+  - Closeout shorthand: `#484` closed by PR `#486`; `#485` closed by PR `#487`; `#483` `Phase 63 exit gate` closed by PR `#488`.
 
 ## Phase 62 Closed Queue
 
