@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, and the completed Phase 62 selected-world review evidence actionability gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, and the active Phase 63 selected-world review next-action route-fidelity gate.
 
 ## Current Gate State
 
@@ -66,12 +66,43 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 60 exit gate: closed
 - Phase 61 exit gate: closed
 - Phase 62 exit gate: closed
+- Phase 63 exit gate: open / blocked
 
 Local phase audits currently report:
 
 - `phase1`: pass
 - `phase2`: pass
 - `phase3`: pass
+
+## Phase 63 Active Queue
+
+Phase 63 title:
+
+```text
+Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate
+```
+
+- Phase 63 is active
+- Phase 62 selected-world review evidence actionability is the historical baseline
+- `audit-github-queue` reports `ready` for the active Phase 63 milestone `Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate`
+- `#483` `Phase 63 exit gate`
+  - blocked until selected-world review next-action route fidelity is synced, reproduced, reviewed, and the milestone can return to a released stop-state or reviewed successor queue
+  - labeled `lane:protected-core` because it is the protected closeout gate
+- `#484` `Phase 63: sync repo truth after Phase 62 closeout and define selected-world review next-action route-fidelity gate`
+  - ready
+  - syncs the active Phase 63 queue and gate into tracked docs, bootstrap metadata, and tests
+- `#485` `Phase 63: add selected-world review next-action route-fidelity smoke`
+  - ready
+  - adds tracked selected-world review next-action route-fidelity smoke for existing world-scoped follow-up paths
+- boundary posture
+  - Phase 63 may promote only narrow selected-world review next-action route fidelity for selected bounded fictional worlds, or record blockers.
+  - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
+  - Phase 63 does not start runtime sessions, generate branches, call POST/runtime APIs, call provider or model paths, or change route ownership.
+  - untracked private-alpha, private-beta, kernel, and design-system planning notes remain candidate inputs only.
+  - Phase 63 does not promote broad private-beta readiness, future-world readiness, launch hub behavior, async/task_id behavior, public/plugin path expansion, runtime mutation expansion, or contract expansion.
+  - `status:needs-adr` and unresolved `risk:safety` remain blockers.
+- phase gate baseline
+  - Phase 63 Selected-World Review Next-Action Route-Fidelity Gate: `docs/plans/phase-63-selected-world-next-action-route-fidelity-gate-2026-05-25.md`
 
 ## Phase 62 Closed Queue
 
