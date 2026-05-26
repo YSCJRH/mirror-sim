@@ -95,6 +95,8 @@ Phase 64 - Selected-World Perturb Follow-Up Readiness Gate
 - `#491` `Phase 64: add selected-world perturb follow-up readiness smoke`
   - ready
   - should add tracked selected-world perturb follow-up readiness smoke for existing world-scoped perturb routes
+  - evidence target: `docs/plans/phase-64-selected-world-perturb-followup-readiness-2026-05-26.md`
+  - reproduction script: `scripts/smoke_phase64_selected_world_perturb_followup_readiness.py`
 - boundary posture
   - Phase 64 may promote only narrow selected-world perturb follow-up readiness for selected bounded fictional worlds, or record blockers.
   - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
@@ -104,6 +106,8 @@ Phase 64 - Selected-World Perturb Follow-Up Readiness Gate
   - `status:needs-adr` and unresolved `risk:safety` remain blockers.
 - phase gate baseline
   - Phase 64 Selected-World Perturb Follow-Up Readiness Gate: `docs/plans/phase-64-selected-world-perturb-followup-readiness-gate-2026-05-26.md`
+  - Phase 64 Selected-World Perturb Follow-Up Readiness: `docs/plans/phase-64-selected-world-perturb-followup-readiness-2026-05-26.md`
+  - selected-world perturb follow-up readiness smoke: `scripts/smoke_phase64_selected_world_perturb_followup_readiness.py`
   - Follow-up readiness anchors: `frontend/src/app/worlds/[worldId]/perturb/page.tsx`; `frontend/src/app/components/preset-perturbation-composer.tsx`.
   - Phase 64 evidence target: selected-world perturb routes stay reachable, world-scoped, bound to world-local perturbation presets, and backed by decision schema defaults.
 

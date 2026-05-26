@@ -33,6 +33,8 @@ Phase 64 - Selected-World Perturb Follow-Up Readiness Gate
 - `#491` `Phase 64: add selected-world perturb follow-up readiness smoke`
   - Status: ready.
   - Scope: add tracked selected-world perturb follow-up readiness smoke for existing world-scoped perturb routes.
+  - Evidence target: `docs/plans/phase-64-selected-world-perturb-followup-readiness-2026-05-26.md`.
+  - Reproduction script: `scripts/smoke_phase64_selected_world_perturb_followup_readiness.py`.
 
 ## Selected-World Perturb Follow-Up Readiness Scope
 
@@ -70,6 +72,8 @@ The stale launch-hub and broad private-beta wording in untracked candidate notes
 
 ```powershell
 python -m pytest backend/tests/test_phase64_selected_world_perturb_followup_readiness_gate.py backend/tests/test_phase63_selected_world_next_action_route_fidelity_gate.py -q
+python -m pytest backend/tests/test_phase64_selected_world_perturb_followup_readiness.py -q
+python scripts/smoke_phase64_selected_world_perturb_followup_readiness.py --source-only
 python scripts/check_no_secrets.py
 python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim
