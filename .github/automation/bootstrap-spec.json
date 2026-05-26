@@ -207,6 +207,10 @@
     {
       "title": "Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate",
       "description": "Prove that Phase 62 read-only selected-world review next-action cues map only to existing world-scoped follow-up paths for Fog Harbor, Museum Night, and Library Rain without starting sessions, generating branches, adding mutating APIs, widening runtime/public/plugin contracts, or promoting broad readiness claims."
+    },
+    {
+      "title": "Phase 64 - Selected-World Perturb Follow-Up Readiness Gate",
+      "description": "Prove that selected-world perturb follow-up surfaces are reachable, world-scoped, schema-backed, and bounded for Fog Harbor, Museum Night, and Library Rain without starting sessions, generating branches, adding mutating APIs, widening runtime/public/plugin contracts, or promoting broad readiness claims."
     }
   ],
   "labels": [
@@ -469,6 +473,11 @@
       "name": "phase:63",
       "color": "C8E6C9",
       "description": "Phase 63 selected-world review next-action route-fidelity work."
+    },
+    {
+      "name": "phase:64",
+      "color": "C8E6C9",
+      "description": "Phase 64 selected-world perturb follow-up readiness work."
     },
     {
       "name": "area:backend",
@@ -2770,6 +2779,42 @@
         "status:ready"
       ],
       "body": "## goal\nAdd selected-world review next-action route-fidelity smoke that proves Phase 62 read-only `nextAction` cues map only to existing world-scoped follow-up paths for `fog-harbor-east-gate`, `museum-night`, and `library-rain`.\n\n## input\n- Phase 62 selected-world review evidence actionability evidence and smoke\n- Phase 56 world review continuity guardrail\n- current selected-world review page source\n- current runtime/session route ownership contracts\n- selected bounded-world artifact roots and review routes\n\n## output\n- source-only and optional GET-only route-fidelity smoke for selected-world review next-action handoff\n- tracked evidence note or explicit blocker note for selected-world review next-action route fidelity\n- focused tests proving the handoff stays world-scoped, no-session/read-only unless an existing route path is already present, and does not call mutating runtime APIs\n\n## out-of-scope\n- starting sessions, generating branches, rollback, POST/runtime API use, or provider/model calls\n- changing runtime/session/node manifests or route ownership contracts\n- broad private-beta readiness, future-world readiness, launch hub behavior, async/task_id, public/plugin path expansion, or Hosted GPT/BYOK readiness\n- adding upload/auth/billing/database/object storage/quota\n- changing scenario DSL, claim labels, report claim `evidence_ids`, run trace shape, compare artifact shape, public demo artifact layout, or plugin MCP contract\n- promotion of untracked planning notes as durable truth\n\n## minimal test\n- `python -m pytest backend/tests/test_phase63_selected_world_next_action_route_fidelity.py -q`\n- `python scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py --source-only`\n- `python scripts/smoke_phase62_selected_world_review_actionability.py --source-only`\n- `python scripts/smoke_phase61_selected_world_review_surface_binding.py --source-only`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n- optional GET-only smoke with `python scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py --timeout 60`\n\n## touches contract\nNo. This should verify existing route fidelity only. If evidence shows a contract gap, record `TODO[verify]: ...` and split a separate protected-core contract issue.\n\n## phase\nPhase 63"
+    },
+    {
+      "title": "Phase 64 exit gate",
+      "milestone": "Phase 64 - Selected-World Perturb Follow-Up Readiness Gate",
+      "labels": [
+        "phase:64",
+        "area:docs-evals",
+        "lane:protected-core",
+        "status:blocked"
+      ],
+      "body": "## goal\nClose Phase 64 only after the selected-world perturb follow-up readiness gate is synced, perturb follow-up readiness smoke is reproduced for `fog-harbor-east-gate`, `museum-night`, and `library-rain`, required validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue.\n\n## input\n- Phase 63 closed baseline\n- Phase 63 selected-world review next-action route-fidelity evidence\n- current selected-world perturb page source\n- current perturbation composer source\n- current world-local product configs and decision schema defaults\n- current GitHub issue and milestone state\n\n## output\n- explicit Phase 64 closeout decision\n- documented stop condition for the Phase 64 queue\n- selected-world perturb follow-up readiness outcome, or recorded blockers if evidence cannot be reproduced\n\n## out-of-scope\n- starting runtime sessions, generating branches, rollback, POST/runtime API use, or provider/model calls\n- changing perturbation payload schema or decision schema\n- broad private-beta readiness claims\n- future-world readiness claims\n- launch hub behavior or replacement of `/`\n- async/task_id behavior or worker queues\n- Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, or public/plugin path expansion\n- new mutating runtime APIs\n- route ownership, scenario DSL, claim label, trace, compare artifact, session/node manifest, public demo artifact, or plugin MCP contract changes\n- wholesale promotion of untracked planning notes\n\n## minimal test\n- `python -m pytest backend/tests/test_phase64_selected_world_perturb_followup_readiness_gate.py -q`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `./make.ps1 eval-transfer`\n- `python -m backend.app.cli audit-phase phase1`\n- `python -m backend.app.cli audit-phase phase2`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nNo. This gate should prove follow-up readiness against existing route, preset, and schema contracts only. If a missing guard requires contract changes, stop and split a separate protected-core contract item.\n\n## phase\nPhase 64"
+    },
+    {
+      "title": "Phase 64: sync repo truth after Phase 63 closeout and define selected-world perturb follow-up gate",
+      "milestone": "Phase 64 - Selected-World Perturb Follow-Up Readiness Gate",
+      "labels": [
+        "phase:64",
+        "area:docs-evals",
+        "risk:ci",
+        "lane:protected-core",
+        "status:ready"
+      ],
+      "body": "## goal\nSync the repo source of truth to the active Phase 64 selected-world perturb follow-up readiness gate so docs, bootstrap metadata, and tests stop referring to Phase 63 as the active or pending queue and record Phase 64 as the only active successor milestone.\n\n## input\n- closed Phase 63 baseline after PR #488\n- `docs/plans/phase-63-selected-world-next-action-route-fidelity-gate-2026-05-25.md`\n- `docs/plans/phase-63-selected-world-review-next-action-route-fidelity-2026-05-26.md`\n- `frontend/src/app/worlds/[worldId]/perturb/page.tsx`\n- `frontend/src/app/components/preset-perturbation-composer.tsx`\n- current `README.md`, `docs/plans/current-state-baseline.md`, `docs/plans/phase-execution-queue.md`, `docs/plans/automation-roadmap.md`\n- `.github/automation/bootstrap-spec.json`\n- current queue-related tests under `backend/tests/**`\n\n## output\n- Phase 64 becomes the documented active queue across README, plans, bootstrap spec, and queue fixtures\n- Phase 63 is recorded as closed after PR #488\n- bootstrap metadata includes the Phase 64 milestone, label, and issues created on GitHub\n- Phase 64 scope is constrained to selected-world perturb follow-up readiness only\n\n## out-of-scope\n- adding the selected-world perturb follow-up readiness smoke directly in this issue\n- starting runtime sessions, generating branches, rollback, POST/runtime API use, or provider/model calls\n- changing perturbation payload schema or decision schema\n- broad private-beta readiness, future-world readiness, launch hub behavior, async/task_id, Hosted GPT/BYOK, upload/auth/billing/database/object storage/quota, public/plugin expansion, or runtime mutation expansion\n- scenario DSL, claim label, report claim `evidence_ids`, run trace shape, compare artifact shape, session/node manifest shape, public demo artifact layout, or plugin MCP contract changes\n- promotion of untracked planning notes as durable truth\n\n## minimal test\n- `python -m pytest backend/tests/test_phase64_selected_world_perturb_followup_readiness_gate.py backend/tests/test_phase63_selected_world_next_action_route_fidelity_gate.py -q`\n- `python scripts/check_no_secrets.py`\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n- `git diff --check`\n- `./make.ps1 test`\n\n## touches contract\nNo. Repo governance and queue sync only.\n\n## phase\nPhase 64"
+    },
+    {
+      "title": "Phase 64: add selected-world perturb follow-up readiness smoke",
+      "milestone": "Phase 64 - Selected-World Perturb Follow-Up Readiness Gate",
+      "labels": [
+        "phase:64",
+        "area:frontend",
+        "area:docs-evals",
+        "risk:ci",
+        "lane:protected-core",
+        "status:ready"
+      ],
+      "body": "## goal\nAdd selected-world perturb follow-up readiness smoke that proves Phase 63 `nextAction` targets are reachable, world-scoped, schema-backed, and bounded for `fog-harbor-east-gate`, `museum-night`, and `library-rain`.\n\n## input\n- Phase 63 selected-world review next-action route-fidelity evidence and smoke\n- current selected-world perturb page source\n- current preset perturbation composer source\n- selected bounded-world product configs and decision schema defaults\n- current runtime/session route ownership contracts\n\n## output\n- source-only and optional GET-only perturb follow-up readiness smoke for selected-world perturb routes\n- tracked evidence note or explicit blocker note for selected-world perturb follow-up readiness\n- focused tests proving the follow-up surface stays world-scoped, binds to world-local perturbation presets and decision schema defaults, and does not start sessions or call mutating runtime APIs during validation\n\n## out-of-scope\n- starting sessions, generating branches, rollback, POST/runtime API use, or provider/model calls\n- changing perturbation payload schema, decision schema, runtime/session/node manifests, or route ownership contracts\n- broad private-beta readiness, future-world readiness, launch hub behavior, async/task_id, public/plugin path expansion, or Hosted GPT/BYOK readiness\n- adding upload/auth/billing/database/object storage/quota\n- changing scenario DSL, claim labels, report claim `evidence_ids`, run trace shape, compare artifact shape, public demo artifact layout, or plugin MCP contract\n- promotion of untracked planning notes as durable truth\n\n## minimal test\n- `python -m pytest <focused perturb follow-up readiness tests> -q`\n- `<focused perturb follow-up readiness smoke command>`\n- `python scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py --source-only`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n- optional GET-only smoke with `<focused perturb follow-up readiness smoke command> --timeout 60`\n\n## touches contract\nNo. This should verify existing follow-up readiness only. If evidence shows a contract gap, record `TODO[verify]: ...` and split a separate protected-core contract issue.\n\n## phase\nPhase 64"
     }
   ]
 }
