@@ -28,11 +28,14 @@ Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate
 - `#483` `Phase 63 exit gate`
   - Status: blocked until the Phase 63 work items land, validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue.
 - `#484` `Phase 63: sync repo truth after Phase 62 closeout and define selected-world review next-action route-fidelity gate`
-  - Status: ready.
-  - Scope: sync tracked docs, bootstrap metadata, and tests to the active Phase 63 gate.
+  - Status: closed by PR `#486`.
+  - Scope: synced tracked docs, bootstrap metadata, and tests to the active Phase 63 gate.
 - `#485` `Phase 63: add selected-world review next-action route-fidelity smoke`
-  - Status: ready.
+  - Status: ready / current.
   - Scope: add tracked selected-world review next-action route-fidelity smoke for selected worlds.
+  - Evidence note: `docs/plans/phase-63-selected-world-review-next-action-route-fidelity-2026-05-26.md`.
+  - Reproduction script: `scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py`.
+  - The smoke proves read-only `nextAction` cues map only to existing world-scoped follow-up paths.
 
 `audit-github-queue` reports `ready` for the active Phase 63 milestone `Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate`.
 

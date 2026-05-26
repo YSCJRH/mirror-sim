@@ -89,11 +89,14 @@ Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate
   - blocked until selected-world review next-action route fidelity is synced, reproduced, reviewed, and the milestone can return to a released stop-state or reviewed successor queue
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#484` `Phase 63: sync repo truth after Phase 62 closeout and define selected-world review next-action route-fidelity gate`
-  - ready
-  - syncs the active Phase 63 queue and gate into tracked docs, bootstrap metadata, and tests
+  - closed by PR `#486`
+  - synced the active Phase 63 queue and gate into tracked docs, bootstrap metadata, and tests
 - `#485` `Phase 63: add selected-world review next-action route-fidelity smoke`
-  - ready
+  - ready / current
   - adds tracked selected-world review next-action route-fidelity smoke for existing world-scoped follow-up paths
+  - evidence note: `docs/plans/phase-63-selected-world-review-next-action-route-fidelity-2026-05-26.md`
+  - reproduction script: `scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py`
+  - proves read-only `nextAction` cues map only to existing world-scoped follow-up paths
 - boundary posture
   - Phase 63 may promote only narrow selected-world review next-action route fidelity for selected bounded fictional worlds, or record blockers.
   - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
