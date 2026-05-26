@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, and the active Phase 63 selected-world review next-action route-fidelity gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, and the recorded Phase 63 selected-world review next-action route-fidelity closeout decision.
 
 ## Current Gate State
 
@@ -66,7 +66,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 60 exit gate: closed
 - Phase 61 exit gate: closed
 - Phase 62 exit gate: closed
-- Phase 63 exit gate: open / blocked
+- Phase 63 exit gate: closeout decision recorded
 
 Local phase audits currently report:
 
@@ -74,7 +74,7 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 63 Active Queue
+## Phase 63 Closeout Decision
 
 Phase 63 title:
 
@@ -82,18 +82,18 @@ Phase 63 title:
 Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate
 ```
 
-- Phase 63 is active
+- Phase 63 closeout decision is recorded
 - Phase 62 selected-world review evidence actionability is the historical baseline
-- `audit-github-queue` reports `ready` for the active Phase 63 milestone `Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate`
+- Post-merge stop condition: after the Phase 63 closeout PR lands and the Phase 63 milestone is closed, `audit-github-queue` must report `paused` with no active milestone.
 - `#483` `Phase 63 exit gate`
-  - blocked until selected-world review next-action route fidelity is synced, reproduced, reviewed, and the milestone can return to a released stop-state or reviewed successor queue
+  - This Phase 63 closeout PR is the closing path for `#483` `Phase 63 exit gate`.
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#484` `Phase 63: sync repo truth after Phase 62 closeout and define selected-world review next-action route-fidelity gate`
-  - closed by PR `#486`
-  - synced the active Phase 63 queue and gate into tracked docs, bootstrap metadata, and tests
+  - `#484` closed by PR `#486`
+  - synced the then-active Phase 63 queue and gate into tracked docs, bootstrap metadata, and tests
 - `#485` `Phase 63: add selected-world review next-action route-fidelity smoke`
-  - ready / current
-  - adds tracked selected-world review next-action route-fidelity smoke for existing world-scoped follow-up paths
+  - `#485` closed by PR `#487`
+  - added tracked selected-world review next-action route-fidelity smoke for existing world-scoped follow-up paths
   - evidence note: `docs/plans/phase-63-selected-world-review-next-action-route-fidelity-2026-05-26.md`
   - reproduction script: `scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py`
   - proves read-only `nextAction` cues map only to existing world-scoped follow-up paths
@@ -106,6 +106,7 @@ Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate
   - `status:needs-adr` and unresolved `risk:safety` remain blockers.
 - phase gate baseline
   - Phase 63 Selected-World Review Next-Action Route-Fidelity Gate: `docs/plans/phase-63-selected-world-next-action-route-fidelity-gate-2026-05-25.md`
+  - Closeout shorthand: `#484` closed by PR `#486`; `#485` closed by PR `#487`; this Phase 63 closeout PR is the closing path for `#483` `Phase 63 exit gate`.
 
 ## Phase 62 Closed Queue
 
