@@ -2,9 +2,9 @@
 
 Issue: `#483` `Phase 63 exit gate`
 
-Current state: Phase 63 is active; Phase 62 is closed.
+Current state: Phase 63 closeout decision is recorded; Phase 62 is closed.
 
-This note records the active Phase 63 gate for selected-world review next-action route fidelity. This gate lives in `docs/plans/phase-63-selected-world-next-action-route-fidelity-gate-2026-05-25.md`. Phase 62 selected-world review evidence actionability is the historical baseline. Phase 63 may prove only that Phase 62 read-only `nextAction` cues map only to existing world-scoped follow-up paths for the selected bounded fictional worlds.
+This note records the Phase 63 closeout decision for selected-world review next-action route fidelity. This gate lives in `docs/plans/phase-63-selected-world-next-action-route-fidelity-gate-2026-05-25.md`. Phase 62 selected-world review evidence actionability is the historical baseline. Phase 63 proved only that Phase 62 read-only `nextAction` cues map only to existing world-scoped follow-up paths for the selected bounded fictional worlds.
 
 ## Post-Phase-62 Baseline
 
@@ -17,7 +17,7 @@ This note records the active Phase 63 gate for selected-world review next-action
 - The Phase 62 selected-world review evidence actionability smoke is `scripts/smoke_phase62_selected_world_review_actionability.py`.
 - Phase 56 world review continuity guardrail is a source anchor.
 
-## Phase 63 Active Queue
+## Phase 63 Closeout Decision
 
 Phase 63 title:
 
@@ -26,18 +26,21 @@ Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate
 ```
 
 - `#483` `Phase 63 exit gate`
-  - Status: blocked until the Phase 63 work items land, validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue.
+  - Closeout path: This Phase 63 closeout PR is the closing path for `#483` `Phase 63 exit gate`.
+  - Exit criteria: the Phase 63 work items landed, validation passed, and read-only subagent review reported no blockers.
 - `#484` `Phase 63: sync repo truth after Phase 62 closeout and define selected-world review next-action route-fidelity gate`
-  - Status: closed by PR `#486`.
-  - Scope: synced tracked docs, bootstrap metadata, and tests to the active Phase 63 gate.
+  - Status: `#484` closed by PR `#486`.
+  - Scope: synced tracked docs, bootstrap metadata, and tests to the then-active Phase 63 gate.
 - `#485` `Phase 63: add selected-world review next-action route-fidelity smoke`
-  - Status: ready / current.
-  - Scope: add tracked selected-world review next-action route-fidelity smoke for selected worlds.
+  - Status: `#485` closed by PR `#487`.
+  - Scope: added tracked selected-world review next-action route-fidelity smoke for selected worlds.
   - Evidence note: `docs/plans/phase-63-selected-world-review-next-action-route-fidelity-2026-05-26.md`.
   - Reproduction script: `scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py`.
   - The smoke proves read-only `nextAction` cues map only to existing world-scoped follow-up paths.
 
-`audit-github-queue` reports `ready` for the active Phase 63 milestone `Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate`.
+## Post-Merge Stop Condition
+
+Post-merge stop condition: after the Phase 63 closeout PR lands and the Phase 63 milestone is closed, `audit-github-queue` must report `paused` with no active milestone.
 
 ## Selected-World Next-Action Route-Fidelity Scope
 
@@ -47,7 +50,7 @@ Selected worlds remain:
 - `museum-night`
 - `library-rain`
 
-Phase 63 covers selected-world review next-action route fidelity only. It may prove that read-only `nextAction` cues map only to existing world-scoped follow-up paths for the selected bounded fictional worlds. It does not start sessions, generate branches, call POST/runtime APIs, call provider or model paths, or make a broad product-readiness claim.
+Phase 63 covers selected-world review next-action route fidelity only. It proved that read-only `nextAction` cues map only to existing world-scoped follow-up paths for the selected bounded fictional worlds. It does not start sessions, generate branches, call POST/runtime APIs, call provider or model paths, or make a broad product-readiness claim.
 
 ## Candidate Input Policy
 

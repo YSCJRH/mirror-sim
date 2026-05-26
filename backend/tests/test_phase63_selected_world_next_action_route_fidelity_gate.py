@@ -11,6 +11,8 @@ PHASE63_TITLE = "Phase 63 - Selected-World Review Next-Action Route-Fidelity Gat
 PHASE63_EXIT_ISSUE = "#483"
 PHASE63_SYNC_ISSUE_NUMBER = "#484"
 PHASE63_SMOKE_ISSUE_NUMBER = "#485"
+PHASE63_SYNC_PR = "#486"
+PHASE63_SMOKE_PR = "#487"
 PHASE63_SYNC_ISSUE = (
     "Phase 63: sync repo truth after Phase 62 closeout and define selected-world review "
     "next-action route-fidelity gate"
@@ -29,9 +31,10 @@ def test_phase63_route_fidelity_gate_exists_with_required_sections() -> None:
     required_sections = [
         "# Phase 63 Selected-World Review Next-Action Route-Fidelity Gate",
         f"Issue: `{PHASE63_EXIT_ISSUE}` `Phase 63 exit gate`",
-        "Current state: Phase 63 is active; Phase 62 is closed.",
+        "Current state: Phase 63 closeout decision is recorded; Phase 62 is closed.",
         "## Post-Phase-62 Baseline",
-        "## Phase 63 Active Queue",
+        "## Phase 63 Closeout Decision",
+        "## Post-Merge Stop Condition",
         "## Selected-World Next-Action Route-Fidelity Scope",
         "## Candidate Input Policy",
         "## Non-Goals",
@@ -50,13 +53,18 @@ def test_phase63_gate_records_queue_scope_and_boundaries() -> None:
         f"`{PHASE63_EXIT_ISSUE}` `Phase 63 exit gate`",
         f"`{PHASE63_SYNC_ISSUE_NUMBER}` `{PHASE63_SYNC_ISSUE}`",
         f"`{PHASE63_SMOKE_ISSUE_NUMBER}` `{PHASE63_SMOKE_ISSUE}`",
-        "`audit-github-queue` reports `ready` for the active Phase 63 milestone `Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate`",
+        f"`{PHASE63_SYNC_ISSUE_NUMBER}` closed by PR `{PHASE63_SYNC_PR}`",
+        f"`{PHASE63_SMOKE_ISSUE_NUMBER}` closed by PR `{PHASE63_SMOKE_PR}`",
+        "This Phase 63 closeout PR is the closing path for `#483` `Phase 63 exit gate`.",
+        "Post-merge stop condition: after the Phase 63 closeout PR lands and the Phase 63 milestone is closed, `audit-github-queue` must report `paused` with no active milestone.",
         "`fog-harbor-east-gate`",
         "`museum-night`",
         "`library-rain`",
         "selected-world review next-action route fidelity",
         "read-only `nextAction` cues map only to existing world-scoped follow-up paths",
         "Phase 62 selected-world review evidence actionability is the historical baseline",
+        "`docs/plans/phase-63-selected-world-review-next-action-route-fidelity-2026-05-26.md`",
+        "`scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py`",
         "Phase 56 world review continuity guardrail is a source anchor",
         "untracked private-alpha, private-beta, kernel, and design-system planning notes remain candidate inputs only",
         "status:needs-adr",
@@ -78,7 +86,7 @@ def test_phase63_gate_records_queue_scope_and_boundaries() -> None:
         assert phrase in gate
 
 
-def test_active_state_docs_record_phase63_queue_without_scope_expansion() -> None:
+def test_closeout_state_docs_record_phase63_queue_without_scope_expansion() -> None:
     docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -87,15 +95,20 @@ def test_active_state_docs_record_phase63_queue_without_scope_expansion() -> Non
         PHASE63_GATE_PATH,
     ]
     required_phrases = [
-        "Phase 63 is active",
+        "Phase 63 closeout decision is recorded",
         PHASE63_TITLE,
         f"`{PHASE63_EXIT_ISSUE}` `Phase 63 exit gate`",
         f"`{PHASE63_SYNC_ISSUE_NUMBER}` `{PHASE63_SYNC_ISSUE}`",
         f"`{PHASE63_SMOKE_ISSUE_NUMBER}` `{PHASE63_SMOKE_ISSUE}`",
+        f"`{PHASE63_SYNC_ISSUE_NUMBER}` closed by PR `{PHASE63_SYNC_PR}`",
+        f"`{PHASE63_SMOKE_ISSUE_NUMBER}` closed by PR `{PHASE63_SMOKE_PR}`",
+        "This Phase 63 closeout PR is the closing path for `#483` `Phase 63 exit gate`.",
+        "Post-merge stop condition: after the Phase 63 closeout PR lands and the Phase 63 milestone is closed, `audit-github-queue` must report `paused` with no active milestone.",
         "`docs/plans/phase-63-selected-world-next-action-route-fidelity-gate-2026-05-25.md`",
+        "`docs/plans/phase-63-selected-world-review-next-action-route-fidelity-2026-05-26.md`",
+        "`scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py`",
         "selected-world review next-action route fidelity",
         "Phase 62 selected-world review evidence actionability is the historical baseline",
-        "`audit-github-queue` reports `ready` for the active Phase 63 milestone",
     ]
     forbidden_phrases = [
         "Phase 63 implements async",
@@ -112,6 +125,14 @@ def test_active_state_docs_record_phase63_queue_without_scope_expansion() -> Non
         "Phase 63 adds database",
         "Phase 63 adds object storage",
         "Phase 63 ratifies task_id",
+        "Phase 63 is active",
+        "Phase 63 active",
+        "Phase 63 Active Queue",
+        "Phase 63 exit gate: open / blocked",
+        "`audit-github-queue` reports `ready` with active milestone",
+        "`audit-github-queue` reports `ready` for the active Phase 63 milestone",
+        "remaining active work item",
+        "ready / current",
         "Phase 63 changes route ownership",
         "Phase 63 changes scenario DSL",
         "Phase 63 changes claim labels",
@@ -128,9 +149,9 @@ def test_active_state_docs_record_phase63_queue_without_scope_expansion() -> Non
     for path in docs:
         text = _read(path)
         for phrase in required_phrases:
-            assert phrase in text, f"{path} is missing Phase 63 active queue wording: {phrase}"
+            assert phrase in text, f"{path} is missing Phase 63 closeout wording: {phrase}"
         for phrase in forbidden_phrases:
-            assert phrase not in text, f"{path} expands blocked Phase 63 scope: {phrase}"
+            assert phrase not in text, f"{path} expands Phase 63 closeout scope: {phrase}"
 
 
 def test_bootstrap_spec_records_phase63_queue() -> None:
