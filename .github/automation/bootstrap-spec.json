@@ -211,6 +211,10 @@
     {
       "title": "Phase 64 - Selected-World Perturb Follow-Up Readiness Gate",
       "description": "Prove that selected-world perturb follow-up surfaces are reachable, world-scoped, schema-backed, and bounded for Fog Harbor, Museum Night, and Library Rain without starting sessions, generating branches, adding mutating APIs, widening runtime/public/plugin contracts, or promoting broad readiness claims."
+    },
+    {
+      "title": "Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate",
+      "description": "Prove with temporary local deterministic artifacts that Fog Harbor, Museum Night, and Library Rain can each start a world-scoped runtime session and generate one branch through existing v1 CLI/session contracts without adding APIs, schemas, async/task_id behavior, launch hub behavior, provider calls, public/plugin expansion, or broad private-beta/future-world readiness claims."
     }
   ],
   "labels": [
@@ -478,6 +482,11 @@
       "name": "phase:64",
       "color": "C8E6C9",
       "description": "Phase 64 selected-world perturb follow-up readiness work."
+    },
+    {
+      "name": "phase:65",
+      "color": "C8E6C9",
+      "description": "Phase 65 selected-world deterministic runtime generation evidence work."
     },
     {
       "name": "area:backend",
@@ -2815,6 +2824,42 @@
         "status:ready"
       ],
       "body": "## goal\nAdd selected-world perturb follow-up readiness smoke that proves Phase 63 `nextAction` targets are reachable, world-scoped, schema-backed, and bounded for `fog-harbor-east-gate`, `museum-night`, and `library-rain`.\n\n## input\n- Phase 63 selected-world review next-action route-fidelity evidence and smoke\n- current selected-world perturb page source\n- current preset perturbation composer source\n- selected bounded-world product configs and decision schema defaults\n- current runtime/session route ownership contracts\n\n## output\n- source-only and optional GET-only perturb follow-up readiness smoke for selected-world perturb routes\n- tracked evidence note or explicit blocker note for selected-world perturb follow-up readiness\n- focused tests proving the follow-up surface stays world-scoped, binds to world-local perturbation presets and decision schema defaults, and does not start sessions or call mutating runtime APIs during validation\n\n## out-of-scope\n- starting sessions, generating branches, rollback, POST/runtime API use, or provider/model calls\n- changing perturbation payload schema, decision schema, runtime/session/node manifests, or route ownership contracts\n- broad private-beta readiness, future-world readiness, launch hub behavior, async/task_id, public/plugin path expansion, or Hosted GPT/BYOK readiness\n- adding upload/auth/billing/database/object storage/quota\n- changing scenario DSL, claim labels, report claim `evidence_ids`, run trace shape, compare artifact shape, public demo artifact layout, or plugin MCP contract\n- promotion of untracked planning notes as durable truth\n\n## minimal test\n- `python -m pytest <focused perturb follow-up readiness tests> -q`\n- `<focused perturb follow-up readiness smoke command>`\n- `python scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py --source-only`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n- optional GET-only smoke with `<focused perturb follow-up readiness smoke command> --timeout 60`\n\n## touches contract\nNo. This should verify existing follow-up readiness only. If evidence shows a contract gap, record `TODO[verify]: ...` and split a separate protected-core contract issue.\n\n## phase\nPhase 64"
+    },
+    {
+      "title": "Phase 65 exit gate",
+      "milestone": "Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate",
+      "labels": [
+        "phase:65",
+        "area:docs-evals",
+        "lane:protected-core",
+        "status:blocked"
+      ],
+      "body": "## goal\nClose Phase 65 only after the repo-truth sync and selected-world deterministic runtime generation smoke land, required validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue.\n\n## input\n- Phase 64 closed baseline\n- Phase 64 selected-world perturb follow-up readiness evidence\n- current v1 CLI/session contracts\n- selected bounded-world data for `fog-harbor-east-gate`, `museum-night`, and `library-rain`\n- current GitHub issue and milestone state\n\n## output\n- explicit Phase 65 closeout decision\n- documented stop condition for the Phase 65 queue\n- selected-world deterministic runtime generation outcome, or recorded blockers if evidence cannot be reproduced\n\n## out-of-scope\n- routes, APIs, schemas, async/task_id behavior, worker queues, launch hub behavior, provider/model calls, Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, public/plugin path expansion, route ownership changes, runtime mutation expansion, broad private-beta readiness, future-world readiness, or untracked planning-note promotion\n\n## minimal test\n- `python -m pytest backend/tests/test_phase65_selected_world_runtime_generation_gate.py -q`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `./make.ps1 eval-transfer`\n- `python scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py --source-only`\n- `python scripts/smoke_phase64_selected_world_perturb_followup_readiness.py --source-only`\n- `python scripts/smoke_phase65_selected_world_runtime_generation.py`\n- `python -m backend.app.cli audit-phase phase1`\n- `python -m backend.app.cli audit-phase phase2`\n- `python -m backend.app.cli audit-phase phase3`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n\n## touches contract\nNo. This gate should prove deterministic runtime generation evidence against existing v1 CLI/session contracts only. If a missing guard requires contract changes, stop and split a separate protected-core contract item.\n\n## phase\nPhase 65"
+    },
+    {
+      "title": "Phase 65: sync repo truth after Phase 64 closeout and define selected-world runtime-generation evidence gate",
+      "milestone": "Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate",
+      "labels": [
+        "phase:65",
+        "area:docs-evals",
+        "risk:core-contract",
+        "lane:protected-core",
+        "status:ready"
+      ],
+      "body": "## goal\nSync the repo source of truth to the active Phase 65 selected-world deterministic runtime generation evidence gate so docs, bootstrap metadata, and tests record Phase 65 as the only active successor milestone after Phase 64 closeout.\n\n## input\n- closed Phase 64 baseline after PR #494\n- `docs/plans/phase-64-selected-world-perturb-followup-readiness-gate-2026-05-26.md`\n- `docs/plans/phase-64-selected-world-perturb-followup-readiness-2026-05-26.md`\n- current `README.md`, `docs/plans/current-state-baseline.md`, `docs/plans/phase-execution-queue.md`, `docs/plans/automation-roadmap.md`\n- `.github/automation/bootstrap-spec.json`\n- current queue-related tests under `backend/tests/**`\n\n## output\n- Phase 65 becomes the documented active queue across README, plans, bootstrap spec, and queue fixtures\n- Phase 64 remains recorded as closed after PR #494\n- bootstrap metadata includes the Phase 65 milestone, label, and issues created on GitHub\n- Phase 65 scope is constrained to selected-world deterministic runtime generation evidence only\n\n## out-of-scope\n- adding the selected-world deterministic runtime generation smoke directly in this issue\n- routes, APIs, schemas, async/task_id behavior, worker queues, launch hub behavior, provider/model calls, Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, public/plugin path expansion, route ownership changes, runtime mutation expansion, broad private-beta readiness, future-world readiness, or untracked planning-note promotion\n\n## minimal test\n- `python -m pytest backend/tests/test_phase65_selected_world_runtime_generation_gate.py -q`\n- `python scripts/check_no_secrets.py`\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n- `git diff --check`\n- `./make.ps1 test`\n\n## touches contract\nNo. Repo governance and queue sync only.\n\n## phase\nPhase 65"
+    },
+    {
+      "title": "Phase 65: add selected-world deterministic runtime generation smoke",
+      "milestone": "Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate",
+      "labels": [
+        "phase:65",
+        "area:backend",
+        "area:docs-evals",
+        "risk:core-contract",
+        "lane:protected-core",
+        "status:ready"
+      ],
+      "body": "## goal\nAdd selected-world deterministic runtime generation smoke proving that `fog-harbor-east-gate`, `museum-night`, and `library-rain` can each start one world-scoped runtime session and generate one branch through existing v1 CLI/session contracts using temporary local artifacts.\n\n## input\n- Phase 64 selected-world perturb follow-up readiness evidence and smoke\n- current v1 CLI/session contracts\n- current selected-world data and world-scoped session generation paths\n- current runtime/session route ownership contracts\n\n## output\n- deterministic local smoke for selected-world runtime session and branch generation\n- tracked evidence note or explicit blocker note for selected-world deterministic runtime generation evidence\n- focused tests proving the smoke stays world-scoped, deterministic, local-artifact-only, and does not change contracts or call provider/model paths\n\n## out-of-scope\n- routes, APIs, schemas, async/task_id behavior, worker queues, launch hub behavior, provider/model calls, Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, public/plugin path expansion, route ownership changes, runtime mutation expansion, broad private-beta readiness, future-world readiness, or untracked planning-note promotion\n\n## minimal test\n- `python -m pytest <focused Phase 65 runtime generation tests> -q`\n- `python scripts/smoke_phase65_selected_world_runtime_generation.py`\n- `python scripts/smoke_phase64_selected_world_perturb_followup_readiness.py --source-only`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n\n## touches contract\nNo. This should verify existing v1 CLI/session contracts only. If evidence shows a contract gap, record `TODO[verify]: ...` and split a separate protected-core contract issue.\n\n## phase\nPhase 65"
     }
   ]
 }

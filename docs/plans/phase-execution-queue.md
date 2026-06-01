@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, and the completed Phase 64 selected-world perturb follow-up readiness gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, the completed Phase 64 selected-world perturb follow-up readiness gate, and the active Phase 65 selected-world deterministic runtime generation evidence gate.
 
 ## Current Gate State
 
@@ -68,12 +68,37 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 62 exit gate: closed
 - Phase 63 exit gate: closed
 - Phase 64 exit gate: closed
+- Phase 65 exit gate: open / blocked
 
 Local phase audits currently report:
 
 - `phase1`: pass
 - `phase2`: pass
 - `phase3`: pass
+
+## Phase 65 Active Queue
+
+Phase 65 title:
+
+```text
+Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate
+```
+
+- Phase 65 is active
+- Phase 64 is closed after PR `#494`
+- `#489` `Phase 64 exit gate` closed by PR `#494`
+- `audit-github-queue` reports `ready` for the active Phase 65 milestone
+- `#495` `Phase 65 exit gate`
+  - Status: blocked until the sync and deterministic runtime generation smoke work items land, validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue.
+- `#496` `Phase 65: sync repo truth after Phase 64 closeout and define selected-world runtime-generation evidence gate`
+  - `#496` is handled by this Phase 65 sync PR
+  - Scope: sync tracked docs, bootstrap metadata, and tests to the active Phase 65 gate.
+- `#497` `Phase 65: add selected-world deterministic runtime generation smoke`
+  - Status: ready.
+  - Scope: add selected-world deterministic runtime generation evidence for existing v1 CLI/session contracts using temporary local artifacts.
+- phase gate baseline
+  - `docs/plans/phase-65-selected-world-deterministic-runtime-generation-gate-2026-06-01.md`
+  - selected-world deterministic runtime generation evidence remains limited to temporary local artifacts and existing v1 CLI/session contracts.
 
 ## Phase 64 Closed Queue
 

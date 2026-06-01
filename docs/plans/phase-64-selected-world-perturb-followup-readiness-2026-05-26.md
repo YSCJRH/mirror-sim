@@ -2,7 +2,7 @@
 
 Issue: `#491` `Phase 64: add selected-world perturb follow-up readiness smoke`
 
-Current state: Phase 64 remains active; `#490` is closed by PR `#492`; `#489` remains the blocked exit gate.
+Current state: Phase 64 is closed after PR `#494`; `#490` is closed by PR `#492`; `#491` is closed by PR `#493`; `#489` `Phase 64 exit gate` closed by PR `#494`.
 
 Evidence note: `docs/plans/phase-64-selected-world-perturb-followup-readiness-2026-05-26.md`
 
