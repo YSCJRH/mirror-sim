@@ -15,6 +15,9 @@ PHASE64_SYNC_ISSUE = (
 )
 PHASE64_SMOKE_ISSUE_NUMBER = "#491"
 PHASE64_SMOKE_ISSUE = "Phase 64: add selected-world perturb follow-up readiness smoke"
+PHASE64_SYNC_PR = "#492"
+PHASE64_SMOKE_PR = "#493"
+PHASE64_CLOSEOUT_PR = "#494"
 PHASE63_TITLE = "Phase 63 - Selected-World Review Next-Action Route-Fidelity Gate"
 
 
@@ -28,9 +31,9 @@ def test_phase64_perturb_followup_readiness_gate_exists_with_required_sections()
     required_sections = [
         "# Phase 64 Selected-World Perturb Follow-Up Readiness Gate",
         f"Issue: `{PHASE64_EXIT_ISSUE}` `Phase 64 exit gate`",
-        "Current state: Phase 64 is active; Phase 63 is closed.",
+        "Current state: Phase 64 is closed; Phase 63 is closed.",
         "## Post-Phase-63 Baseline",
-        "## Phase 64 Active Queue",
+        "## Phase 64 Closed Queue",
         "## Selected-World Perturb Follow-Up Readiness Scope",
         "## Candidate Input Policy",
         "## Non-Goals",
@@ -51,6 +54,11 @@ def test_phase64_gate_records_scope_and_boundaries() -> None:
         f"`{PHASE64_EXIT_ISSUE}` `Phase 64 exit gate`",
         f"`{PHASE64_SYNC_ISSUE_NUMBER}` `{PHASE64_SYNC_ISSUE}`",
         f"`{PHASE64_SMOKE_ISSUE_NUMBER}` `{PHASE64_SMOKE_ISSUE}`",
+        f"`{PHASE64_SYNC_ISSUE_NUMBER}` closed by PR `{PHASE64_SYNC_PR}`",
+        f"`{PHASE64_SMOKE_ISSUE_NUMBER}` closed by PR `{PHASE64_SMOKE_PR}`",
+        f"`{PHASE64_EXIT_ISSUE}` `Phase 64 exit gate` closed by PR `{PHASE64_CLOSEOUT_PR}`",
+        f"milestone `{PHASE64_TITLE}` is closed",
+        "`audit-github-queue` reports `paused` with no active milestone after Phase 64 closeout",
         "`fog-harbor-east-gate`",
         "`museum-night`",
         "`library-rain`",
@@ -81,7 +89,7 @@ def test_phase64_gate_records_scope_and_boundaries() -> None:
         assert phrase in gate
 
 
-def test_active_state_docs_record_phase64_queue_without_scope_expansion() -> None:
+def test_closeout_state_docs_record_phase64_queue_without_scope_expansion() -> None:
     docs = [
         Path("README.md"),
         Path("docs/plans/current-state-baseline.md"),
@@ -90,12 +98,19 @@ def test_active_state_docs_record_phase64_queue_without_scope_expansion() -> Non
         PHASE64_GATE_PATH,
     ]
     required_phrases = [
-        "Phase 64 is active",
+        "Phase 64 is closed",
         PHASE64_TITLE,
         f"`{PHASE64_EXIT_ISSUE}` `Phase 64 exit gate`",
         f"`{PHASE64_SYNC_ISSUE_NUMBER}` `{PHASE64_SYNC_ISSUE}`",
         f"`{PHASE64_SMOKE_ISSUE_NUMBER}` `{PHASE64_SMOKE_ISSUE}`",
+        f"`{PHASE64_SYNC_ISSUE_NUMBER}` closed by PR `{PHASE64_SYNC_PR}`",
+        f"`{PHASE64_SMOKE_ISSUE_NUMBER}` closed by PR `{PHASE64_SMOKE_PR}`",
+        f"`{PHASE64_EXIT_ISSUE}` `Phase 64 exit gate` closed by PR `{PHASE64_CLOSEOUT_PR}`",
+        f"milestone `{PHASE64_TITLE}` is closed",
+        "`audit-github-queue` reports `paused` with no active milestone after Phase 64 closeout",
         "`docs/plans/phase-64-selected-world-perturb-followup-readiness-gate-2026-05-26.md`",
+        "`docs/plans/phase-64-selected-world-perturb-followup-readiness-2026-05-26.md`",
+        "`scripts/smoke_phase64_selected_world_perturb_followup_readiness.py`",
         "selected-world perturb follow-up readiness",
         "world-local perturbation presets",
         "decision schema defaults",
@@ -132,6 +147,14 @@ def test_active_state_docs_record_phase64_queue_without_scope_expansion() -> Non
         "Phase 64 promotes broad private-beta readiness",
         "Phase 64 promotes future-world readiness",
         "Phase 64 promotes untracked planning notes",
+        "Phase 64 is active",
+        "Phase 64 active",
+        "Phase 64 Active Queue",
+        "Phase 64 exit gate `#489`: open / blocked",
+        "`audit-github-queue` reports `ready` with active milestone",
+        "`audit-github-queue` reports `ready` for the active Phase 64 milestone",
+        "remaining active work item",
+        "ready / current",
     ]
 
     for path in docs:

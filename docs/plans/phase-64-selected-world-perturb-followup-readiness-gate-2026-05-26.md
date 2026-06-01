@@ -2,9 +2,9 @@
 
 Issue: `#489` `Phase 64 exit gate`
 
-Current state: Phase 64 is active; Phase 63 is closed.
+Current state: Phase 64 is closed; Phase 63 is closed.
 
-This note records the active Phase 64 gate for selected-world perturb follow-up readiness. This gate lives in `docs/plans/phase-64-selected-world-perturb-followup-readiness-gate-2026-05-26.md`. Phase 63 selected-world review next-action route fidelity is the historical baseline. Phase 64 may only prove that the selected-world perturb follow-up surfaces are reachable, world-scoped, schema-backed, and bounded for selected fictional worlds. It must not start runtime sessions or generate branches.
+This note records the closed Phase 64 gate for selected-world perturb follow-up readiness. This gate lives in `docs/plans/phase-64-selected-world-perturb-followup-readiness-gate-2026-05-26.md`. Phase 63 selected-world review next-action route fidelity is the historical baseline. Phase 64 verified that the selected-world perturb follow-up surfaces are reachable, world-scoped, schema-backed, and bounded for selected fictional worlds without starting runtime sessions or generating branches.
 
 ## Post-Phase-63 Baseline
 
@@ -17,7 +17,7 @@ This note records the active Phase 64 gate for selected-world perturb follow-up 
 - The Phase 63 route-fidelity evidence lives in `docs/plans/phase-63-selected-world-review-next-action-route-fidelity-2026-05-26.md`.
 - The Phase 63 route-fidelity smoke is `scripts/smoke_phase63_selected_world_review_next_action_route_fidelity.py`.
 
-## Phase 64 Active Queue
+## Phase 64 Closed Queue
 
 Phase 64 title:
 
@@ -26,15 +26,17 @@ Phase 64 - Selected-World Perturb Follow-Up Readiness Gate
 ```
 
 - `#489` `Phase 64 exit gate`
-  - Status: blocked until the sync and smoke work items land, validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue.
+  - Status: `#489` `Phase 64 exit gate` closed by PR `#494`.
 - `#490` `Phase 64: sync repo truth after Phase 63 closeout and define selected-world perturb follow-up gate`
-  - Status: ready.
-  - Scope: sync tracked docs, bootstrap metadata, and tests to the active Phase 64 gate.
+  - Status: `#490` closed by PR `#492`.
+  - Scope: synced tracked docs, bootstrap metadata, and tests to the Phase 64 gate.
 - `#491` `Phase 64: add selected-world perturb follow-up readiness smoke`
-  - Status: ready.
-  - Scope: add tracked selected-world perturb follow-up readiness smoke for existing world-scoped perturb routes.
+  - Status: `#491` closed by PR `#493`.
+  - Scope: added tracked selected-world perturb follow-up readiness smoke for existing world-scoped perturb routes.
   - Evidence target: `docs/plans/phase-64-selected-world-perturb-followup-readiness-2026-05-26.md`.
   - Reproduction script: `scripts/smoke_phase64_selected_world_perturb_followup_readiness.py`.
+- The milestone `Phase 64 - Selected-World Perturb Follow-Up Readiness Gate` is closed.
+- `audit-github-queue` reports `paused` with no active milestone after Phase 64 closeout.
 
 ## Selected-World Perturb Follow-Up Readiness Scope
 

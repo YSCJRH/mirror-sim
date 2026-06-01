@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, and the active Phase 64 selected-world perturb follow-up readiness gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, and the completed Phase 64 selected-world perturb follow-up readiness gate.
 
 ## Current Gate State
 
@@ -67,7 +67,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 61 exit gate: closed
 - Phase 62 exit gate: closed
 - Phase 63 exit gate: closed
-- Phase 64 exit gate `#489`: open / blocked
+- Phase 64 exit gate: closed
 
 Local phase audits currently report:
 
@@ -75,7 +75,7 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 64 Active Queue
+## Phase 64 Closed Queue
 
 Phase 64 title:
 
@@ -83,18 +83,20 @@ Phase 64 title:
 Phase 64 - Selected-World Perturb Follow-Up Readiness Gate
 ```
 
-- Phase 64 is active
+- Phase 64 is closed
 - Phase 63 is closed after PR `#488`
 - Phase 63 selected-world review next-action route fidelity is the historical baseline
+- milestone `Phase 64 - Selected-World Perturb Follow-Up Readiness Gate` is closed
+- `audit-github-queue` reports `paused` with no active milestone after Phase 64 closeout
 - `#489` `Phase 64 exit gate`
-  - blocked until the Phase 64 sync and smoke work items land, validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue
+  - `#489` `Phase 64 exit gate` closed by PR `#494`
   - labeled `lane:protected-core` because it is the protected closeout gate
 - `#490` `Phase 64: sync repo truth after Phase 63 closeout and define selected-world perturb follow-up gate`
-  - status: ready
-  - syncs the active Phase 64 queue and gate into tracked docs, bootstrap metadata, and tests
+  - `#490` closed by PR `#492`
+  - synced the Phase 64 queue and gate into tracked docs, bootstrap metadata, and tests
 - `#491` `Phase 64: add selected-world perturb follow-up readiness smoke`
-  - ready
-  - should add tracked selected-world perturb follow-up readiness smoke for existing world-scoped perturb routes
+  - `#491` closed by PR `#493`
+  - added tracked selected-world perturb follow-up readiness smoke for existing world-scoped perturb routes
   - evidence target: `docs/plans/phase-64-selected-world-perturb-followup-readiness-2026-05-26.md`
   - reproduction script: `scripts/smoke_phase64_selected_world_perturb_followup_readiness.py`
 - boundary posture
