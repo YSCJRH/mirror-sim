@@ -96,6 +96,8 @@ Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate
 - `#497` `Phase 65: add selected-world deterministic runtime generation smoke`
   - Status: ready.
   - Scope: add selected-world deterministic runtime generation evidence for existing v1 CLI/session contracts using temporary local artifacts.
+  - Evidence target: `docs/plans/phase-65-selected-world-runtime-generation-evidence-2026-06-01.md`.
+  - Reproduction script: `scripts/smoke_phase65_selected_world_runtime_generation.py`.
 - phase gate baseline
   - `docs/plans/phase-65-selected-world-deterministic-runtime-generation-gate-2026-06-01.md`
   - selected-world deterministic runtime generation evidence remains limited to temporary local artifacts and existing v1 CLI/session contracts.
