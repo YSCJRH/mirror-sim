@@ -31,7 +31,7 @@ Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate
   - Status: `#496` is handled by this Phase 65 sync PR.
   - Scope: sync tracked docs, bootstrap metadata, and tests to the active Phase 65 gate.
 - `#497` `Phase 65: add selected-world deterministic runtime generation smoke`
-  - Status: ready.
+  - Status: ready; this #497 smoke PR records the selected-world deterministic runtime generation evidence.
   - Scope: add tracked selected-world deterministic runtime generation smoke for existing v1 CLI/session contracts.
   - Evidence target: `docs/plans/phase-65-selected-world-runtime-generation-evidence-2026-06-01.md`.
   - Reproduction script: `scripts/smoke_phase65_selected_world_runtime_generation.py`.
