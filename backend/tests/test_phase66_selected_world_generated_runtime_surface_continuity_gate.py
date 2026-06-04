@@ -20,11 +20,28 @@ PHASE66_MILESTONE_NUMBER = "#66"
 PHASE66_EXIT_ISSUE_NUMBER = "#501"
 PHASE66_SYNC_ISSUE_NUMBER = "#502"
 PHASE66_SMOKE_ISSUE_NUMBER = "#503"
+PHASE66_SYNC_PR = "#504"
+PHASE66_SMOKE_PR = "#505"
+PHASE66_CLOSEOUT_PR = "#506"
 PHASE66_SYNC_ISSUE = (
     "Phase 66: sync repo truth after Phase 65 closeout and define selected-world "
     "generated-runtime surface continuity gate"
 )
 PHASE66_SMOKE_ISSUE = "Phase 66: add selected-world generated runtime surface continuity smoke"
+PHASE66_CLOSEOUT_STATUS = (
+    f"`{PHASE66_EXIT_ISSUE_NUMBER}` `Phase 66 exit gate` closed by PR `{PHASE66_CLOSEOUT_PR}`"
+)
+PHASE66_EXTERNAL_STOP_STATE = (
+    "`audit-github-queue` reports `paused` with no active milestone after Phase 66 closeout"
+)
+PHASE66_BLUEPRINT_CALIBRATION_STOP = (
+    "Phase 67 must start with a blueprint-calibration successor boundary before any "
+    "additional surface/readiness/gate evidence is promoted."
+)
+PHASE67_MINIMAL_LOOP_TARGET = (
+    "The next phase must state how it improves `corpus -> chunks -> graph -> "
+    "personas -> scenarios -> deterministic runs -> report/claims -> eval`."
+)
 PHASE66_TODO = (
     "TODO[verify]: Phase 66 generated-runtime surface continuity is inferred from "
     "Phase 65 evidence and existing world-scoped runtime/review/report routes; no "
@@ -74,10 +91,11 @@ def test_phase66_successor_boundary_gate_exists_with_required_sections() -> None
     required_sections = [
         "# Phase 66 Selected-World Generated Runtime Surface Continuity Gate",
         f"Issue: `{PHASE66_EXIT_ISSUE_NUMBER}` `Phase 66 exit gate`",
-        "Current state: Phase 66 successor boundary is active; Phase 65 is closed.",
+        "Current state: Phase 66 is closed; Phase 65 is closed.",
         "## Post-Phase-65 Baseline",
-        "## Phase 66 Active Queue",
+        "## Phase 66 Closed Queue",
         "## Selected-World Generated Runtime Surface Continuity Scope",
+        "## Blueprint Calibration Stop Condition",
         "## Candidate Input Policy",
         "## Non-Goals",
         "## Validation Commands",
@@ -94,12 +112,19 @@ def test_phase66_gate_records_inferred_scope_and_boundaries() -> None:
         f"milestone `{PHASE65_TITLE}` is closed",
         "`audit-github-queue` reports `paused` with no active milestone after Phase 65 closeout",
         PHASE66_TITLE,
-        f"milestone `{PHASE66_TITLE}` is open as milestone `{PHASE66_MILESTONE_NUMBER}`",
+        f"milestone `{PHASE66_TITLE}` is closed",
         f"`{PHASE66_EXIT_ISSUE_NUMBER}` `Phase 66 exit gate`",
         f"`{PHASE66_SYNC_ISSUE_NUMBER}` `{PHASE66_SYNC_ISSUE}`",
         f"`{PHASE66_SMOKE_ISSUE_NUMBER}` `{PHASE66_SMOKE_ISSUE}`",
-        "this Phase 66 repo-truth sync PR",
+        f"`{PHASE66_SYNC_ISSUE_NUMBER}` closed by PR `{PHASE66_SYNC_PR}`",
+        f"`{PHASE66_SMOKE_ISSUE_NUMBER}` closed by PR `{PHASE66_SMOKE_PR}`",
+        f"Phase 66 is closed as `{PHASE66_TITLE}`",
+        PHASE66_CLOSEOUT_STATUS,
+        PHASE66_EXTERNAL_STOP_STATE,
         PHASE66_TODO,
+        PHASE66_BLUEPRINT_CALIBRATION_STOP,
+        PHASE67_MINIMAL_LOOP_TARGET,
+        "Do not open another adjacent surface/readiness proof as the primary Phase 67 scope without a source-backed tie to scenario/intervention/branch-comparison/eval value.",
         "selected bounded fictional or explicitly authorized worlds",
         "`fog-harbor-east-gate`",
         "`museum-night`",
@@ -135,14 +160,22 @@ def test_active_state_docs_record_phase66_queue_without_scope_expansion() -> Non
         PHASE66_GATE_PATH,
     ]
     required_phrases = [
-        "Phase 66 successor boundary is active",
+        f"Phase 66 is closed as `{PHASE66_TITLE}`",
         PHASE66_TITLE,
-        f"milestone `{PHASE66_TITLE}` is open as milestone `{PHASE66_MILESTONE_NUMBER}`",
+        f"milestone `{PHASE66_TITLE}` is closed",
         f"`{PHASE66_EXIT_ISSUE_NUMBER}` `Phase 66 exit gate`",
         f"`{PHASE66_SYNC_ISSUE_NUMBER}` `{PHASE66_SYNC_ISSUE}`",
         f"`{PHASE66_SMOKE_ISSUE_NUMBER}` `{PHASE66_SMOKE_ISSUE}`",
+        f"`{PHASE66_SYNC_ISSUE_NUMBER}` closed by PR `{PHASE66_SYNC_PR}`",
+        f"`{PHASE66_SMOKE_ISSUE_NUMBER}` closed by PR `{PHASE66_SMOKE_PR}`",
+        PHASE66_CLOSEOUT_STATUS,
+        PHASE66_EXTERNAL_STOP_STATE,
+        PHASE66_BLUEPRINT_CALIBRATION_STOP,
+        PHASE67_MINIMAL_LOOP_TARGET,
         PHASE66_TODO,
         "`docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-gate-2026-06-04.md`",
+        "`docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-evidence-2026-06-04.md`",
+        "`scripts/smoke_phase66_selected_world_runtime_surface_continuity.py`",
         "selected-world generated runtime surface continuity",
         "selected bounded fictional or explicitly authorized worlds",
         "existing world-scoped runtime, explain, report, and review surfaces",
@@ -179,6 +212,18 @@ def test_active_state_docs_record_phase66_queue_without_scope_expansion() -> Non
         "Phase 66 promotes broad private-beta readiness",
         "Phase 66 promotes future-world readiness",
         "Phase 66 promotes untracked planning notes",
+        "Phase 66 successor boundary is active",
+        "Phase 66 active",
+        "Phase 66 Active Queue",
+        "Phase 66 exit gate `#501`: open / blocked",
+        f"milestone `{PHASE66_TITLE}` is open",
+        "`audit-github-queue` reports `ready` for the active Phase 66 milestone",
+        "remaining active work item",
+        "Phase 66 closeout target is recorded",
+        "After this Phase 66 closeout PR merges and external closure is verified",
+        "Phase 66 exit gate: closeout target recorded in this PR",
+        "Phase 67 should continue selected-world generated runtime surface continuity",
+        "Phase 67 should continue selected-world review readiness",
     ]
 
     for path in docs:

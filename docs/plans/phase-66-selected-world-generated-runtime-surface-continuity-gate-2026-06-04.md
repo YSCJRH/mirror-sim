@@ -2,9 +2,9 @@
 
 Issue: `#501` `Phase 66 exit gate`
 
-Current state: Phase 66 successor boundary is active; Phase 65 is closed.
+Current state: Phase 66 is closed; Phase 65 is closed.
 
-This note records the Phase 66 successor boundary for `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate`. The gate lives in `docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-gate-2026-06-04.md` and constrains selected-world generated runtime surface continuity to existing world-scoped runtime, explain, report, and review surfaces. It does not add routes, APIs, schemas, async/task_id behavior, launch hub behavior, provider calls, public/plugin expansion, broad private-beta readiness, or future-world readiness claims.
+This note records the Phase 66 closeout for `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate`. The gate lives in `docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-gate-2026-06-04.md` and constrains selected-world generated runtime surface continuity to existing world-scoped runtime, explain, report, and review surfaces. It does not add routes, APIs, schemas, async/task_id behavior, launch hub behavior, provider calls, public/plugin expansion, broad private-beta readiness, or future-world readiness claims.
 
 ## Post-Phase-65 Baseline
 
@@ -18,7 +18,7 @@ This note records the Phase 66 successor boundary for `Phase 66 - Selected-World
 - The Phase 65 evidence note lives in `docs/plans/phase-65-selected-world-runtime-generation-evidence-2026-06-01.md`.
 - The Phase 65 smoke is `scripts/smoke_phase65_selected_world_runtime_generation.py`.
 
-## Phase 66 Active Queue
+## Phase 66 Closed Queue
 
 Phase 66 title:
 
@@ -26,16 +26,20 @@ Phase 66 title:
 Phase 66 - Selected-World Generated Runtime Surface Continuity Gate
 ```
 
-- milestone `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate` is open as milestone `#66`.
+- Phase 66 is closed as `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate`.
+- milestone `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate` is closed.
 - `#501` `Phase 66 exit gate`
-  - Status: blocked until this Phase 66 repo-truth sync PR and the selected-world generated runtime surface continuity smoke land.
+  - `#501` `Phase 66 exit gate` closed by PR `#506`.
 - `#502` `Phase 66: sync repo truth after Phase 65 closeout and define selected-world generated-runtime surface continuity gate`
-  - Scope: sync tracked docs, bootstrap metadata, and tests to the Phase 66 successor boundary.
+  - `#502` closed by PR `#504`.
+  - Scope: synced tracked docs, bootstrap metadata, and tests to the Phase 66 successor boundary.
 - `#503` `Phase 66: add selected-world generated runtime surface continuity smoke`
-  - Scope: add tracked smoke coverage for generated session/node artifacts consumed by existing world-scoped runtime, explain, report, and review surfaces.
+  - `#503` closed by PR `#505`.
+  - Scope: added tracked smoke coverage for generated session/node artifacts consumed by existing world-scoped runtime, explain, report, and review surfaces.
   - Evidence target: `docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-evidence-2026-06-04.md`.
   - Reproduction script: `scripts/smoke_phase66_selected_world_runtime_surface_continuity.py`.
   - Evidence mode: selected-world generated runtime surface continuity evidence through existing world-scoped runtime, explain, report, and review surfaces with temporary local artifacts.
+- `audit-github-queue` reports `paused` with no active milestone after Phase 66 closeout.
 - `status:needs-adr` and unresolved `risk:safety` findings remain merge blockers until the needed ADR or safety review is resolved.
 
 ## Selected-World Generated Runtime Surface Continuity Scope
@@ -49,6 +53,16 @@ Selected worlds:
 Phase 66 covers selected bounded fictional or explicitly authorized worlds and selected-world generated runtime surface continuity only. It should prove that generated session/node artifacts from the Phase 65 evidence path can be consumed by existing world-scoped runtime, explain, report, and review surfaces through existing v1 CLI/session contracts with temporary local artifacts. The continuity check should preserve route-derived `worldId` guards and should not require contract changes for the selected worlds.
 
 Every report claim must keep both `label` and `evidence_ids`.
+
+## Blueprint Calibration Stop Condition
+
+Phase 67 must start with a blueprint-calibration successor boundary before any additional surface/readiness/gate evidence is promoted.
+
+The next phase must state how it improves `corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`.
+
+Do not open another adjacent surface/readiness proof as the primary Phase 67 scope without a source-backed tie to scenario/intervention/branch-comparison/eval value.
+
+The automation loop remains an execution mechanism, not the project north star. Future phase titles and acceptance criteria should lead with simulation, evidence, branch comparison, claim quality, trace explainability, or eval value before they mention queue sync or closeout mechanics.
 
 ## Candidate Input Policy
 
