@@ -2,9 +2,9 @@
 
 Issue: `#495` `Phase 65 exit gate`
 
-Current state: Phase 65 is active; Phase 64 is closed.
+Current state: Phase 65 closeout target is recorded; Phase 64 is closed.
 
-This note records the active Phase 65 gate for selected-world deterministic runtime generation evidence. This gate lives in `docs/plans/phase-65-selected-world-deterministic-runtime-generation-gate-2026-06-01.md`. Phase 64 selected-world perturb follow-up readiness is the historical baseline. Phase 65 may only verify that the selected fictional worlds can each create one world-scoped runtime session and one generated branch through existing v1 CLI/session contracts using temporary local artifacts.
+This note records the Phase 65 closeout target for selected-world deterministic runtime generation evidence. This gate lives in `docs/plans/phase-65-selected-world-deterministic-runtime-generation-gate-2026-06-01.md`. Phase 64 selected-world perturb follow-up readiness is the historical baseline. Phase 65 evidence reproduces that the selected fictional worlds can each create one world-scoped runtime session and one generated branch through existing v1 CLI/session contracts using temporary local artifacts.
 
 ## Post-Phase-64 Baseline
 
@@ -17,7 +17,7 @@ This note records the active Phase 65 gate for selected-world deterministic runt
 - The Phase 64 perturb follow-up readiness evidence lives in `docs/plans/phase-64-selected-world-perturb-followup-readiness-2026-05-26.md`.
 - The Phase 64 perturb follow-up readiness smoke is `scripts/smoke_phase64_selected_world_perturb_followup_readiness.py`.
 
-## Phase 65 Active Queue
+## Phase 65 Closeout Target
 
 Phase 65 title:
 
@@ -26,16 +26,16 @@ Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate
 ```
 
 - `#495` `Phase 65 exit gate`
-  - Status: blocked until the sync and deterministic runtime generation smoke work items land, validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue.
+  - Status: `#495` `Phase 65 exit gate` is handled by this Phase 65 closeout PR.
 - `#496` `Phase 65: sync repo truth after Phase 64 closeout and define selected-world runtime-generation evidence gate`
-  - Status: `#496` is handled by this Phase 65 sync PR.
-  - Scope: sync tracked docs, bootstrap metadata, and tests to the active Phase 65 gate.
+  - Status: `#496` closed by PR `#498`.
+  - Scope: sync tracked docs, bootstrap metadata, and tests to the Phase 65 gate.
 - `#497` `Phase 65: add selected-world deterministic runtime generation smoke`
-  - Status: ready; this #497 smoke PR records the selected-world deterministic runtime generation evidence.
+  - Status: `#497` closed by PR `#499`.
   - Scope: add tracked selected-world deterministic runtime generation smoke for existing v1 CLI/session contracts.
   - Evidence target: `docs/plans/phase-65-selected-world-runtime-generation-evidence-2026-06-01.md`.
   - Reproduction script: `scripts/smoke_phase65_selected_world_runtime_generation.py`.
-- `audit-github-queue` reports `ready` for the active Phase 65 milestone.
+- After this Phase 65 closeout PR merges and external closure is verified, milestone `Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate` is closed and `audit-github-queue` reports `paused` with no active milestone.
 
 ## Selected-World Deterministic Runtime Generation Scope
 
@@ -45,7 +45,7 @@ Selected worlds:
 - `museum-night`
 - `library-rain`
 
-Phase 65 covers selected-world deterministic runtime generation evidence only. It may verify, with temporary local artifacts, that existing `start-session` and `generate-branch` entrypoints create one world-scoped runtime session and one generated branch per selected world through existing v1 CLI/session contracts. The gate should preserve route-derived `worldId` guards, keep generation deterministic/local, and record blockers instead of changing contracts if one selected world cannot generate under current data and code.
+Phase 65 covers selected-world deterministic runtime generation evidence only. It verified, with temporary local artifacts, that existing `start-session` and `generate-branch` entrypoints create one world-scoped runtime session and one generated branch per selected world through existing v1 CLI/session contracts. The gate preserved route-derived `worldId` guards, kept generation deterministic/local, and did not require contract changes for the selected worlds.
 
 ## Candidate Input Policy
 
