@@ -219,6 +219,10 @@
     {
       "title": "Phase 66 - Selected-World Generated Runtime Surface Continuity Gate",
       "description": "Prove that selected bounded fictional or explicitly authorized worlds and selected-world generated runtime session and node artifacts for Fog Harbor, Museum Night, and Library Rain can be consumed by existing world-scoped runtime, explain, report, and review surfaces without adding APIs, schemas, async/task_id behavior, launch hub behavior, provider calls, public/plugin expansion, or broad private-beta/future-world readiness claims."
+    },
+    {
+      "title": "Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate",
+      "description": "Recalibrate Mirror's active queue against mirror.md by mapping current repo truth to the minimum loop from corpus through eval, identifying the next value-bearing scenario/intervention/branch-comparison/eval gap, and blocking adjacent surface/readiness gates unless they resolve a named blueprint or protected-core contract blocker."
     }
   ],
   "labels": [
@@ -551,6 +555,11 @@
       "name": "status:needs-adr",
       "color": "5319e7",
       "description": "Needs an ADR or contract decision before merge."
+    },
+    {
+      "name": "phase:67",
+      "color": "C8E6C9",
+      "description": "Phase 67 blueprint calibration and minimum-loop value work."
     }
   ],
   "issues": [
@@ -2906,6 +2915,41 @@
         "status:ready"
       ],
       "body": "## goal\nAdd selected-world generated runtime surface continuity smoke proving that generated session/node artifacts for selected bounded fictional or explicitly authorized worlds `fog-harbor-east-gate`, `museum-night`, and `library-rain` can be consumed by existing world-scoped runtime, explain, report, and review surfaces through existing v1 CLI/session contracts using temporary local artifacts.\n\n## input\n- Phase 65 selected-world deterministic runtime generation evidence and smoke\n- current selected bounded fictional or explicitly authorized world data and generated runtime artifact paths\n- existing world-scoped runtime, explain, report, and review surfaces\n- current runtime/session route ownership contracts\n\n## output\n- focused smoke for selected-world generated runtime surface continuity\n- tracked evidence note or explicit blocker note for selected-world generated runtime surface continuity\n- focused tests proving generated artifacts stay world-scoped, deterministic, local-artifact-only, evidence-backed, and contract-preserving\n\n## out-of-scope\n- routes, APIs, schemas, async/task_id behavior, worker queues, launch hub behavior, provider/model calls, Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, public/plugin path expansion, route ownership changes, runtime mutation expansion, broad private-beta readiness, future-world readiness, real-world prediction, real-person personas, political or high-risk decision systems, or untracked planning-note promotion\n\n## minimal test\n- `python -m pytest <focused Phase 66 generated runtime surface continuity tests> -q`\n- `<focused Phase 66 generated runtime surface continuity smoke command>`\n- `python scripts/smoke_phase65_selected_world_runtime_generation.py`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n\n## touches contract\nNo. This should verify existing runtime surface continuity only. If evidence shows a contract gap, record `TODO[verify]: ...` and split a separate protected-core contract issue.\n\n## phase\nPhase 66"
+    },
+    {
+      "title": "Phase 67 exit gate",
+      "milestone": "Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate",
+      "labels": [
+        "phase:67",
+        "area:docs-evals",
+        "lane:protected-core",
+        "status:blocked"
+      ],
+      "body": "## goal\nClose Phase 67 only after the repo-truth sync and minimum-loop value gap audit land, required validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue.\n\n## input\n- Phase 66 closeout after PR #506\n- `mirror.md` long-term blueprint\n- current repo truth in README and docs/plans\n- current demo/world artifacts and evals\n\n## output\n- explicit Phase 67 closeout decision\n- documented next value-bearing scenario/intervention/branch-comparison/eval gap or stop-state\n- a decision on whether the successor should implement a minimum-loop improvement or split a protected-core contract issue\n\n## out-of-scope\n- adjacent surface/readiness/fidelity/continuity gates without a source-backed tie to scenario/intervention/branch-comparison/eval value; routes, APIs, schemas, async/task_id behavior, worker queues, launch hub behavior, provider/model calls, Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, public/plugin path expansion, route ownership changes, runtime mutation expansion, broad private-beta readiness, future-world readiness, real-world prediction, real-person personas, political or high-risk decision systems, or untracked planning-note promotion\n\n## minimum loop\n`corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`\n\n## minimal test\n- `python -m pytest backend/tests/test_phase67_blueprint_calibration_gate.py -q`\n- `python scripts/check_no_secrets.py`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `./make.ps1 eval-transfer`\n\n## touches contract\nNo. This closeout gate should close the calibration phase only. If a core contract change is needed, split a protected-core contract item and update docs/architecture/contracts.md plus an ADR when the change is long-lived.\n\n## phase\nPhase 67"
+    },
+    {
+      "title": "Phase 67: sync repo truth after Phase 66 closeout and define blueprint calibration gate",
+      "milestone": "Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate",
+      "labels": [
+        "phase:67",
+        "area:docs-evals",
+        "risk:core-contract",
+        "lane:protected-core",
+        "status:ready"
+      ],
+      "body": "## goal\nSync the repo source of truth to the active Phase 67 blueprint calibration and minimum-loop value gate so docs, bootstrap metadata, and tests record Phase 67 as the only active successor milestone after Phase 66 closeout.\n\n## input\n- Phase 66 closeout after PR #506\n- `docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-gate-2026-06-04.md`\n- `docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-evidence-2026-06-04.md`\n- `mirror.md`\n- current `README.md`, `docs/plans/current-state-baseline.md`, `docs/plans/phase-execution-queue.md`, `docs/plans/automation-roadmap.md`\n- `.github/automation/bootstrap-spec.json`\n- current queue-related tests under `backend/tests/**`\n\n## output\n- Phase 66 closure is recorded across tracked repo truth\n- Phase 67 becomes the documented active successor queue across README, plans, bootstrap spec, and queue fixtures\n- bootstrap metadata includes the Phase 67 milestone, label, and issues created on GitHub\n- Phase 67 scope is constrained to blueprint calibration and minimum-loop value gap audit work\n- docs, bootstrap metadata, and tests are synced around `corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`\n\n## out-of-scope\n- adding the minimum-loop value gap audit directly in this issue\n- adjacent surface/readiness/fidelity/continuity gates without a source-backed tie to scenario/intervention/branch-comparison/eval value; routes, APIs, schemas, async/task_id behavior, worker queues, launch hub behavior, provider/model calls, Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, public/plugin path expansion, route ownership changes, runtime mutation expansion, broad private-beta readiness, future-world readiness, real-world prediction, real-person personas, political or high-risk decision systems, or untracked planning-note promotion\n\n## minimum loop\n`corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`\n\n## minimal test\n- `python -m pytest backend/tests/test_phase66_selected_world_generated_runtime_surface_continuity_gate.py backend/tests/test_phase67_blueprint_calibration_gate.py -q`\n- `python scripts/check_no_secrets.py`\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n- `git diff --check`\n- `./make.ps1 test`\n\n## touches contract\nNo. Repo governance and queue sync only. If a core contract gap is found, split a separate protected-core contract issue before changing schema, scenario DSL, claim labels, run trace shape, or artifact layout.\n\n## phase\nPhase 67"
+    },
+    {
+      "title": "Phase 67: audit current minimum-loop value gaps before next implementation",
+      "milestone": "Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate",
+      "labels": [
+        "phase:67",
+        "area:docs-evals",
+        "risk:core-contract",
+        "lane:protected-core",
+        "status:ready"
+      ],
+      "body": "## goal\nCreate a tracked minimum-loop value gap audit that maps current repo truth against `mirror.md` and selects the next value-bearing scenario/intervention/branch-comparison/eval gap before any further implementation PR is opened.\n\n## input\n- Phase 67 blueprint calibration gate\n- `mirror.md`\n- current README and docs/plans state\n- current pipeline, artifacts, report/claims, eval, and review workbench evidence\n\n## output\n- tracked minimum-loop value gap audit note\n- explicit next-action recommendation tied to scenario/intervention/branch-comparison/eval value\n- clear separation between evidence, inference, open questions, and `TODO[verify]: ...`\n- statement on whether the next item should be ordinary implementation, a protected-core contract issue, or an ADR-backed contract change\n\n## out-of-scope\n- adjacent surface/readiness/fidelity/continuity gates without a source-backed tie to scenario/intervention/branch-comparison/eval value; routes, APIs, schemas, async/task_id behavior, worker queues, launch hub behavior, provider/model calls, Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, public/plugin path expansion, route ownership changes, runtime mutation expansion, broad private-beta readiness, future-world readiness, real-world prediction, real-person personas, political or high-risk decision systems, or untracked planning-note promotion\n\n## minimum loop\n`corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`\n\n## minimal test\n- `python -m pytest backend/tests/test_phase67_blueprint_calibration_gate.py -q`\n- `<focused Phase 67 minimum-loop audit test> -q`\n- `python scripts/check_no_secrets.py`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n- `git diff --check`\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n\n## touches contract\nNo. This audit should not change contracts. If it finds a core contract gap, record `TODO[verify]: ...` and split a separate protected-core contract issue before changing schema, scenario DSL, claim labels, run trace shape, or artifact layout.\n\n## phase\nPhase 67"
     }
   ]
 }
