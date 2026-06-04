@@ -2,9 +2,9 @@
 
 Issue: `#495` `Phase 65 exit gate`
 
-Current state: Phase 65 closeout target is recorded; Phase 64 is closed.
+Current state: Phase 65 is closed; Phase 64 is closed.
 
-This note records the Phase 65 closeout target for selected-world deterministic runtime generation evidence. This gate lives in `docs/plans/phase-65-selected-world-deterministic-runtime-generation-gate-2026-06-01.md`. Phase 64 selected-world perturb follow-up readiness is the historical baseline. Phase 65 evidence reproduces that the selected fictional worlds can each create one world-scoped runtime session and one generated branch through existing v1 CLI/session contracts using temporary local artifacts.
+This note records the closed Phase 65 selected-world deterministic runtime generation evidence gate. This gate lives in `docs/plans/phase-65-selected-world-deterministic-runtime-generation-gate-2026-06-01.md`. Phase 64 selected-world perturb follow-up readiness is the historical baseline. Phase 65 evidence reproduces that the selected fictional worlds can each create one world-scoped runtime session and one generated branch through existing v1 CLI/session contracts using temporary local artifacts.
 
 ## Post-Phase-64 Baseline
 
@@ -17,7 +17,7 @@ This note records the Phase 65 closeout target for selected-world deterministic 
 - The Phase 64 perturb follow-up readiness evidence lives in `docs/plans/phase-64-selected-world-perturb-followup-readiness-2026-05-26.md`.
 - The Phase 64 perturb follow-up readiness smoke is `scripts/smoke_phase64_selected_world_perturb_followup_readiness.py`.
 
-## Phase 65 Closeout Target
+## Phase 65 Closed Queue
 
 Phase 65 title:
 
@@ -26,7 +26,7 @@ Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate
 ```
 
 - `#495` `Phase 65 exit gate`
-  - Status: `#495` `Phase 65 exit gate` is handled by this Phase 65 closeout PR.
+  - Status: `#495` `Phase 65 exit gate` closed by PR `#500`.
 - `#496` `Phase 65: sync repo truth after Phase 64 closeout and define selected-world runtime-generation evidence gate`
   - Status: `#496` closed by PR `#498`.
   - Scope: sync tracked docs, bootstrap metadata, and tests to the Phase 65 gate.
@@ -35,7 +35,9 @@ Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate
   - Scope: add tracked selected-world deterministic runtime generation smoke for existing v1 CLI/session contracts.
   - Evidence target: `docs/plans/phase-65-selected-world-runtime-generation-evidence-2026-06-01.md`.
   - Reproduction script: `scripts/smoke_phase65_selected_world_runtime_generation.py`.
-- After this Phase 65 closeout PR merges and external closure is verified, milestone `Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate` is closed and `audit-github-queue` reports `paused` with no active milestone.
+- Phase 65 is closed as `Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate`.
+- milestone `Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate` is closed.
+- `audit-github-queue` reports `paused` with no active milestone after Phase 65 closeout.
 
 ## Selected-World Deterministic Runtime Generation Scope
 

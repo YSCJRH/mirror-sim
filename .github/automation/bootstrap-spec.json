@@ -215,6 +215,10 @@
     {
       "title": "Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate",
       "description": "Prove with temporary local deterministic artifacts that Fog Harbor, Museum Night, and Library Rain can each start a world-scoped runtime session and generate one branch through existing v1 CLI/session contracts without adding APIs, schemas, async/task_id behavior, launch hub behavior, provider calls, public/plugin expansion, or broad private-beta/future-world readiness claims."
+    },
+    {
+      "title": "Phase 66 - Selected-World Generated Runtime Surface Continuity Gate",
+      "description": "Prove that selected bounded fictional or explicitly authorized worlds and selected-world generated runtime session and node artifacts for Fog Harbor, Museum Night, and Library Rain can be consumed by existing world-scoped runtime, explain, report, and review surfaces without adding APIs, schemas, async/task_id behavior, launch hub behavior, provider calls, public/plugin expansion, or broad private-beta/future-world readiness claims."
     }
   ],
   "labels": [
@@ -487,6 +491,11 @@
       "name": "phase:65",
       "color": "C8E6C9",
       "description": "Phase 65 selected-world deterministic runtime generation evidence work."
+    },
+    {
+      "name": "phase:66",
+      "color": "C8E6C9",
+      "description": "Phase 66 selected-world generated runtime surface continuity work."
     },
     {
       "name": "area:backend",
@@ -2860,6 +2869,43 @@
         "status:ready"
       ],
       "body": "## goal\nAdd selected-world deterministic runtime generation smoke proving that `fog-harbor-east-gate`, `museum-night`, and `library-rain` can each start one world-scoped runtime session and generate one branch through existing v1 CLI/session contracts using temporary local artifacts.\n\n## input\n- Phase 64 selected-world perturb follow-up readiness evidence and smoke\n- current v1 CLI/session contracts\n- current selected-world data and world-scoped session generation paths\n- current runtime/session route ownership contracts\n\n## output\n- deterministic local smoke for selected-world runtime session and branch generation\n- tracked evidence note or explicit blocker note for selected-world deterministic runtime generation evidence\n- focused tests proving the smoke stays world-scoped, deterministic, local-artifact-only, and does not change contracts or call provider/model paths\n\n## out-of-scope\n- routes, APIs, schemas, async/task_id behavior, worker queues, launch hub behavior, provider/model calls, Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, public/plugin path expansion, route ownership changes, runtime mutation expansion, broad private-beta readiness, future-world readiness, or untracked planning-note promotion\n\n## minimal test\n- `python -m pytest <focused Phase 65 runtime generation tests> -q`\n- `python scripts/smoke_phase65_selected_world_runtime_generation.py`\n- `python scripts/smoke_phase64_selected_world_perturb_followup_readiness.py --source-only`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n\n## touches contract\nNo. This should verify existing v1 CLI/session contracts only. If evidence shows a contract gap, record `TODO[verify]: ...` and split a separate protected-core contract issue.\n\n## phase\nPhase 65"
+    },
+    {
+      "title": "Phase 66 exit gate",
+      "milestone": "Phase 66 - Selected-World Generated Runtime Surface Continuity Gate",
+      "labels": [
+        "phase:66",
+        "area:docs-evals",
+        "lane:protected-core",
+        "status:blocked"
+      ],
+      "body": "## goal\nClose Phase 66 only after the repo-truth sync and selected-world generated runtime surface continuity smoke land, required validation passes, read-only subagent review reports no blockers, and the milestone can return to a released stop-state or reviewed successor queue.\n\n## input\n- closed Phase 65 baseline after PR #500\n- Phase 65 selected-world deterministic runtime generation evidence and smoke\n- existing world-scoped runtime, explain, report, and review surfaces\n- current v1 CLI/session contracts\n- selected bounded fictional or explicitly authorized world data for `fog-harbor-east-gate`, `museum-night`, and `library-rain`\n\n## output\n- explicit Phase 66 closeout decision\n- documented stop condition for the Phase 66 queue\n- selected-world generated runtime surface continuity outcome, or recorded blockers if evidence cannot be reproduced\n\n## out-of-scope\n- routes, APIs, schemas, async/task_id behavior, worker queues, launch hub behavior, provider/model calls, Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, public/plugin path expansion, route ownership changes, runtime mutation expansion, broad private-beta readiness, future-world readiness, real-world prediction, real-person personas, political or high-risk decision systems, or untracked planning-note promotion\n\n## minimal test\n- `python -m pytest backend/tests/test_phase66_selected_world_generated_runtime_surface_continuity_gate.py -q`\n- `python scripts/check_no_secrets.py`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n- `./make.ps1 smoke`\n- `./make.ps1 test`\n- `./make.ps1 eval-demo`\n- `./make.ps1 eval-transfer`\n\n## touches contract\nNo. This gate should prove generated runtime surface continuity against existing contracts only. If a missing guard requires contract changes, stop and split a separate protected-core contract item.\n\n## phase\nPhase 66"
+    },
+    {
+      "title": "Phase 66: sync repo truth after Phase 65 closeout and define selected-world generated-runtime surface continuity gate",
+      "milestone": "Phase 66 - Selected-World Generated Runtime Surface Continuity Gate",
+      "labels": [
+        "phase:66",
+        "area:docs-evals",
+        "risk:core-contract",
+        "lane:protected-core",
+        "status:ready"
+      ],
+      "body": "## goal\nSync the repo source of truth to the active Phase 66 selected-world generated runtime surface continuity gate so docs, bootstrap metadata, and tests record Phase 66 as the only active successor milestone after Phase 65 closeout.\n\n## input\n- closed Phase 65 baseline after PR #500\n- `docs/plans/phase-65-selected-world-deterministic-runtime-generation-gate-2026-06-01.md`\n- `docs/plans/phase-65-selected-world-runtime-generation-evidence-2026-06-01.md`\n- current `README.md`, `docs/plans/current-state-baseline.md`, `docs/plans/phase-execution-queue.md`, `docs/plans/automation-roadmap.md`\n- `.github/automation/bootstrap-spec.json`\n- current queue-related tests under `backend/tests/**`\n\n## output\n- Phase 65 closure is recorded across tracked repo truth\n- Phase 66 becomes the documented active successor queue across README, plans, bootstrap spec, and queue fixtures\n- bootstrap metadata includes the Phase 66 milestone, label, and issues created on GitHub\n- Phase 66 scope is constrained to selected bounded fictional or explicitly authorized worlds and selected-world generated runtime surface continuity only\n\n## out-of-scope\n- adding the selected-world generated runtime surface continuity smoke directly in this issue\n- routes, APIs, schemas, async/task_id behavior, worker queues, launch hub behavior, provider/model calls, Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, public/plugin path expansion, route ownership changes, runtime mutation expansion, broad private-beta readiness, future-world readiness, real-world prediction, real-person personas, political or high-risk decision systems, or untracked planning-note promotion\n\n## minimal test\n- `python -m pytest backend/tests/test_phase65_selected_world_runtime_generation_gate.py backend/tests/test_phase66_selected_world_generated_runtime_surface_continuity_gate.py -q`\n- `python scripts/check_no_secrets.py`\n- `python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim`\n- `python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim`\n- `git diff --check`\n- `./make.ps1 test`\n\n## touches contract\nNo. Repo governance and queue sync only.\n\n## phase\nPhase 66"
+    },
+    {
+      "title": "Phase 66: add selected-world generated runtime surface continuity smoke",
+      "milestone": "Phase 66 - Selected-World Generated Runtime Surface Continuity Gate",
+      "labels": [
+        "phase:66",
+        "area:frontend",
+        "area:backend",
+        "area:docs-evals",
+        "risk:core-contract",
+        "lane:protected-core",
+        "status:ready"
+      ],
+      "body": "## goal\nAdd selected-world generated runtime surface continuity smoke proving that generated session/node artifacts for selected bounded fictional or explicitly authorized worlds `fog-harbor-east-gate`, `museum-night`, and `library-rain` can be consumed by existing world-scoped runtime, explain, report, and review surfaces through existing v1 CLI/session contracts using temporary local artifacts.\n\n## input\n- Phase 65 selected-world deterministic runtime generation evidence and smoke\n- current selected bounded fictional or explicitly authorized world data and generated runtime artifact paths\n- existing world-scoped runtime, explain, report, and review surfaces\n- current runtime/session route ownership contracts\n\n## output\n- focused smoke for selected-world generated runtime surface continuity\n- tracked evidence note or explicit blocker note for selected-world generated runtime surface continuity\n- focused tests proving generated artifacts stay world-scoped, deterministic, local-artifact-only, evidence-backed, and contract-preserving\n\n## out-of-scope\n- routes, APIs, schemas, async/task_id behavior, worker queues, launch hub behavior, provider/model calls, Hosted GPT, BYOK, upload, auth, billing, database, object storage, quota, public/plugin path expansion, route ownership changes, runtime mutation expansion, broad private-beta readiness, future-world readiness, real-world prediction, real-person personas, political or high-risk decision systems, or untracked planning-note promotion\n\n## minimal test\n- `python -m pytest <focused Phase 66 generated runtime surface continuity tests> -q`\n- `<focused Phase 66 generated runtime surface continuity smoke command>`\n- `python scripts/smoke_phase65_selected_world_runtime_generation.py`\n- `python scripts/check_no_secrets.py`\n- `npm run build --prefix frontend`\n\n## touches contract\nNo. This should verify existing runtime surface continuity only. If evidence shows a contract gap, record `TODO[verify]: ...` and split a separate protected-core contract issue.\n\n## phase\nPhase 66"
     }
   ]
 }
