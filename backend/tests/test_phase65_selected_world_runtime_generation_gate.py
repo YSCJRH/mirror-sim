@@ -20,11 +20,10 @@ PHASE65_SMOKE_ISSUE_NUMBER = "#497"
 PHASE65_SMOKE_ISSUE = "Phase 65: add selected-world deterministic runtime generation smoke"
 PHASE65_SYNC_PR = "#498"
 PHASE65_SMOKE_PR = "#499"
-PHASE65_CLOSEOUT_STATUS = "`#495` `Phase 65 exit gate` is handled by this Phase 65 closeout PR"
+PHASE65_CLOSEOUT_PR = "#500"
+PHASE65_CLOSEOUT_STATUS = f"`#495` `Phase 65 exit gate` closed by PR `{PHASE65_CLOSEOUT_PR}`"
 PHASE65_EXTERNAL_STOP_STATE = (
-    "After this Phase 65 closeout PR merges and external closure is verified, "
-    f"milestone `{PHASE65_TITLE}` is closed and `audit-github-queue` reports `paused` "
-    "with no active milestone."
+    "`audit-github-queue` reports `paused` with no active milestone after Phase 65 closeout"
 )
 PHASE64_TITLE = "Phase 64 - Selected-World Perturb Follow-Up Readiness Gate"
 
@@ -39,9 +38,9 @@ def test_phase65_runtime_generation_gate_exists_with_required_sections() -> None
     required_sections = [
         "# Phase 65 Selected-World Deterministic Runtime Generation Evidence Gate",
         f"Issue: `{PHASE65_EXIT_ISSUE}` `Phase 65 exit gate`",
-        "Current state: Phase 65 closeout target is recorded; Phase 64 is closed.",
+        "Current state: Phase 65 is closed; Phase 64 is closed.",
         "## Post-Phase-64 Baseline",
-        "## Phase 65 Closeout Target",
+        "## Phase 65 Closed Queue",
         "## Selected-World Deterministic Runtime Generation Scope",
         "## Candidate Input Policy",
         "## Non-Goals",
@@ -64,6 +63,8 @@ def test_phase65_gate_records_scope_and_boundaries() -> None:
         f"`{PHASE65_SMOKE_ISSUE_NUMBER}` `{PHASE65_SMOKE_ISSUE}`",
         f"`{PHASE65_SYNC_ISSUE_NUMBER}` closed by PR `{PHASE65_SYNC_PR}`",
         f"`{PHASE65_SMOKE_ISSUE_NUMBER}` closed by PR `{PHASE65_SMOKE_PR}`",
+        f"Phase 65 is closed as `{PHASE65_TITLE}`",
+        f"milestone `{PHASE65_TITLE}` is closed",
         PHASE65_CLOSEOUT_STATUS,
         PHASE65_EXTERNAL_STOP_STATE,
         "`fog-harbor-east-gate`",
@@ -110,7 +111,7 @@ def test_active_state_docs_record_phase65_queue_without_scope_expansion() -> Non
         PHASE65_GATE_PATH,
     ]
     required_phrases = [
-        "Phase 65 closeout target is recorded",
+        f"Phase 65 is closed as `{PHASE65_TITLE}`",
         PHASE65_TITLE,
         f"`{PHASE65_EXIT_ISSUE}` `Phase 65 exit gate`",
         f"`{PHASE65_SYNC_ISSUE_NUMBER}` `{PHASE65_SYNC_ISSUE}`",
@@ -162,9 +163,9 @@ def test_active_state_docs_record_phase65_queue_without_scope_expansion() -> Non
         "Phase 65 exit gate `#495`: open / blocked",
         "`audit-github-queue` reports `ready` for the active Phase 65 milestone",
         "remaining active work item",
-        "Current state: Phase 65 is closed",
-        "Phase 65 is closed as",
-        "`audit-github-queue` reports `paused` with no active milestone after Phase 65 closeout",
+        "Phase 65 closeout target is recorded",
+        "After this Phase 65 closeout PR merges and external closure is verified",
+        "Phase 65 exit gate: closeout target recorded in this PR",
         "Phase 64 is active",
         "Phase 64 active",
         "Phase 64 Active Queue",
@@ -185,7 +186,7 @@ def test_current_state_capabilities_summary_includes_recent_phase_queue() -> Non
     required_phrases = [
         "Phase 63 closed after selected-world review next-action route fidelity",
         "Phase 64 closed after PR `#494`",
-        f"Phase 65 closeout target recorded as `{PHASE65_TITLE}`",
+        f"Phase 65 is closed as `{PHASE65_TITLE}`",
         "selected-world deterministic runtime generation evidence reproduced through existing v1 CLI/session contracts",
     ]
     for phrase in required_phrases:

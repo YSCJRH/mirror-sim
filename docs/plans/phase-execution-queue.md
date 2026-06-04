@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, the completed Phase 64 selected-world perturb follow-up readiness gate, and the Phase 65 closeout target for selected-world deterministic runtime generation evidence.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, the completed Phase 64 selected-world perturb follow-up readiness gate, the completed Phase 65 selected-world deterministic runtime generation evidence gate, and the Phase 66 successor boundary for selected-world generated runtime surface continuity.
 
 ## Current Gate State
 
@@ -68,7 +68,8 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 62 exit gate: closed
 - Phase 63 exit gate: closed
 - Phase 64 exit gate: closed
-- Phase 65 exit gate: closeout target recorded in this PR
+- Phase 65 exit gate: closed
+- Phase 66 exit gate: active / blocked
 
 Local phase audits currently report:
 
@@ -76,7 +77,31 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 65 Closeout Target
+## Phase 66 Active Queue
+
+Phase 66 title:
+
+```text
+Phase 66 - Selected-World Generated Runtime Surface Continuity Gate
+```
+
+- Phase 66 successor boundary is active
+- milestone `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate` is open as milestone `#66`
+- `#501` `Phase 66 exit gate`
+  - Status: blocked until the Phase 66 repo-truth sync and generated-runtime surface continuity smoke land.
+- `#502` `Phase 66: sync repo truth after Phase 65 closeout and define selected-world generated-runtime surface continuity gate`
+  - Scope: sync tracked docs, bootstrap metadata, and tests to the Phase 66 successor boundary.
+- `#503` `Phase 66: add selected-world generated runtime surface continuity smoke`
+  - Scope: add tracked selected-world generated runtime surface continuity smoke for existing world-scoped runtime, explain, report, and review surfaces.
+- phase gate baseline
+  - `docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-gate-2026-06-04.md`
+  - selected-world generated runtime surface continuity remains limited to selected bounded fictional or explicitly authorized worlds, generated session/node artifacts, existing v1 CLI/session contracts, and temporary local artifacts.
+- boundary posture
+  - TODO[verify]: Phase 66 generated-runtime surface continuity is inferred from Phase 65 evidence and existing world-scoped runtime/review/report routes; no tracked pre-Phase-66 doc currently names this scope.
+  - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
+  - Phase 66 does not add routes or APIs, change schemas or artifact contracts, add async/task_id behavior, implement launch hub behavior, call provider or model paths, promote broad private-beta readiness, claim future-world readiness, or promote untracked planning notes as durable truth.
+
+## Phase 65 Closed Queue
 
 Phase 65 title:
 
@@ -84,12 +109,13 @@ Phase 65 title:
 Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate
 ```
 
-- Phase 65 closeout target is recorded
+- Phase 65 is closed as `Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate`
 - Phase 64 is closed after PR `#494`
 - `#489` `Phase 64 exit gate` closed by PR `#494`
-- After this Phase 65 closeout PR merges and external closure is verified, milestone `Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate` is closed and `audit-github-queue` reports `paused` with no active milestone.
+- milestone `Phase 65 - Selected-World Deterministic Runtime Generation Evidence Gate` is closed
+- `audit-github-queue` reports `paused` with no active milestone after Phase 65 closeout
 - `#495` `Phase 65 exit gate`
-  - Status: `#495` `Phase 65 exit gate` is handled by this Phase 65 closeout PR.
+  - Status: `#495` `Phase 65 exit gate` closed by PR `#500`.
 - `#496` `Phase 65: sync repo truth after Phase 64 closeout and define selected-world runtime-generation evidence gate`
   - `#496` closed by PR `#498`
   - Scope: sync tracked docs, bootstrap metadata, and tests to the Phase 65 gate.
