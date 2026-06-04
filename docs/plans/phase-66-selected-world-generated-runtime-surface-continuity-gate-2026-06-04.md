@@ -33,6 +33,9 @@ Phase 66 - Selected-World Generated Runtime Surface Continuity Gate
   - Scope: sync tracked docs, bootstrap metadata, and tests to the Phase 66 successor boundary.
 - `#503` `Phase 66: add selected-world generated runtime surface continuity smoke`
   - Scope: add tracked smoke coverage for generated session/node artifacts consumed by existing world-scoped runtime, explain, report, and review surfaces.
+  - Evidence target: `docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-evidence-2026-06-04.md`.
+  - Reproduction script: `scripts/smoke_phase66_selected_world_runtime_surface_continuity.py`.
+  - Evidence mode: selected-world generated runtime surface continuity evidence through existing world-scoped runtime, explain, report, and review surfaces with temporary local artifacts.
 - `status:needs-adr` and unresolved `risk:safety` findings remain merge blockers until the needed ADR or safety review is resolved.
 
 ## Selected-World Generated Runtime Surface Continuity Scope
@@ -72,7 +75,9 @@ If Phase 66 evidence shows a real contract gap, stop and split a separate protec
 ## Validation Commands
 
 ```powershell
-python -m pytest backend/tests/test_phase65_selected_world_runtime_generation_gate.py backend/tests/test_phase66_selected_world_generated_runtime_surface_continuity_gate.py -q
+python -m pytest backend/tests/test_phase66_selected_world_generated_runtime_surface_continuity.py backend/tests/test_phase66_selected_world_generated_runtime_surface_continuity_gate.py -q
+python scripts/smoke_phase66_selected_world_runtime_surface_continuity.py
+python scripts/smoke_phase65_selected_world_runtime_generation.py
 python scripts/check_no_secrets.py
 python scripts/bootstrap_github.py --repo YSCJRH/mirror-sim
 python -m backend.app.cli audit-github-queue --repo YSCJRH/mirror-sim

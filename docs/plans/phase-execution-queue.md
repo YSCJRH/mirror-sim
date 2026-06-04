@@ -93,6 +93,9 @@ Phase 66 - Selected-World Generated Runtime Surface Continuity Gate
   - Scope: sync tracked docs, bootstrap metadata, and tests to the Phase 66 successor boundary.
 - `#503` `Phase 66: add selected-world generated runtime surface continuity smoke`
   - Scope: add tracked selected-world generated runtime surface continuity smoke for existing world-scoped runtime, explain, report, and review surfaces.
+  - Evidence target: `docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-evidence-2026-06-04.md`.
+  - Reproduction script: `scripts/smoke_phase66_selected_world_runtime_surface_continuity.py`.
+  - Evidence mode: selected-world generated runtime surface continuity evidence through existing world-scoped runtime, explain, report, and review surfaces with temporary local artifacts.
 - phase gate baseline
   - `docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-gate-2026-06-04.md`
   - selected-world generated runtime surface continuity remains limited to selected bounded fictional or explicitly authorized worlds, generated session/node artifacts, existing v1 CLI/session contracts, and temporary local artifacts.
