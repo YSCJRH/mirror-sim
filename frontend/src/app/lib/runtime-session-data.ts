@@ -341,7 +341,7 @@ async function loadRuntimeNodeLineage(
 }
 
 async function loadRuntimeDecisionSummary(
-  sessionRoot: string,
+  artifactsRoot: string,
   decisionTracePath?: string | null
 ): Promise<RuntimeDecisionSummary | null> {
   if (!decisionTracePath) {
@@ -350,7 +350,7 @@ async function loadRuntimeDecisionSummary(
 
   try {
     const entries = await readJsonl<RuntimeDecisionTraceEntry>(
-      path.join(sessionRoot, decisionTracePath)
+      path.join(artifactsRoot, decisionTracePath)
     );
     if (entries.length === 0) {
       return null;
@@ -423,10 +423,7 @@ export async function loadRuntimeSessionWorkspaceForWorld(
     ) {
       return null;
     }
-    const decisionSummary = await loadRuntimeDecisionSummary(
-      sessionRoot,
-      selectedNode.decision_trace_path
-    );
+    const decisionSummary = await loadRuntimeDecisionSummary(artifactsRoot, selectedNode.decision_trace_path);
 
     if (!selectedNode.compare_path) {
       return {
