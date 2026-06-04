@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, the completed Phase 64 selected-world perturb follow-up readiness gate, the completed Phase 65 selected-world deterministic runtime generation evidence gate, and the completed Phase 66 selected-world generated runtime surface continuity gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, the completed Phase 64 selected-world perturb follow-up readiness gate, the completed Phase 65 selected-world deterministic runtime generation evidence gate, the completed Phase 66 selected-world generated runtime surface continuity gate, and the active Phase 67 blueprint calibration and minimum-loop value gate.
 
 ## Current Gate State
 
@@ -70,12 +70,38 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 64 exit gate: closed
 - Phase 65 exit gate: closed
 - Phase 66 exit gate: closed
+- Phase 67 exit gate: open / blocked
 
 Local phase audits currently report:
 
 - `phase1`: pass
 - `phase2`: pass
 - `phase3`: pass
+
+## Phase 67 Active Queue
+
+Phase 67 title:
+
+```text
+Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate
+```
+
+- Phase 67 is active as `Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate`
+- milestone `Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate` is open
+- `#507` `Phase 67 exit gate`: open / blocked
+- `#508` `Phase 67: sync repo truth after Phase 66 closeout and define blueprint calibration gate`: open / ready
+- `#509` `Phase 67: audit current minimum-loop value gaps before next implementation`: open / ready
+- `audit-github-queue` reports `ready` for the active Phase 67 milestone
+- phase gate baseline
+  - `docs/plans/phase-67-blueprint-calibration-minimum-loop-gate-2026-06-04.md`
+  - Phase 67 must produce a minimum-loop value gap audit over `corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`.
+- boundary posture
+  - Phase 66 is closed as `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate`.
+  - `#501` `Phase 66 exit gate` closed by PR `#506`; `#502` closed by PR `#504`; `#503` closed by PR `#505`.
+  - `audit-github-queue` reports `paused` with no active milestone after Phase 66 closeout.
+  - The next Phase 67 item must tie to scenario/intervention/branch-comparison/eval value.
+  - Do not open another adjacent surface/readiness/fidelity/continuity gate as the primary Phase 67 scope without a source-backed tie to scenario/intervention/branch-comparison/eval value.
+  - If the minimum-loop value gap audit finds a contract gap, split a separate protected-core contract issue before changing schema, scenario DSL, claim labels, run trace shape, or artifact layout.
 
 ## Phase 66 Closed Queue
 
