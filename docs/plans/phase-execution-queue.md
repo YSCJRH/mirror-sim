@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, the completed Phase 64 selected-world perturb follow-up readiness gate, the completed Phase 65 selected-world deterministic runtime generation evidence gate, and the Phase 66 successor boundary for selected-world generated runtime surface continuity.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, the completed Phase 64 selected-world perturb follow-up readiness gate, the completed Phase 65 selected-world deterministic runtime generation evidence gate, and the completed Phase 66 selected-world generated runtime surface continuity gate.
 
 ## Current Gate State
 
@@ -69,7 +69,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 63 exit gate: closed
 - Phase 64 exit gate: closed
 - Phase 65 exit gate: closed
-- Phase 66 exit gate: active / blocked
+- Phase 66 exit gate: closed
 
 Local phase audits currently report:
 
@@ -77,7 +77,7 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 66 Active Queue
+## Phase 66 Closed Queue
 
 Phase 66 title:
 
@@ -85,17 +85,20 @@ Phase 66 title:
 Phase 66 - Selected-World Generated Runtime Surface Continuity Gate
 ```
 
-- Phase 66 successor boundary is active
-- milestone `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate` is open as milestone `#66`
+- Phase 66 is closed as `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate`
+- milestone `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate` is closed
 - `#501` `Phase 66 exit gate`
-  - Status: blocked until the Phase 66 repo-truth sync and generated-runtime surface continuity smoke land.
+  - `#501` `Phase 66 exit gate` closed by PR `#506`.
 - `#502` `Phase 66: sync repo truth after Phase 65 closeout and define selected-world generated-runtime surface continuity gate`
-  - Scope: sync tracked docs, bootstrap metadata, and tests to the Phase 66 successor boundary.
+  - `#502` closed by PR `#504`
+  - Scope: synced tracked docs, bootstrap metadata, and tests to the Phase 66 successor boundary.
 - `#503` `Phase 66: add selected-world generated runtime surface continuity smoke`
-  - Scope: add tracked selected-world generated runtime surface continuity smoke for existing world-scoped runtime, explain, report, and review surfaces.
+  - `#503` closed by PR `#505`
+  - Scope: added tracked selected-world generated runtime surface continuity smoke for existing world-scoped runtime, explain, report, and review surfaces.
   - Evidence target: `docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-evidence-2026-06-04.md`.
   - Reproduction script: `scripts/smoke_phase66_selected_world_runtime_surface_continuity.py`.
   - Evidence mode: selected-world generated runtime surface continuity evidence through existing world-scoped runtime, explain, report, and review surfaces with temporary local artifacts.
+- `audit-github-queue` reports `paused` with no active milestone after Phase 66 closeout.
 - phase gate baseline
   - `docs/plans/phase-66-selected-world-generated-runtime-surface-continuity-gate-2026-06-04.md`
   - selected-world generated runtime surface continuity remains limited to selected bounded fictional or explicitly authorized worlds, generated session/node artifacts, existing v1 CLI/session contracts, and temporary local artifacts.
@@ -103,6 +106,10 @@ Phase 66 - Selected-World Generated Runtime Surface Continuity Gate
   - TODO[verify]: Phase 66 generated-runtime surface continuity is inferred from Phase 65 evidence and existing world-scoped runtime/review/report routes; no tracked pre-Phase-66 doc currently names this scope.
   - selected worlds remain `fog-harbor-east-gate`, `museum-night`, and `library-rain`.
   - Phase 66 does not add routes or APIs, change schemas or artifact contracts, add async/task_id behavior, implement launch hub behavior, call provider or model paths, promote broad private-beta readiness, claim future-world readiness, or promote untracked planning notes as durable truth.
+  - Phase 67 must start with a blueprint-calibration successor boundary before any additional surface/readiness/gate evidence is promoted.
+  - The next phase must state how it improves `corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`.
+  - Do not open another adjacent surface/readiness proof as the primary Phase 67 scope without a source-backed tie to scenario/intervention/branch-comparison/eval value.
+  - Phase 66 completes the selected-world route/review/runtime surface continuity evidence chain. Further adjacent continuity/readiness/fidelity gates are stopped unless they resolve a named blocker from `mirror.md`'s minimum loop, Phase 2 simulation/report closure, Phase 3 eval/UI/demo value, or a documented protected-core contract gap.
 
 ## Phase 65 Closed Queue
 
