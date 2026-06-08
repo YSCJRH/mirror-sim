@@ -23,11 +23,14 @@ PHASE67_COMPARE_REPORT_ISSUE = (
     "Phase 67: align report and claims generation with compare-sourced branch truth"
 )
 PHASE67_COMPARE_REPORT_ISSUE_NUMBER = "#511"
+PHASE67_CLOSEOUT_PR = "#514"
+PHASE67_AUDIT_PR = "#512"
+PHASE67_COMPARE_REPORT_PR = "#513"
 MINIMUM_LOOP = (
     "corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> "
     "report/claims -> eval"
 )
-READY_STATUS = "`audit-github-queue` reports `ready` for the active Phase 67 milestone"
+STOP_STATUS = "`audit-github-queue` reports `paused` with no active milestone after Phase 67 closeout"
 DRIFT_STOP = (
     "Do not open another adjacent surface/readiness/fidelity/continuity gate as "
     "the primary Phase 67 scope without a source-backed tie to "
@@ -111,23 +114,38 @@ def test_active_docs_record_phase67_audit_and_next_value_item() -> None:
         PHASE67_GATE_PATH,
     ]
     required_phrases = [
-        f"Phase 67 is active as `{PHASE67_TITLE}`",
-        f"`{PHASE67_EXIT_ISSUE_NUMBER}` `Phase 67 exit gate`: open / blocked",
-        f"`{PHASE67_SYNC_ISSUE_NUMBER}` `{PHASE67_SYNC_ISSUE}`: closed by PR `#510`",
-        f"`{PHASE67_AUDIT_ISSUE_NUMBER}` `{PHASE67_AUDIT_ISSUE}`: open / ready",
-        f"`{PHASE67_COMPARE_REPORT_ISSUE_NUMBER}` `{PHASE67_COMPARE_REPORT_ISSUE}`: open / ready",
+        f"Phase 67 closeout decision is recorded by PR `{PHASE67_CLOSEOUT_PR}`",
+        "Post-merge stop-state:",
+        "Pre-Merge Evidence Boundary",
+        f"Phase 67 is closed as `{PHASE67_TITLE}`",
+        f"`{PHASE67_EXIT_ISSUE_NUMBER}` `Phase 67 exit gate` closed by PR `{PHASE67_CLOSEOUT_PR}`",
+        f"`{PHASE67_SYNC_ISSUE_NUMBER}` closed by PR `#510`",
+        f"`{PHASE67_AUDIT_ISSUE_NUMBER}` closed by PR `{PHASE67_AUDIT_PR}`",
+        f"`{PHASE67_COMPARE_REPORT_ISSUE_NUMBER}` closed by PR `{PHASE67_COMPARE_REPORT_PR}`",
         PHASE67_COMPARE_REPORT_ISSUE,
         "`docs/plans/phase-67-minimum-loop-value-gap-audit-2026-06-04.md`",
+        "`docs/plans/phase-67-blueprint-calibration-minimum-loop-closeout-2026-06-08.md`",
         "compare-sourced report/claims closure",
         f"`{MINIMUM_LOOP}`",
         "scenario/intervention/branch-comparison/eval value",
-        READY_STATUS,
-        DRIFT_STOP,
+        STOP_STATUS,
+        "No Phase 68 successor queue is opened in this closeout.",
+        "Before PR `#514` merges and the Phase 67 milestone is closed",
+        "this closeout PR records the required post-merge verification target",
+    ]
+    forbidden_phrases = [
+        f"Phase 67 is active as `{PHASE67_TITLE}`",
+        f"`{PHASE67_EXIT_ISSUE_NUMBER}` `Phase 67 exit gate`: open / blocked",
+        f"`{PHASE67_AUDIT_ISSUE_NUMBER}` `{PHASE67_AUDIT_ISSUE}`: open / ready",
+        f"`{PHASE67_COMPARE_REPORT_ISSUE_NUMBER}` `{PHASE67_COMPARE_REPORT_ISSUE}`: open / ready",
+        "`audit-github-queue` reports `ready` for the active Phase 67 milestone",
     ]
     for path in docs:
         text = _read(path)
         for phrase in required_phrases:
             assert phrase in text, f"{path} is missing Phase 67 audit wording: {phrase}"
+        for phrase in forbidden_phrases:
+            assert phrase not in text, f"{path} still records Phase 67 as active: {phrase}"
 
 
 def test_bootstrap_spec_records_phase67_compare_report_follow_up() -> None:
