@@ -64,6 +64,7 @@ def test_museum_night_world_eval_passes(tmp_path: Path) -> None:
     assert result.metrics["compare_outcome_fields_covered"] == 5
     assert result.metrics["changed_tracked_outcome_count"] >= 1
     assert result.metrics["default_report_changed_outcome_count"] >= 1
+    assert result.metrics["report_compare_sourced"] is True
     assert result.metrics["transfer_proof_world_local"] is True
     assert Path(result.artifact_paths["report"]).exists()
     assert Path(result.artifact_paths["eval"]).exists()
@@ -79,6 +80,7 @@ def test_library_rain_world_eval_passes(tmp_path: Path) -> None:
     assert result.metrics["compare_outcome_fields_covered"] == 5
     assert result.metrics["changed_tracked_outcome_count"] >= 1
     assert result.metrics["default_report_changed_outcome_count"] >= 1
+    assert result.metrics["report_compare_sourced"] is True
     assert result.metrics["transfer_proof_world_local"] is True
     assert Path(result.artifact_paths["report"]).exists()
     assert Path(result.artifact_paths["eval"]).exists()

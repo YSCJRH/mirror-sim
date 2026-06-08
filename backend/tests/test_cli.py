@@ -453,6 +453,15 @@ def test_cli_generate_branch_writes_child_node_and_compare(tmp_path: Path, capsy
     assert (tmp_path / child_node["claims_path"]).exists()
     assert (tmp_path / child_node["resolution_path"]).exists()
     assert (tmp_path / child_node["decision_trace_path"]).exists()
+    compare_artifact = json.loads((tmp_path / child_node["compare_path"]).read_text(encoding="utf-8"))
+    reference_branch = next(branch for branch in compare_artifact["branches"] if branch["is_reference"])
+    candidate_branch = next(branch for branch in compare_artifact["branches"] if not branch["is_reference"])
+    report = (tmp_path / child_node["report_path"]).read_text(encoding="utf-8")
+    assert f"Compare source: `compare/{child_node_id}/compare.json`." in report
+    assert (
+        f"Compare branch pair: `{reference_branch['branch_id']}` -> `{candidate_branch['branch_id']}`."
+        in report
+    )
 
 
 def test_generate_branch_rejects_expected_world_mismatch(tmp_path: Path, capsys) -> None:
