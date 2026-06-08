@@ -28,6 +28,13 @@ from backend.app.worlds import CANONICAL_DEMO_WORLD_ID, WorldPaths, resolve_worl
 DEFAULT_TRANSFER_WORLD_IDS = [CANONICAL_DEMO_WORLD_ID, "museum-night", "library-rain"]
 
 
+def _default_redlines_path(repo_root: Path) -> Path:
+    runtime_path = repo_root / "evals" / "assertions" / "redlines.yaml"
+    if runtime_path.exists():
+        return runtime_path
+    return Path(__file__).resolve().parents[3] / "evals" / "assertions" / "redlines.yaml"
+
+
 def _compare(op: str, left: Any, right: Any) -> bool:
     if op == "gt":
         return left > right
@@ -559,7 +566,7 @@ def evaluate_transfer_world(world_paths: WorldPaths) -> EvalResult:
     )
 
     redline_failures = _evaluate_redlines_texts(
-        world_paths.repo_root / "evals" / "assertions" / "redlines.yaml",
+        _default_redlines_path(world_paths.repo_root),
         _transfer_redline_texts(artifacts_root),
     )
     record("redlines_pass", not redline_failures, "; ".join(redline_failures) if redline_failures else "ok")

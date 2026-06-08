@@ -179,6 +179,7 @@ def test_cli_create_world_writes_runtime_world_pack(tmp_path: Path, capsys, monk
     assert (runtime_root / "state" / "worlds" / world_id / "config" / "world_model.yaml").exists()
     assert (runtime_root / "state" / "worlds" / world_id / "config" / "simulation_rules.yaml").exists()
     assert (runtime_root / "state" / "worlds" / world_id / "config" / "decision_schema.yaml").exists()
+    assert (runtime_root / "state" / "worlds" / world_id / "scenarios" / "evidence_delayed.yaml").exists()
     assert (runtime_root / "state" / "artifacts" / "worlds" / world_id / "graph" / "graph.json").exists()
     assert (runtime_root / "state" / "artifacts" / "worlds" / world_id / "personas" / "personas.json").exists()
 
@@ -196,6 +197,37 @@ def test_cli_create_world_writes_runtime_world_pack(tmp_path: Path, capsys, monk
     )
     session_payload = json.loads(capsys.readouterr().out)
     assert session_payload["world_id"] == world_id
+
+
+def test_cli_runtime_created_world_passes_eval_world(tmp_path: Path, capsys, monkeypatch) -> None:
+    runtime_root = tmp_path / "repo"
+    runtime_root.mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr(cli_module, "get_settings", lambda: _runtime_settings(runtime_root))
+
+    assert main(["create-world", "--spec", json.dumps(_safe_world_template_spec())]) == 0
+    create_payload = json.loads(capsys.readouterr().out)
+    world_id = create_payload["world_id"]
+
+    assert main(["eval-world", "--world", world_id]) == 0
+    eval_payload = json.loads(capsys.readouterr().out)
+
+    assert eval_payload["world_id"] == world_id
+    assert eval_payload["status"] == "pass"
+    assert eval_payload["metrics"]["tracked_outcome_count"] == 5
+    assert eval_payload["metrics"]["tracked_outcome_fields_covered"] == 5
+    assert eval_payload["metrics"]["compare_outcome_fields_covered"] == 5
+    assert eval_payload["metrics"]["changed_tracked_outcome_count"] >= 1
+    assert eval_payload["metrics"]["default_report_changed_outcome_count"] >= 1
+    assert eval_payload["metrics"]["report_compare_sourced"] is True
+    assert eval_payload["metrics"]["transfer_proof_world_local"] is True
+
+    artifacts_root = runtime_root / "state" / "artifacts" / "worlds" / world_id
+    claims = json.loads((artifacts_root / "report" / "claims.json").read_text(encoding="utf-8"))
+    assert claims
+    assert all(claim.get("label") for claim in claims)
+    assert all(claim.get("evidence_ids") for claim in claims)
+    assert (artifacts_root / "eval" / "summary.json").exists()
+    assert (artifacts_root / "compare" / "scenario_harbor_night_drill_template_matrix" / "compare.json").exists()
 
 
 def test_cli_create_world_uses_locale_for_generated_product_copy(
