@@ -89,17 +89,20 @@ Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate
 - Phase 67 is active as `Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate`
 - milestone `Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate` is open
 - `#507` `Phase 67 exit gate`: open / blocked
-- `#508` `Phase 67: sync repo truth after Phase 66 closeout and define blueprint calibration gate`: open / ready
+- `#508` `Phase 67: sync repo truth after Phase 66 closeout and define blueprint calibration gate`: closed by PR `#510`
 - `#509` `Phase 67: audit current minimum-loop value gaps before next implementation`: open / ready
+- `#511` `Phase 67: align report and claims generation with compare-sourced branch truth`: open / ready
 - `audit-github-queue` reports `ready` for the active Phase 67 milestone
 - phase gate baseline
   - `docs/plans/phase-67-blueprint-calibration-minimum-loop-gate-2026-06-04.md`
+  - `docs/plans/phase-67-minimum-loop-value-gap-audit-2026-06-04.md`
   - Phase 67 must produce a minimum-loop value gap audit over `corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`.
 - boundary posture
   - Phase 66 is closed as `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate`.
   - `#501` `Phase 66 exit gate` closed by PR `#506`; `#502` closed by PR `#504`; `#503` closed by PR `#505`.
   - `audit-github-queue` reports `paused` with no active milestone after Phase 66 closeout.
   - The next Phase 67 item must tie to scenario/intervention/branch-comparison/eval value.
+  - The audit recommends compare-sourced report/claims closure through `#511` `Phase 67: align report and claims generation with compare-sourced branch truth`.
   - Do not open another adjacent surface/readiness/fidelity/continuity gate as the primary Phase 67 scope without a source-backed tie to scenario/intervention/branch-comparison/eval value.
   - If the minimum-loop value gap audit finds a contract gap, split a separate protected-core contract issue before changing schema, scenario DSL, claim labels, run trace shape, or artifact layout.
 
