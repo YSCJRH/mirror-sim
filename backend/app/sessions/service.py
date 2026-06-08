@@ -486,6 +486,8 @@ def generate_branch(
         child_run_dir,
         report_dir,
         baseline_dir=parent_branch.run_dir,
+        compare_path=compare_dir / "compare.json",
+        candidate_branch_id=child_run.branch_id,
         simulation_rules_path=world_paths.simulation_rules_path,
     )
 

@@ -15,6 +15,46 @@ from backend.app.simulation.service import simulate_branching_scenario, simulate
 from backend.app.utils import read_json
 
 
+def _write_branch_matrix_scenario(tmp_path: Path) -> Path:
+    scenario_path = tmp_path / "scenario_branch_matrix.yaml"
+    scenario_path.write_text(
+        "\n".join(
+            [
+                "scenario_id: scenario_branch_matrix",
+                "world_id: fog-harbor-east-gate",
+                "title: Branch Matrix Runner Test",
+                "description: Deterministic runner test for multi-branch compare artifacts.",
+                "seed: 7",
+                "turn_budget: 8",
+                "branch_count: 4",
+                "evaluation_questions:",
+                "  - Which branch delays the ledger most?",
+                "  - Which branch loses the direct warning path?",
+                "injections:",
+                "  - injection_id: inj_reporter_detained",
+                "    kind: delay_document",
+                "    target_id: doc_ledger_copy",
+                "    actor_id: entity_lin_lan",
+                "    params:",
+                "      delay_turns: 2",
+                "  - injection_id: inj_harbor_comms_failure",
+                "    kind: resource_failure",
+                "    actor_id: persona_chen_yu",
+                "    target_id: entity_east_wharf",
+                "    params:",
+                "      duration_turns: 3",
+                "  - injection_id: inj_mayor_signal_blocked",
+                "    kind: block_contact",
+                "    actor_id: persona_chen_yu",
+                "    target_id: persona_zhao_ke",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    return scenario_path
+
+
 def test_ingest_writes_documents_and_chunks(tmp_path: Path) -> None:
     settings = get_settings()
     documents, chunks = ingest_manifest(settings.manifest_path, tmp_path / "ingest")
@@ -110,43 +150,7 @@ def test_branching_scenario_writes_stable_compare_artifact(tmp_path: Path) -> No
     ingest_manifest(settings.manifest_path, tmp_path / "ingest")
     build_graph(tmp_path / "ingest" / "chunks.jsonl", tmp_path / "graph")
     build_personas(tmp_path / "graph" / "graph.json", tmp_path / "personas")
-
-    scenario_path = tmp_path / "scenario_branch_matrix.yaml"
-    scenario_path.write_text(
-        "\n".join(
-            [
-                "scenario_id: scenario_branch_matrix",
-                "world_id: fog-harbor-east-gate",
-                "title: Branch Matrix Runner Test",
-                "description: Deterministic runner test for multi-branch compare artifacts.",
-                "seed: 7",
-                "turn_budget: 8",
-                "branch_count: 4",
-                "evaluation_questions:",
-                "  - Which branch delays the ledger most?",
-                "  - Which branch loses the direct warning path?",
-                "injections:",
-                "  - injection_id: inj_reporter_detained",
-                "    kind: delay_document",
-                "    target_id: doc_ledger_copy",
-                "    actor_id: entity_lin_lan",
-                "    params:",
-                "      delay_turns: 2",
-                "  - injection_id: inj_harbor_comms_failure",
-                "    kind: resource_failure",
-                "    actor_id: persona_chen_yu",
-                "    target_id: entity_east_wharf",
-                "    params:",
-                "      duration_turns: 3",
-                "  - injection_id: inj_mayor_signal_blocked",
-                "    kind: block_contact",
-                "    actor_id: persona_chen_yu",
-                "    target_id: persona_zhao_ke",
-            ]
-        )
-        + "\n",
-        encoding="utf-8",
-    )
+    scenario_path = _write_branch_matrix_scenario(tmp_path)
 
     first_compare = simulate_branching_scenario(
         scenario_path,
@@ -173,6 +177,37 @@ def test_branching_scenario_writes_stable_compare_artifact(tmp_path: Path) -> No
     ]
     assert (tmp_path / "demo-one" / "compare" / "scenario_branch_matrix" / "compare.json").exists()
     assert (tmp_path / "demo-one" / "run" / "branch_matrix" / "branches" / "branch_inj_reporter_detained" / "summary.json").exists()
+
+
+def test_report_selects_branch_pair_from_compare_artifact(tmp_path: Path) -> None:
+    settings = get_settings()
+    ingest_manifest(settings.manifest_path, tmp_path / "ingest")
+    build_graph(tmp_path / "ingest" / "chunks.jsonl", tmp_path / "graph")
+    build_personas(tmp_path / "graph" / "graph.json", tmp_path / "personas")
+    scenario_path = _write_branch_matrix_scenario(tmp_path)
+
+    simulate_branching_scenario(
+        scenario_path,
+        tmp_path / "graph" / "graph.json",
+        tmp_path / "personas" / "personas.json",
+        tmp_path / "demo-one" / "run" / "branch_matrix",
+        tmp_path / "demo-one",
+    )
+
+    wrong_run_dir = tmp_path / "demo-one" / "run" / "branch_matrix" / "branches" / "branch_inj_harbor_comms_failure"
+    claims = generate_report(
+        wrong_run_dir,
+        tmp_path / "demo-one" / "report",
+        baseline_dir=wrong_run_dir,
+        compare_path=tmp_path / "demo-one" / "compare" / "scenario_branch_matrix" / "compare.json",
+        candidate_branch_id="branch_inj_reporter_detained",
+    )
+    report = (tmp_path / "demo-one" / "report" / "report.md").read_text(encoding="utf-8")
+
+    assert "Compare source: `compare/scenario_branch_matrix/compare.json`." in report
+    assert "Compare branch pair: `branch_reference` -> `branch_inj_reporter_detained`." in report
+    assert all(claim.label for claim in claims)
+    assert all(claim.evidence_ids for claim in claims)
 
 
 def test_report_contains_labeled_claims(tmp_path: Path) -> None:

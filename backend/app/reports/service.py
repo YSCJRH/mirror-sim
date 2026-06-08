@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 
 from backend.app.config import get_settings
-from backend.app.domain.models import Claim, RunTrace, TurnAction
+from backend.app.domain.models import Claim, CompareArtifact, CompareBranch, RunTrace, TurnAction
 from backend.app.safety.service import ensure_safe_report, validate_claim_payloads
 from backend.app.simulation.rules import OutcomeDefinition, SimulationPlan, load_simulation_plan
 from backend.app.utils import read_json, read_jsonl, slugify, write_json
@@ -16,6 +17,15 @@ def _load_summary(path: Path) -> RunTrace:
 
 def _load_actions(path: Path) -> list[TurnAction]:
     return [TurnAction.model_validate(row) for row in read_jsonl(path / "run_trace.jsonl")]
+
+
+@dataclass(frozen=True)
+class _CompareBranchSelection:
+    reference_dir: Path
+    candidate_dir: Path
+    source_path: str
+    reference_branch_id: str
+    candidate_branch_id: str
 
 
 def _guess_simulation_rules_path(
@@ -31,6 +41,70 @@ def _guess_simulation_rules_path(
         if candidate.exists():
             return candidate
     return get_settings().simulation_rules_path
+
+
+def _compare_scope_root(compare_path: Path) -> Path:
+    resolved = compare_path.resolve()
+    compare_indexes = [index for index, part in enumerate(resolved.parts) if part == "compare"]
+    if not compare_indexes:
+        raise ValueError(f"Compare artifact path `{compare_path}` is not under a compare directory.")
+    compare_index = compare_indexes[-1]
+    if compare_index == 0:
+        return Path(".").resolve()
+    return Path(*resolved.parts[:compare_index])
+
+
+def _branch_by_id(compare: CompareArtifact, branch_id: str) -> CompareBranch:
+    for branch in compare.branches:
+        if branch.branch_id == branch_id:
+            return branch
+    raise ValueError(f"Compare artifact `{compare.compare_id}` does not include branch `{branch_id}`.")
+
+
+def _branch_run_dir(scope_root: Path, branch: CompareBranch) -> Path:
+    return (scope_root / branch.summary_path).parent
+
+
+def _select_compare_branch_pair(
+    compare_path: Path,
+    run_dir: Path,
+    candidate_branch_id: str | None,
+) -> _CompareBranchSelection:
+    resolved_compare_path = compare_path.resolve()
+    compare = CompareArtifact.model_validate(read_json(resolved_compare_path))
+    scope_root = _compare_scope_root(resolved_compare_path)
+    reference_branch = _branch_by_id(compare, compare.reference_branch_id)
+
+    if candidate_branch_id:
+        candidate_branch = _branch_by_id(compare, candidate_branch_id)
+    else:
+        resolved_run_dir = run_dir.resolve()
+        matching_branches = [
+            branch
+            for branch in compare.branches
+            if _branch_run_dir(scope_root, branch).resolve() == resolved_run_dir
+        ]
+        if not matching_branches:
+            raise ValueError(
+                f"Run directory `{run_dir}` does not match any branch in compare artifact `{resolved_compare_path}`."
+            )
+        candidate_branch = matching_branches[0]
+
+    if candidate_branch.branch_id == reference_branch.branch_id:
+        raise ValueError(f"Report candidate branch `{candidate_branch.branch_id}` cannot be the reference branch.")
+
+    try:
+        source_path = resolved_compare_path.relative_to(scope_root).as_posix()
+    except ValueError:
+        source_path = resolved_compare_path.as_posix()
+
+    return _CompareBranchSelection(
+        reference_dir=_branch_run_dir(scope_root, reference_branch),
+        candidate_dir=_branch_run_dir(scope_root, candidate_branch),
+        source_path=source_path,
+        reference_branch_id=reference_branch.branch_id,
+        candidate_branch_id=candidate_branch.branch_id,
+    )
 
 
 def _summary_outcome_value(summary: RunTrace, field: str):
@@ -113,19 +187,35 @@ def generate_report(
     out_dir: Path,
     baseline_dir: Path | None = None,
     *,
+    compare_path: Path | None = None,
+    candidate_branch_id: str | None = None,
     simulation_rules_path: Path | None = None,
 ) -> list[Claim]:
-    candidate_summary = _load_summary(run_dir)
-    candidate_actions = _load_actions(run_dir)
-    plan = load_simulation_plan(_guess_simulation_rules_path(run_dir, baseline_dir, simulation_rules_path))
+    effective_run_dir = run_dir
+    effective_baseline_dir = baseline_dir
+    compare_lines: list[str] = []
+    if compare_path is not None:
+        selection = _select_compare_branch_pair(compare_path, run_dir, candidate_branch_id)
+        effective_run_dir = selection.candidate_dir
+        effective_baseline_dir = selection.reference_dir
+        compare_lines = [
+            f"Compare source: `{selection.source_path}`.",
+            f"Compare branch pair: `{selection.reference_branch_id}` -> `{selection.candidate_branch_id}`.",
+        ]
+
+    candidate_summary = _load_summary(effective_run_dir)
+    candidate_actions = _load_actions(effective_run_dir)
+    plan = load_simulation_plan(
+        _guess_simulation_rules_path(effective_run_dir, effective_baseline_dir, simulation_rules_path)
+    )
 
     claims: list[Claim]
     key_differences: list[str]
     scenario_line: str
 
-    if baseline_dir is not None:
-        baseline_summary = _load_summary(baseline_dir)
-        baseline_actions = _load_actions(baseline_dir)
+    if effective_baseline_dir is not None:
+        baseline_summary = _load_summary(effective_baseline_dir)
+        baseline_actions = _load_actions(effective_baseline_dir)
         changed_outcomes = [
             outcome
             for outcome in plan.tracked_outcomes
@@ -162,6 +252,7 @@ def generate_report(
             f"Scenario `{candidate_summary.scenario_id}` under seed {candidate_summary.seed} in world `{plan.world_id}`."
         )
 
+    scenario_lines = [scenario_line, *compare_lines]
     claim_payloads = [claim.model_dump() for claim in claims]
     validate_claim_payloads(claim_payloads)
     claim_rows = "\n".join(
@@ -178,7 +269,7 @@ def generate_report(
             "# Mirror Report",
             "",
             "## 1. Scenario",
-            scenario_line,
+            *scenario_lines,
             "",
             "## 2. Key Differences",
             *key_differences,

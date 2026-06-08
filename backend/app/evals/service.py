@@ -348,6 +348,7 @@ def _materialize_world(world_paths: WorldPaths) -> SimulationPlan:
         )
 
     report_run_dir = run_root / plan.default_report_scenario
+    report_compare_path = world_paths.artifacts_root / "compare" / plan.compare_id / "compare.json"
     if not report_run_dir.exists():
         raise ValueError(
             f"Default report scenario `{plan.default_report_scenario}` is missing under {run_root}."
@@ -356,6 +357,8 @@ def _materialize_world(world_paths: WorldPaths) -> SimulationPlan:
         report_run_dir,
         world_paths.artifacts_root / "report",
         baseline_dir=run_root / "baseline",
+        compare_path=report_compare_path if matrix_branch_runs else None,
+        candidate_branch_id=f"branch_{plan.default_report_scenario}" if matrix_branch_runs else None,
         simulation_rules_path=world_paths.simulation_rules_path,
     )
     return plan
@@ -434,6 +437,7 @@ def evaluate_transfer_world(world_paths: WorldPaths) -> EvalResult:
         if run_summaries and all(_run_has_outcome_field(summary, field) for summary in run_summaries)
     }
     compare_payloads = [read_json(path) for path in compare_json_paths]
+    report_text = report_path.read_text(encoding="utf-8") if report_path.exists() else ""
     compare_covered_fields = (
         set().union(*[_compare_outcome_fields(payload) for payload in compare_payloads])
         if compare_payloads
@@ -457,6 +461,17 @@ def evaluate_transfer_world(world_paths: WorldPaths) -> EvalResult:
         else set()
     )
     default_report_changed_tracked_fields = tracked_outcome_set & default_report_changed_fields
+    default_report_compare_sources = [
+        (path, payload)
+        for path, payload in zip(compare_json_paths, compare_payloads, strict=True)
+        if any(branch.get("branch_id") == default_report_branch_id for branch in payload.get("branches", []))
+    ]
+    report_compare_sourced = any(
+        f"Compare source: `{path.relative_to(artifacts_root).as_posix()}`." in report_text
+        and f"Compare branch pair: `{payload.get('reference_branch_id')}` -> `{default_report_branch_id}`."
+        in report_text
+        for path, payload in default_report_compare_sources
+    )
 
     failures: list[str] = []
     checks_total = 0
@@ -516,6 +531,11 @@ def evaluate_transfer_world(world_paths: WorldPaths) -> EvalResult:
         bool(default_report_changed_tracked_fields),
         f"`{plan.default_report_scenario}` did not change any tracked outcome against baseline.",
     )
+    record(
+        "report_compare_sourced",
+        report_compare_sourced,
+        f"Report must cite compare source and branch pair for `{default_report_branch_id}`.",
+    )
     record("claims_labeled", all(claim.get("label") for claim in claims), "Every claim must carry a label.")
     record(
         "claims_have_evidence",
@@ -558,10 +578,12 @@ def evaluate_transfer_world(world_paths: WorldPaths) -> EvalResult:
             "compare_outcome_fields_covered": len(tracked_outcome_set & compare_covered_fields),
             "changed_tracked_outcome_count": len(changed_tracked_fields),
             "default_report_changed_outcome_count": len(default_report_changed_tracked_fields),
+            "report_compare_sourced": report_compare_sourced,
             "transfer_proof_world_local": (
                 len(run_covered_fields) == len(tracked_outcome_fields)
                 and len(tracked_outcome_set & compare_covered_fields) == len(tracked_outcome_fields)
                 and bool(default_report_changed_tracked_fields)
+                and report_compare_sourced
             ),
         },
         failures=failures,
