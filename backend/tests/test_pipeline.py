@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 import backend.app.evals.service as evals_service
 from backend.app.world_query import inspect_world
 from pathlib import Path
@@ -143,6 +145,48 @@ def test_scenario_validation_and_simulation_are_deterministic(tmp_path: Path) ->
     )
     assert scenario.scenario_id == "scenario_reporter_detained"
     assert first.model_dump() == second.model_dump()
+
+
+def test_simulation_replays_from_existing_decision_trace(tmp_path: Path) -> None:
+    settings = get_settings()
+    ingest_manifest(settings.manifest_path, tmp_path / "ingest")
+    build_graph(tmp_path / "ingest" / "chunks.jsonl", tmp_path / "graph")
+    build_personas(tmp_path / "graph" / "graph.json", tmp_path / "personas")
+    run_dir = tmp_path / "run"
+
+    first = simulate_scenario(
+        settings.intervention_scenario_path,
+        tmp_path / "graph" / "graph.json",
+        tmp_path / "personas" / "personas.json",
+        run_dir,
+    )
+    trace_path = run_dir / "decision_trace.jsonl"
+    first_trace_rows = [
+        json.loads(line) for line in trace_path.read_text(encoding="utf-8").splitlines()
+    ]
+    assert first_trace_rows
+    assert all(row["provider_mode"] != "replay_cache" for row in first_trace_rows)
+
+    second = simulate_scenario(
+        settings.intervention_scenario_path,
+        tmp_path / "graph" / "graph.json",
+        tmp_path / "personas" / "personas.json",
+        run_dir,
+    )
+    replay_trace_rows = [
+        json.loads(line) for line in trace_path.read_text(encoding="utf-8").splitlines()
+    ][len(first_trace_rows) :]
+
+    assert first.model_dump() == second.model_dump()
+    assert len(replay_trace_rows) == len(first_trace_rows)
+    assert all(row["provider_mode"] == "replay_cache" for row in replay_trace_rows)
+    assert all(row["validation_status"] == "accepted_from_replay" for row in replay_trace_rows)
+    assert [row["selected_choice_index"] for row in replay_trace_rows] == [
+        row["selected_choice_index"] for row in first_trace_rows
+    ]
+    assert [row["input_hash"] for row in replay_trace_rows] == [
+        row["input_hash"] for row in first_trace_rows
+    ]
 
 
 def test_branching_scenario_writes_stable_compare_artifact(tmp_path: Path) -> None:

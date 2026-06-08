@@ -216,7 +216,7 @@ What this means in practice:
 
 - the model does **not** write world state directly
 - the model only chooses among legal actions produced by the world rules
-- every decision is validated and written into `decision_trace.jsonl`
+- every materialized generated-run decision is validated and written into `decision_trace.jsonl`
 - if the model is missing, unavailable, or invalid, Mirror falls back deterministically
 - interactive runtime sessions can now pin one explicit decision model at creation time
 - hosted GPT access is beta-gated and quota-limited before a model call is made
@@ -427,6 +427,7 @@ For a guided walkthrough of the canonical demo flow, see [docs/demo/fog-harbor-w
 - Post-Phase-67 successor intake audit keeps the queue paused; `docs/plans/post-phase-67-successor-intake-audit-2026-06-08.md` records the successor-intake decision. No Phase 68 successor queue is opened by this audit. Do not open Phase 68 as an execution queue until this intake audit identifies a new source-backed minimum-loop gap or protected-core contract blocker. The intake remains tied to `corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`.
 - Post-Phase-67 outcome/report/eval generalization audit keeps the queue paused; `docs/plans/post-phase-67-outcome-report-eval-generalization-audit-2026-06-08.md` records that selected-world proof is current for `fog-harbor-east-gate`, `museum-night`, and `library-rain`, does not claim future-world readiness, and does not prove a Phase 68 blocker. Do not open Phase 68 from this audit.
 - Post-Phase-67 runtime-created world eval proof keeps the queue paused; `docs/plans/post-phase-67-runtime-created-world-eval-proof-2026-06-08.md` records that a runtime-created bounded world can pass `eval-world`, does not claim future-world readiness, and does not prove a Phase 68 blocker. Do not open Phase 68 from this proof.
+- Post-Phase-67 decision-trace replay audit keeps the queue paused; `docs/plans/post-phase-67-decision-trace-replay-audit-2026-06-08.md` records current evidence for kernel-level replay and runner-level same-run-directory replay. Do not open Phase 68 from this audit.
 - Phase 48 is closed after PR `#382`, issue `#375`, and milestone `Phase 48 - Successor Intake and Boundary Contract Triage`.
 - Phase 49 is closed after PR `#395`, issue `#383`, and milestone `Phase 49 - Kernel, Perturbation, and Runtime Contract Hardening`; completed work items were `#384`, `#386`, `#388`, `#390`, `#392`, and `#394`.
 - Phase 50 is closed after PR `#402`, issue `#396`, and milestone `Phase 50 - Runtime Orchestration Measurement and Product Boundary`; completed work items were `#397`, `#398`, and `#401`. Phase 50 measured before any `task_id` or worker contract is introduced and kept the private-beta launch hub planning-only for now.

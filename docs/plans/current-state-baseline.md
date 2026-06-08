@@ -30,6 +30,8 @@ Post-Phase-67 outcome/report/eval generalization audit keeps the queue paused; `
 
 Post-Phase-67 runtime-created world eval proof keeps the queue paused; `docs/plans/post-phase-67-runtime-created-world-eval-proof-2026-06-08.md` records that a runtime-created bounded world can pass `eval-world`, does not claim future-world readiness, and does not prove a Phase 68 blocker. Do not open Phase 68 from this proof.
 
+Post-Phase-67 decision-trace replay audit keeps the queue paused; `docs/plans/post-phase-67-decision-trace-replay-audit-2026-06-08.md` records current evidence for kernel-level replay and runner-level same-run-directory replay. Do not open Phase 68 from this audit.
+
 ## Snapshot
 
 - Local quality baseline:
