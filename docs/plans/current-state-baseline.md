@@ -32,6 +32,8 @@ Post-Phase-67 runtime-created world eval proof keeps the queue paused; `docs/pla
 
 Post-Phase-67 decision-trace replay audit keeps the queue paused; `docs/plans/post-phase-67-decision-trace-replay-audit-2026-06-08.md` records current evidence for kernel-level replay and runner-level same-run-directory replay. Do not open Phase 68 from this audit.
 
+Post-Phase-67 decision-trace eval-ownership boundary keeps the queue paused; `docs/plans/post-phase-67-decision-trace-eval-ownership-boundary-2026-06-08.md` records that eval-owned decision-trace replay metrics remain unclaimed and that opening implementation without a source-backed blocker would be blueprint drift. Do not open Phase 68 from this boundary note.
+
 ## Snapshot
 
 - Local quality baseline:
