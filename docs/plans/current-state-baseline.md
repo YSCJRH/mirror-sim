@@ -28,6 +28,8 @@ Post-Phase-67 successor intake audit keeps the queue paused; `docs/plans/post-ph
 
 Post-Phase-67 outcome/report/eval generalization audit keeps the queue paused; `docs/plans/post-phase-67-outcome-report-eval-generalization-audit-2026-06-08.md` records that selected-world proof is current for `fog-harbor-east-gate`, `museum-night`, and `library-rain`, does not claim future-world readiness, and does not prove a Phase 68 blocker. Do not open Phase 68 from this audit.
 
+Post-Phase-67 runtime-created world eval proof keeps the queue paused; `docs/plans/post-phase-67-runtime-created-world-eval-proof-2026-06-08.md` records that a runtime-created bounded world can pass `eval-world`, does not claim future-world readiness, and does not prove a Phase 68 blocker. Do not open Phase 68 from this proof.
+
 ## Snapshot
 
 - Local quality baseline:

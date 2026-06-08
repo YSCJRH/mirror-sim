@@ -173,6 +173,24 @@ def _baseline_title(spec: CreateWorldTemplateInput) -> str:
     return f"Baseline {spec.world_name}"
 
 
+def _default_report_scenario_title(spec: CreateWorldTemplateInput) -> str:
+    if _is_chinese(spec):
+        return f"{spec.evidence_document_name}延迟"
+    return f"{spec.evidence_document_name} Delay"
+
+
+def _default_report_scenario_description(spec: CreateWorldTemplateInput) -> str:
+    if _is_chinese(spec):
+        return (
+            f"{spec.evidence_document_name}比基线晚两个回合进入决策链，"
+            f"以验证{spec.public_event_name}与{spec.response_location_name}响应是否随证据延迟而变化。"
+        )
+    return (
+        f"{spec.evidence_document_name} reaches the decision loop two turns later than baseline, "
+        f"testing whether {spec.public_event_name} and the response around {spec.response_location_name} change."
+    )
+
+
 def _evaluation_questions(spec: CreateWorldTemplateInput) -> list[str]:
     if _is_chinese(spec):
         return [
@@ -598,10 +616,11 @@ def create_bounded_incident_world(
             }
         )
 
+    default_report_scenario = "evidence_delayed"
     simulation_rules = {
         "world_id": world_id,
         "compare_id": f"scenario_{world_id}_template_matrix",
-        "default_report_scenario": "baseline",
+        "default_report_scenario": default_report_scenario,
         "communications_down_field": "communications_down_until",
         "blocked_contacts_field": "blocked_contacts",
         "turn_sequence": [
@@ -894,6 +913,34 @@ def create_bounded_incident_world(
         "injections": [],
     }
     _write_yaml(world_root / "scenarios" / "baseline.yaml", baseline_scenario)
+
+    injected_scenario_id = f"scenario_{world_id}_{default_report_scenario}"
+    injected_scenario = {
+        "scenario_id": injected_scenario_id,
+        "world_id": world_id,
+        "title": _default_report_scenario_title(spec),
+        "description": _default_report_scenario_description(spec),
+        "seed": 11,
+        "turn_budget": 8,
+        "branch_count": 1,
+        "evaluation_questions": _evaluation_questions(spec),
+        "injections": [
+            {
+                "injection_id": "inj_evidence_delayed",
+                "kind": "delay_document",
+                "target_id": "doc_user_01",
+                "actor_id": _role_persona_id("records_lead"),
+                "params": {
+                    "delay_turns": 2,
+                    "cause": "routing_delay",
+                },
+                "rationale": (
+                    f"{spec.evidence_document_name} is delayed two turns before it reaches the decision loop."
+                ),
+            }
+        ],
+    }
+    _write_yaml(world_root / "scenarios" / f"{default_report_scenario}.yaml", injected_scenario)
 
     product_payload = {
         "world_id": world_id,
