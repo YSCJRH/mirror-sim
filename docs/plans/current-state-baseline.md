@@ -26,6 +26,8 @@ Phase 67 closeout shorthand: `#507` `Phase 67 exit gate` closed by PR `#514`; `#
 
 Post-Phase-67 successor intake audit keeps the queue paused; `docs/plans/post-phase-67-successor-intake-audit-2026-06-08.md` records the successor-intake decision. No Phase 68 successor queue is opened by this audit. Do not open Phase 68 as an execution queue until this intake audit identifies a new source-backed minimum-loop gap or protected-core contract blocker. The intake remains tied to `corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`.
 
+Post-Phase-67 outcome/report/eval generalization audit keeps the queue paused; `docs/plans/post-phase-67-outcome-report-eval-generalization-audit-2026-06-08.md` records that selected-world proof is current for `fog-harbor-east-gate`, `museum-night`, and `library-rain`, does not claim future-world readiness, and does not prove a Phase 68 blocker. Do not open Phase 68 from this audit.
+
 ## Snapshot
 
 - Local quality baseline:

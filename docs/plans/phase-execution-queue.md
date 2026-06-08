@@ -117,6 +117,7 @@ Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate
   - Every future successor must identify a new source-backed minimum-loop gap or protected-core contract blocker before opening.
   - Do not open another adjacent surface/readiness/fidelity/continuity gate as the primary successor scope without a source-backed tie to scenario/intervention/branch-comparison/eval value.
   - Post-Phase-67 successor intake audit keeps the queue paused; `docs/plans/post-phase-67-successor-intake-audit-2026-06-08.md` records the successor-intake decision. No Phase 68 successor queue is opened by this audit. Do not open Phase 68 as an execution queue until this intake audit identifies a new source-backed minimum-loop gap or protected-core contract blocker. The intake remains tied to `corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`.
+  - Post-Phase-67 outcome/report/eval generalization audit keeps the queue paused; `docs/plans/post-phase-67-outcome-report-eval-generalization-audit-2026-06-08.md` records that selected-world proof is current for `fog-harbor-east-gate`, `museum-night`, and `library-rain`, does not claim future-world readiness, and does not prove a Phase 68 blocker. Do not open Phase 68 from this audit.
   - If a future minimum-loop audit finds a contract gap, split a separate protected-core contract issue before changing schema, scenario DSL, claim labels, run trace shape, or artifact layout.
 
 ## Phase 66 Closed Queue
