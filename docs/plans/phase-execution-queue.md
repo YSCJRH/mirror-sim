@@ -1,6 +1,6 @@
 # Phase Execution Queue
 
-This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, the completed Phase 64 selected-world perturb follow-up readiness gate, the completed Phase 65 selected-world deterministic runtime generation evidence gate, the completed Phase 66 selected-world generated runtime surface continuity gate, and the active Phase 67 blueprint calibration and minimum-loop value gate.
+This note records the current post-Day-0 execution status for Mirror after the formal `v0.1.0` release cut, the completed Phase 58 route-readiness evidence gate, the completed Phase 59 selected-world route continuity evidence gate, the completed Phase 60 selected-world review artifact integrity gate, the completed Phase 61 selected-world review surface evidence binding gate, the completed Phase 62 selected-world review evidence actionability gate, the completed Phase 63 selected-world review next-action route-fidelity gate, the completed Phase 64 selected-world perturb follow-up readiness gate, the completed Phase 65 selected-world deterministic runtime generation evidence gate, the completed Phase 66 selected-world generated runtime surface continuity gate, and the Phase 67 blueprint calibration and minimum-loop value closeout target recorded by PR `#514`.
 
 ## Current Gate State
 
@@ -70,7 +70,7 @@ This note records the current post-Day-0 execution status for Mirror after the f
 - Phase 64 exit gate: closed
 - Phase 65 exit gate: closed
 - Phase 66 exit gate: closed
-- Phase 67 exit gate: open / blocked
+- Phase 67 exit gate: post-merge closeout target
 
 Local phase audits currently report:
 
@@ -78,7 +78,7 @@ Local phase audits currently report:
 - `phase2`: pass
 - `phase3`: pass
 
-## Phase 67 Active Queue
+## Phase 67 Closed Queue
 
 Phase 67 title:
 
@@ -86,25 +86,37 @@ Phase 67 title:
 Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate
 ```
 
-- Phase 67 is active as `Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate`
-- milestone `Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate` is open
-- `#507` `Phase 67 exit gate`: open / blocked
-- `#508` `Phase 67: sync repo truth after Phase 66 closeout and define blueprint calibration gate`: closed by PR `#510`
-- `#509` `Phase 67: audit current minimum-loop value gaps before next implementation`: open / ready
-- `#511` `Phase 67: align report and claims generation with compare-sourced branch truth`: open / ready
-- `audit-github-queue` reports `ready` for the active Phase 67 milestone
+- Phase 67 closeout decision is recorded by PR `#514`
+- Post-merge stop-state: Phase 67 is closed as `Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate`
+- milestone `Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate` is closed
+- `#507` `Phase 67 exit gate`
+  - `#507` `Phase 67 exit gate` closed by PR `#514`.
+- `#508` `Phase 67: sync repo truth after Phase 66 closeout and define blueprint calibration gate`
+  - `#508` closed by PR `#510`
+  - Scope: synced tracked docs, bootstrap metadata, and tests to the Phase 67 blueprint calibration boundary.
+- `#509` `Phase 67: audit current minimum-loop value gaps before next implementation`
+  - `#509` closed by PR `#512`
+  - Scope: recorded the minimum-loop value gap audit and selected compare-sourced report/claims closure.
+- `#511` `Phase 67: align report and claims generation with compare-sourced branch truth`
+  - `#511` closed by PR `#513`
+  - Scope: implemented compare-sourced report/claims closure while preserving claim `label` and `evidence_ids`.
+- `audit-github-queue` reports `paused` with no active milestone after Phase 67 closeout
+- Pre-Merge Evidence Boundary
+  - Before PR `#514` merges and the Phase 67 milestone is closed, live GitHub still reports `#507` open and `Phase 67 - Blueprint Calibration and Minimum-Loop Value Gate` as the active milestone; this closeout PR records the required post-merge verification target.
 - phase gate baseline
+  - `docs/plans/phase-67-blueprint-calibration-minimum-loop-closeout-2026-06-08.md`
   - `docs/plans/phase-67-blueprint-calibration-minimum-loop-gate-2026-06-04.md`
   - `docs/plans/phase-67-minimum-loop-value-gap-audit-2026-06-04.md`
-  - Phase 67 must produce a minimum-loop value gap audit over `corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`.
+  - Phase 67 completed the source-backed `compare-sourced report/claims closure` selected by the audit over `corpus -> chunks -> graph -> personas -> scenarios -> deterministic runs -> report/claims -> eval`.
 - boundary posture
   - Phase 66 is closed as `Phase 66 - Selected-World Generated Runtime Surface Continuity Gate`.
   - `#501` `Phase 66 exit gate` closed by PR `#506`; `#502` closed by PR `#504`; `#503` closed by PR `#505`.
   - `audit-github-queue` reports `paused` with no active milestone after Phase 66 closeout.
-  - The next Phase 67 item must tie to scenario/intervention/branch-comparison/eval value.
-  - The audit recommends compare-sourced report/claims closure through `#511` `Phase 67: align report and claims generation with compare-sourced branch truth`.
-  - Do not open another adjacent surface/readiness/fidelity/continuity gate as the primary Phase 67 scope without a source-backed tie to scenario/intervention/branch-comparison/eval value.
-  - If the minimum-loop value gap audit finds a contract gap, split a separate protected-core contract issue before changing schema, scenario DSL, claim labels, run trace shape, or artifact layout.
+  - Phase 67 tied its landed work to scenario/intervention/branch-comparison/eval value.
+  - No Phase 68 successor queue is opened in this closeout.
+  - Every future successor must identify a new source-backed minimum-loop gap or protected-core contract blocker before opening.
+  - Do not open another adjacent surface/readiness/fidelity/continuity gate as the primary successor scope without a source-backed tie to scenario/intervention/branch-comparison/eval value.
+  - If a future minimum-loop audit finds a contract gap, split a separate protected-core contract issue before changing schema, scenario DSL, claim labels, run trace shape, or artifact layout.
 
 ## Phase 66 Closed Queue
 
