@@ -45,7 +45,7 @@ def test_decision_trace_replay_audit_is_source_backed_without_phase68() -> None:
         "The current queue remains in the formal paused stop-state.",
         "does not change `decision_trace.jsonl` shape",
         "No ADR or `docs/architecture/contracts.md` update is made by this audit because this diff does not change a protected-core contract.",
-        "TODO[verify]: Future eval ownership for decision-trace replay metrics remains unclaimed by this audit.",
+        "`docs/plans/post-phase-67-decision-trace-eval-ownership-boundary-2026-06-08.md` records that future eval ownership for decision-trace replay metrics remains unclaimed and is not a current Phase 68 blocker.",
         "`status:needs-adr` and unresolved `risk:safety` findings remain merge blockers.",
         "Do not present Mirror as a real-world prediction machine.",
         "Do not build real-person personas or digital doubles.",

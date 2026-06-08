@@ -47,7 +47,7 @@ This audit does not prove a protected-core blocker. It proves that the current d
 
 No successor queue is opened by this audit.
 
-TODO[verify]: Future eval ownership for decision-trace replay metrics remains unclaimed by this audit.
+Follow-up boundary: `docs/plans/post-phase-67-decision-trace-eval-ownership-boundary-2026-06-08.md` records that future eval ownership for decision-trace replay metrics remains unclaimed and is not a current Phase 68 blocker.
 
 ## Boundaries
 
